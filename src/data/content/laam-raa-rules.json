@@ -1,0 +1,93 @@
+{
+  "id": "laam-raa-rules",
+  "title_en": "Rules of Laam & Raa",
+  "title_ar": "أحكام اللام والراء",
+  "category": "laam-raa",
+  "sections": [
+    {
+      "id": "laam-shamsiyyah-qamariyyah",
+      "title_en": "Laam of the Definite Article (Al-)",
+      "title_ar": "لام التعريف",
+      "description": "The Laam in the definite article 'Al-' (الـ) is either pronounced clearly (Qamariyyah) or silent/merged (Shamsiyyah), depending on the letter that follows.",
+      "subtypes": [
+        {
+          "id": "laam-qamariyyah",
+          "title_en": "Laam Qamariyyah (Moon Letters)",
+          "title_ar": "اللام القمرية",
+          "description": "The Laam is PRONOUNCED clearly with sukoon. Occurs before 14 'moon' letters.",
+          "letters": "ا ب ج ح خ ع غ ف ق ك م و هـ ي",
+          "letter_count": 14,
+          "mnemonic_ar": "ابغ حجك وخف عقيمه",
+          "example_words": ["الْقَمَرِ", "الْكِتَابِ", "الْحَمْدُ", "الْمُؤْمِنُونَ"],
+          "examples": [
+            {
+              "arabic": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+              "transliteration": "al-ḥamdu lillahi rabb il-'aalameen",
+              "translation": "All praise is for Allah, Lord of the worlds",
+              "surah": 1, "ayah": 2, "surah_name_en": "Al-Fatiha",
+              "highlight_word": "الْحَمْدُ",
+              "rule_applied": "Laam Qamariyyah — Laam pronounced, followed by Haa (ح)"
+            }
+          ]
+        },
+        {
+          "id": "laam-shamsiyyah",
+          "title_en": "Laam Shamsiyyah (Sun Letters)",
+          "title_ar": "اللام الشمسية",
+          "description": "The Laam is SILENT — written but not pronounced. It merges (Idgham) into the following letter, which gets a Shaddah. Occurs before 14 'sun' letters.",
+          "letters": "ت ث د ذ ر ز س ش ص ض ط ظ ل ن",
+          "letter_count": 14,
+          "example_words": ["الشَّمْسِ", "النَّاسِ", "الرَّحْمَنِ", "التَّوْبَةِ"],
+          "examples": [
+            {
+              "arabic": "الرَّحْمَنِ الرَّحِيمِ",
+              "transliteration": "ar-raḥmaan ir-raḥeem",
+              "translation": "The Most Gracious, The Most Merciful",
+              "surah": 1, "ayah": 3, "surah_name_en": "Al-Fatiha",
+              "highlight_word": "الرَّحْمَنِ",
+              "rule_applied": "Laam Shamsiyyah — Laam silent, merged into Raa (ر)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "laam-lafzul-jalalah",
+      "title_en": "Laam of the Name of Allah",
+      "title_ar": "لام لفظ الجلالة",
+      "description": "The Laam in the name 'Allah' (الله) alternates between heavy (Tafkheem) and light (Tarqeeq) based on the vowel of the letter BEFORE it.",
+      "rules": [
+        {
+          "condition": "Preceded by Fathah (ـَ) or Dammah (ـُ)",
+          "result": "Tafkheem (heavy Laam)",
+          "examples": ["قَالَ اللَّهُ", "رَسُولُ اللَّهِ", "عَبْدُ اللَّهِ"]
+        },
+        {
+          "condition": "Preceded by Kasrah (ـِ)",
+          "result": "Tarqeeq (light Laam)",
+          "examples": ["بِسْمِ اللَّهِ", "لِلَّهِ", "قُلِ اللَّهُمَّ"]
+        }
+      ]
+    },
+    {
+      "id": "raa-rules",
+      "title_en": "Rules of Raa (ر)",
+      "title_ar": "أحكام الراء",
+      "description": "The letter Raa alternates between heavy (Tafkheem/Mufakhham) and light (Tarqeeq/Muraqqaq) depending on its vowel and surrounding context.",
+      "tafkheem_cases": [
+        { "condition": "Raa has Fathah", "example": "رَبِّ", "note": "Always heavy" },
+        { "condition": "Raa has Dammah", "example": "رُزِقُوا", "note": "Always heavy" },
+        { "condition": "Raa has Sukoon, preceded by Fathah", "example": "مَرْيَمَ", "note": "Heavy" },
+        { "condition": "Raa has Sukoon, preceded by Dammah", "example": "الْقُرْآنَ", "note": "Heavy" },
+        { "condition": "Raa has Sukoon, preceded by Kasrah 'Aaridah (temporary)", "example": "ارْجِعُوا", "note": "Heavy — the Kasrah on Hamzat Al-Wasl is temporary" },
+        { "condition": "Raa has Sukoon, preceded by Sukoon after Fathah/Dammah", "example": "الْفَجْرِ (when stopping)", "note": "Heavy" }
+      ],
+      "tarqeeq_cases": [
+        { "condition": "Raa has Kasrah", "example": "رِجَالٌ", "note": "Always light" },
+        { "condition": "Raa has Sukoon, preceded by Kasrah Asliyyah (original)", "example": "فِرْعَوْنَ", "note": "Light" },
+        { "condition": "Raa has Sukoon, preceded by Yaa Maddiyyah", "example": "قَدِيرٌ (when stopping)", "note": "Light" }
+      ]
+    }
+  ],
+  "verified": true
+}
