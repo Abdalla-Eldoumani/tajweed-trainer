@@ -1,0 +1,95 @@
+{
+  "id": "meem-sakinah",
+  "title_en": "Rules of Meem Sakinah",
+  "title_ar": "أحكام الميم الساكنة",
+  "category": "meem-sakinah",
+  "introduction": "Meem Sakinah is the letter Meem (م) with a sukoon (مْ). It has three rules depending on the letter that follows it.",
+  "rules": [
+    {
+      "id": "ikhfaa-shafawi",
+      "order": 1,
+      "title_en": "Ikhfaa Shafawi (Lip Concealment)",
+      "title_ar": "الإخفاء الشفوي",
+      "description": "When Meem Sakinah is followed by Baa (ب), the Meem is hidden with a light nasal sound (ghunnah) for 2 beats. The lips come close together but do not fully press.",
+      "letters": [{ "arabic": "ب", "name_en": "Baa", "transliteration": "b" }],
+      "examples": [
+        {
+          "arabic": "تَرْمِيهِمْ بِحِجَارَةٍ",
+          "transliteration": "tarmeehim biḥijaarah",
+          "translation": "striking them with stones",
+          "surah": 105, "ayah": 4, "surah_name_en": "Al-Fil",
+          "highlight_word": "تَرْمِيهِمْ بِحِجَارَةٍ",
+          "rule_applied": "Ikhfaa Shafawi — Meem Sakinah followed by Baa (ب)"
+        },
+        {
+          "arabic": "هُمْ بِهِ",
+          "transliteration": "hum bihi",
+          "translation": "they in it",
+          "surah": 78, "ayah": 3, "surah_name_en": "An-Naba",
+          "highlight_word": "هُمْ بِهِ",
+          "rule_applied": "Ikhfaa Shafawi — Meem Sakinah followed by Baa (ب)"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "idgham-shafawi",
+      "order": 2,
+      "title_en": "Idgham Shafawi (Lip Merging)",
+      "title_ar": "إدغام المتماثلين الصغير",
+      "description": "When Meem Sakinah is followed by another Meem (م), the two Meems merge into one emphasized Meem with ghunnah for 2 beats. Also called Idgham Mithlayn Sagheer.",
+      "letters": [{ "arabic": "م", "name_en": "Meem", "transliteration": "m" }],
+      "examples": [
+        {
+          "arabic": "لَهُمْ مَا يَشَاءُونَ",
+          "transliteration": "lahum maa yashaa'oon",
+          "translation": "for them whatever they wish",
+          "surah": 16, "ayah": 31, "surah_name_en": "An-Nahl",
+          "highlight_word": "لَهُمْ مَا",
+          "rule_applied": "Idgham Shafawi — Meem Sakinah followed by Meem (م)"
+        },
+        {
+          "arabic": "أَنَّهُمْ مُّبْتَلُونَ",
+          "transliteration": "annahum mubtaloon",
+          "translation": "that they are being tested",
+          "surah": 68, "ayah": 17, "surah_name_en": "Al-Qalam",
+          "highlight_word": "أَنَّهُمْ مُّبْتَلُونَ",
+          "rule_applied": "Idgham Shafawi — Meem Sakinah followed by Meem (م)"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "izhar-shafawi",
+      "order": 3,
+      "title_en": "Izhar Shafawi (Lip Clarity)",
+      "title_ar": "الإظهار الشفوي",
+      "description": "When Meem Sakinah is followed by any letter OTHER than Baa (ب) or Meem (م), the Meem is pronounced clearly without ghunnah. This covers the remaining 26 letters.",
+      "letters_description": "All Arabic letters except ب and م",
+      "examples": [
+        {
+          "arabic": "هُمْ فِيهَا",
+          "transliteration": "hum feehaa",
+          "translation": "they in it",
+          "surah": 2, "ayah": 39, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "هُمْ فِيهَا",
+          "rule_applied": "Izhar Shafawi — Meem Sakinah followed by Faa (ف)"
+        },
+        {
+          "arabic": "أَنْعَمْتَ",
+          "transliteration": "an'amta",
+          "translation": "You have bestowed favor",
+          "surah": 1, "ayah": 7, "surah_name_en": "Al-Fatiha",
+          "highlight_word": "أَنْعَمْتَ",
+          "rule_applied": "Izhar Shafawi — Meem Sakinah followed by Taa (ت) within one word"
+        }
+      ],
+      "common_mistakes": [
+        "Adding ghunnah when followed by Waw (و) or Faa (ف) — only Baa triggers Ikhfaa",
+        "Not closing lips fully when pronouncing the clear Meem before opening for the next letter"
+      ],
+      "verified": true
+    }
+  ],
+  "verified": true
+}
