@@ -1,0 +1,76 @@
+{
+  "id": "ghunnah",
+  "title_en": "Ghunnah (Nasal Sound)",
+  "title_ar": "الغنة",
+  "category": "ghunnah",
+  "introduction": "Ghunnah is the nasal sound that resonates in the nasal cavity when pronouncing certain letters. It is an inherent quality of the letters Noon (ن) and Meem (م). The duration and prominence of Ghunnah varies depending on the tajweed rule being applied.",
+  "definition": "A sound that comes from the nasal cavity (khayshoom). You can test it by pinching your nose while saying 'mmm' or 'nnn' — the vibration you feel is the Ghunnah.",
+  "duration": "2 beats (harakaat) when fully applied",
+  "rules": [
+    {
+      "id": "noon-mushaddad",
+      "order": 1,
+      "title_en": "Noon Mushaddadah (Doubled Noon)",
+      "title_ar": "النون المشددة",
+      "description": "When the letter Noon has a Shaddah (نّ), it MUST be pronounced with Ghunnah for 2 beats. This applies whether stopping or continuing.",
+      "examples": [
+        {
+          "arabic": "إِنَّ",
+          "transliteration": "inna",
+          "translation": "indeed",
+          "surah": 2, "ayah": 6, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "إِنَّ",
+          "rule_applied": "Noon Mushaddadah — Ghunnah for 2 beats"
+        },
+        {
+          "arabic": "النَّاسِ",
+          "transliteration": "an-naas",
+          "translation": "the people",
+          "surah": 114, "ayah": 1, "surah_name_en": "An-Nas",
+          "highlight_word": "النَّاسِ",
+          "rule_applied": "Noon Mushaddadah — Ghunnah for 2 beats"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "meem-mushaddad",
+      "order": 2,
+      "title_en": "Meem Mushaddadah (Doubled Meem)",
+      "title_ar": "الميم المشددة",
+      "description": "When the letter Meem has a Shaddah (مّ), it MUST be pronounced with Ghunnah for 2 beats. This applies whether stopping or continuing.",
+      "examples": [
+        {
+          "arabic": "أُمَّةً",
+          "transliteration": "ummatan",
+          "translation": "a nation",
+          "surah": 2, "ayah": 128, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "أُمَّةً",
+          "rule_applied": "Meem Mushaddadah — Ghunnah for 2 beats"
+        },
+        {
+          "arabic": "ثُمَّ",
+          "transliteration": "thumma",
+          "translation": "then",
+          "surah": 2, "ayah": 28, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "ثُمَّ",
+          "rule_applied": "Meem Mushaddadah — Ghunnah for 2 beats"
+        }
+      ],
+      "verified": true
+    }
+  ],
+  "ghunnah_prominence_ranking": [
+    { "rank": 1, "context": "Noon/Meem Mushaddad", "prominence": "Most prominent", "beats": 2 },
+    { "rank": 2, "context": "Idgham with Ghunnah", "prominence": "Strong", "beats": 2 },
+    { "rank": 3, "context": "Iqlab", "prominence": "Strong", "beats": 2 },
+    { "rank": 4, "context": "Ikhfaa (Haqiqi & Shafawi)", "prominence": "Moderate", "beats": 2 },
+    { "rank": 5, "context": "Izhar", "prominence": "Natural/minimal", "beats": 0 }
+  ],
+  "common_mistakes": [
+    "Not holding the Ghunnah for a full 2 beats — rushing through it",
+    "Making the Ghunnah too nasal or exaggerated",
+    "Forgetting Ghunnah on Noon/Meem with Shaddah when stopping at end of ayah"
+  ],
+  "verified": true
+}
