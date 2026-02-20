@@ -1,0 +1,225 @@
+{
+  "id": "madd-rules",
+  "title_en": "Rules of Madd (Elongation)",
+  "title_ar": "أحكام المد",
+  "category": "madd",
+  "introduction": "Madd means 'to stretch' or 'lengthen.' It refers to elongating the sound of one of three Madd letters: Alif (ا), Waw (و), or Yaa (ي). The length depends on what follows the Madd letter — specifically whether a Hamzah (ء) or Sukoon follows.",
+  "madd_letters": [
+    { "arabic": "ا", "name_en": "Alif", "condition": "Preceded by Fathah" },
+    { "arabic": "و", "name_en": "Waw Sakinah", "condition": "Preceded by Dammah" },
+    { "arabic": "ي", "name_en": "Yaa Sakinah", "condition": "Preceded by Kasrah" }
+  ],
+  "types": [
+    {
+      "id": "madd-tabeeee",
+      "order": 1,
+      "title_en": "Madd Tabee'i (Natural Madd)",
+      "title_ar": "المد الطبيعي",
+      "beats": 2,
+      "obligation": "Required",
+      "description": "The basic, natural elongation. Occurs when a Madd letter is NOT followed by a Hamzah or Sukoon. Always exactly 2 beats.",
+      "trigger": "Madd letter with no Hamzah or Sukoon after it",
+      "examples": [
+        {
+          "arabic": "قَالَ",
+          "transliteration": "qaala",
+          "translation": "he said",
+          "surah": 2, "ayah": 30, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "قَالَ",
+          "rule_applied": "Madd Tabee'i — Alif after Fathah, 2 beats"
+        },
+        {
+          "arabic": "يَقُولُونَ",
+          "transliteration": "yaqooloon",
+          "translation": "they say",
+          "surah": 2, "ayah": 8, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "يَقُولُونَ",
+          "rule_applied": "Madd Tabee'i — Waw after Dammah, 2 beats"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "madd-muttasil",
+      "order": 2,
+      "title_en": "Madd Wajib Muttasil (Obligatory Connected)",
+      "title_ar": "المد الواجب المتصل",
+      "beats": "4-5",
+      "obligation": "Obligatory (Wajib)",
+      "description": "When a Madd letter is followed by a Hamzah (ء) WITHIN THE SAME WORD. Must be elongated for 4-5 beats.",
+      "trigger": "Madd letter + Hamzah in same word",
+      "examples": [
+        {
+          "arabic": "جَاءَ",
+          "transliteration": "jaa'a",
+          "translation": "he came",
+          "surah": 110, "ayah": 1, "surah_name_en": "An-Nasr",
+          "highlight_word": "جَاءَ",
+          "rule_applied": "Madd Muttasil — Alif followed by Hamzah in same word, 4-5 beats"
+        },
+        {
+          "arabic": "سُوءَ",
+          "transliteration": "soo'a",
+          "translation": "evil",
+          "surah": 4, "ayah": 17, "surah_name_en": "An-Nisa",
+          "highlight_word": "سُوءَ",
+          "rule_applied": "Madd Muttasil — Waw followed by Hamzah in same word, 4-5 beats"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "madd-munfasil",
+      "order": 3,
+      "title_en": "Madd Jaiz Munfasil (Permissible Separated)",
+      "title_ar": "المد الجائز المنفصل",
+      "beats": "4-5",
+      "obligation": "Permissible (Jaiz)",
+      "description": "When a Madd letter is at the END of one word and the NEXT word begins with a Hamzah. Elongated for 4-5 beats (Hafs allows shortening to 4).",
+      "trigger": "Madd letter at end of word + Hamzah at start of next word",
+      "examples": [
+        {
+          "arabic": "بِمَا أُنْزِلَ",
+          "transliteration": "bimaa unzila",
+          "translation": "in what was revealed",
+          "surah": 2, "ayah": 4, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "بِمَا أُنْزِلَ",
+          "rule_applied": "Madd Munfasil — Alif at end of first word, Hamzah at start of second, 4-5 beats"
+        },
+        {
+          "arabic": "قَالُوا آمَنَّا",
+          "transliteration": "qaaloo aamannaa",
+          "translation": "they said: we believe",
+          "surah": 2, "ayah": 14, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "قَالُوا آمَنَّا",
+          "rule_applied": "Madd Munfasil — Waw at end of first word, Hamzah at start of second"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "madd-arid",
+      "order": 4,
+      "title_en": "Madd 'Arid lil-Sukoon (Temporary Elongation)",
+      "title_ar": "المد العارض للسكون",
+      "beats": "2, 4, or 6",
+      "obligation": "Permissible",
+      "description": "When a Madd letter is followed by a letter that receives a temporary Sukoon because the reciter pauses or stops. Can be held for 2, 4, or 6 beats. If not stopping, it reverts to Madd Tabee'i (2 beats).",
+      "trigger": "Madd letter + letter given temporary Sukoon when stopping",
+      "examples": [
+        {
+          "arabic": "الْعَالَمِينَ",
+          "transliteration": "al-'aalameen",
+          "translation": "the worlds",
+          "surah": 1, "ayah": 2, "surah_name_en": "Al-Fatiha",
+          "highlight_word": "الْعَالَمِينَ",
+          "rule_applied": "Madd 'Arid — Yaa followed by temporary Sukoon when stopping, 2/4/6 beats"
+        },
+        {
+          "arabic": "الْمُفْلِحُونَ",
+          "transliteration": "al-muflihoon",
+          "translation": "the successful",
+          "surah": 2, "ayah": 5, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "الْمُفْلِحُونَ",
+          "rule_applied": "Madd 'Arid — Waw followed by temporary Sukoon when stopping"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "madd-lazim",
+      "order": 5,
+      "title_en": "Madd Lazim (Necessary Elongation)",
+      "title_ar": "المد اللازم",
+      "beats": 6,
+      "obligation": "Obligatory (Wajib)",
+      "description": "When a Madd letter is followed by a PERMANENT Sukoon (or Shaddah) in the same word. Always exactly 6 beats. This is the longest Madd. Subdivided into Kalimi (word-based) and Harfi (letter-based, in Muqatta'at letters at beginnings of surahs).",
+      "trigger": "Madd letter + permanent Sukoon/Shaddah in same word",
+      "subtypes": [
+        {
+          "id": "kalimi-muthaqqal",
+          "title_en": "Kalimi Muthaqqal (Heavy Word Madd)",
+          "description": "Madd letter followed by a letter with Shaddah within the same word.",
+          "example_arabic": "الصَّاخَّةِ",
+          "example_surah": 80, "example_ayah": 33
+        },
+        {
+          "id": "kalimi-mukhaffaf",
+          "title_en": "Kalimi Mukhaffaf (Light Word Madd)",
+          "description": "Madd letter followed by Sukoon (no Shaddah) in same word. Very rare — occurs only in آلْآنَ (twice in Surah Yunus).",
+          "example_arabic": "آلْآنَ",
+          "example_surah": 10, "example_ayah": 51
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "madd-badal",
+      "order": 6,
+      "title_en": "Madd Badal (Substitute Madd)",
+      "title_ar": "مد البدل",
+      "beats": 2,
+      "obligation": "Required",
+      "description": "When a Hamzah PRECEDES a Madd letter (the reverse of Muttasil/Munfasil). The original form had two Hamzahs, but the second was replaced by a Madd letter. Held for 2 beats.",
+      "trigger": "Hamzah + Madd letter (Hamzah comes first)",
+      "examples": [
+        {
+          "arabic": "آمَنُوا",
+          "transliteration": "aamanoo",
+          "translation": "they believed",
+          "surah": 2, "ayah": 3, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "آمَنُوا",
+          "rule_applied": "Madd Badal — Hamzah preceded the Alif, 2 beats"
+        },
+        {
+          "arabic": "إِيمَانًا",
+          "transliteration": "eemaanan",
+          "translation": "faith",
+          "surah": 48, "ayah": 4, "surah_name_en": "Al-Fath",
+          "highlight_word": "إِيمَانًا",
+          "rule_applied": "Madd Badal — Hamzah preceded the Yaa, 2 beats"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "madd-leen",
+      "order": 7,
+      "title_en": "Madd Al-Leen (Soft Madd)",
+      "title_ar": "مد اللين",
+      "beats": "2, 4, or 6",
+      "obligation": "Permissible (only when stopping)",
+      "description": "Applies to Waw Sakinah or Yaa Sakinah preceded by Fathah (not their matching vowels). Only elongated when stopping on the word. These are the Leen letters (soft letters).",
+      "trigger": "Waw/Yaa Sakinah preceded by Fathah, when stopping",
+      "examples": [
+        {
+          "arabic": "قُرَيْشٍ",
+          "transliteration": "quraysh",
+          "translation": "Quraysh",
+          "surah": 106, "ayah": 1, "surah_name_en": "Quraysh",
+          "highlight_word": "قُرَيْشٍ",
+          "rule_applied": "Madd Leen — Yaa Sakinah preceded by Fathah, elongated when stopping"
+        },
+        {
+          "arabic": "خَوْفٍ",
+          "transliteration": "khawf",
+          "translation": "fear",
+          "surah": 106, "ayah": 4, "surah_name_en": "Quraysh",
+          "highlight_word": "خَوْفٍ",
+          "rule_applied": "Madd Leen — Waw Sakinah preceded by Fathah, elongated when stopping"
+        }
+      ],
+      "verified": true
+    }
+  ],
+  "summary_table": {
+    "natural": { "type": "Tabee'i", "beats": 2, "trigger": "No Hamzah/Sukoon after" },
+    "connected_hamzah": { "type": "Muttasil", "beats": "4-5", "trigger": "Hamzah in same word" },
+    "separated_hamzah": { "type": "Munfasil", "beats": "4-5", "trigger": "Hamzah in next word" },
+    "temporary_sukoon": { "type": "'Arid", "beats": "2/4/6", "trigger": "Sukoon when stopping" },
+    "permanent_sukoon": { "type": "Lazim", "beats": 6, "trigger": "Permanent Sukoon/Shaddah" },
+    "preceded_hamzah": { "type": "Badal", "beats": 2, "trigger": "Hamzah before Madd letter" },
+    "soft_letters": { "type": "Leen", "beats": "2/4/6", "trigger": "و/ي after Fathah, when stopping" }
+  },
+  "verified": true
+}
