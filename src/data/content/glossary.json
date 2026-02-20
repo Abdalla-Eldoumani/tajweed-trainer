@@ -1,0 +1,33 @@
+{
+  "id": "glossary",
+  "title_en": "Tajweed Glossary",
+  "title_ar": "مصطلحات التجويد",
+  "terms": [
+    { "term_ar": "تجويد", "term_en": "Tajweed", "definition": "The science of reciting the Quran correctly, giving each letter its right and dues of characteristics and articulation." },
+    { "term_ar": "مخرج", "term_en": "Makhraj", "definition": "The articulation point — the specific location in the mouth/throat where a letter's sound originates." },
+    { "term_ar": "صفة", "term_en": "Sifah", "definition": "Characteristic or attribute of a letter (e.g., heaviness, voicing, softness)." },
+    { "term_ar": "سكون", "term_en": "Sukoon", "definition": "The absence of a vowel on a letter, shown as a small circle (ـْـ) above the letter." },
+    { "term_ar": "شدّة", "term_en": "Shaddah", "definition": "A mark (ـّـ) indicating the letter is doubled/emphasized." },
+    { "term_ar": "تنوين", "term_en": "Tanween", "definition": "Double vowel marks at the end of nouns (ـًـ ـٍـ ـٌـ) producing an 'n' sound." },
+    { "term_ar": "حركة", "term_en": "Harakah", "definition": "A vowel mark (Fathah, Kasrah, or Dammah). Also used as a unit of timing (1 beat)." },
+    { "term_ar": "فتحة", "term_en": "Fathah", "definition": "The short 'a' vowel, shown as a diagonal stroke above a letter (ـَـ)." },
+    { "term_ar": "كسرة", "term_en": "Kasrah", "definition": "The short 'i' vowel, shown as a diagonal stroke below a letter (ـِـ)." },
+    { "term_ar": "ضمّة", "term_en": "Dammah", "definition": "The short 'u' vowel, shown as a small و above a letter (ـُـ)." },
+    { "term_ar": "غنّة", "term_en": "Ghunnah", "definition": "A nasal sound resonating from the nasal cavity, lasting 2 beats." },
+    { "term_ar": "إظهار", "term_en": "Izhar", "definition": "Clear pronunciation — articulating a letter without nasalization or merging." },
+    { "term_ar": "إدغام", "term_en": "Idgham", "definition": "Merging one letter into the following letter so they become one sound." },
+    { "term_ar": "إقلاب", "term_en": "Iqlab", "definition": "Converting the Noon sound into a Meem before the letter Baa." },
+    { "term_ar": "إخفاء", "term_en": "Ikhfaa", "definition": "Hiding or concealing a letter's sound — pronouncing between clarity and merging." },
+    { "term_ar": "مدّ", "term_en": "Madd", "definition": "Elongation of a vowel sound using one of three Madd letters (ا و ي)." },
+    { "term_ar": "قلقلة", "term_en": "Qalqalah", "definition": "An echoing/bouncing sound on five specific letters (ق ط ب ج د) when they have sukoon." },
+    { "term_ar": "تفخيم", "term_en": "Tafkheem", "definition": "Heaviness in pronunciation — the tongue is raised and mouth fills with the sound." },
+    { "term_ar": "ترقيق", "term_en": "Tarqeeq", "definition": "Lightness in pronunciation — the tongue is lowered, producing a thin sound." },
+    { "term_ar": "وقف", "term_en": "Waqf", "definition": "Stopping or pausing during recitation, with specific rules for how to end the word." },
+    { "term_ar": "وصل", "term_en": "Wasl", "definition": "Continuing recitation without stopping." },
+    { "term_ar": "لحن", "term_en": "Lahn", "definition": "An error in recitation. Lahn Jali (clear error) changes meaning. Lahn Khafi (hidden error) affects quality." },
+    { "term_ar": "إجازة", "term_en": "Ijazah", "definition": "A certification given by a qualified teacher confirming a student has mastered Quran recitation with proper Tajweed, tracing back through a chain to the Prophet ﷺ." },
+    { "term_ar": "قراءة", "term_en": "Qira'ah", "definition": "A method of recitation attributed to a specific Imam. There are 10 recognized Qira'aat." },
+    { "term_ar": "حفص عن عاصم", "term_en": "Hafs 'an 'Asim", "definition": "The most widely used Qira'ah globally. Hafs ibn Sulayman narrated from his teacher Imam 'Asim ibn Abi An-Najud." }
+  ],
+  "verified": true
+}
