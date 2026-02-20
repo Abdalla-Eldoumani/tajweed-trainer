@@ -1,0 +1,108 @@
+{
+  "id": "learning-path",
+  "title_en": "Tajweed Learning Path",
+  "title_ar": "مسار تعلم التجويد",
+  "description": "Structured curriculum for learning Tajweed rules, ordered from foundational to advanced.",
+  "modules": [
+    {
+      "id": "makharij",
+      "order": 1,
+      "title_en": "Articulation Points (Makharij Al-Huroof)",
+      "title_ar": "مخارج الحروف",
+      "description": "Where each Arabic letter originates in the mouth, throat, and nasal cavity. The foundation of all tajweed.",
+      "estimated_hours": 4,
+      "lessons_count": 6,
+      "prerequisite": null,
+      "icon": "mouth"
+    },
+    {
+      "id": "noon-sakinah",
+      "order": 2,
+      "title_en": "Noon Sakinah & Tanween",
+      "title_ar": "أحكام النون الساكنة والتنوين",
+      "description": "The four rules governing the pronunciation of Noon with sukoon and Tanween: Izhar, Idgham, Iqlab, and Ikhfaa.",
+      "estimated_hours": 5,
+      "lessons_count": 5,
+      "prerequisite": "makharij",
+      "icon": "noon"
+    },
+    {
+      "id": "meem-sakinah",
+      "order": 3,
+      "title_en": "Meem Sakinah",
+      "title_ar": "أحكام الميم الساكنة",
+      "description": "The three rules for Meem with sukoon: Ikhfaa Shafawi, Idgham Shafawi, and Izhar Shafawi.",
+      "estimated_hours": 2,
+      "lessons_count": 4,
+      "prerequisite": "noon-sakinah",
+      "icon": "meem"
+    },
+    {
+      "id": "ghunnah",
+      "order": 4,
+      "title_en": "Ghunnah (Nasal Sound)",
+      "title_ar": "الغنة",
+      "description": "The nasal sound produced when pronouncing Noon and Meem Mushaddad, held for 2 beats.",
+      "estimated_hours": 1,
+      "lessons_count": 2,
+      "prerequisite": "meem-sakinah",
+      "icon": "sound"
+    },
+    {
+      "id": "qalqalah",
+      "order": 5,
+      "title_en": "Qalqalah (Echoing)",
+      "title_ar": "القلقلة",
+      "description": "The bouncing or echoing sound applied to five specific letters (ق ط ب ج د) when they have sukoon.",
+      "estimated_hours": 2,
+      "lessons_count": 3,
+      "prerequisite": "ghunnah",
+      "icon": "echo"
+    },
+    {
+      "id": "madd",
+      "order": 6,
+      "title_en": "Madd (Elongation)",
+      "title_ar": "أحكام المد",
+      "description": "Rules for elongating vowel sounds, from natural 2-beat madd to obligatory 6-beat madd.",
+      "estimated_hours": 6,
+      "lessons_count": 8,
+      "prerequisite": "qalqalah",
+      "icon": "stretch"
+    },
+    {
+      "id": "laam-raa",
+      "order": 7,
+      "title_en": "Laam & Raa Rules",
+      "title_ar": "أحكام اللام والراء",
+      "description": "Sun and Moon letters (Shamsiyyah/Qamariyyah), plus when Raa is heavy or light.",
+      "estimated_hours": 3,
+      "lessons_count": 4,
+      "prerequisite": "madd",
+      "icon": "letters"
+    },
+    {
+      "id": "tafkheem-tarqeeq",
+      "order": 8,
+      "title_en": "Heavy & Light Letters",
+      "title_ar": "التفخيم والترقيق",
+      "description": "Which letters are always heavy (Tafkheem), always light (Tarqeeq), or variable depending on context.",
+      "estimated_hours": 3,
+      "lessons_count": 4,
+      "prerequisite": "laam-raa",
+      "icon": "weight"
+    },
+    {
+      "id": "waqf",
+      "order": 9,
+      "title_en": "Waqf (Stopping Rules)",
+      "title_ar": "أحكام الوقف",
+      "description": "Symbols and rules for where to stop, pause, or continue when reciting the Quran.",
+      "estimated_hours": 2,
+      "lessons_count": 3,
+      "prerequisite": "tafkheem-tarqeeq",
+      "icon": "pause"
+    }
+  ],
+  "verified": true
+}
