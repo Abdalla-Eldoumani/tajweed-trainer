@@ -1,0 +1,69 @@
+{
+  "id": "tafkheem-tarqeeq",
+  "title_en": "Tafkheem & Tarqeeq (Heavy & Light Letters)",
+  "title_ar": "التفخيم والترقيق",
+  "category": "tafkheem-tarqeeq",
+  "introduction": "Arabic letters are categorized by their 'weight' in pronunciation. Tafkheem (heaviness) creates a full, thick sound with the back of the tongue raised. Tarqeeq (lightness) creates a thin, soft sound.",
+  "always_heavy": {
+    "title_en": "Always Heavy Letters (Huroof Al-Isti'laa)",
+    "title_ar": "حروف الاستعلاء",
+    "letters": [
+      { "arabic": "خ", "name_en": "Khaa" },
+      { "arabic": "ص", "name_en": "Saad" },
+      { "arabic": "ض", "name_en": "Daad" },
+      { "arabic": "غ", "name_en": "Ghayn" },
+      { "arabic": "ط", "name_en": "Taa" },
+      { "arabic": "ق", "name_en": "Qaaf" },
+      { "arabic": "ظ", "name_en": "Dhaa" }
+    ],
+    "mnemonic_ar": "خُصَّ ضَغْطٍ قِظْ",
+    "mnemonic_en": "Remember: خُصَّ ضَغْطٍ قِظْ (Khussa Daghtin Qizh)",
+    "count": 7,
+    "tafkheem_levels": [
+      "Level 1 (strongest): Letter has Fathah + followed by Alif (e.g., قَالَ)",
+      "Level 2: Letter has Fathah without Alif after (e.g., قَبْل)",
+      "Level 3: Letter has Dammah (e.g., طُوبَى)",
+      "Level 4: Letter has Sukoon (e.g., يَقْطَعُون)",
+      "Level 5 (lightest heavy): Letter has Kasrah (e.g., طِبَاقًا)"
+    ]
+  },
+  "always_light": {
+    "title_en": "Always Light Letters",
+    "title_ar": "حروف الاستفال",
+    "description": "All remaining Arabic letters (excluding Alif, Laam, and Raa which are variable) are always light.",
+    "letters": "ب ت ث ج ح د ذ ز س ش ع ف ك م ن هـ و ي",
+    "note": "These letters are NEVER pronounced with heaviness, regardless of their vowel."
+  },
+  "variable_letters": {
+    "title_en": "Variable Letters (Sometimes Heavy, Sometimes Light)",
+    "title_ar": "الحروف المتغيرة",
+    "letters": [
+      {
+        "arabic": "ا",
+        "name_en": "Alif",
+        "rule": "Follows the letter BEFORE it. If the preceding letter is heavy, Alif is heavy. If light, Alif is light.",
+        "heavy_example": "صَالِحَات — the Alif after Saad (heavy) is heavy",
+        "light_example": "مَالِك — the Alif after Meem (light) is light"
+      },
+      {
+        "arabic": "ل",
+        "name_en": "Laam",
+        "rule": "Always light EXCEPT in the name Allah (الله) when preceded by Fathah or Dammah.",
+        "heavy_example": "قَالَ اللَّهُ — Laam is heavy (preceded by Fathah)",
+        "light_example": "بِسْمِ اللَّهِ — Laam is light (preceded by Kasrah)"
+      },
+      {
+        "arabic": "ر",
+        "name_en": "Raa",
+        "rule": "Heavy with Fathah/Dammah, light with Kasrah. With Sukoon, depends on context (see Raa rules)."
+      }
+    ]
+  },
+  "common_mistakes": [
+    "Making ت (Taa) heavy like ط (Taa) — they sound similar but ط is heavy and ت is light",
+    "Making س (Seen) heavy like ص (Saad) — ص has full tafkheem, س does not",
+    "Not distinguishing ذ (Dhaal, light) from ظ (Dhaa, heavy)",
+    "Making the Laam in 'Allahumma' heavy when preceded by Kasrah (قُلِ اللَّهُمَّ — Laam is LIGHT here)"
+  ],
+  "verified": true
+}
