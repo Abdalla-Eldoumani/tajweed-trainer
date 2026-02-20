@@ -1,0 +1,176 @@
+{
+  "id": "makharij",
+  "title_en": "Makharij Al-Huroof (Articulation Points)",
+  "title_ar": "مخارج الحروف",
+  "category": "makharij",
+  "introduction": "Makhraj (plural: Makharij) refers to the specific point in the mouth, throat, or nasal cavity where a letter's sound originates. According to Imam Ibn Al-Jazari and Imam Al-Khalil, there are 17 articulation points grouped into 5 major regions. Mastering these is the foundation of all Tajweed.",
+  "regions": [
+    {
+      "id": "al-jawf",
+      "order": 1,
+      "title_en": "Al-Jawf (Empty Space / Oral Cavity)",
+      "title_ar": "الجوف",
+      "description": "The open space in the mouth and throat. The three Madd (lengthened) letters originate from here. Their sound continues until the breath runs out.",
+      "points_count": 1,
+      "letters": [
+        { "arabic": "ا", "name_en": "Alif", "condition": "Sakinah preceded by Fathah" },
+        { "arabic": "و", "name_en": "Waw", "condition": "Sakinah preceded by Dammah" },
+        { "arabic": "ي", "name_en": "Yaa", "condition": "Sakinah preceded by Kasrah" }
+      ]
+    },
+    {
+      "id": "al-halq",
+      "order": 2,
+      "title_en": "Al-Halq (The Throat)",
+      "title_ar": "الحلق",
+      "description": "The throat contains 3 articulation points for 6 letters, from deepest to closest to the mouth.",
+      "points_count": 3,
+      "sub_points": [
+        {
+          "id": "aqsa-halq",
+          "title_en": "Aqsa Al-Halq (Deepest Throat)",
+          "title_ar": "أقصى الحلق",
+          "letters": [
+            { "arabic": "ء", "name_en": "Hamzah" },
+            { "arabic": "هـ", "name_en": "Haa" }
+          ]
+        },
+        {
+          "id": "wasat-halq",
+          "title_en": "Wasat Al-Halq (Middle Throat)",
+          "title_ar": "وسط الحلق",
+          "letters": [
+            { "arabic": "ع", "name_en": "'Ayn" },
+            { "arabic": "ح", "name_en": "Haa" }
+          ]
+        },
+        {
+          "id": "adna-halq",
+          "title_en": "Adna Al-Halq (Nearest Throat / Top)",
+          "title_ar": "أدنى الحلق",
+          "letters": [
+            { "arabic": "غ", "name_en": "Ghayn" },
+            { "arabic": "خ", "name_en": "Khaa" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "al-lisan",
+      "order": 3,
+      "title_en": "Al-Lisan (The Tongue)",
+      "title_ar": "اللسان",
+      "description": "The tongue has 10 articulation points producing 18 letters. This is the largest and most complex region.",
+      "points_count": 10,
+      "sub_points": [
+        {
+          "id": "aqsa-lisan-1",
+          "title_en": "Back of tongue against soft palate",
+          "letters": [{ "arabic": "ق", "name_en": "Qaaf" }]
+        },
+        {
+          "id": "aqsa-lisan-2",
+          "title_en": "Back of tongue (slightly forward) against hard palate",
+          "letters": [{ "arabic": "ك", "name_en": "Kaaf" }]
+        },
+        {
+          "id": "wasat-lisan",
+          "title_en": "Middle of tongue against hard palate",
+          "letters": [
+            { "arabic": "ج", "name_en": "Jeem" },
+            { "arabic": "ش", "name_en": "Sheen" },
+            { "arabic": "ي", "name_en": "Yaa (consonant)" }
+          ]
+        },
+        {
+          "id": "hafat-lisan",
+          "title_en": "Side(s) of tongue against upper molars",
+          "letters": [{ "arabic": "ض", "name_en": "Daad" }],
+          "note": "Daad is the most unique Arabic letter — it can emerge from either or both sides of the tongue."
+        },
+        {
+          "id": "adna-hafat-lisan",
+          "title_en": "Nearest edge of tongue against upper gums (canines to front)",
+          "letters": [{ "arabic": "ل", "name_en": "Laam" }]
+        },
+        {
+          "id": "taraf-lisan-noon",
+          "title_en": "Tip of tongue against upper gums (behind Laam's point)",
+          "letters": [{ "arabic": "ن", "name_en": "Noon" }]
+        },
+        {
+          "id": "taraf-lisan-raa",
+          "title_en": "Tip of tongue against upper gums (behind Noon's point)",
+          "letters": [{ "arabic": "ر", "name_en": "Raa" }]
+        },
+        {
+          "id": "taraf-lisan-upper-teeth",
+          "title_en": "Broad tip of tongue against base of upper front teeth gums",
+          "letters": [
+            { "arabic": "ط", "name_en": "Taa" },
+            { "arabic": "د", "name_en": "Daal" },
+            { "arabic": "ت", "name_en": "Taa" }
+          ]
+        },
+        {
+          "id": "taraf-lisan-teeth-edge",
+          "title_en": "Tip of tongue against edge of upper front incisors",
+          "letters": [
+            { "arabic": "ظ", "name_en": "Dhaa" },
+            { "arabic": "ذ", "name_en": "Dhaal" },
+            { "arabic": "ث", "name_en": "Thaa" }
+          ]
+        },
+        {
+          "id": "taraf-lisan-lower-teeth",
+          "title_en": "Tip of tongue near lower front teeth (whistling letters)",
+          "letters": [
+            { "arabic": "ص", "name_en": "Saad" },
+            { "arabic": "ز", "name_en": "Zaay" },
+            { "arabic": "س", "name_en": "Seen" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ash-shafataan",
+      "order": 4,
+      "title_en": "Ash-Shafataan (The Two Lips)",
+      "title_ar": "الشفتان",
+      "description": "The lips produce 4 letters from 2 articulation points.",
+      "points_count": 2,
+      "sub_points": [
+        {
+          "id": "inner-lower-lip",
+          "title_en": "Inner lower lip against upper front teeth",
+          "letters": [{ "arabic": "ف", "name_en": "Faa" }]
+        },
+        {
+          "id": "both-lips",
+          "title_en": "Both lips together",
+          "letters": [
+            { "arabic": "ب", "name_en": "Baa" },
+            { "arabic": "م", "name_en": "Meem" },
+            { "arabic": "و", "name_en": "Waw (consonant)" }
+          ],
+          "note": "Waw consonant is formed by rounding the lips slightly, while Baa and Meem require pressing them together."
+        }
+      ]
+    },
+    {
+      "id": "al-khayshoom",
+      "order": 5,
+      "title_en": "Al-Khayshoom (The Nasal Cavity)",
+      "title_ar": "الخيشوم",
+      "description": "The nasal passage produces the Ghunnah (nasal resonance) sound, which accompanies Noon and Meem in certain tajweed rules.",
+      "points_count": 1,
+      "letters": [
+        { "arabic": "ن", "name_en": "Noon (ghunnah component)" },
+        { "arabic": "م", "name_en": "Meem (ghunnah component)" }
+      ]
+    }
+  ],
+  "total_points": 17,
+  "total_letters": 29,
+  "verified": true
+}
