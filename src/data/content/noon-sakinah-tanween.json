@@ -1,0 +1,300 @@
+{
+  "id": "noon-sakinah-tanween",
+  "title_en": "Rules of Noon Sakinah & Tanween",
+  "title_ar": "أحكام النون الساكنة والتنوين",
+  "category": "noon-sakinah",
+  "introduction": "Noon Sakinah is the letter Noon (ن) with a sukoon (نْ). Tanween is the double vowel marks (ـًـ ـٍـ ـٌـ) at the end of nouns, producing the same 'n' sound. Both follow the same four rules depending on the letter that comes after them.",
+  "rules": [
+    {
+      "id": "izhar-halqi",
+      "order": 1,
+      "title_en": "Izhar (Clear Pronunciation)",
+      "title_ar": "الإظهار الحلقي",
+      "description": "When Noon Sakinah or Tanween is followed by one of six throat letters, pronounce the Noon/Tanween clearly without any nasalization (ghunnah) or merging.",
+      "arabic_definition": "إظهار النون الساكنة والتنوين عند حروف الحلق",
+      "letters": [
+        { "arabic": "ء", "name_ar": "هَمْزَة", "name_en": "Hamzah", "transliteration": "'" },
+        { "arabic": "هـ", "name_ar": "هَاء", "name_en": "Haa", "transliteration": "h" },
+        { "arabic": "ع", "name_ar": "عَيْن", "name_en": "'Ayn", "transliteration": "'" },
+        { "arabic": "ح", "name_ar": "حَاء", "name_en": "Haa", "transliteration": "ḥ" },
+        { "arabic": "غ", "name_ar": "غَيْن", "name_en": "Ghayn", "transliteration": "gh" },
+        { "arabic": "خ", "name_ar": "خَاء", "name_en": "Khaa", "transliteration": "kh" }
+      ],
+      "mnemonic_ar": "هَمْزٌ هَاءٌ عَيْنٌ حَاءٌ غَيْنٌ خَاءٌ",
+      "mnemonic_en": "All six are throat letters (Huroof Halqiyyah) — they come from the deepest part of the throat to the opening.",
+      "examples": [
+        {
+          "arabic": "مِنْ أَجْرٍ",
+          "transliteration": "min ajr",
+          "translation": "of reward",
+          "surah": 36,
+          "ayah": 21,
+          "surah_name_en": "Ya-Sin",
+          "highlight_word": "مِنْ أَجْرٍ",
+          "rule_applied": "Izhar — Noon Sakinah followed by Hamzah (ء)"
+        },
+        {
+          "arabic": "مِنْ عِلْمٍ",
+          "transliteration": "min 'ilm",
+          "translation": "of knowledge",
+          "surah": 53,
+          "ayah": 28,
+          "surah_name_en": "An-Najm",
+          "highlight_word": "مِنْ عِلْمٍ",
+          "rule_applied": "Izhar — Noon Sakinah followed by 'Ayn (ع)"
+        },
+        {
+          "arabic": "يَنْهَوْنَ",
+          "transliteration": "yanhawn",
+          "translation": "they forbid",
+          "surah": 6,
+          "ayah": 26,
+          "surah_name_en": "Al-An'am",
+          "highlight_word": "يَنْهَوْنَ",
+          "rule_applied": "Izhar — Noon Sakinah followed by Haa (هـ) within one word"
+        },
+        {
+          "arabic": "جُرُفٍ هَارٍ",
+          "transliteration": "jurufin haar",
+          "translation": "an unstable cliff",
+          "surah": 9,
+          "ayah": 109,
+          "surah_name_en": "At-Tawbah",
+          "highlight_word": "جُرُفٍ هَارٍ",
+          "rule_applied": "Izhar — Tanween followed by Haa (هـ)"
+        }
+      ],
+      "common_mistakes": [
+        "Adding ghunnah (nasalization) — Izhar must be completely clear",
+        "Merging the Noon sound into the following letter",
+        "Not distinguishing between ح (Haa) and هـ (Haa) — both trigger Izhar but have different makhraj"
+      ],
+      "verified": true
+    },
+    {
+      "id": "idgham",
+      "order": 2,
+      "title_en": "Idgham (Merging)",
+      "title_ar": "الإدغام",
+      "description": "When Noon Sakinah or Tanween is followed by one of six letters (يرملون), the Noon/Tanween merges into the following letter. This ONLY occurs between two separate words, not within a single word.",
+      "arabic_definition": "إدخال النون الساكنة أو التنوين في الحرف الذي بعده",
+      "subtypes": [
+        {
+          "id": "idgham-with-ghunnah",
+          "title_en": "Idgham with Ghunnah (with nasalization)",
+          "title_ar": "إدغام بغنة",
+          "letters": [
+            { "arabic": "ي", "name_en": "Yaa", "transliteration": "y" },
+            { "arabic": "ن", "name_en": "Noon", "transliteration": "n" },
+            { "arabic": "م", "name_en": "Meem", "transliteration": "m" },
+            { "arabic": "و", "name_en": "Waw", "transliteration": "w" }
+          ],
+          "mnemonic_en": "Letters of Idgham with Ghunnah: يَنْمُو (yanmoo — 'it grows')",
+          "description": "The Noon Sakinah/Tanween merges into the following letter WITH a 2-beat nasal sound (ghunnah).",
+          "examples": [
+            {
+              "arabic": "مَن يَقُولُ",
+              "transliteration": "may-yaqool",
+              "translation": "who says",
+              "surah": 2,
+              "ayah": 8,
+              "surah_name_en": "Al-Baqarah",
+              "highlight_word": "مَن يَقُولُ",
+              "rule_applied": "Idgham with Ghunnah — Noon Sakinah followed by Yaa (ي)"
+            },
+            {
+              "arabic": "مِن وَلِيٍّ",
+              "transliteration": "miw-waliyy",
+              "translation": "of a protector",
+              "surah": 42,
+              "ayah": 31,
+              "surah_name_en": "Ash-Shura",
+              "highlight_word": "مِن وَلِيٍّ",
+              "rule_applied": "Idgham with Ghunnah — Noon Sakinah followed by Waw (و)"
+            }
+          ]
+        },
+        {
+          "id": "idgham-without-ghunnah",
+          "title_en": "Idgham without Ghunnah (without nasalization)",
+          "title_ar": "إدغام بلا غنة",
+          "letters": [
+            { "arabic": "ل", "name_en": "Laam", "transliteration": "l" },
+            { "arabic": "ر", "name_en": "Raa", "transliteration": "r" }
+          ],
+          "description": "The Noon Sakinah/Tanween merges COMPLETELY into the following letter with NO nasal sound. The merge is total.",
+          "examples": [
+            {
+              "arabic": "مِن رَّبِّهِمْ",
+              "transliteration": "mir-rabbihim",
+              "translation": "from their Lord",
+              "surah": 2,
+              "ayah": 5,
+              "surah_name_en": "Al-Baqarah",
+              "highlight_word": "مِن رَّبِّهِمْ",
+              "rule_applied": "Idgham without Ghunnah — Noon Sakinah followed by Raa (ر)"
+            },
+            {
+              "arabic": "مِن لَّدُنْهُ",
+              "transliteration": "mil-ladunhu",
+              "translation": "from Himself",
+              "surah": 18,
+              "ayah": 2,
+              "surah_name_en": "Al-Kahf",
+              "highlight_word": "مِن لَّدُنْهُ",
+              "rule_applied": "Idgham without Ghunnah — Noon Sakinah followed by Laam (ل)"
+            }
+          ]
+        }
+      ],
+      "mnemonic_ar": "يَرْمَلُون",
+      "mnemonic_en": "All six Idgham letters are collected in the word يَرْمَلُون (yarmaloon).",
+      "critical_condition": "Idgham ONLY occurs when the Noon Sakinah/Tanween and the Idgham letter are in TWO SEPARATE WORDS. If they are within one word, the rule is Izhar Mutlaq (absolute clarity). There are only four such words in the entire Quran: دُنْيَا، بُنْيَان، صِنْوَان، قِنْوَان.",
+      "common_mistakes": [
+        "Applying Idgham within a single word (e.g., reading دُنْيَا with Idgham — this is WRONG)",
+        "Adding ghunnah with Laam and Raa — these two are WITHOUT ghunnah",
+        "Not merging completely — the Noon sound must disappear entirely"
+      ],
+      "verified": true
+    },
+    {
+      "id": "iqlab",
+      "order": 3,
+      "title_en": "Iqlab (Conversion)",
+      "title_ar": "الإقلاب",
+      "description": "When Noon Sakinah or Tanween is followed by the letter Baa (ب), the Noon/Tanween sound is converted into a hidden Meem (م) sound, pronounced with ghunnah for 2 beats.",
+      "arabic_definition": "قلب النون الساكنة أو التنوين ميمًا مخفاة عند الباء",
+      "letters": [
+        { "arabic": "ب", "name_en": "Baa", "transliteration": "b" }
+      ],
+      "description_detailed": "Only ONE letter triggers Iqlab: Baa (ب). The sound of Noon changes to a light Meem, and you pronounce the Meem with ghunnah (nasalization) for 2 beats before saying the Baa. In many Mushafs, a small Meem (مۢ) is written above the Noon to indicate this rule.",
+      "examples": [
+        {
+          "arabic": "مِنۢ بَعْدِ",
+          "transliteration": "mim ba'd",
+          "translation": "after",
+          "surah": 2,
+          "ayah": 27,
+          "surah_name_en": "Al-Baqarah",
+          "highlight_word": "مِنۢ بَعْدِ",
+          "rule_applied": "Iqlab — Noon Sakinah followed by Baa (ب), Noon becomes Meem"
+        },
+        {
+          "arabic": "سَمِيعٌۢ بَصِيرٌ",
+          "transliteration": "samee'um baseer",
+          "translation": "All-Hearing, All-Seeing",
+          "surah": 17,
+          "ayah": 1,
+          "surah_name_en": "Al-Isra",
+          "highlight_word": "سَمِيعٌۢ بَصِيرٌ",
+          "rule_applied": "Iqlab — Tanween followed by Baa (ب)"
+        },
+        {
+          "arabic": "أَنۢبِئْهُمْ",
+          "transliteration": "ambi'hum",
+          "translation": "inform them",
+          "surah": 2,
+          "ayah": 33,
+          "surah_name_en": "Al-Baqarah",
+          "highlight_word": "أَنۢبِئْهُمْ",
+          "rule_applied": "Iqlab — Noon Sakinah followed by Baa (ب) within one word"
+        }
+      ],
+      "common_mistakes": [
+        "Pronouncing a full, clear Meem instead of a hidden Meem",
+        "Pressing the lips fully together — the lips should only come close, not fully shut",
+        "Forgetting the ghunnah — must hold for 2 beats"
+      ],
+      "verified": true
+    },
+    {
+      "id": "ikhfaa",
+      "order": 4,
+      "title_en": "Ikhfaa (Concealment)",
+      "title_ar": "الإخفاء الحقيقي",
+      "description": "When Noon Sakinah or Tanween is followed by any of 15 remaining letters, the Noon/Tanween is 'hidden' — pronounced with a light nasal sound (ghunnah) for 2 beats. The tongue prepares for the position of the following letter.",
+      "arabic_definition": "النطق بالنون الساكنة أو التنوين بصفة بين الإظهار والإدغام مع بقاء الغنة",
+      "letters": [
+        { "arabic": "ت", "name_en": "Taa", "transliteration": "t" },
+        { "arabic": "ث", "name_en": "Thaa", "transliteration": "th" },
+        { "arabic": "ج", "name_en": "Jeem", "transliteration": "j" },
+        { "arabic": "د", "name_en": "Daal", "transliteration": "d" },
+        { "arabic": "ذ", "name_en": "Dhaal", "transliteration": "dh" },
+        { "arabic": "ز", "name_en": "Zaay", "transliteration": "z" },
+        { "arabic": "س", "name_en": "Seen", "transliteration": "s" },
+        { "arabic": "ش", "name_en": "Sheen", "transliteration": "sh" },
+        { "arabic": "ص", "name_en": "Saad", "transliteration": "ṣ" },
+        { "arabic": "ض", "name_en": "Daad", "transliteration": "ḍ" },
+        { "arabic": "ط", "name_en": "Taa", "transliteration": "ṭ" },
+        { "arabic": "ظ", "name_en": "Dhaa", "transliteration": "ẓ" },
+        { "arabic": "ف", "name_en": "Faa", "transliteration": "f" },
+        { "arabic": "ق", "name_en": "Qaaf", "transliteration": "q" },
+        { "arabic": "ك", "name_en": "Kaaf", "transliteration": "k" }
+      ],
+      "description_detailed": "Ikhfaa is the most common rule in the Quran. The quality of the ghunnah (nasal sound) varies — it takes on a heavier or lighter quality depending on whether the following letter is heavy (mufakhham) or light (muraqqaq). For example, Ikhfaa before ط (heavy letter) has a heavier ghunnah than Ikhfaa before ت (light letter).",
+      "examples": [
+        {
+          "arabic": "مِنْ قَبْلُ",
+          "transliteration": "min qabl",
+          "translation": "before",
+          "surah": 30,
+          "ayah": 4,
+          "surah_name_en": "Ar-Rum",
+          "highlight_word": "مِنْ قَبْلُ",
+          "rule_applied": "Ikhfaa — Noon Sakinah followed by Qaaf (ق)"
+        },
+        {
+          "arabic": "أَنْتُمْ",
+          "transliteration": "antum",
+          "translation": "you (plural)",
+          "surah": 2,
+          "ayah": 85,
+          "surah_name_en": "Al-Baqarah",
+          "highlight_word": "أَنْتُمْ",
+          "rule_applied": "Ikhfaa — Noon Sakinah followed by Taa (ت) within one word"
+        },
+        {
+          "arabic": "مَنْصُورًا",
+          "transliteration": "mansoora",
+          "translation": "aided/victorious",
+          "surah": 17,
+          "ayah": 33,
+          "surah_name_en": "Al-Isra",
+          "highlight_word": "مَنْصُورًا",
+          "rule_applied": "Ikhfaa — Noon Sakinah followed by Saad (ص) within one word"
+        },
+        {
+          "arabic": "مِنْ ظَهِيرٍ",
+          "transliteration": "min ẓaheer",
+          "translation": "of a helper",
+          "surah": 34,
+          "ayah": 22,
+          "surah_name_en": "Saba",
+          "highlight_word": "مِنْ ظَهِيرٍ",
+          "rule_applied": "Ikhfaa — Noon Sakinah followed by Dhaa (ظ)"
+        }
+      ],
+      "common_mistakes": [
+        "Pronouncing the Noon too clearly (like Izhar) — it must be hidden",
+        "Merging completely (like Idgham) — the Noon sound should still be faintly present",
+        "Not adjusting the ghunnah quality for heavy vs. light following letters",
+        "Tongue touching the articulation point of the Noon — it should hover near the following letter's position"
+      ],
+      "verified": true
+    }
+  ],
+  "summary_table": {
+    "description": "Quick reference: What comes after Noon Sakinah/Tanween determines the rule",
+    "izhar_letters": "ء هـ ع ح غ خ",
+    "izhar_count": 6,
+    "idgham_with_ghunnah_letters": "ي ن م و",
+    "idgham_without_ghunnah_letters": "ل ر",
+    "idgham_count": 6,
+    "iqlab_letters": "ب",
+    "iqlab_count": 1,
+    "ikhfaa_letters": "ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك",
+    "ikhfaa_count": 15,
+    "total_arabic_letters_covered": 28
+  },
+  "verified": true
+}
