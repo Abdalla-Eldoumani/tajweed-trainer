@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Amiri+Quran&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #1B5E20;
+  --primary-light: #4CAF50;
+  --accent: #D4A574;
+  --bg: #FAFAF5;
+  --bg-card: #FFFFFF;
+  --bg-card-dark: #2D2D44;
+  --text: #1A1A2E;
+  --text-muted: #6B7280;
+
+  --tajweed-ghunnah: #169200;
+  --tajweed-ikhfaa: #D98000;
+  --tajweed-idgham-ghunnah: #9400A8;
+  --tajweed-idgham-no-ghunnah: #0057D9;
+  --tajweed-iqlab: #26A69A;
+  --tajweed-qalqalah: #A30000;
+  --tajweed-madd-normal: #E06050;
+  --tajweed-madd-obligatory: #D50000;
+  --tajweed-madd-permissible: #E8567F;
+  --tajweed-laam-shamsiyah: #707070;
+  --tajweed-silent: #AAAAAA;
+}
+
+.dark {
+  --bg: #1A1A2E;
+  --bg-card: #2D2D44;
+  --bg-card-dark: #2D2D44;
+  --text: #F5F5F5;
+  --text-muted: #9CA3AF;
+
+  --tajweed-ghunnah: #1DBF00;
+  --tajweed-ikhfaa: #F0A030;
+  --tajweed-idgham-ghunnah: #C040D8;
+  --tajweed-idgham-no-ghunnah: #4090FF;
+  --tajweed-iqlab: #40C4B8;
+  --tajweed-qalqalah: #E03030;
+  --tajweed-madd-normal: #F08070;
+  --tajweed-madd-obligatory: #FF3030;
+  --tajweed-madd-permissible: #F07090;
+  --tajweed-laam-shamsiyah: #909090;
+  --tajweed-silent: #CCCCCC;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Smooth transitions between dark/light */
+body, .bg-bg-card, .dark\:bg-bg-card-dark {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Focus ring for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Tajweed CSS classes matching Quran.com API output exactly */
+.ham_wasl {
+  color: var(--tajweed-silent);
+}
+
+.laam_shamsiyah {
+  color: var(--tajweed-laam-shamsiyah);
+}
+
+.madda_normal {
+  color: var(--tajweed-madd-normal);
+}
+
+.madda_permissible {
+  color: var(--tajweed-madd-permissible);
+}
+
+.madda_obligatory {
+  color: var(--tajweed-madd-obligatory);
+}
+
+.qalqalah {
+  color: var(--tajweed-qalqalah);
+}
+
+.silent {
+  color: var(--tajweed-silent);
+}
+
+.ikhfaa_shafawi {
+  color: var(--tajweed-ikhfaa);
+}
+
+.ikhfaa {
+  color: var(--tajweed-ikhfaa);
+}
+
+.idgham_shafawi {
+  color: var(--tajweed-idgham-ghunnah);
+}
+
+.idgham_ghunnah {
+  color: var(--tajweed-idgham-ghunnah);
+}
+
+.idgham_no_ghunnah {
+  color: var(--tajweed-idgham-no-ghunnah);
+}
+
+.idgham_mutajanisayn {
+  color: var(--tajweed-idgham-no-ghunnah);
+}
+
+.idgham_mutaqaribayn {
+  color: var(--tajweed-idgham-no-ghunnah);
+}
+
+.ghunnah {
+  color: var(--tajweed-ghunnah);
+}
+
+.iqlab {
+  color: var(--tajweed-iqlab);
+}
+
+/* Ensure tajweed text spans inherit font */
+[class^="tajweed"] span,
+.tajweed-text span {
+  font-family: inherit;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
