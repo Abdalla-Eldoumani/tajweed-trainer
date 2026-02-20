@@ -1,0 +1,95 @@
+{
+  "id": "qalqalah",
+  "title_en": "Qalqalah (Echoing/Bouncing)",
+  "title_ar": "القلقلة",
+  "category": "qalqalah",
+  "introduction": "Qalqalah means 'shaking' or 'disturbance.' It is a slight bouncing or echoing sound produced when any of five specific letters appear with a sukoon. Without qalqalah, these letters would be cut off abruptly because they have the attributes of jahr (stoppage of breath flow) and shiddah (stoppage of sound flow).",
+  "letters": [
+    { "arabic": "ق", "name_en": "Qaaf", "transliteration": "q" },
+    { "arabic": "ط", "name_en": "Taa", "transliteration": "ṭ" },
+    { "arabic": "ب", "name_en": "Baa", "transliteration": "b" },
+    { "arabic": "ج", "name_en": "Jeem", "transliteration": "j" },
+    { "arabic": "د", "name_en": "Daal", "transliteration": "d" }
+  ],
+  "mnemonic_ar": "قُطْبُ جَدٍّ",
+  "mnemonic_en": "Remember: قُطْبُ جَدٍّ (Qutbu Jadd — 'axis of a grandfather')",
+  "levels": [
+    {
+      "id": "qalqalah-sughra",
+      "order": 1,
+      "title_en": "Qalqalah Sughra (Minor)",
+      "title_ar": "القلقلة الصغرى",
+      "description": "Occurs when a Qalqalah letter has a sukoon in the MIDDLE of a word. The echo is subtle and quick.",
+      "examples": [
+        {
+          "arabic": "يَقْطَعُونَ",
+          "transliteration": "yaqṭa'oon",
+          "translation": "they cut",
+          "surah": 2, "ayah": 27, "surah_name_en": "Al-Baqarah",
+          "highlight_word": "يَقْطَعُونَ",
+          "rule_applied": "Qalqalah Sughra — Qaaf (ق) with sukoon in middle of word"
+        },
+        {
+          "arabic": "يَجْعَلُونَ",
+          "transliteration": "yaj'aloon",
+          "translation": "they make",
+          "surah": 6, "ayah": 136, "surah_name_en": "Al-An'am",
+          "highlight_word": "يَجْعَلُونَ",
+          "rule_applied": "Qalqalah Sughra — Jeem (ج) with sukoon in middle of word"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "qalqalah-wusta",
+      "order": 2,
+      "title_en": "Qalqalah Wusta (Medium)",
+      "title_ar": "القلقلة الوسطى",
+      "description": "Occurs when a Qalqalah letter has a sukoon at the END of a word, but NOT at the end of an ayah. The echo is moderate.",
+      "examples": [
+        {
+          "arabic": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+          "transliteration": "lam yalid wa lam yoolad",
+          "translation": "He neither begets nor was He begotten",
+          "surah": 112, "ayah": 3, "surah_name_en": "Al-Ikhlas",
+          "highlight_word": "يَلِدْ",
+          "rule_applied": "Qalqalah Wusta — Daal (د) at end of word, mid-ayah"
+        }
+      ],
+      "verified": true
+    },
+    {
+      "id": "qalqalah-kubra",
+      "order": 3,
+      "title_en": "Qalqalah Kubra (Major)",
+      "title_ar": "القلقلة الكبرى",
+      "description": "Occurs when a Qalqalah letter is the LAST letter of an ayah (or when you stop on a word ending with a Qalqalah letter). The echo is the strongest and most pronounced.",
+      "examples": [
+        {
+          "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
+          "transliteration": "qul a'oodhu bi rabbi al-falaq",
+          "translation": "Say: I seek refuge in the Lord of daybreak",
+          "surah": 113, "ayah": 1, "surah_name_en": "Al-Falaq",
+          "highlight_word": "الْفَلَقِ",
+          "rule_applied": "Qalqalah Kubra — Qaaf (ق) at end of ayah"
+        },
+        {
+          "arabic": "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
+          "transliteration": "tabbat yadaa abee lahabiw wa tabb",
+          "translation": "May the hands of Abu Lahab perish, and may he perish",
+          "surah": 111, "ayah": 1, "surah_name_en": "Al-Masad",
+          "highlight_word": "وَتَبَّ",
+          "rule_applied": "Qalqalah Kubra — Baa (ب) at end of ayah (with shaddah, making it extra strong)"
+        }
+      ],
+      "verified": true
+    }
+  ],
+  "common_mistakes": [
+    "Adding a vowel sound to the echo — Qalqalah should be a pure bounce, not 'ba' or 'bu' or 'bi'",
+    "Making the echo too strong in Sughra — it should be subtle",
+    "Making the echo too weak in Kubra — it should be clearly pronounced",
+    "Applying Qalqalah to letters that are NOT in the five (قطبجد)"
+  ],
+  "verified": true
+}
