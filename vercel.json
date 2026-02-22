@@ -1,8 +1,6 @@
 {
   "buildCommand": "next build",
-  "outputDirectory": "out",
   "framework": "nextjs",
-  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
