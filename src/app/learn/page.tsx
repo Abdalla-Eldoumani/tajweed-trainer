@@ -1,6 +1,7 @@
 "use client";
 
 import { ModuleCard } from "@/components/learn/ModuleCard";
+import { ArabicText } from "@/components/ui/ArabicText";
 import { useProgress } from "@/hooks/useProgress";
 import learningPath from "@/data/content/learning-path.json";
 import type { LearningModule } from "@/lib/types";
@@ -22,9 +23,7 @@ export default function LearnPage() {
     <div>
       <div className="mb-8">
         <h1 className="font-heading text-2xl font-bold">Learn Tajweed</h1>
-        <p className="font-arabic text-lg text-text-muted mt-1" dir="rtl" lang="ar">
-          {learningPath.title_ar}
-        </p>
+        <ArabicText text={learningPath.title_ar} size="sm" className="block text-text-muted mt-1" />
         <p className="text-sm text-text-muted mt-2">
           {learningPath.description}
         </p>
