@@ -1,11 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
-import { MakhrajDiagram } from "@/components/learn/MakhrajDiagram";
-import { LetterGrid } from "@/components/learn/LetterGrid";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+
+const MakhrajDiagram = dynamic(
+  () => import("@/components/learn/MakhrajDiagram").then((mod) => ({ default: mod.MakhrajDiagram })),
+  {
+    ssr: false,
+    loading: () => <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />,
+  }
+);
+
+const LetterGrid = dynamic(
+  () => import("@/components/learn/LetterGrid").then((mod) => ({ default: mod.LetterGrid })),
+  {
+    ssr: false,
+    loading: () => <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />,
+  }
+);
 import { useProgress } from "@/hooks/useProgress";
 import makharijData from "@/data/content/makharij.json";
 
@@ -35,9 +50,7 @@ export default function MakharijPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">{makharijData.title_en}</h1>
-        <p className="font-arabic text-lg text-text-muted mt-1" dir="rtl" lang="ar">
-          {makharijData.title_ar}
-        </p>
+        <ArabicText text={makharijData.title_ar} size="sm" className="block text-text-muted mt-1" />
         <p className="text-sm text-text-muted mt-3">{makharijData.introduction}</p>
       </div>
 
@@ -49,7 +62,7 @@ export default function MakharijPage() {
       {activeRegion && (
         <Card>
           <h3 className="font-heading font-semibold">{activeRegion.title_en}</h3>
-          <p className="font-arabic text-sm text-text-muted" dir="rtl" lang="ar">{activeRegion.title_ar}</p>
+          <ArabicText text={activeRegion.title_ar} size="sm" className="text-text-muted" />
           <p className="text-sm text-text-muted mt-2">{activeRegion.description}</p>
           <p className="text-xs text-text-muted mt-1">{activeRegion.points_count} articulation point(s)</p>
 
