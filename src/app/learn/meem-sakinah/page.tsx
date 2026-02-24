@@ -1,6 +1,7 @@
 "use client";
 
 import { RuleCard } from "@/components/learn/RuleCard";
+import { ArabicText } from "@/components/ui/ArabicText";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { useProgress } from "@/hooks/useProgress";
 import meemData from "@/data/content/meem-sakinah.json";
@@ -19,9 +20,7 @@ export default function MeemSakinahPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">{meemData.title_en}</h1>
-        <p className="font-arabic text-lg text-text-muted mt-1" dir="rtl" lang="ar">
-          {meemData.title_ar}
-        </p>
+        <ArabicText text={meemData.title_ar} size="sm" className="block text-text-muted mt-1" />
         <p className="text-sm text-text-muted mt-3">{meemData.introduction}</p>
       </div>
 
