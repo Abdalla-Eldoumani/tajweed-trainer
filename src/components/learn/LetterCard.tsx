@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
@@ -12,7 +13,7 @@ interface LetterCardProps {
   onClick?: () => void;
 }
 
-export function LetterCard({ arabic, nameEn, description, selected, onClick }: LetterCardProps) {
+export const LetterCard = memo(function LetterCard({ arabic, nameEn, description, selected, onClick }: LetterCardProps) {
   return (
     <Card
       hover={!!onClick}
@@ -33,4 +34,6 @@ export function LetterCard({ arabic, nameEn, description, selected, onClick }: L
       {description && <p className="text-[10px] text-text-muted mt-1">{description}</p>}
     </Card>
   );
-}
+});
+
+LetterCard.displayName = "LetterCard";
