@@ -22,9 +22,7 @@ export default function NoonSakinahPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">{noonData.title_en}</h1>
-        <p className="font-arabic text-lg text-text-muted mt-1" dir="rtl" lang="ar">
-          {noonData.title_ar}
-        </p>
+        <ArabicText text={noonData.title_ar} size="sm" className="block text-text-muted mt-1" />
         <p className="text-sm text-text-muted mt-3">{noonData.introduction}</p>
       </div>
 
