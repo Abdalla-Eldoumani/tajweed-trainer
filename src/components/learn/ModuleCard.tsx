@@ -1,6 +1,8 @@
 "use client";
 
+import { memo } from "react";
 import Link from "next/link";
+import { ArabicText } from "@/components/ui/ArabicText";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { cn } from "@/lib/utils";
@@ -24,7 +26,7 @@ const MODULE_ICONS: Record<string, string> = {
   pause: "||",
 };
 
-export function ModuleCard({ module, completedLessons, locked = false }: ModuleCardProps) {
+export const ModuleCard = memo(function ModuleCard({ module, completedLessons, locked = false }: ModuleCardProps) {
   const progress = module.lessons_count > 0 ? (completedLessons / module.lessons_count) * 100 : 0;
 
   const content = (
@@ -53,9 +55,7 @@ export function ModuleCard({ module, completedLessons, locked = false }: ModuleC
           <h3 className="font-heading font-semibold text-sm mb-0.5">
             {module.title_en}
           </h3>
-          <p className="font-arabic text-xs text-text-muted" dir="rtl" lang="ar">
-            {module.title_ar}
-          </p>
+          <ArabicText text={module.title_ar} size="sm" className="text-text-muted" />
 
           <p className="text-xs text-text-muted mt-2 line-clamp-2">
             {module.description}
@@ -78,4 +78,6 @@ export function ModuleCard({ module, completedLessons, locked = false }: ModuleC
   }
 
   return <Link href={`/learn/${module.id}`}>{content}</Link>;
-}
+});
+
+ModuleCard.displayName = "ModuleCard";
