@@ -14,9 +14,7 @@ export default function WaqfPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">{waqfData.title_en}</h1>
-        <p className="font-arabic text-lg text-text-muted mt-1" dir="rtl" lang="ar">
-          {waqfData.title_ar}
-        </p>
+        <ArabicText text={waqfData.title_ar} size="sm" className="block text-text-muted mt-1" />
         <p className="text-sm text-text-muted mt-3">{waqfData.introduction}</p>
       </div>
 
@@ -29,7 +27,7 @@ export default function WaqfPage() {
               </div>
               <div>
                 <h3 className="font-heading font-semibold text-sm">{symbol.title_en}</h3>
-                <p className="font-arabic text-xs text-text-muted" dir="rtl" lang="ar">{symbol.title_ar}</p>
+                <ArabicText text={symbol.title_ar} size="sm" className="text-text-muted" />
                 <p className="text-xs text-text-muted mt-2">{symbol.description}</p>
               </div>
             </div>
