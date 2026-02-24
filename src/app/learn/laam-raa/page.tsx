@@ -19,21 +19,19 @@ export default function LaamRaaPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">{laamRaaData.title_en}</h1>
-        <p className="font-arabic text-lg text-text-muted mt-1" dir="rtl" lang="ar">
-          {laamRaaData.title_ar}
-        </p>
+        <ArabicText text={laamRaaData.title_ar} size="sm" className="block text-text-muted mt-1" />
       </div>
 
       {/* Laam Shamsiyyah/Qamariyyah */}
       <Card>
         <h2 className="font-heading font-semibold">{laamSection.title_en}</h2>
-        <p className="font-arabic text-sm text-text-muted" dir="rtl" lang="ar">{laamSection.title_ar}</p>
+        <ArabicText text={laamSection.title_ar} size="sm" className="text-text-muted" />
         <p className="text-sm text-text-muted mt-2">{laamSection.description}</p>
 
         {laamSection.subtypes?.map((st) => (
           <div key={st.id} className="mt-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
             <h3 className="font-heading font-semibold text-sm">{st.title_en}</h3>
-            <p className="font-arabic text-xs text-text-muted" dir="rtl" lang="ar">{st.title_ar}</p>
+            <ArabicText text={st.title_ar} size="sm" className="text-text-muted" />
             <p className="text-xs text-text-muted mt-2">{st.description}</p>
 
             <div className="mt-3">
@@ -60,7 +58,7 @@ export default function LaamRaaPage() {
       {/* Laam of Allah */}
       <Card>
         <h2 className="font-heading font-semibold">{laamAllahSection.title_en}</h2>
-        <p className="font-arabic text-sm text-text-muted" dir="rtl" lang="ar">{laamAllahSection.title_ar}</p>
+        <ArabicText text={laamAllahSection.title_ar} size="sm" className="text-text-muted" />
         <p className="text-sm text-text-muted mt-2">{laamAllahSection.description}</p>
 
         {laamAllahSection.rules?.map((rule, i) => (
@@ -81,7 +79,7 @@ export default function LaamRaaPage() {
       {/* Raa Rules */}
       <Card>
         <h2 className="font-heading font-semibold">{raaSection.title_en}</h2>
-        <p className="font-arabic text-sm text-text-muted" dir="rtl" lang="ar">{raaSection.title_ar}</p>
+        <ArabicText text={raaSection.title_ar} size="sm" className="text-text-muted" />
         <p className="text-sm text-text-muted mt-2">{raaSection.description}</p>
 
         {raaSection.tafkheem_cases && (
