@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { QuizSession } from "@/components/practice/QuizSession";
+import dynamic from "next/dynamic";
 import { StreakCounter } from "@/components/practice/StreakCounter";
+
+const QuizSession = dynamic(
+  () => import("@/components/practice/QuizSession").then((mod) => ({ default: mod.QuizSession })),
+  {
+    ssr: false,
+    loading: () => <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />,
+  }
+);
 import { getAvailableModules } from "@/lib/question-pool";
 
 export default function PracticePage() {
