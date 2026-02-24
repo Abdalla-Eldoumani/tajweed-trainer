@@ -52,9 +52,7 @@ export function RuleCard({
           <div className="flex items-center justify-between gap-2">
             <div>
               <h3 className="font-heading font-semibold text-sm">{titleEn}</h3>
-              <p className="font-arabic text-xs text-text-muted mt-0.5" dir="rtl" lang="ar">
-                {titleAr}
-              </p>
+              <ArabicText text={titleAr} size="sm" className="text-text-muted mt-0.5" />
             </div>
             <svg
               className={cn("w-5 h-5 text-text-muted transition-transform shrink-0", expanded && "rotate-180")}
