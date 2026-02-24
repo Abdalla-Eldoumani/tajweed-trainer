@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Badge } from "@/components/ui/Badge";
@@ -13,7 +14,7 @@ interface ExampleCardProps {
   color?: string;
 }
 
-export function ExampleCard({ example, color }: ExampleCardProps) {
+export const ExampleCard = memo(function ExampleCard({ example, color }: ExampleCardProps) {
   const { settings } = useSettings();
 
   return (
@@ -44,4 +45,6 @@ export function ExampleCard({ example, color }: ExampleCardProps) {
       <Badge color={color}>{example.rule_applied}</Badge>
     </Card>
   );
-}
+});
+
+ExampleCard.displayName = "ExampleCard";
