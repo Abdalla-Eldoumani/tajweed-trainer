@@ -93,14 +93,14 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
             key={region.id}
             onClick={() => onRegionSelect?.(region.id)}
             className={cn(
-              "text-left px-3 py-2 rounded-lg text-xs transition-colors",
+              "text-left px-3 py-3 rounded-lg text-xs transition-colors min-h-[44px]",
               selectedRegion === region.id
                 ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
                 : "hover:bg-gray-100 dark:hover:bg-gray-800 text-text-muted"
             )}
           >
             <p className="font-medium">{region.label}</p>
-            <p className="font-arabic text-[10px]" dir="rtl" lang="ar">{region.labelAr}</p>
+            <p className="font-arabic text-xs" dir="rtl" lang="ar">{region.labelAr}</p>
           </button>
         ))}
       </div>
