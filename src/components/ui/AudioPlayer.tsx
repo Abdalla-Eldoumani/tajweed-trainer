@@ -40,7 +40,7 @@ export function AudioPlayer({ surah, ayah, reciter, compact = false, className }
         onClick={handlePlayPause}
         disabled={isLoading}
         className={cn(
-          "inline-flex items-center justify-center w-8 h-8 rounded-full transition-colors",
+          "inline-flex items-center justify-center w-11 h-11 rounded-full transition-colors",
           "bg-primary/10 text-primary hover:bg-primary/20 dark:bg-primary-light/20 dark:text-primary-light",
           "disabled:opacity-50",
           className
