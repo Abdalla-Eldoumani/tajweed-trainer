@@ -22,8 +22,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               variant === "outline",
           },
           {
-            "h-8 px-3 text-sm": size === "sm",
-            "h-10 px-4 text-sm": size === "md",
+            "h-11 px-3 text-sm": size === "sm",
+            "h-11 px-4 text-sm": size === "md",
             "h-12 px-6 text-base": size === "lg",
           },
           className
