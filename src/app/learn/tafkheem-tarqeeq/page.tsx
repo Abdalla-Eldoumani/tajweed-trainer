@@ -14,18 +14,14 @@ export default function TafkheemTarqeeqPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-heading text-2xl font-bold">{tafkheemData.title_en}</h1>
-        <p className="font-arabic text-lg text-text-muted mt-1" dir="rtl" lang="ar">
-          {tafkheemData.title_ar}
-        </p>
+        <ArabicText text={tafkheemData.title_ar} size="sm" className="block text-text-muted mt-1" />
         <p className="text-sm text-text-muted mt-3">{tafkheemData.introduction}</p>
       </div>
 
       {/* Always Heavy */}
       <Card>
         <h2 className="font-heading font-semibold">{tafkheemData.always_heavy.title_en}</h2>
-        <p className="font-arabic text-sm text-text-muted" dir="rtl" lang="ar">
-          {tafkheemData.always_heavy.title_ar}
-        </p>
+        <ArabicText text={tafkheemData.always_heavy.title_ar} size="sm" className="text-text-muted" />
 
         <div className="flex flex-wrap justify-center gap-4 mt-4">
           {tafkheemData.always_heavy.letters.map((letter) => (
@@ -58,9 +54,7 @@ export default function TafkheemTarqeeqPage() {
       {/* Always Light */}
       <Card>
         <h2 className="font-heading font-semibold">{tafkheemData.always_light.title_en}</h2>
-        <p className="font-arabic text-sm text-text-muted" dir="rtl" lang="ar">
-          {tafkheemData.always_light.title_ar}
-        </p>
+        <ArabicText text={tafkheemData.always_light.title_ar} size="sm" className="text-text-muted" />
         <p className="text-sm text-text-muted mt-2">{tafkheemData.always_light.description}</p>
 
         <div className="mt-3">
@@ -73,9 +67,7 @@ export default function TafkheemTarqeeqPage() {
       {/* Variable Letters */}
       <Card>
         <h2 className="font-heading font-semibold">{tafkheemData.variable_letters.title_en}</h2>
-        <p className="font-arabic text-sm text-text-muted" dir="rtl" lang="ar">
-          {tafkheemData.variable_letters.title_ar}
-        </p>
+        <ArabicText text={tafkheemData.variable_letters.title_ar} size="sm" className="text-text-muted" />
 
         <div className="mt-4 space-y-3">
           {tafkheemData.variable_letters.letters.map((letter) => (
