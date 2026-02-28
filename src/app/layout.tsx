@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
@@ -19,6 +19,12 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Tajweed Trainer | تجويد القرآن",
@@ -54,7 +60,7 @@ export default function RootLayout({
             <Sidebar />
             <div className="flex-1 md:ml-[260px]">
               <Header />
-              <main className="max-w-4xl mx-auto px-4 py-6 pb-20 md:pb-6">
+              <main className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 safe-bottom">
                 {children}
               </main>
             </div>
