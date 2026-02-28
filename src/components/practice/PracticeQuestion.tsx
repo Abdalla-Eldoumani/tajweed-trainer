@@ -57,7 +57,7 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
               onClick={() => handleSelect(option)}
               disabled={answered}
               className={cn(
-                "w-full text-left p-3 rounded-lg border-2 text-sm transition-colors",
+                "w-full text-left p-3 rounded-lg border-2 text-sm transition-colors min-h-[48px]",
                 !answered && "hover:border-primary/50 hover:bg-primary/5",
                 !answered && "border-gray-200 dark:border-gray-700",
                 answered && isCorrect && "border-green-500 bg-green-50 dark:bg-green-900/20",
