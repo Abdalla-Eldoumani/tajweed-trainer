@@ -48,7 +48,7 @@ export default function NoonSakinahPage() {
               />
 
               {rule.subtypes && (
-                <div className="ml-4 mt-2 space-y-2">
+                <div className="ml-2 sm:ml-4 mt-2 space-y-2">
                   {rule.subtypes.map((st) => (
                     <RuleCard
                       key={st.id}
