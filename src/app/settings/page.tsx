@@ -50,13 +50,13 @@ export default function SettingsPage() {
       {/* Playback Speed */}
       <Card>
         <h2 className="font-heading font-semibold text-sm mb-3">Playback Speed</h2>
-        <div className="flex gap-2" role="radiogroup" aria-label="Playback speed">
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Playback speed">
           {[0.5, 0.75, 1.0].map((speed) => (
             <button
               key={speed}
               onClick={() => updateSettings({ playbackSpeed: speed })}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
                 settings.playbackSpeed === speed
                   ? "bg-primary text-white"
                   : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -74,7 +74,7 @@ export default function SettingsPage() {
       {/* Font Size */}
       <Card>
         <h2 className="font-heading font-semibold text-sm mb-3">Arabic Font Size</h2>
-        <div className="flex gap-2" role="radiogroup" aria-label="Arabic font size">
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Arabic font size">
           {([
             { value: "normal", label: "Normal" },
             { value: "large", label: "Large" },
@@ -84,7 +84,7 @@ export default function SettingsPage() {
               key={size.value}
               onClick={() => updateSettings({ fontSize: size.value })}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
                 settings.fontSize === size.value
                   ? "bg-primary text-white"
                   : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
