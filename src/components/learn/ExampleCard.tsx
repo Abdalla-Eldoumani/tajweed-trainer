@@ -19,7 +19,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
 
   return (
     <Card className="space-y-3">
-      <div className="text-center">
+      <div className="text-center overflow-x-auto">
         <ArabicText text={example.arabic} quran size="lg" />
       </div>
 
