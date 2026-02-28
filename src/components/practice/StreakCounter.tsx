@@ -32,7 +32,7 @@ export function StreakCounter() {
   return (
     <Card>
       <h3 className="font-heading font-semibold text-sm mb-3">Practice Streak</h3>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 sm:gap-6">
         <div className="text-center">
           <div className="text-3xl font-bold text-primary dark:text-primary-light">{currentStreak}</div>
           <p className="text-xs text-text-muted">Current Streak</p>
