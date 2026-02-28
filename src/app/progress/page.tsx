@@ -104,10 +104,10 @@ export default function ProgressPage() {
                 .sort((a, b) => b.date.localeCompare(a.date))
                 .slice(0, 10)
                 .map((qs, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs py-1 border-b border-gray-100 dark:border-gray-800 last:border-0">
-                    <span className="text-text-muted">{qs.moduleId}</span>
-                    <span className="font-medium">{qs.score}%</span>
-                    <span className="text-text-muted">{new Date(qs.date).toLocaleDateString()}</span>
+                  <div key={i} className="flex items-center justify-between gap-2 text-xs py-1 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                    <span className="text-text-muted truncate min-w-0 flex-1">{qs.moduleId}</span>
+                    <span className="font-medium shrink-0">{qs.score}%</span>
+                    <span className="text-text-muted shrink-0">{new Date(qs.date).toLocaleDateString()}</span>
                   </div>
                 ))}
             </div>
