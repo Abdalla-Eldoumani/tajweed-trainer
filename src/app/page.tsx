@@ -34,7 +34,7 @@ export default function HomePage() {
           Learn the rules of proper Quran recitation through interactive lessons,
           color-coded text, and audio examples.
         </p>
-        <div className="mt-6 flex items-center justify-center gap-3">
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link href="/learn">
             <Button size="lg">Start Learning</Button>
           </Link>
@@ -121,7 +121,7 @@ export default function HomePage() {
         <div className="space-y-2">
           {modules.map((module) => (
             <Link key={module.id} href={`/learn/${module.id}`}>
-              <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <div className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <span className="w-8 h-8 rounded-full bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light flex items-center justify-center text-xs font-bold">
                   {module.order}
                 </span>
