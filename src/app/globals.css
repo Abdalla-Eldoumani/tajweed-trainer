@@ -154,3 +154,21 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
     text-wrap: balance;
   }
 }
+
+/* Prevent horizontal scroll on mobile */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Arabic text wrap safety */
+[dir="rtl"] {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Safe area utility for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
