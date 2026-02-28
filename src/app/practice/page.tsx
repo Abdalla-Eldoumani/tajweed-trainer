@@ -36,7 +36,7 @@ export default function PracticePage() {
           id="module-filter"
           value={moduleFilter}
           onChange={(e) => setModuleFilter(e.target.value)}
-          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-bg-card dark:bg-bg-card-dark text-sm"
+          className="w-full sm:w-auto px-3 py-2 min-h-[44px] rounded-lg border border-gray-300 dark:border-gray-600 bg-bg-card dark:bg-bg-card-dark text-sm"
         >
           <option value="">All Modules</option>
           {modules.map((m) => (
