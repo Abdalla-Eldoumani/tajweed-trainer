@@ -58,7 +58,7 @@ export default function RootLayout({
         <DarkModeProvider>
           <div className="flex min-h-screen">
             <Sidebar />
-            <div className="flex-1 md:ml-[260px]">
+            <div className="flex-1 min-w-0 md:ml-[260px]">
               <Header />
               <main className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 safe-bottom">
                 {children}
