@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
-import { DarkModeProvider } from "@/components/layout/DarkModeProvider";
+import { AppProvider } from "@/components/layout/AppProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -48,24 +48,24 @@ export default function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=JSON.parse(localStorage.getItem('tajweed-trainer-progress'));if(s&&s.settings&&s.settings.darkMode)document.documentElement.classList.add('dark')}catch(e){}})()`,
+            __html: `(function(){try{var s=JSON.parse(localStorage.getItem('tajweed-trainer-progress'));if(s&&s.settings){if(s.settings.darkMode)document.documentElement.classList.add('dark');if(s.settings.language==='ar'){document.documentElement.lang='ar';document.documentElement.dir='rtl'}}}catch(e){}})()`,
           }}
         />
       </head>
       <body
         className={`${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} font-body bg-bg text-text dark:bg-bg-dark dark:text-text-dark antialiased`}
       >
-        <DarkModeProvider>
+        <AppProvider>
           <div className="flex min-h-screen">
             <Sidebar />
-            <div className="flex-1 min-w-0 md:ml-[260px]">
+            <div className="flex-1 min-w-0 md:ms-[260px]">
               <Header />
               <main className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 safe-bottom">
                 {children}
               </main>
             </div>
           </div>
-        </DarkModeProvider>
+        </AppProvider>
       </body>
     </html>
   );
