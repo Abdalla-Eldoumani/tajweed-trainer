@@ -3,8 +3,10 @@
 import { RuleCard } from "@/components/learn/RuleCard";
 import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
+import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { useProgress } from "@/hooks/useProgress";
+import { useTranslation } from "@/lib/i18n";
 import maddData from "@/data/content/madd-rules.json";
 
 const MADD_COLORS: Record<string, string> = {
@@ -20,23 +22,28 @@ const MADD_COLORS: Record<string, string> = {
 export default function MaddPage() {
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("madd");
+  const { t, isAr } = useTranslation();
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{maddData.title_en}</h1>
-        <ArabicText text={maddData.title_ar} size="sm" className="block text-text-muted mt-1" />
-        <p className="text-sm text-text-muted mt-3">{maddData.introduction}</p>
+        <SectionBanner
+          title={isAr ? maddData.title_ar : maddData.title_en}
+          subtitle={isAr ? maddData.title_en : maddData.title_ar}
+        />
+        <p className="text-sm text-text-muted mt-4">
+          {isAr ? (maddData.introduction_ar ?? maddData.introduction) : maddData.introduction}
+        </p>
       </div>
 
       <Card>
-        <h2 className="font-heading font-semibold mb-3">Madd Letters</h2>
+        <h2 className="font-heading font-semibold mb-3">{t("madd.letters")}</h2>
         <div className="flex flex-wrap justify-center gap-6">
           {maddData.madd_letters.map((letter) => (
             <div key={letter.arabic} className="text-center">
               <ArabicText text={letter.arabic} size="xl" className="block" />
-              <p className="text-xs font-medium mt-1">{letter.name_en}</p>
-              <p className="text-[10px] text-text-muted">{letter.condition}</p>
+              <p className="text-xs font-medium mt-1">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</p>
+              <p className="text-[10px] text-text-muted">{isAr ? (letter.condition_ar ?? letter.condition) : letter.condition}</p>
             </div>
           ))}
         </div>
@@ -47,31 +54,32 @@ export default function MaddPage() {
           <RuleCard
             key={type.id}
             titleEn={`${type.title_en} (${type.beats} beats)`}
-            titleAr={type.title_ar}
+            titleAr={`${type.title_ar} (${type.beats} ${t("ghunnah.beats")})`}
             description={type.description}
+            descriptionAr={type.description_ar}
             examples={type.examples}
             color={MADD_COLORS[type.id] ?? "#E06050"}
           />
         ))}
       </div>
 
-      <Card>
-        <h2 className="font-heading font-semibold mb-3">Summary Table</h2>
+      <Card variant="ornate">
+        <h2 className="font-heading font-semibold mb-3">{t("madd.summaryTable")}</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="text-left py-2 pr-4 font-semibold">Type</th>
-                <th className="text-center py-2 pr-4 font-semibold">Beats</th>
-                <th className="text-left py-2 font-semibold">Trigger</th>
+              <tr className="border-b border-gold-light/30 dark:border-gold-dark/20">
+                <th className="text-start py-2 pe-4 font-semibold">{t("madd.type")}</th>
+                <th className="text-center py-2 pe-4 font-semibold">{t("madd.beats")}</th>
+                <th className="text-start py-2 font-semibold">{t("madd.trigger")}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody className="divide-y divide-gold-light/20 dark:divide-gold-dark/10">
               {Object.entries(maddData.summary_table).map(([key, val]) => (
                 <tr key={key}>
-                  <td className="py-2 pr-4 font-medium">{val.type}</td>
-                  <td className="py-2 pr-4 text-center">{val.beats}</td>
-                  <td className="py-2 text-text-muted">{val.trigger}</td>
+                  <td className="py-2 pe-4 font-medium">{isAr && val.type_ar ? val.type_ar : val.type}</td>
+                  <td className="py-2 pe-4 text-center">{val.beats}</td>
+                  <td className="py-2 text-text-muted">{isAr && val.trigger_ar ? val.trigger_ar : val.trigger}</td>
                 </tr>
               ))}
             </tbody>
@@ -81,9 +89,9 @@ export default function MaddPage() {
 
       <LessonNavigation
         prevHref="/learn/qalqalah"
-        prevLabel="Qalqalah"
+        prevLabel={{ en: "Qalqalah", ar: "القلقلة" }}
         nextHref="/learn/laam-raa"
-        nextLabel="Laam & Raa"
+        nextLabel={{ en: "Laam & Raa", ar: "اللام والراء" }}
         onMarkComplete={() => markLessonComplete("madd", "madd-main")}
         isComplete={progress.lessonsCompleted.includes("madd-main")}
       />
