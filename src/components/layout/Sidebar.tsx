@@ -5,24 +5,30 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { MODULES, NAV_ITEMS, ChevronIcon } from "./nav-data";
+import { LanguageToggle } from "@/components/ui/LanguageToggle";
+import { useTranslation } from "@/lib/i18n";
 
 export function Sidebar() {
   const pathname = usePathname();
   const [learnExpanded, setLearnExpanded] = useState(pathname.startsWith("/learn"));
+  const { t, isAr } = useTranslation();
 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-[260px] h-screen fixed left-0 top-0 bg-bg-card dark:bg-bg-card-dark border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
-        <div className="p-5 border-b border-gray-200 dark:border-gray-700">
+      <aside className="hidden md:flex flex-col w-[260px] h-screen fixed top-0 bg-bg-card dark:bg-bg-card-dark border-e border-gold-light/30 dark:border-gold-dark/20 overflow-y-auto sidebar-desktop inset-inline-start-0">
+        <div className="p-5 border-b border-gold-light/30 dark:border-gold-dark/20">
           <Link href="/" className="block">
             <h1 className="text-lg font-heading font-bold text-primary dark:text-primary-light">
-              Tajweed Trainer
+              {t("app.title")}
             </h1>
             <p className="text-sm font-arabic text-text-muted mt-0.5" dir="rtl" lang="ar">
-              تجويد القرآن
+              {t("app.titleAr")}
             </p>
           </Link>
+          <div className="mt-3">
+            <LanguageToggle />
+          </div>
         </div>
 
         <nav className="flex-1 p-3 space-y-1">
@@ -30,6 +36,8 @@ export function Sidebar() {
             const isActive = item.href === "/"
               ? pathname === "/"
               : pathname.startsWith(item.href);
+
+            const label = isAr ? item.labelAr : item.label;
 
             return (
               <div key={item.href}>
@@ -49,14 +57,14 @@ export function Sidebar() {
                   )}
                 >
                   <item.icon className="w-5 h-5" />
-                  <span className="flex-1">{item.label}</span>
+                  <span className="flex-1">{label}</span>
                   {item.expandable && (
-                    <ChevronIcon className={cn("w-4 h-4 transition-transform", learnExpanded && "rotate-90")} />
+                    <ChevronIcon className={cn("w-4 h-4 transition-transform", learnExpanded && "rotate-90", isAr && !learnExpanded && "rotate-180")} />
                   )}
                 </Link>
 
                 {item.expandable && learnExpanded && (
-                  <div className="ml-8 mt-1 space-y-0.5">
+                  <div className="ms-8 mt-1 space-y-0.5">
                     <Link
                       href="/learn"
                       className={cn(
@@ -66,7 +74,7 @@ export function Sidebar() {
                           : "text-text-muted hover:text-text dark:hover:text-text-dark"
                       )}
                     >
-                      All Modules
+                      {t("nav.allModules")}
                     </Link>
                     {MODULES.map((m) => {
                       const moduleActive = pathname === `/learn/${m.id}`;
@@ -81,7 +89,7 @@ export function Sidebar() {
                               : "text-text-muted hover:text-text dark:hover:text-text-dark"
                           )}
                         >
-                          {m.label}
+                          {isAr ? m.labelAr : m.label}
                         </Link>
                       );
                     })}
@@ -95,7 +103,7 @@ export function Sidebar() {
 
       {/* Mobile bottom tab bar */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 bg-bg-card dark:bg-bg-card-dark border-t border-gray-200 dark:border-gray-700 z-50"
+        className="md:hidden fixed bottom-0 inset-x-0 bg-bg-card dark:bg-bg-card-dark border-t border-gold-light/30 dark:border-gold-dark/20 z-50"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <div className="flex items-center justify-around h-16">
@@ -104,6 +112,7 @@ export function Sidebar() {
             const isActive = href === "/"
               ? pathname === "/"
               : pathname.startsWith(href);
+            const label = isAr ? item.labelAr : item.label;
 
             return (
               <Link
@@ -117,7 +126,7 @@ export function Sidebar() {
                 )}
               >
                 <item.icon className="w-5 h-5" />
-                <span>{item.label}</span>
+                <span>{label}</span>
               </Link>
             );
           })}
