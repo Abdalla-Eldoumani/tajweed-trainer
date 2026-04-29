@@ -4,17 +4,18 @@
   "title_ar": "التفخيم والترقيق",
   "category": "tafkheem-tarqeeq",
   "introduction": "Arabic letters are categorized by their 'weight' in pronunciation. Tafkheem (heaviness) creates a full, thick sound with the back of the tongue raised. Tarqeeq (lightness) creates a thin, soft sound.",
+  "introduction_ar": "تنقسم الحروف العربية بحسب ثقلها وخفّتها في النطق. فالتفخيم تسمين الحرف بحيث يمتلئ الفم بصداه مع رفع مؤخّر اللسان. والترقيق تنحيف الحرف فيخرج صوتا رقيقا.",
   "always_heavy": {
     "title_en": "Always Heavy Letters (Huroof Al-Isti'laa)",
     "title_ar": "حروف الاستعلاء",
     "letters": [
-      { "arabic": "خ", "name_en": "Khaa" },
-      { "arabic": "ص", "name_en": "Saad" },
-      { "arabic": "ض", "name_en": "Daad" },
-      { "arabic": "غ", "name_en": "Ghayn" },
-      { "arabic": "ط", "name_en": "Taa" },
-      { "arabic": "ق", "name_en": "Qaaf" },
-      { "arabic": "ظ", "name_en": "Dhaa" }
+      { "arabic": "خ", "name_en": "Khaa", "name_ar": "خَاء" },
+      { "arabic": "ص", "name_en": "Saad", "name_ar": "صَاد" },
+      { "arabic": "ض", "name_en": "Daad", "name_ar": "ضَاد" },
+      { "arabic": "غ", "name_en": "Ghayn", "name_ar": "غَيْن" },
+      { "arabic": "ط", "name_en": "Taa", "name_ar": "طَاء" },
+      { "arabic": "ق", "name_en": "Qaaf", "name_ar": "قَاف" },
+      { "arabic": "ظ", "name_en": "Dhaa", "name_ar": "ظَاء" }
     ],
     "mnemonic_ar": "خُصَّ ضَغْطٍ قِظْ",
     "mnemonic_en": "Remember: خُصَّ ضَغْطٍ قِظْ (Khussa Daghtin Qizh)",
@@ -25,14 +26,23 @@
       "Level 3: Letter has Dammah (e.g., طُوبَى)",
       "Level 4: Letter has Sukoon (e.g., يَقْطَعُون)",
       "Level 5 (lightest heavy): Letter has Kasrah (e.g., طِبَاقًا)"
+    ],
+    "tafkheem_levels_ar": [
+      "المرتبة الأولى (أقواها): مفتوح بعده ألف (مثل: قَالَ)",
+      "المرتبة الثانية: مفتوح بدون ألف بعده (مثل: قَبْل)",
+      "المرتبة الثالثة: مضموم (مثل: طُوبَى)",
+      "المرتبة الرابعة: ساكن (مثل: يَقْطَعُون)",
+      "المرتبة الخامسة (أدناها): مكسور (مثل: طِبَاقًا)"
     ]
   },
   "always_light": {
     "title_en": "Always Light Letters",
     "title_ar": "حروف الاستفال",
     "description": "All remaining Arabic letters (excluding Alif, Laam, and Raa which are variable) are always light.",
+    "description_ar": "سائر حروف العربية (ما عدا الألف واللام والراء فإنها متردّدة) مرقّقة دائما.",
     "letters": "ب ت ث ج ح د ذ ز س ش ع ف ك م ن هـ و ي",
-    "note": "These letters are NEVER pronounced with heaviness, regardless of their vowel."
+    "note": "These letters are NEVER pronounced with heaviness, regardless of their vowel.",
+    "note_ar": "لا تُنطق هذه الحروف بالتفخيم أبدا مهما تغيّرت حركتها."
   },
   "variable_letters": {
     "title_en": "Variable Letters (Sometimes Heavy, Sometimes Light)",
@@ -41,21 +51,27 @@
       {
         "arabic": "ا",
         "name_en": "Alif",
+        "name_ar": "ألف",
         "rule": "Follows the letter BEFORE it. If the preceding letter is heavy, Alif is heavy. If light, Alif is light.",
+        "rule_ar": "تتبع الحرف الذي قبلها. فإن كان مفخّما فُخِّمت، وإن كان مرقّقا رُقِّقت.",
         "heavy_example": "صَالِحَات — the Alif after Saad (heavy) is heavy",
         "light_example": "مَالِك — the Alif after Meem (light) is light"
       },
       {
         "arabic": "ل",
         "name_en": "Laam",
+        "name_ar": "لام",
         "rule": "Always light EXCEPT in the name Allah (الله) when preceded by Fathah or Dammah.",
+        "rule_ar": "مرقّقة دائما إلا في لفظ الجلالة (الله) إذا سبقها فتح أو ضمّ.",
         "heavy_example": "قَالَ اللَّهُ — Laam is heavy (preceded by Fathah)",
         "light_example": "بِسْمِ اللَّهِ — Laam is light (preceded by Kasrah)"
       },
       {
         "arabic": "ر",
         "name_en": "Raa",
-        "rule": "Heavy with Fathah/Dammah, light with Kasrah. With Sukoon, depends on context (see Raa rules)."
+        "name_ar": "راء",
+        "rule": "Heavy with Fathah/Dammah, light with Kasrah. With Sukoon, depends on context (see Raa rules).",
+        "rule_ar": "مفخّمة مع الفتحة والضمّة، مرقّقة مع الكسرة. وأمّا الراء الساكنة فتُحدَّد بحسب السياق (انظر أحكام الراء)."
       }
     ]
   },
@@ -64,6 +80,12 @@
     "Making س (Seen) heavy like ص (Saad) — ص has full tafkheem, س does not",
     "Not distinguishing ذ (Dhaal, light) from ظ (Dhaa, heavy)",
     "Making the Laam in 'Allahumma' heavy when preceded by Kasrah (قُلِ اللَّهُمَّ — Laam is LIGHT here)"
+  ],
+  "common_mistakes_ar": [
+    "تفخيم التاء (ت) كالطاء (ط) — رغم تشابه الصوت، الطاء مفخّمة والتاء مرقّقة",
+    "تفخيم السين (س) كالصاد (ص) — الصاد فيها التفخيم التامّ دون السين",
+    "عدم التمييز بين الذال (ذ) المرقّقة والظاء (ظ) المفخّمة",
+    "تفخيم لام لفظ الجلالة في (اللَّهُمَّ) إذا سبقتها كسرة (قُلِ اللَّهُمَّ — اللام هنا مرقّقة)"
   ],
   "verified": true
 }
