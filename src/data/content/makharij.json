@@ -4,6 +4,7 @@
   "title_ar": "مخارج الحروف",
   "category": "makharij",
   "introduction": "Makhraj (plural: Makharij) refers to the specific point in the mouth, throat, or nasal cavity where a letter's sound originates. According to Imam Ibn Al-Jazari and Imam Al-Khalil, there are 17 articulation points grouped into 5 major regions. Mastering these is the foundation of all Tajweed.",
+  "introduction_ar": "المخرج (وجمعه: مخارج) هو الموضع الذي يخرج منه الحرف من الفم أو الحلق أو التجويف الأنفي. وعند الإمام ابن الجزري والإمام الخليل: سبعة عشر مخرجا مقسّمة على خمس مناطق رئيسية. وإتقان المخارج هو أساس علم التجويد.",
   "regions": [
     {
       "id": "al-jawf",
@@ -11,11 +12,12 @@
       "title_en": "Al-Jawf (Empty Space / Oral Cavity)",
       "title_ar": "الجوف",
       "description": "The open space in the mouth and throat. The three Madd (lengthened) letters originate from here. Their sound continues until the breath runs out.",
+      "description_ar": "الفضاء المفتوح داخل الفم والحلق. ومنه تخرج حروف المدّ الثلاثة. ويستمرّ صوتها حتى ينقطع النفَس.",
       "points_count": 1,
       "letters": [
-        { "arabic": "ا", "name_en": "Alif", "condition": "Sakinah preceded by Fathah" },
-        { "arabic": "و", "name_en": "Waw", "condition": "Sakinah preceded by Dammah" },
-        { "arabic": "ي", "name_en": "Yaa", "condition": "Sakinah preceded by Kasrah" }
+        { "arabic": "ا", "name_en": "Alif", "name_ar": "ألف", "condition": "Sakinah preceded by Fathah", "condition_ar": "ساكنة بعد فتحة" },
+        { "arabic": "و", "name_en": "Waw", "name_ar": "واو", "condition": "Sakinah preceded by Dammah", "condition_ar": "ساكنة بعد ضمّة" },
+        { "arabic": "ي", "name_en": "Yaa", "name_ar": "ياء", "condition": "Sakinah preceded by Kasrah", "condition_ar": "ساكنة بعد كسرة" }
       ]
     },
     {
@@ -24,6 +26,7 @@
       "title_en": "Al-Halq (The Throat)",
       "title_ar": "الحلق",
       "description": "The throat contains 3 articulation points for 6 letters, from deepest to closest to the mouth.",
+      "description_ar": "في الحلق ثلاثة مخارج لستة حروف، من أقصاه قربا إلى الصدر إلى أدناه قربا إلى الفم.",
       "points_count": 3,
       "sub_points": [
         {
@@ -31,8 +34,8 @@
           "title_en": "Aqsa Al-Halq (Deepest Throat)",
           "title_ar": "أقصى الحلق",
           "letters": [
-            { "arabic": "ء", "name_en": "Hamzah" },
-            { "arabic": "هـ", "name_en": "Haa" }
+            { "arabic": "ء", "name_en": "Hamzah", "name_ar": "همزة" },
+            { "arabic": "هـ", "name_en": "Haa", "name_ar": "هاء" }
           ]
         },
         {
@@ -40,8 +43,8 @@
           "title_en": "Wasat Al-Halq (Middle Throat)",
           "title_ar": "وسط الحلق",
           "letters": [
-            { "arabic": "ع", "name_en": "'Ayn" },
-            { "arabic": "ح", "name_en": "Haa" }
+            { "arabic": "ع", "name_en": "'Ayn", "name_ar": "عين" },
+            { "arabic": "ح", "name_en": "Haa", "name_ar": "حاء" }
           ]
         },
         {
@@ -49,8 +52,8 @@
           "title_en": "Adna Al-Halq (Nearest Throat / Top)",
           "title_ar": "أدنى الحلق",
           "letters": [
-            { "arabic": "غ", "name_en": "Ghayn" },
-            { "arabic": "خ", "name_en": "Khaa" }
+            { "arabic": "غ", "name_en": "Ghayn", "name_ar": "غين" },
+            { "arabic": "خ", "name_en": "Khaa", "name_ar": "خاء" }
           ]
         }
       ]
@@ -61,73 +64,85 @@
       "title_en": "Al-Lisan (The Tongue)",
       "title_ar": "اللسان",
       "description": "The tongue has 10 articulation points producing 18 letters. This is the largest and most complex region.",
+      "description_ar": "في اللسان عشرة مخارج تخرج منها ثمانية عشر حرفا. وهو أوسع مناطق المخارج وأكثرها تنوّعا.",
       "points_count": 10,
       "sub_points": [
         {
           "id": "aqsa-lisan-1",
           "title_en": "Back of tongue against soft palate",
-          "letters": [{ "arabic": "ق", "name_en": "Qaaf" }]
+          "title_ar": "أقصى اللسان مع ما يحاذيه من الحنك اللين",
+          "letters": [{ "arabic": "ق", "name_en": "Qaaf", "name_ar": "قاف" }]
         },
         {
           "id": "aqsa-lisan-2",
           "title_en": "Back of tongue (slightly forward) against hard palate",
-          "letters": [{ "arabic": "ك", "name_en": "Kaaf" }]
+          "title_ar": "أقصى اللسان مع ما يحاذيه من الحنك الصلب",
+          "letters": [{ "arabic": "ك", "name_en": "Kaaf", "name_ar": "كاف" }]
         },
         {
           "id": "wasat-lisan",
           "title_en": "Middle of tongue against hard palate",
+          "title_ar": "وسط اللسان مع ما يحاذيه من الحنك الأعلى",
           "letters": [
-            { "arabic": "ج", "name_en": "Jeem" },
-            { "arabic": "ش", "name_en": "Sheen" },
-            { "arabic": "ي", "name_en": "Yaa (consonant)" }
+            { "arabic": "ج", "name_en": "Jeem", "name_ar": "جيم" },
+            { "arabic": "ش", "name_en": "Sheen", "name_ar": "شين" },
+            { "arabic": "ي", "name_en": "Yaa (consonant)", "name_ar": "ياء غير مدّيّة" }
           ]
         },
         {
           "id": "hafat-lisan",
           "title_en": "Side(s) of tongue against upper molars",
-          "letters": [{ "arabic": "ض", "name_en": "Daad" }],
-          "note": "Daad is the most unique Arabic letter — it can emerge from either or both sides of the tongue."
+          "title_ar": "إحدى حافتي اللسان أو كلتاهما مع الأضراس العليا",
+          "letters": [{ "arabic": "ض", "name_en": "Daad", "name_ar": "ضاد" }],
+          "note": "Daad is the most unique Arabic letter — it can emerge from either or both sides of the tongue.",
+          "note_ar": "الضاد أصعب حروف العربية وأكثرها تميّزا؛ تخرج من إحدى الحافتين أو من كلتيهما."
         },
         {
           "id": "adna-hafat-lisan",
           "title_en": "Nearest edge of tongue against upper gums (canines to front)",
-          "letters": [{ "arabic": "ل", "name_en": "Laam" }]
+          "title_ar": "أدنى حافتي اللسان مع لثة الثنايا والرباعيات العلويّة",
+          "letters": [{ "arabic": "ل", "name_en": "Laam", "name_ar": "لام" }]
         },
         {
           "id": "taraf-lisan-noon",
           "title_en": "Tip of tongue against upper gums (behind Laam's point)",
-          "letters": [{ "arabic": "ن", "name_en": "Noon" }]
+          "title_ar": "طرف اللسان مع لثة الثنايا العليا (خلف مخرج اللام)",
+          "letters": [{ "arabic": "ن", "name_en": "Noon", "name_ar": "نون" }]
         },
         {
           "id": "taraf-lisan-raa",
           "title_en": "Tip of tongue against upper gums (behind Noon's point)",
-          "letters": [{ "arabic": "ر", "name_en": "Raa" }]
+          "title_ar": "طرف اللسان مع لثة الثنايا العليا (خلف مخرج النون)",
+          "letters": [{ "arabic": "ر", "name_en": "Raa", "name_ar": "راء" }]
         },
         {
           "id": "taraf-lisan-upper-teeth",
           "title_en": "Broad tip of tongue against base of upper front teeth gums",
+          "title_ar": "ظهر طرف اللسان مع أصول الثنايا العليا",
           "letters": [
-            { "arabic": "ط", "name_en": "Taa" },
-            { "arabic": "د", "name_en": "Daal" },
-            { "arabic": "ت", "name_en": "Taa" }
+            { "arabic": "ط", "name_en": "Taa", "name_ar": "طاء" },
+            { "arabic": "د", "name_en": "Daal", "name_ar": "دال" },
+            { "arabic": "ت", "name_en": "Taa", "name_ar": "تاء" }
           ]
         },
         {
           "id": "taraf-lisan-teeth-edge",
           "title_en": "Tip of tongue against edge of upper front incisors",
+          "title_ar": "طرف اللسان مع أطراف الثنايا العليا",
           "letters": [
-            { "arabic": "ظ", "name_en": "Dhaa" },
-            { "arabic": "ذ", "name_en": "Dhaal" },
-            { "arabic": "ث", "name_en": "Thaa" }
+            { "arabic": "ظ", "name_en": "Dhaa", "name_ar": "ظاء" },
+            { "arabic": "ذ", "name_en": "Dhaal", "name_ar": "ذال" },
+            { "arabic": "ث", "name_en": "Thaa", "name_ar": "ثاء" }
           ]
         },
         {
           "id": "taraf-lisan-lower-teeth",
           "title_en": "Tip of tongue near lower front teeth (whistling letters)",
+          "title_ar": "طرف اللسان مع ما فوق الثنايا السفلى (حروف الصفير)",
           "letters": [
-            { "arabic": "ص", "name_en": "Saad" },
-            { "arabic": "ز", "name_en": "Zaay" },
-            { "arabic": "س", "name_en": "Seen" }
+            { "arabic": "ص", "name_en": "Saad", "name_ar": "صاد" },
+            { "arabic": "ز", "name_en": "Zaay", "name_ar": "زاي" },
+            { "arabic": "س", "name_en": "Seen", "name_ar": "سين" }
           ]
         }
       ]
@@ -138,22 +153,26 @@
       "title_en": "Ash-Shafataan (The Two Lips)",
       "title_ar": "الشفتان",
       "description": "The lips produce 4 letters from 2 articulation points.",
+      "description_ar": "تنتج الشفتان أربعة حروف من مخرجين اثنين.",
       "points_count": 2,
       "sub_points": [
         {
           "id": "inner-lower-lip",
           "title_en": "Inner lower lip against upper front teeth",
-          "letters": [{ "arabic": "ف", "name_en": "Faa" }]
+          "title_ar": "باطن الشفة السفلى مع أطراف الثنايا العليا",
+          "letters": [{ "arabic": "ف", "name_en": "Faa", "name_ar": "فاء" }]
         },
         {
           "id": "both-lips",
           "title_en": "Both lips together",
+          "title_ar": "بين الشفتين",
           "letters": [
-            { "arabic": "ب", "name_en": "Baa" },
-            { "arabic": "م", "name_en": "Meem" },
-            { "arabic": "و", "name_en": "Waw (consonant)" }
+            { "arabic": "ب", "name_en": "Baa", "name_ar": "باء" },
+            { "arabic": "م", "name_en": "Meem", "name_ar": "ميم" },
+            { "arabic": "و", "name_en": "Waw (consonant)", "name_ar": "واو غير مدّيّة" }
           ],
-          "note": "Waw consonant is formed by rounding the lips slightly, while Baa and Meem require pressing them together."
+          "note": "Waw consonant is formed by rounding the lips slightly, while Baa and Meem require pressing them together.",
+          "note_ar": "الواو غير المدّيّة تُنطق بضمّ الشفتين قليلا، في حين أن الباء والميم تتطلّبان إطباق الشفتين."
         }
       ]
     },
@@ -163,10 +182,11 @@
       "title_en": "Al-Khayshoom (The Nasal Cavity)",
       "title_ar": "الخيشوم",
       "description": "The nasal passage produces the Ghunnah (nasal resonance) sound, which accompanies Noon and Meem in certain tajweed rules.",
+      "description_ar": "التجويف الأنفي ومنه تخرج الغنّة المصاحبة للنون والميم في عدد من أحكام التجويد.",
       "points_count": 1,
       "letters": [
-        { "arabic": "ن", "name_en": "Noon (ghunnah component)" },
-        { "arabic": "م", "name_en": "Meem (ghunnah component)" }
+        { "arabic": "ن", "name_en": "Noon (ghunnah component)", "name_ar": "نون (مكوّن الغنّة)" },
+        { "arabic": "م", "name_en": "Meem (ghunnah component)", "name_ar": "ميم (مكوّن الغنّة)" }
       ]
     }
   ],
