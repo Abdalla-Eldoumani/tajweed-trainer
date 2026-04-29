@@ -1,29 +1,35 @@
 "use client";
 
 import { RuleCard } from "@/components/learn/RuleCard";
-import { ArabicText } from "@/components/ui/ArabicText";
 import { Card } from "@/components/ui/Card";
+import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { useProgress } from "@/hooks/useProgress";
+import { useTranslation } from "@/lib/i18n";
 import ghunnahData from "@/data/content/ghunnah.json";
 
 export default function GhunnahPage() {
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("ghunnah");
+  const { t, isAr } = useTranslation();
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{ghunnahData.title_en}</h1>
-        <ArabicText text={ghunnahData.title_ar} size="sm" className="block text-text-muted mt-1" />
-        <p className="text-sm text-text-muted mt-3">{ghunnahData.introduction}</p>
+        <SectionBanner
+          title={isAr ? ghunnahData.title_ar : ghunnahData.title_en}
+          subtitle={isAr ? ghunnahData.title_en : ghunnahData.title_ar}
+        />
+        <p className="text-sm text-text-muted mt-4">
+          {isAr ? (ghunnahData.introduction_ar ?? ghunnahData.introduction) : ghunnahData.introduction}
+        </p>
       </div>
 
       <Card>
-        <h2 className="font-heading font-semibold mb-2">Definition</h2>
-        <p className="text-sm text-text-muted">{ghunnahData.definition}</p>
+        <h2 className="font-heading font-semibold mb-2">{t("ghunnah.definition")}</h2>
+        <p className="text-sm text-text-muted">{isAr && ghunnahData.definition_ar ? ghunnahData.definition_ar : ghunnahData.definition}</p>
         <p className="text-sm font-medium mt-2 text-primary dark:text-primary-light">
-          Duration: {ghunnahData.duration}
+          {t("ghunnah.duration")}: {isAr && ghunnahData.duration_ar ? ghunnahData.duration_ar : ghunnahData.duration}
         </p>
       </Card>
 
@@ -34,6 +40,7 @@ export default function GhunnahPage() {
             titleEn={rule.title_en}
             titleAr={rule.title_ar}
             description={rule.description}
+            descriptionAr={rule.description_ar}
             examples={rule.examples}
             color="#169200"
             defaultExpanded
@@ -41,8 +48,8 @@ export default function GhunnahPage() {
         ))}
       </div>
 
-      <Card>
-        <h2 className="font-heading font-semibold mb-3">Ghunnah Prominence Ranking</h2>
+      <Card variant="ornate">
+        <h2 className="font-heading font-semibold mb-3">{t("ghunnah.ranking")}</h2>
         <div className="space-y-2">
           {ghunnahData.ghunnah_prominence_ranking.map((item) => (
             <div key={item.rank} className="flex items-center gap-3 text-sm">
@@ -50,10 +57,10 @@ export default function GhunnahPage() {
                 {item.rank}
               </span>
               <div className="flex-1">
-                <span className="font-medium">{item.context}</span>
-                <span className="text-text-muted ml-2">({item.prominence})</span>
+                <span className="font-medium">{isAr && item.context_ar ? item.context_ar : item.context}</span>
+                <span className="text-text-muted ms-2">({isAr && item.prominence_ar ? item.prominence_ar : item.prominence})</span>
               </div>
-              <span className="text-xs text-text-muted">{item.beats} beats</span>
+              <span className="text-xs text-text-muted">{item.beats} {t("ghunnah.beats")}</span>
             </div>
           ))}
         </div>
@@ -61,9 +68,9 @@ export default function GhunnahPage() {
 
       {ghunnahData.common_mistakes.length > 0 && (
         <Card>
-          <h2 className="font-heading font-semibold text-red-600 dark:text-red-400 mb-3">Common Mistakes</h2>
+          <h2 className="font-heading font-semibold text-red-600 dark:text-red-400 mb-3">{t("module.commonMistakes")}</h2>
           <ul className="space-y-2">
-            {ghunnahData.common_mistakes.map((mistake, i) => (
+            {(isAr && ghunnahData.common_mistakes_ar ? ghunnahData.common_mistakes_ar : ghunnahData.common_mistakes).map((mistake, i) => (
               <li key={i} className="text-sm text-text-muted flex gap-2">
                 <span className="text-red-500 shrink-0">x</span>
                 {mistake}
@@ -75,9 +82,9 @@ export default function GhunnahPage() {
 
       <LessonNavigation
         prevHref="/learn/meem-sakinah"
-        prevLabel="Meem Sakinah"
+        prevLabel={{ en: "Meem Sakinah", ar: "الميم الساكنة" }}
         nextHref="/learn/qalqalah"
-        nextLabel="Qalqalah"
+        nextLabel={{ en: "Qalqalah", ar: "القلقلة" }}
         onMarkComplete={() => markLessonComplete("ghunnah", "ghunnah-main")}
         isComplete={progress.lessonsCompleted.includes("ghunnah-main")}
       />
