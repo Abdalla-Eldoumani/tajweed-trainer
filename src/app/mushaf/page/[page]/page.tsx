@@ -24,8 +24,10 @@ export async function generateMetadata({ params }: MushafPageRouteProps) {
 }
 
 export default async function MushafPageRoute({ params }: MushafPageRouteProps) {
+  // Strict validation: only positive integers without leading zeros, in range.
+  if (!/^[1-9]\d*$/.test(params.page)) notFound();
   const pageNum = parseInt(params.page, 10);
-  if (Number.isNaN(pageNum) || pageNum < 1 || pageNum > TOTAL_PAGES) {
+  if (!Number.isInteger(pageNum) || pageNum < 1 || pageNum > TOTAL_PAGES) {
     notFound();
   }
 
