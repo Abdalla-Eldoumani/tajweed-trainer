@@ -83,6 +83,15 @@ function shuffle<T>(arr: T[]): T[] {
   return result;
 }
 
+// Map of English rule_applied -> Arabic rule_applied_ar across all examples,
+// used to keep parallel arrays for Arabic display.
+const RULE_AR_MAP: Map<string, string> = new Map();
+for (const item of ALL_EXAMPLES) {
+  if (item.example.rule_applied && item.example.rule_applied_ar && !RULE_AR_MAP.has(item.example.rule_applied)) {
+    RULE_AR_MAP.set(item.example.rule_applied, item.example.rule_applied_ar);
+  }
+}
+
 export function getRandomQuestions(count: number, moduleFilter?: string): PracticeQuestion[] {
   let pool = ALL_EXAMPLES;
   if (moduleFilter) {
@@ -93,13 +102,17 @@ export function getRandomQuestions(count: number, moduleFilter?: string): Practi
 
   return shuffled.map((item) => {
     const correctAnswer = item.example.rule_applied;
+    const correctAnswerAr = item.example.rule_applied_ar ?? RULE_AR_MAP.get(correctAnswer);
     const wrongAnswers = getWrongAnswers(correctAnswer, item.moduleId, 3);
     const options = shuffle([correctAnswer, ...wrongAnswers]);
+    const optionsAr = options.map((opt) => RULE_AR_MAP.get(opt) ?? opt);
 
     return {
       example: item.example,
       correctAnswer,
+      correctAnswerAr,
       options,
+      optionsAr,
       moduleId: item.moduleId,
     };
   });
