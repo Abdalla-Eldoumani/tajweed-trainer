@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { MODULES, NAV_ITEMS, ChevronIcon } from "./nav-data";
+import { useTranslation } from "@/lib/i18n";
 
 interface MobileDrawerProps {
   open: boolean;
@@ -15,6 +16,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const pathname = usePathname();
   const [learnExpanded, setLearnExpanded] = useState(pathname.startsWith("/learn"));
   const closeRef = useRef<HTMLButtonElement>(null);
+  const { t, isAr } = useTranslation();
 
   useEffect(() => {
     if (open) {
@@ -52,29 +54,32 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
       {/* Drawer panel */}
       <div
         className={cn(
-          "fixed left-0 top-0 bottom-0 w-[280px] z-50 bg-bg-card dark:bg-bg-card-dark flex flex-col transition-transform duration-300 ease-in-out",
-          open ? "translate-x-0" : "-translate-x-full"
+          "fixed top-0 bottom-0 w-[280px] z-50 bg-bg-card dark:bg-bg-card-dark flex flex-col transition-transform duration-300 ease-in-out",
+          isAr ? "right-0" : "left-0",
+          open
+            ? "translate-x-0"
+            : isAr ? "translate-x-full" : "-translate-x-full"
         )}
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         role="dialog"
         aria-modal="true"
-        aria-label="Navigation menu"
+        aria-label={t("nav.toggleMenu")}
       >
         {/* Header with close button */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-4 border-b border-gold-light/30 dark:border-gold-dark/20">
           <div>
             <h2 className="text-base font-heading font-bold text-primary dark:text-primary-light">
-              Tajweed Trainer
+              {t("app.title")}
             </h2>
             <p className="text-xs font-arabic text-text-muted" dir="rtl" lang="ar">
-              تجويد القرآن
+              {t("app.titleAr")}
             </p>
           </div>
           <button
             ref={closeRef}
             onClick={onClose}
             className="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-            aria-label="Close menu"
+            aria-label={t("nav.closeMenu")}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -89,6 +94,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
             const isActive = item.href === "/"
               ? pathname === "/"
               : pathname.startsWith(item.href);
+            const label = isAr ? item.labelAr : item.label;
 
             return (
               <div key={item.href}>
@@ -103,8 +109,8 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                     )}
                   >
                     <item.icon className="w-5 h-5" />
-                    <span className="flex-1 text-left">{item.label}</span>
-                    <ChevronIcon className={cn("w-4 h-4 transition-transform", learnExpanded && "rotate-90")} />
+                    <span className="flex-1 text-start">{label}</span>
+                    <ChevronIcon className={cn("w-4 h-4 transition-transform", learnExpanded && "rotate-90", isAr && !learnExpanded && "rotate-180")} />
                   </button>
                 ) : (
                   <Link
@@ -118,12 +124,12 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                     )}
                   >
                     <item.icon className="w-5 h-5" />
-                    <span>{item.label}</span>
+                    <span>{label}</span>
                   </Link>
                 )}
 
                 {item.expandable && learnExpanded && (
-                  <div className="ml-8 mt-1 space-y-0.5">
+                  <div className="ms-8 mt-1 space-y-0.5">
                     <Link
                       href="/learn"
                       onClick={onClose}
@@ -134,7 +140,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                           : "text-text-muted hover:text-text dark:hover:text-text-dark"
                       )}
                     >
-                      All Modules
+                      {t("nav.allModules")}
                     </Link>
                     {MODULES.map((m) => {
                       const moduleActive = pathname === `/learn/${m.id}`;
@@ -150,7 +156,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                               : "text-text-muted hover:text-text dark:hover:text-text-dark"
                           )}
                         >
-                          {m.label}
+                          {isAr ? m.labelAr : m.label}
                         </Link>
                       );
                     })}
