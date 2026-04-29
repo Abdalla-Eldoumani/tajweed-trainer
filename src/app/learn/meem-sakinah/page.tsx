@@ -1,9 +1,10 @@
 "use client";
 
 import { RuleCard } from "@/components/learn/RuleCard";
-import { ArabicText } from "@/components/ui/ArabicText";
+import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { useProgress } from "@/hooks/useProgress";
+import { useTranslation } from "@/lib/i18n";
 import meemData from "@/data/content/meem-sakinah.json";
 
 const RULE_COLORS: Record<string, string> = {
@@ -15,13 +16,18 @@ const RULE_COLORS: Record<string, string> = {
 export default function MeemSakinahPage() {
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("meem-sakinah");
+  const { t, isAr } = useTranslation();
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{meemData.title_en}</h1>
-        <ArabicText text={meemData.title_ar} size="sm" className="block text-text-muted mt-1" />
-        <p className="text-sm text-text-muted mt-3">{meemData.introduction}</p>
+        <SectionBanner
+          title={isAr ? meemData.title_ar : meemData.title_en}
+          subtitle={isAr ? meemData.title_en : meemData.title_ar}
+        />
+        <p className="text-sm text-text-muted mt-4">
+          {isAr ? (meemData.introduction_ar ?? meemData.introduction) : meemData.introduction}
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -31,9 +37,11 @@ export default function MeemSakinahPage() {
             titleEn={rule.title_en}
             titleAr={rule.title_ar}
             description={rule.description}
+            descriptionAr={rule.description_ar}
             letters={rule.letters}
             examples={rule.examples}
             commonMistakes={rule.common_mistakes}
+            commonMistakesAr={rule.common_mistakes_ar}
             color={RULE_COLORS[rule.id] ?? "#1B5E20"}
           />
         ))}
@@ -41,9 +49,9 @@ export default function MeemSakinahPage() {
 
       <LessonNavigation
         prevHref="/learn/noon-sakinah"
-        prevLabel="Noon Sakinah"
+        prevLabel={{ en: "Noon Sakinah", ar: "النون الساكنة والتنوين" }}
         nextHref="/learn/ghunnah"
-        nextLabel="Ghunnah"
+        nextLabel={{ en: "Ghunnah", ar: "الغنّة" }}
         onMarkComplete={() => markLessonComplete("meem-sakinah", "meem-sakinah-main")}
         isComplete={progress.lessonsCompleted.includes("meem-sakinah-main")}
       />
