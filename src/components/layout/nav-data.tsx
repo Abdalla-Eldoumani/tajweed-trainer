@@ -1,20 +1,21 @@
 import type { ComponentType } from "react";
 
 export const MODULES = [
-  { id: "makharij", label: "Makharij", labelAr: "مخارج" },
-  { id: "noon-sakinah", label: "Noon Sakinah", labelAr: "نون ساكنة" },
-  { id: "meem-sakinah", label: "Meem Sakinah", labelAr: "ميم ساكنة" },
-  { id: "ghunnah", label: "Ghunnah", labelAr: "غنّة" },
-  { id: "qalqalah", label: "Qalqalah", labelAr: "قلقلة" },
-  { id: "madd", label: "Madd", labelAr: "مدّ" },
-  { id: "laam-raa", label: "Laam & Raa", labelAr: "لام وراء" },
-  { id: "tafkheem-tarqeeq", label: "Heavy & Light", labelAr: "تفخيم وترقيق" },
-  { id: "waqf", label: "Waqf", labelAr: "وقف" },
+  { id: "makharij", label: "Makharij", labelAr: "مخارج الحروف" },
+  { id: "noon-sakinah", label: "Noon Sakinah", labelAr: "النون الساكنة" },
+  { id: "meem-sakinah", label: "Meem Sakinah", labelAr: "الميم الساكنة" },
+  { id: "ghunnah", label: "Ghunnah", labelAr: "الغنّة" },
+  { id: "qalqalah", label: "Qalqalah", labelAr: "القلقلة" },
+  { id: "madd", label: "Madd", labelAr: "المدّ" },
+  { id: "laam-raa", label: "Laam & Raa", labelAr: "اللام والراء" },
+  { id: "tafkheem-tarqeeq", label: "Heavy & Light", labelAr: "التفخيم والترقيق" },
+  { id: "waqf", label: "Waqf", labelAr: "الوقف" },
 ];
 
 export interface NavItem {
   href: string;
   label: string;
+  labelAr: string;
   icon: ComponentType<{ className?: string }>;
   expandable?: boolean;
 }
@@ -74,10 +75,21 @@ export function ChevronIcon({ className }: { className?: string }) {
   );
 }
 
+export function MushafIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6 C3 5 4 4 5 4 L11 4 L11 20 L5 20 C4 20 3 19 3 18 Z" />
+      <path d="M21 6 C21 5 20 4 19 4 L13 4 L13 20 L19 20 C20 20 21 19 21 18 Z" />
+      <path d="M7 8 L9 8 M7 11 L9 11 M15 8 L17 8 M15 11 L17 11" opacity="0.6" />
+    </svg>
+  );
+}
+
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "Home", icon: HomeIcon },
-  { href: "/learn", label: "Learn", icon: BookIcon, expandable: true },
-  { href: "/practice", label: "Practice", icon: PracticeIcon },
-  { href: "/progress", label: "Progress", icon: ProgressIcon },
-  { href: "/settings", label: "Settings", icon: SettingsIcon },
+  { href: "/", label: "Home", labelAr: "الرئيسية", icon: HomeIcon },
+  { href: "/learn", label: "Learn", labelAr: "تعلّم", icon: BookIcon, expandable: true },
+  { href: "/mushaf", label: "Mushaf", labelAr: "المصحف", icon: MushafIcon },
+  { href: "/practice", label: "Practice", labelAr: "تدريب", icon: PracticeIcon },
+  { href: "/progress", label: "Progress", labelAr: "تقدّم", icon: ProgressIcon },
+  { href: "/settings", label: "Settings", labelAr: "إعدادات", icon: SettingsIcon },
 ];
