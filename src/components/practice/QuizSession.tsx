@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { getRandomQuestions, hasQuestionsForModule } from "@/lib/question-pool";
 import { useProgress } from "@/hooks/useProgress";
+import { useTranslation } from "@/lib/i18n";
 import type { PracticeQuestion as PracticeQuestionType } from "@/lib/types";
 
 interface QuizSessionProps {
@@ -14,6 +15,7 @@ interface QuizSessionProps {
 }
 
 export function QuizSession({ moduleFilter }: QuizSessionProps) {
+  const { t } = useTranslation();
   const [questions, setQuestions] = useState<PracticeQuestionType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -59,20 +61,19 @@ export function QuizSession({ moduleFilter }: QuizSessionProps) {
   if (!started) {
     return (
       <Card className="text-center space-y-4">
-        <h2 className="font-heading font-semibold text-lg">Practice Quiz</h2>
+        <h2 className="font-heading font-semibold text-lg">{t("practice.title")}</h2>
         {hasQuestions ? (
           <>
             <p className="text-sm text-text-muted">
-              Test your knowledge by identifying tajweed rules in Quranic examples.
-              Each quiz has 10 questions.
+              {t("practice.description")}
             </p>
             <Button onClick={startQuiz} size="lg">
-              Start Quiz
+              {t("practice.startQuiz")}
             </Button>
           </>
         ) : (
           <p className="text-sm text-text-muted">
-            No examples available for the selected module. Try a different filter or select &quot;All Modules&quot;.
+            {t("practice.allModules")}
           </p>
         )}
       </Card>
@@ -83,16 +84,16 @@ export function QuizSession({ moduleFilter }: QuizSessionProps) {
     const percentage = Math.round((score / questions.length) * 100);
     return (
       <Card className="text-center space-y-4">
-        <h2 className="font-heading font-semibold text-lg">Quiz Complete</h2>
+        <h2 className="font-heading font-semibold text-lg">{t("practice.quizComplete")}</h2>
         <div className="text-4xl font-bold text-primary dark:text-primary-light">
           {score}/{questions.length}
         </div>
-        <p className="text-sm text-text-muted">{percentage}% correct</p>
+        <p className="text-sm text-text-muted">{percentage}% {t("practice.correct")}</p>
         <ProgressBar value={percentage} color={percentage >= 70 ? "#169200" : percentage >= 40 ? "#D98000" : "#D50000"} />
         <p className="text-sm">
-          {percentage >= 80 ? "Excellent work!" : percentage >= 60 ? "Good effort, keep practicing." : "Keep learning, you will improve."}
+          {percentage >= 80 ? t("practice.wellDone") : percentage >= 60 ? t("practice.goodProgress") : t("practice.keepReviewing")}
         </p>
-        <Button onClick={startQuiz}>Try Again</Button>
+        <Button onClick={startQuiz}>{t("practice.tryAgain")}</Button>
       </Card>
     );
   }
@@ -111,7 +112,7 @@ export function QuizSession({ moduleFilter }: QuizSessionProps) {
       </div>
       {transitioning && (
         <p className="text-center text-xs text-text-muted animate-pulse">
-          Loading next question...
+          {t("practice.loadingQuestion")}
         </p>
       )}
     </div>
