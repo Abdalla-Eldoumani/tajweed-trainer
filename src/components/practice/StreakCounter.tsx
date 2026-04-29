@@ -2,21 +2,20 @@
 
 import { Card } from "@/components/ui/Card";
 import { useProgress } from "@/hooks/useProgress";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export function StreakCounter() {
   const { progress } = useProgress();
+  const { t } = useTranslation();
   const { currentStreak, longestStreak, lastPracticeDate } = progress.streaks;
 
-  // Build the last 7 days and determine which were practiced
-  // A streak of N means the last N consecutive days (ending on lastPracticeDate) were practiced
   const days = Array.from({ length: 7 }).map((_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - (6 - i));
     const dateStr = date.toISOString().split("T")[0];
     const isToday = i === 6;
 
-    // The streak covers lastPracticeDate back (currentStreak - 1) days
     let isPracticed = false;
     if (lastPracticeDate && currentStreak > 0) {
       const lastDate = new Date(lastPracticeDate + "T00:00:00");
@@ -26,21 +25,21 @@ export function StreakCounter() {
       isPracticed = dateStr >= streakStartStr && dateStr <= lastPracticeDate;
     }
 
-    return { dateStr, isToday, isPracticed, dayLabel: ["S", "M", "T", "W", "T", "F", "S"][date.getDay()] };
+    return { dateStr, isToday, isPracticed, dayLabel: t(`weekday.short.${date.getDay()}`) };
   });
 
   return (
     <Card>
-      <h3 className="font-heading font-semibold text-sm mb-3">Practice Streak</h3>
+      <h3 className="font-heading font-semibold text-sm mb-3">{t("practice.streak")}</h3>
       <div className="flex items-center gap-4 sm:gap-6">
         <div className="text-center">
           <div className="text-3xl font-bold text-primary dark:text-primary-light">{currentStreak}</div>
-          <p className="text-xs text-text-muted">Current Streak</p>
+          <p className="text-xs text-text-muted">{t("practice.currentStreak")}</p>
         </div>
-        <div className="w-px h-12 bg-gray-200 dark:bg-gray-700" />
+        <div className="w-px h-12 bg-gold-light/30 dark:bg-gold-dark/20" />
         <div className="text-center">
           <div className="text-3xl font-bold text-accent">{longestStreak}</div>
-          <p className="text-xs text-text-muted">Longest Streak</p>
+          <p className="text-xs text-text-muted">{t("practice.longestStreak")}</p>
         </div>
       </div>
 
@@ -53,8 +52,8 @@ export function StreakCounter() {
               day.isPracticed
                 ? "bg-primary/20 text-primary dark:bg-primary-light/20 dark:text-primary-light"
                 : day.isToday
-                ? "bg-gray-100 dark:bg-gray-800 text-text"
-                : "bg-gray-50 dark:bg-gray-900 text-text-muted"
+                ? "bg-cream-dark dark:bg-gray-800 text-text"
+                : "bg-cream dark:bg-gray-900 text-text-muted"
             )}
           >
             {day.dayLabel}
