@@ -4,83 +4,95 @@
   "title_ar": "علامات الوقف",
   "category": "waqf",
   "introduction": "The Mushaf contains symbols that guide the reciter on where to stop, pause, or continue. These are not part of the Quran itself but were added by scholars to assist recitation.",
+  "introduction_ar": "في المصحف رموز توجّه القارئ إلى مواضع الوقف والابتداء والسكت. وهذه الرموز ليست من القرآن ذاته، بل أضافها العلماء لإعانة القارئ على حسن الأداء.",
   "symbols": [
     {
       "id": "waqf-lazim",
       "symbol": "مـ",
       "title_en": "Waqf Lazim (Obligatory Stop)",
       "title_ar": "الوقف اللازم",
-      "description": "You MUST stop here. Continuing would change or distort the meaning of the verse."
+      "description": "You MUST stop here. Continuing would change or distort the meaning of the verse.",
+      "description_ar": "يجب الوقوف عند هذه العلامة، لأنّ الوصل يُخلّ بالمعنى أو يُغيّره."
     },
     {
       "id": "waqf-mutlaq",
       "symbol": "ط",
       "title_en": "Waqf Mutlaq (Absolute Stop)",
       "title_ar": "الوقف المطلق",
-      "description": "It is better to stop here. The meaning is complete at this point."
+      "description": "It is better to stop here. The meaning is complete at this point.",
+      "description_ar": "الوقف عندها أَولى لأنّ المعنى تامّ في هذا الموضع."
     },
     {
       "id": "waqf-jaiz",
       "symbol": "ج",
       "title_en": "Waqf Jaiz (Permissible Stop)",
       "title_ar": "الوقف الجائز",
-      "description": "Stopping and continuing are both acceptable. The meaning works either way."
+      "description": "Stopping and continuing are both acceptable. The meaning works either way.",
+      "description_ar": "الوقف والوصل عندها سواء، فالمعنى يستقيم في الحالتين."
     },
     {
       "id": "waqf-mujaawaz",
       "symbol": "ز",
       "title_en": "Waqf Mujaawaz (Permissible to Continue)",
       "title_ar": "المجاوز",
-      "description": "Continuing is better, but stopping is permissible."
+      "description": "Continuing is better, but stopping is permissible.",
+      "description_ar": "الوصل أَولى عندها مع جواز الوقف."
     },
     {
       "id": "waqf-murakhkhas",
       "symbol": "ص",
       "title_en": "Waqf Murakhkhas (Licensed Stop)",
       "title_ar": "المرخص",
-      "description": "Stopping is permitted out of necessity (e.g., running out of breath), but continuing is preferred."
+      "description": "Stopping is permitted out of necessity (e.g., running out of breath), but continuing is preferred.",
+      "description_ar": "يُرخَّص الوقف عند الحاجة (كانقطاع النفَس)، والأفضل الوصل."
     },
     {
       "id": "la-taqif",
       "symbol": "لا",
       "title_en": "La (Do Not Stop)",
       "title_ar": "لا تقف",
-      "description": "You should NOT stop here. Stopping would break the meaning. Continue to the next natural stopping point."
+      "description": "You should NOT stop here. Stopping would break the meaning. Continue to the next natural stopping point.",
+      "description_ar": "لا يُوقف عندها لأنّ الوقف يُخلّ بالمعنى. ويُتابَع إلى أقرب موضع وقف مناسب."
     },
     {
       "id": "mu-anaqah",
       "symbol": "∴ ∴",
       "title_en": "Mu'anaqah (Embrace/Tandem Stop)",
       "title_ar": "المعانقة",
-      "description": "Two stop marks placed on two nearby phrases — you must stop at ONE of them but NOT both. Stopping at both would break the meaning."
+      "description": "Two stop marks placed on two nearby phrases — you must stop at ONE of them but NOT both. Stopping at both would break the meaning.",
+      "description_ar": "علامتا وقف متجاورتان: يجوز الوقوف عند إحداهما دون الأخرى. والجمع بين الوقفين يُخلّ بالمعنى."
     },
     {
       "id": "saktah",
       "symbol": "سـ",
       "title_en": "Saktah (Pause Without Breathing)",
       "title_ar": "السكتة",
-      "description": "Pause briefly (about 2 beats) without taking a breath, then continue. There are 4 mandatory Saktah positions in the Quran according to Hafs."
+      "description": "Pause briefly (about 2 beats) without taking a breath, then continue. There are 4 mandatory Saktah positions in the Quran according to Hafs.",
+      "description_ar": "سكتة لطيفة بمقدار حركتين دون تنفّس ثمّ يُتابَع. وفي رواية حفص أربعة مواضع للسكتة الواجبة."
     },
     {
       "id": "qif",
       "symbol": "قف",
       "title_en": "Qif (Stop Preferred)",
       "title_ar": "قف",
-      "description": "It is preferred to stop here, though the meaning connects to what follows."
+      "description": "It is preferred to stop here, though the meaning connects to what follows.",
+      "description_ar": "يُستحبّ الوقوف عندها وإن كان المعنى متّصلا بما بعدها."
     },
     {
       "id": "waqf-aula",
       "symbol": "قلي",
       "title_en": "Al-Waqf Awla (Stopping is Better)",
       "title_ar": "الوقف أولى",
-      "description": "Stopping is better than continuing, but continuing is still permissible."
+      "description": "Stopping is better than continuing, but continuing is still permissible.",
+      "description_ar": "الوقف أَولى من الوصل مع جواز الوصل."
     },
     {
       "id": "wasl-aula",
       "symbol": "صلي",
       "title_en": "Al-Wasl Awla (Continuing is Better)",
       "title_ar": "الوصل أولى",
-      "description": "Continuing is better than stopping, but stopping is still permissible."
+      "description": "Continuing is better than stopping, but stopping is still permissible.",
+      "description_ar": "الوصل أَولى من الوقف مع جواز الوقف."
     }
   ],
   "stopping_effects": [
@@ -89,6 +101,13 @@
     "Last letter receives Sukoon",
     "Qalqalah letters at end receive echoing sound",
     "Madd 'Arid lil-Sukoon may apply (2, 4, or 6 beats)"
+  ],
+  "stopping_effects_ar": [
+    "يسقط التنوين عند الوقف، فيُحذف صوت النون",
+    "تُقلب التاء المربوطة (ة) هاء (ه) عند الوقف",
+    "يُسكَّن آخر حرف في الكلمة الموقوف عليها",
+    "تظهر القلقلة على حروفها إذا كانت في آخر الكلمة الموقوف عليها",
+    "قد يقع المدّ العارض للسكون (حركتان أو أربع أو ستّ)"
   ],
   "verified": true
 }
