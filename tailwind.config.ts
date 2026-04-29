@@ -15,9 +15,18 @@ const config: Config = {
           light: "#4CAF50",
         },
         accent: "#D4A574",
+        gold: {
+          DEFAULT: "#C5A55A",
+          light: "#E8D5A3",
+          dark: "#8B7332",
+        },
+        cream: {
+          DEFAULT: "#FDF8F0",
+          dark: "#F5EDE0",
+        },
         bg: {
-          DEFAULT: "#FAFAF5",
-          card: "#FFFFFF",
+          DEFAULT: "#FDF8F0",
+          card: "#FFFDF9",
           dark: "#1A1A2E",
           "card-dark": "#2D2D44",
         },
