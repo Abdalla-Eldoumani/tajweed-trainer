@@ -1,7 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useSettings } from "@/hooks/useSettings";
+import { sanitizeTajweedHtml } from "@/lib/sanitize";
 
 interface TajweedTextProps {
   tajweedHtml: string;
@@ -19,6 +21,10 @@ const FONT_SIZE_MAP: Record<string, "sm" | "md" | "lg" | "xl"> = {
 export function TajweedText({ tajweedHtml, size, className, loading = false }: TajweedTextProps) {
   const { settings } = useSettings();
   const resolvedSize = size ?? FONT_SIZE_MAP[settings.fontSize] ?? "md";
+  // Defense in depth: even though the markup comes from a trusted API, we run
+  // it through a whitelist sanitizer that only permits <tajweed class=...>
+  // and <span class="end"> before injecting it. See src/lib/sanitize.ts.
+  const safeHtml = useMemo(() => sanitizeTajweedHtml(tajweedHtml), [tajweedHtml]);
 
   const sizeClasses = cn(
     "font-quran leading-[2] tajweed-text",
@@ -52,7 +58,7 @@ export function TajweedText({ tajweedHtml, size, className, loading = false }: T
       dir="rtl"
       lang="ar"
       className={sizeClasses}
-      dangerouslySetInnerHTML={{ __html: tajweedHtml }}
+      dangerouslySetInnerHTML={{ __html: safeHtml }}
     />
   );
 }
