@@ -6,11 +6,19 @@
   --primary: #1B5E20;
   --primary-light: #4CAF50;
   --accent: #D4A574;
-  --bg: #FAFAF5;
-  --bg-card: #FFFFFF;
+  --bg: #FDF8F0;
+  --bg-card: #FFFDF9;
   --bg-card-dark: #2D2D44;
   --text: #1A1A2E;
   --text-muted: #6B7280;
+
+  --gold: #C5A55A;
+  --gold-light: #E8D5A3;
+  --gold-dark: #8B7332;
+  --cream: #FDF8F0;
+  --cream-dark: #F5EDE0;
+  --border-ornate: #C5A55A;
+  --border-ornate-subtle: rgba(197, 165, 90, 0.3);
 
   --tajweed-ghunnah: #169200;
   --tajweed-ikhfaa: #D98000;
@@ -31,6 +39,14 @@
   --bg-card-dark: #2D2D44;
   --text: #F5F5F5;
   --text-muted: #9CA3AF;
+
+  --gold: #D4B96A;
+  --gold-light: #A08940;
+  --gold-dark: #F0E0B0;
+  --cream: #1E1E32;
+  --cream-dark: #252540;
+  --border-ornate: #A08940;
+  --border-ornate-subtle: rgba(160, 137, 64, 0.3);
 
   --tajweed-ghunnah: #1DBF00;
   --tajweed-ikhfaa: #F0A030;
@@ -171,4 +187,270 @@ html, body {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* ============================================
+   Islamic Design System
+   ============================================ */
+
+/* Islamic geometric pattern background (8-pointed star tessellation) */
+.islamic-pattern-bg {
+  position: relative;
+}
+
+.islamic-pattern-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23C5A55A' stroke-width='0.8'%3E%3Cpath d='M40 0L50 15L65 10L55 25L70 30L55 35L65 50L50 45L40 60L30 45L15 50L25 35L10 30L25 25L15 10L30 15Z'/%3E%3Cpath d='M0 40L10 25L0 10L15 20L20 5L25 20L40 15L35 30L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 25L80 10L65 20L60 5L55 20L40 15L45 30L40 40' opacity='0.5'/%3E%3Cpath d='M0 40L10 55L0 70L15 60L20 75L25 60L40 65L35 50L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 55L80 70L65 60L60 75L55 60L40 65L45 50L40 40' opacity='0.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+
+.dark .islamic-pattern-bg::before {
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23D4B96A' stroke-width='0.8'%3E%3Cpath d='M40 0L50 15L65 10L55 25L70 30L55 35L65 50L50 45L40 60L30 45L15 50L25 35L10 30L25 25L15 10L30 15Z'/%3E%3Cpath d='M0 40L10 25L0 10L15 20L20 5L25 20L40 15L35 30L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 25L80 10L65 20L60 5L55 20L40 15L45 30L40 40' opacity='0.5'/%3E%3Cpath d='M0 40L10 55L0 70L15 60L20 75L25 60L40 65L35 50L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 55L80 70L65 60L60 75L55 60L40 65L45 50L40 40' opacity='0.5'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Ornate Quran frame styling */
+.quran-frame {
+  position: relative;
+  background: var(--cream);
+  border: 2px solid var(--border-ornate);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow:
+    inset 0 0 0 4px var(--cream),
+    inset 0 0 0 5px var(--border-ornate-subtle);
+}
+
+.quran-frame::before,
+.quran-frame::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-ornate);
+  pointer-events: none;
+}
+
+.quran-frame::before {
+  top: 6px;
+  inset-inline-start: 6px;
+  border-inline-end: none;
+  border-bottom: none;
+  border-radius: 4px 0 0 0;
+}
+
+.quran-frame::after {
+  bottom: 6px;
+  inset-inline-end: 6px;
+  border-inline-start: none;
+  border-top: none;
+  border-radius: 0 0 4px 0;
+}
+
+/* Section banner (surah header style) */
+.section-banner {
+  position: relative;
+  text-align: center;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, var(--primary) 0%, #2E7D32 100%);
+  color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.section-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='0.5'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3Cpath d='M30 10L35 25H45L37 33L39 45L30 38L21 45L23 33L15 25H25Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.dark .section-banner {
+  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+}
+
+/* Gold divider */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border-ornate),
+    transparent
+  );
+  margin: 1rem 0;
+}
+
+[dir="rtl"] .gold-divider {
+  background: linear-gradient(
+    to left,
+    transparent,
+    var(--border-ornate),
+    transparent
+  );
+}
+
+/* RTL layout support */
+[dir="rtl"] .sidebar-desktop {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+/* ============================================
+   Mushaf Reader styling
+   ============================================ */
+
+/* Outer ornate frame for a Mushaf page — multi-color geometric band */
+.mushaf-frame {
+  position: relative;
+  background: var(--cream);
+  border: 1px solid var(--gold-dark);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.mushaf-frame::before {
+  /* Inner gold rule + decorative band */
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--gold);
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.mushaf-frame::after {
+  /* Repeating geometric tile (gold/red/blue) used as the wide ornamental band */
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 5px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--cream), var(--cream)) padding-box,
+    repeating-linear-gradient(
+      90deg,
+      var(--gold) 0,
+      var(--gold) 6px,
+      var(--tajweed-qalqalah) 6px,
+      var(--tajweed-qalqalah) 9px,
+      var(--gold) 9px,
+      var(--gold) 12px,
+      var(--tajweed-idgham-no-ghunnah) 12px,
+      var(--tajweed-idgham-no-ghunnah) 15px,
+      var(--gold) 15px,
+      var(--gold) 21px
+    ) border-box;
+  border: 8px solid transparent;
+  opacity: 0.85;
+}
+
+.dark .mushaf-frame::after {
+  opacity: 0.65;
+}
+
+/* Surah cartouche — ornamental banner shown when a surah starts */
+.surah-cartouche {
+  position: relative;
+  text-align: center;
+  padding: 14px 24px;
+  margin: 12px 0 10px;
+  background: linear-gradient(180deg, var(--cream-dark) 0%, var(--cream) 50%, var(--cream-dark) 100%);
+  border: 1.5px solid var(--gold-dark);
+  border-radius: 6px;
+}
+
+.surah-cartouche::before,
+.surah-cartouche::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23C5A55A' stroke-width='1'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='%23C5A55A' fill-opacity='0.18'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.surah-cartouche::before { left: 6px; }
+.surah-cartouche::after { right: 6px; }
+
+.dark .surah-cartouche::before,
+.dark .surah-cartouche::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23D4B96A' stroke-width='1'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='%23D4B96A' fill-opacity='0.2'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Verses inside a Mushaf page render side-by-side as inline buttons.
+   Restore tap-to-play affordance without breaking text justification. */
+.mushaf-verse {
+  display: inline;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.mushaf-verse:hover,
+.mushaf-verse:focus-visible {
+  background-color: rgba(197, 165, 90, 0.16);
+  outline: none;
+}
+
+.dark .mushaf-verse:hover,
+.dark .mushaf-verse:focus-visible {
+  background-color: rgba(212, 185, 106, 0.18);
+}
+
+/* Style the verse-end marker the API embeds: <span class="end">١</span> */
+.tajweed-text .end {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  margin: 0 0.25em;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(197, 165, 90, 0.18) 0%, rgba(197, 165, 90, 0.08) 70%, transparent 100%);
+  border: 1.2px solid var(--gold-dark);
+  color: var(--gold-dark);
+  font-size: 0.55em;
+  font-weight: 600;
+  vertical-align: middle;
+  line-height: 1;
+  font-family: var(--font-quran), 'Amiri Quran', serif;
+}
+
+.dark .tajweed-text .end {
+  background: radial-gradient(circle, rgba(212, 185, 106, 0.22) 0%, rgba(212, 185, 106, 0.08) 70%, transparent 100%);
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+}
+
+/* Card elevated variant — gold inner stroke + soft glow */
+.card-elevated {
+  position: relative;
+  box-shadow:
+    inset 0 0 0 1px var(--border-ornate-subtle),
+    0 6px 24px -10px rgba(197, 165, 90, 0.45);
+}
+
+.dark .card-elevated {
+  box-shadow:
+    inset 0 0 0 1px var(--border-ornate-subtle),
+    0 6px 24px -10px rgba(212, 185, 106, 0.35);
 }
