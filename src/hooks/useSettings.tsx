@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   darkMode: false,
   showTransliteration: true,
   showTranslation: true,
+  language: "en",
 };
 
 const SettingsContext = createContext<SettingsContextValue>({
