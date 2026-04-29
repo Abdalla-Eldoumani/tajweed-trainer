@@ -6,9 +6,17 @@
 import { chromium } from "playwright-core";
 import { mkdir } from "node:fs/promises";
 
-const CHROME = "C:/Users/96654/AppData/Local/ms-playwright/chromium-1208/chrome-win64/chrome.exe";
-const BASE = "http://localhost:3000";
-const SCREENSHOT_DIR = "phase3-screenshots";
+// Path to a Chromium binary. Override with PLAYWRIGHT_CHROME env var if your
+// install lives elsewhere. Default tries the standard playwright cache.
+const CHROME =
+  process.env.PLAYWRIGHT_CHROME ||
+  (process.platform === "win32"
+    ? `${process.env.LOCALAPPDATA}\\ms-playwright\\chromium-1208\\chrome-win64\\chrome.exe`
+    : process.platform === "darwin"
+    ? `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1208/chrome-mac/Chromium.app/Contents/MacOS/Chromium`
+    : `${process.env.HOME}/.cache/ms-playwright/chromium-1208/chrome-linux/chrome`);
+const BASE = process.env.BASE_URL || "http://localhost:3000";
+const SCREENSHOT_DIR = "mushaf-screenshots";
 
 const results = [];
 function record(name, ok, details = "") {
