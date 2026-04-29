@@ -9,6 +9,9 @@ const DEFAULT_SETTINGS: UserSettings = {
   darkMode: false,
   showTransliteration: true,
   showTranslation: true,
+  language: "en",
+  lastMushafPage: 1,
+  mushafBookmarks: [],
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
