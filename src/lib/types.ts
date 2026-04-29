@@ -1,21 +1,28 @@
+export type Language = 'en' | 'ar';
+
 export interface ArabicLetter {
   arabic: string;
   name_ar?: string;
   name_en: string;
   transliteration?: string;
   condition?: string;
+  condition_ar?: string;
   note?: string;
+  note_ar?: string;
 }
 
 export interface QuranicExample {
   arabic: string;
   transliteration: string;
   translation: string;
+  translation_ar?: string;
   surah: number;
   ayah: number;
   surah_name_en: string;
+  surah_name_ar?: string;
   highlight_word: string;
   rule_applied: string;
+  rule_applied_ar?: string;
 }
 
 export interface TajweedRule {
@@ -25,13 +32,17 @@ export interface TajweedRule {
   title_ar: string;
   category?: string;
   description: string;
+  description_ar?: string;
   arabic_definition?: string;
   letters?: ArabicLetter[];
   letters_description?: string;
+  letters_description_ar?: string;
   subtypes?: TajweedSubtype[];
   examples: QuranicExample[];
   audio_tip?: string;
+  audio_tip_ar?: string;
   common_mistakes?: string[];
+  common_mistakes_ar?: string[];
   mnemonic_ar?: string;
   mnemonic_en?: string;
   verified: true;
@@ -42,6 +53,7 @@ export interface TajweedSubtype {
   title_en: string;
   title_ar?: string;
   description: string;
+  description_ar?: string;
   letters?: ArabicLetter[];
   mnemonic_en?: string;
   examples?: QuranicExample[];
@@ -53,6 +65,7 @@ export interface LearningModule {
   title_en: string;
   title_ar: string;
   description: string;
+  description_ar?: string;
   estimated_hours: number;
   lessons_count: number;
   prerequisite: string | null;
@@ -64,6 +77,7 @@ export interface LearningPath {
   title_en: string;
   title_ar: string;
   description: string;
+  description_ar?: string;
   modules: LearningModule[];
   verified: true;
 }
@@ -74,6 +88,7 @@ export interface MakhrajRegion {
   title_en: string;
   title_ar: string;
   description: string;
+  description_ar?: string;
   points_count: number;
   letters?: ArabicLetter[];
   sub_points?: MakhrajSubPoint[];
@@ -85,6 +100,7 @@ export interface MakhrajSubPoint {
   title_ar?: string;
   letters: ArabicLetter[];
   note?: string;
+  note_ar?: string;
 }
 
 export interface MakhrajData {
@@ -93,6 +109,7 @@ export interface MakhrajData {
   title_ar: string;
   category: string;
   introduction: string;
+  introduction_ar?: string;
   regions: MakhrajRegion[];
   total_points: number;
   total_letters: number;
@@ -105,9 +122,11 @@ export interface NoonSakinahData {
   title_ar: string;
   category: string;
   introduction: string;
+  introduction_ar?: string;
   rules: TajweedRule[];
   summary_table: {
     description: string;
+    description_ar?: string;
     izhar_letters: string;
     izhar_count: number;
     idgham_with_ghunnah_letters: string;
@@ -128,6 +147,7 @@ export interface MeemSakinahData {
   title_ar: string;
   category: string;
   introduction: string;
+  introduction_ar?: string;
   rules: TajweedRule[];
   verified: true;
 }
@@ -138,6 +158,7 @@ export interface QalqalahLevel {
   title_en: string;
   title_ar: string;
   description: string;
+  description_ar?: string;
   examples: QuranicExample[];
   verified: true;
 }
@@ -148,11 +169,13 @@ export interface QalqalahData {
   title_ar: string;
   category: string;
   introduction: string;
+  introduction_ar?: string;
   letters: ArabicLetter[];
   mnemonic_ar: string;
   mnemonic_en: string;
   levels: QalqalahLevel[];
   common_mistakes: string[];
+  common_mistakes_ar?: string[];
   verified: true;
 }
 
@@ -163,10 +186,13 @@ export interface MaddType {
   title_ar: string;
   beats: number | string;
   obligation: string;
+  obligation_ar?: string;
   description: string;
+  description_ar?: string;
   trigger: string;
+  trigger_ar?: string;
   examples?: QuranicExample[];
-  subtypes?: { id: string; title_en: string; description: string; example_arabic?: string; example_surah?: number; example_ayah?: number }[];
+  subtypes?: { id: string; title_en: string; title_ar?: string; description: string; description_ar?: string; example_arabic?: string; example_surah?: number; example_ayah?: number }[];
   verified: true;
 }
 
@@ -176,9 +202,10 @@ export interface MaddData {
   title_ar: string;
   category: string;
   introduction: string;
-  madd_letters: { arabic: string; name_en: string; condition: string }[];
+  introduction_ar?: string;
+  madd_letters: { arabic: string; name_en: string; name_ar?: string; condition: string; condition_ar?: string }[];
   types: MaddType[];
-  summary_table: Record<string, { type: string; beats: number | string; trigger: string }>;
+  summary_table: Record<string, { type: string; type_ar?: string; beats: number | string; trigger: string; trigger_ar?: string }>;
   verified: true;
 }
 
@@ -188,11 +215,15 @@ export interface GhunnahData {
   title_ar: string;
   category: string;
   introduction: string;
+  introduction_ar?: string;
   definition: string;
+  definition_ar?: string;
   duration: string;
+  duration_ar?: string;
   rules: TajweedRule[];
-  ghunnah_prominence_ranking: { rank: number; context: string; prominence: string; beats: number }[];
+  ghunnah_prominence_ranking: { rank: number; context: string; context_ar?: string; prominence: string; prominence_ar?: string; beats: number }[];
   common_mistakes: string[];
+  common_mistakes_ar?: string[];
   verified: true;
 }
 
@@ -201,16 +232,20 @@ export interface LaamRaaData {
   title_en: string;
   title_ar: string;
   category: string;
+  introduction?: string;
+  introduction_ar?: string;
   sections: {
     id: string;
     title_en: string;
     title_ar: string;
     description: string;
+    description_ar?: string;
     subtypes?: {
       id: string;
       title_en: string;
       title_ar: string;
       description: string;
+      description_ar?: string;
       letters: string;
       letter_count: number;
       mnemonic_ar?: string;
@@ -219,11 +254,13 @@ export interface LaamRaaData {
     }[];
     rules?: {
       condition: string;
+      condition_ar?: string;
       result: string;
+      result_ar?: string;
       examples: string[];
     }[];
-    tafkheem_cases?: { condition: string; example: string; note: string }[];
-    tarqeeq_cases?: { condition: string; example: string; note: string }[];
+    tafkheem_cases?: { condition: string; condition_ar?: string; example: string; note: string; note_ar?: string }[];
+    tarqeeq_cases?: { condition: string; condition_ar?: string; example: string; note: string; note_ar?: string }[];
   }[];
   verified: true;
 }
@@ -234,6 +271,7 @@ export interface TafkheemTarqeeqData {
   title_ar: string;
   category: string;
   introduction: string;
+  introduction_ar?: string;
   always_heavy: {
     title_en: string;
     title_ar: string;
@@ -242,13 +280,16 @@ export interface TafkheemTarqeeqData {
     mnemonic_en: string;
     count: number;
     tafkheem_levels: string[];
+    tafkheem_levels_ar?: string[];
   };
   always_light: {
     title_en: string;
     title_ar: string;
     description: string;
+    description_ar?: string;
     letters: string;
     note: string;
+    note_ar?: string;
   };
   variable_letters: {
     title_en: string;
@@ -256,12 +297,15 @@ export interface TafkheemTarqeeqData {
     letters: {
       arabic: string;
       name_en: string;
+      name_ar?: string;
       rule: string;
+      rule_ar?: string;
       heavy_example?: string;
       light_example?: string;
     }[];
   };
   common_mistakes: string[];
+  common_mistakes_ar?: string[];
   verified: true;
 }
 
@@ -271,6 +315,7 @@ export interface WaqfSymbol {
   title_en: string;
   title_ar: string;
   description: string;
+  description_ar?: string;
 }
 
 export interface WaqfData {
@@ -279,8 +324,10 @@ export interface WaqfData {
   title_ar: string;
   category: string;
   introduction: string;
+  introduction_ar?: string;
   symbols: WaqfSymbol[];
   stopping_effects: string[];
+  stopping_effects_ar?: string[];
   verified: true;
 }
 
@@ -307,6 +354,9 @@ export interface UserSettings {
   darkMode: boolean;
   showTransliteration: boolean;
   showTranslation: boolean;
+  language: Language;
+  lastMushafPage?: number;
+  mushafBookmarks?: number[];
 }
 
 export interface ModuleProgress {
@@ -329,10 +379,42 @@ export interface QuranApiVerse {
   id: number;
   verse_key: string;
   text_uthmani_tajweed: string;
+  page_number?: number;
+  juz_number?: number;
+  ruku_number?: number;
+  hizb_number?: number;
+  sajdah_number?: number | null;
 }
 
 export interface QuranApiResponse {
   verses: QuranApiVerse[];
+}
+
+export type RevelationPlace = 'makkah' | 'madinah';
+
+export interface SurahHeader {
+  number: number;
+  nameSimple: string;
+  nameArabic: string;
+  versesCount: number;
+  pages: [number, number];
+  bismillahPre: boolean;
+  revelationPlace: RevelationPlace;
+}
+
+export interface VerseTajweed {
+  verseKey: string;
+  surah: number;
+  ayah: number;
+  tajweedHtml: string;
+  juzNumber: number;
+}
+
+export interface MushafPageData {
+  pageNumber: number;
+  juzNumber: number;
+  verses: VerseTajweed[];
+  surahsOnPage: SurahHeader[];
 }
 
 export interface AlQuranCloudResponse {
@@ -354,6 +436,8 @@ export interface AlQuranCloudResponse {
 export interface PracticeQuestion {
   example: QuranicExample;
   correctAnswer: string;
+  correctAnswerAr?: string;
   options: string[];
+  optionsAr?: string[];
   moduleId: string;
 }
