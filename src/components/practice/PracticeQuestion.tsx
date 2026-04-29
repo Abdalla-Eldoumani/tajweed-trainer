@@ -6,6 +6,7 @@ import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { formatSurahReference } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 import type { PracticeQuestion as PracticeQuestionType } from "@/lib/types";
 
 interface PracticeQuestionProps {
@@ -16,27 +17,36 @@ interface PracticeQuestionProps {
 }
 
 export function PracticeQuestion({ question, questionNumber, totalQuestions, onAnswer }: PracticeQuestionProps) {
+  const { t, lang, isAr } = useTranslation();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
+
+  const displayOptions = isAr && question.optionsAr ? question.optionsAr : question.options;
+  const displayCorrect = isAr && question.correctAnswerAr ? question.correctAnswerAr : question.correctAnswer;
 
   const handleSelect = (option: string) => {
     if (answered) return;
     setSelectedAnswer(option);
     setAnswered(true);
-    onAnswer(option === question.correctAnswer);
+    onAnswer(option === displayCorrect);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between text-sm text-text-muted">
-        <span>Question {questionNumber} of {totalQuestions}</span>
+        <span>{t("practice.questionOf").replace("{current}", String(questionNumber)).replace("{total}", String(totalQuestions))}</span>
         <span className="text-xs">
-          {formatSurahReference(question.example.surah_name_en, question.example.surah, question.example.ayah)}
+          {formatSurahReference(
+            { en: question.example.surah_name_en, ar: question.example.surah_name_ar },
+            question.example.surah,
+            question.example.ayah,
+            lang,
+          )}
         </span>
       </div>
 
       <Card className="text-center space-y-3">
-        <p className="text-xs text-text-muted">Identify the tajweed rule for the highlighted word:</p>
+        <p className="text-xs text-text-muted">{t("practice.identifyRule")}</p>
         <ArabicText text={question.example.arabic} quran size="lg" />
         <div className="pt-1">
           <span className="text-xs font-medium text-primary dark:text-primary-light">
@@ -47,8 +57,8 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
       </Card>
 
       <div className="grid gap-2" role="radiogroup">
-        {question.options.map((option, i) => {
-          const isCorrect = option === question.correctAnswer;
+        {displayOptions.map((option, i) => {
+          const isCorrect = option === displayCorrect;
           const isSelected = option === selectedAnswer;
 
           return (
