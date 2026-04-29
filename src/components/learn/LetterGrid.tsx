@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { LetterCard } from "./LetterCard";
+import { useTranslation } from "@/lib/i18n";
 
 interface LetterInfo {
   arabic: string;
   name_en: string;
+  name_ar?: string;
   condition?: string;
   note?: string;
 }
@@ -21,6 +23,7 @@ interface LetterGridProps {
 
 export function LetterGrid({ groups }: LetterGridProps) {
   const [selected, setSelected] = useState<string | null>(null);
+  const { isAr } = useTranslation();
 
   const selectedLetter = groups
     .flatMap((g) => g.letters)
@@ -37,6 +40,7 @@ export function LetterGrid({ groups }: LetterGridProps) {
                 key={letter.arabic + letter.name_en}
                 arabic={letter.arabic}
                 nameEn={letter.name_en}
+                nameAr={letter.name_ar}
                 selected={selected === letter.arabic}
                 onClick={() => setSelected(selected === letter.arabic ? null : letter.arabic)}
               />
@@ -47,7 +51,7 @@ export function LetterGrid({ groups }: LetterGridProps) {
 
       {selectedLetter && (
         <div className="p-4 rounded-lg bg-primary/5 dark:bg-primary-light/10 border border-primary/20">
-          <p className="text-sm font-medium">{selectedLetter.name_en}</p>
+          <p className="text-sm font-medium">{isAr && selectedLetter.name_ar ? selectedLetter.name_ar : selectedLetter.name_en}</p>
           {selectedLetter.condition && (
             <p className="text-xs text-text-muted mt-1">{selectedLetter.condition}</p>
           )}
