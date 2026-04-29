@@ -4,16 +4,20 @@ import { memo } from "react";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 
 interface LetterCardProps {
   arabic: string;
   nameEn: string;
+  nameAr?: string;
   description?: string;
   selected?: boolean;
   onClick?: () => void;
 }
 
-export const LetterCard = memo(function LetterCard({ arabic, nameEn, description, selected, onClick }: LetterCardProps) {
+export const LetterCard = memo(function LetterCard({ arabic, nameEn, nameAr, description, selected, onClick }: LetterCardProps) {
+  const { isAr } = useTranslation();
+  const displayName = isAr && nameAr ? nameAr : nameEn;
   return (
     <Card
       hover={!!onClick}
@@ -30,7 +34,7 @@ export const LetterCard = memo(function LetterCard({ arabic, nameEn, description
       } : undefined}
     >
       <ArabicText text={arabic} size="xl" className="block mb-1" />
-      <p className="text-xs font-medium">{nameEn}</p>
+      <p className="text-xs font-medium">{displayName}</p>
       {description && <p className="text-[10px] text-text-muted mt-1">{description}</p>}
     </Card>
   );
