@@ -1,4 +1,4 @@
-import type { TajweedProgress, UserSettings, ModuleProgress } from "./types";
+import type { TajweedProgress, UserSettings, ModuleProgress, ReciterId, Language } from "./types";
 
 const STORAGE_KEY = "tajweed-trainer-progress";
 
@@ -24,8 +24,110 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   },
 };
 
+// Caps protect against pathological inputs from a tampered localStorage —
+// e.g. a 100,000-entry bookmarks array that bloats every render.
+const MAX_BOOKMARKS = 200;
+const MAX_LESSONS_PER_MODULE = 200;
+const MAX_QUIZ_SCORES_PER_MODULE = 500;
+const MAX_MODULES = 100;
+
+const VALID_RECITERS: readonly ReciterId[] = ["husary", "alafasy"];
+const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
+const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
+
 function isBrowser(): boolean {
   return typeof window !== "undefined";
+}
+
+function isObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+function pickEnum<T extends string>(value: unknown, options: readonly T[], fallback: T): T {
+  return options.includes(value as T) ? (value as T) : fallback;
+}
+
+function pickNumber(value: unknown, fallback: number, min?: number, max?: number): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+  if (min !== undefined && value < min) return fallback;
+  if (max !== undefined && value > max) return fallback;
+  return value;
+}
+
+function sanitizeSettings(input: unknown): UserSettings {
+  if (!isObject(input)) return DEFAULT_SETTINGS;
+  const bookmarks = Array.isArray(input.mushafBookmarks)
+    ? Array.from(
+        new Set(
+          (input.mushafBookmarks as unknown[])
+            .filter((n): n is number => typeof n === "number" && Number.isInteger(n) && n >= 1 && n <= 604),
+        ),
+      )
+        .slice(0, MAX_BOOKMARKS)
+        .sort((a, b) => a - b)
+    : [];
+  return {
+    reciter: pickEnum(input.reciter, VALID_RECITERS, DEFAULT_SETTINGS.reciter),
+    playbackSpeed: ([0.5, 0.75, 1.0] as const).includes(input.playbackSpeed as 0.5 | 0.75 | 1.0)
+      ? (input.playbackSpeed as number)
+      : DEFAULT_SETTINGS.playbackSpeed,
+    fontSize: pickEnum(input.fontSize, VALID_FONT_SIZES, DEFAULT_SETTINGS.fontSize),
+    darkMode: typeof input.darkMode === "boolean" ? input.darkMode : DEFAULT_SETTINGS.darkMode,
+    showTransliteration:
+      typeof input.showTransliteration === "boolean" ? input.showTransliteration : DEFAULT_SETTINGS.showTransliteration,
+    showTranslation:
+      typeof input.showTranslation === "boolean" ? input.showTranslation : DEFAULT_SETTINGS.showTranslation,
+    language: pickEnum(input.language, VALID_LANGUAGES, DEFAULT_SETTINGS.language),
+    lastMushafPage: pickNumber(input.lastMushafPage, 1, 1, 604),
+    mushafBookmarks: bookmarks,
+  };
+}
+
+function sanitizeModule(input: unknown): ModuleProgress {
+  if (!isObject(input)) return { lessonsCompleted: [], quizScores: [], lastAccessed: "" };
+  const lessonsCompleted = Array.isArray(input.lessonsCompleted)
+    ? (input.lessonsCompleted as unknown[])
+        .filter((s): s is string => typeof s === "string" && s.length > 0 && s.length < 100)
+        .slice(0, MAX_LESSONS_PER_MODULE)
+    : [];
+  const quizScores = Array.isArray(input.quizScores)
+    ? (input.quizScores as unknown[])
+        .filter((q): q is { lessonId: string; score: number; date: string } =>
+          isObject(q) &&
+          typeof q.lessonId === "string" &&
+          typeof q.score === "number" &&
+          Number.isFinite(q.score) &&
+          typeof q.date === "string",
+        )
+        .slice(0, MAX_QUIZ_SCORES_PER_MODULE)
+    : [];
+  const lastAccessed = typeof input.lastAccessed === "string" ? input.lastAccessed : "";
+  return { lessonsCompleted, quizScores, lastAccessed };
+}
+
+function sanitizeProgress(input: unknown): TajweedProgress {
+  if (!isObject(input)) return DEFAULT_PROGRESS;
+  const modules: Record<string, ModuleProgress> = {};
+  if (isObject(input.modules)) {
+    const entries = Object.entries(input.modules).slice(0, MAX_MODULES);
+    for (const [id, mod] of entries) {
+      if (typeof id === "string" && id.length > 0 && id.length < 100) {
+        modules[id] = sanitizeModule(mod);
+      }
+    }
+  }
+  const streaks = isObject(input.streaks)
+    ? {
+        currentStreak: pickNumber(input.streaks.currentStreak, 0, 0, 100000),
+        longestStreak: pickNumber(input.streaks.longestStreak, 0, 0, 100000),
+        lastPracticeDate: typeof input.streaks.lastPracticeDate === "string" ? input.streaks.lastPracticeDate : "",
+      }
+    : DEFAULT_PROGRESS.streaks;
+  return {
+    modules,
+    settings: sanitizeSettings(input.settings),
+    streaks,
+  };
 }
 
 export function getProgress(): TajweedProgress {
@@ -33,7 +135,7 @@ export function getProgress(): TajweedProgress {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_PROGRESS;
-    return { ...DEFAULT_PROGRESS, ...JSON.parse(raw) };
+    return sanitizeProgress(JSON.parse(raw));
   } catch {
     return DEFAULT_PROGRESS;
   }
