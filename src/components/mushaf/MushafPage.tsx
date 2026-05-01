@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { useAudio } from "@/hooks/useAudio";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
@@ -31,25 +32,44 @@ export function MushafPage({ data }: MushafPageProps) {
         className="font-quran leading-[2.4] text-arabic-xl text-justify"
         style={{ textAlignLast: "center" }}
       >
-        {data.surahsOnPage.map((s) => (
-          <header key={s.number}>
-            <SurahCartouche surah={s} />
-            <BismillahLine surahNumber={s.number} />
-          </header>
-        ))}
-
         <div className="leading-[2.6]">
-          {data.verses.map((v) => (
-            <button
-              key={v.verseKey}
-              type="button"
-              onClick={() => handleVerseTap(v.surah, v.ayah)}
-              aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
-              className="mushaf-verse"
-            >
-              <TajweedText tajweedHtml={v.tajweedHtml} className="!leading-[2.6]" />{" "}
-            </button>
-          ))}
+          {data.verses.map((v, i) => {
+            const prev = i > 0 ? data.verses[i - 1] : null;
+            // A surah begins on this page when ayah 1 appears as the first
+            // verse rendered or directly after a verse from a different surah.
+            // Render the cartouche and Bismillah at this exact boundary so the
+            // layout matches a physical Mushaf, where surah headings interleave
+            // with verses instead of all stacking at the top of the page.
+            const beginsNewSurah = v.ayah === 1 && (!prev || prev.surah !== v.surah);
+            const surahMeta = beginsNewSurah
+              ? data.surahsOnPage.find((s) => s.number === v.surah)
+              : null;
+
+            if (beginsNewSurah && !surahMeta && process.env.NODE_ENV !== "production") {
+              console.warn(
+                `MushafPage: missing surah metadata for surah ${v.surah} on page ${data.pageNumber}`
+              );
+            }
+
+            return (
+              <Fragment key={v.verseKey}>
+                {beginsNewSurah && surahMeta && (
+                  <header>
+                    <SurahCartouche surah={surahMeta} />
+                    <BismillahLine surahNumber={v.surah} />
+                  </header>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleVerseTap(v.surah, v.ayah)}
+                  aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
+                  className="mushaf-verse"
+                >
+                  <TajweedText tajweedHtml={v.tajweedHtml} className="!leading-[2.6]" />{" "}
+                </button>
+              </Fragment>
+            );
+          })}
         </div>
       </article>
 
