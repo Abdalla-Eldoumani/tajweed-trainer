@@ -98,7 +98,7 @@ export function RuleCard({
                 {letters.map((letter) => (
                   <div
                     key={letter.arabic + (letter.name_en ?? "")}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cream dark:bg-cream-dark border border-gold-light/20 dark:border-gold-dark/20"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bg-card dark:bg-bg-card-dark border border-gold-light/20 dark:border-gold-dark/20"
                   >
                     <ArabicText text={letter.arabic} size="sm" />
                     <span className="text-xs text-text-muted">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</span>
