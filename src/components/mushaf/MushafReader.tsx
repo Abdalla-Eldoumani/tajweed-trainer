@@ -101,8 +101,13 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Treat the dropdown as a "jump to" picker. A page can show 0, 1, 2,
+              or 3 surah starts, so there is no single right answer for "selected
+              option". Binding value to the page number used to make the label
+              lie when the page coincidentally matched a surah number (e.g.
+              page 106 displaying "106. Quraysh" while showing Al-Ma'idah). */}
           <select
-            value={page}
+            value=""
             onChange={(e) => router.push(`/mushaf/surah/${e.target.value}`)}
             className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
             aria-label={t("mushaf.surahIndex")}
