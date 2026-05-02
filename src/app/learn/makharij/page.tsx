@@ -76,7 +76,7 @@ export default function MakharijPage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div id="makharij-overview" className="scroll-mt-20">
         <SectionBanner
           title={isAr ? makharijData.title_ar : makharijData.title_en}
           subtitle={isAr ? makharijData.title_en : makharijData.title_ar}
@@ -148,6 +148,7 @@ export default function MakharijPage() {
         nextLabel={{ en: "Noon Sakinah", ar: "النون الساكنة والتنوين" }}
         onMarkComplete={() => markLessonComplete("makharij", "makharij-main")}
         isComplete={progress.lessonsCompleted.includes("makharij-main")}
+        practiceModuleId="makharij"
       />
     </div>
   );
