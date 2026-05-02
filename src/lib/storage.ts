@@ -25,6 +25,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
     lastPracticeDate: "",
   },
   reviews: {},
+  memorizedVerses: [],
 };
 
 // Caps protect against pathological inputs from a tampered localStorage —
@@ -34,6 +35,8 @@ const MAX_LESSONS_PER_MODULE = 200;
 const MAX_QUIZ_SCORES_PER_MODULE = 500;
 const MAX_MODULES = 100;
 const MAX_REVIEWS = 2000;
+const MAX_MEMORIZED = 6236;
+const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 
 const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 
@@ -144,6 +147,18 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
   return out;
 }
 
+function sanitizeMemorized(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+  const out = new Set<string>();
+  for (const v of input) {
+    if (typeof v !== "string") continue;
+    if (!VERSE_KEY_PATTERN.test(v)) continue;
+    out.add(v);
+    if (out.size >= MAX_MEMORIZED) break;
+  }
+  return Array.from(out);
+}
+
 function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return DEFAULT_PROGRESS;
   const modules: Record<string, ModuleProgress> = {};
@@ -167,6 +182,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     settings: sanitizeSettings(input.settings),
     streaks,
     reviews: sanitizeReviews(input.reviews),
+    memorizedVerses: sanitizeMemorized(input.memorizedVerses),
   };
 }
 
@@ -234,6 +250,27 @@ export function setReview(questionId: string, state: ReviewState): void {
   const progress = getProgress();
   progress.reviews[questionId] = state;
   setProgress(progress);
+}
+
+// Returns the new memorized state (true if marked, false if cleared) so the
+// caller can update its UI without reading back from storage.
+export function toggleMemorizedVerse(verseKey: string): boolean {
+  if (!isBrowser()) return false;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return false;
+  const progress = getProgress();
+  const set = new Set(progress.memorizedVerses);
+  let nowMemorized: boolean;
+  if (set.has(verseKey)) {
+    set.delete(verseKey);
+    nowMemorized = false;
+  } else {
+    if (set.size >= MAX_MEMORIZED) return progress.memorizedVerses.includes(verseKey);
+    set.add(verseKey);
+    nowMemorized = true;
+  }
+  progress.memorizedVerses = Array.from(set);
+  setProgress(progress);
+  return nowMemorized;
 }
 
 export function saveQuizScore(moduleId: string, lessonId: string, score: number): void {

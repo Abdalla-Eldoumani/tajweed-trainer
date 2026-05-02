@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
+import { useMemorization } from "@/hooks/useMemorization";
 import { useTranslation } from "@/lib/i18n";
 import { MODULES } from "@/components/layout/nav-data";
 import learningPath from "@/data/content/learning-path.json";
@@ -18,6 +19,7 @@ export default function ProgressPage() {
   const { progress, moduleProgress, getOverallCompletion, resetProgress } = useProgress();
   const { stats: reviewStatsFn } = useReviews();
   const reviewStats = reviewStatsFn();
+  const { count: memorizedCount } = useMemorization();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const totalLessons: Record<string, number> = {};
@@ -74,6 +76,17 @@ export default function ProgressPage() {
             </div>
           </div>
           <p className="text-xs text-text-muted">{t("review.statsHelp")}</p>
+        </Card>
+      )}
+
+      {memorizedCount > 0 && (
+        <Card>
+          <h2 className="font-heading font-semibold mb-3">{t("memorize.statsTitle")}</h2>
+          <div className="text-2xl font-bold text-primary dark:text-primary-light mb-1">
+            {memorizedCount}
+          </div>
+          <p className="text-xs text-text-muted mb-1">{t("memorize.statsCount")}</p>
+          <p className="text-xs text-text-muted">{t("memorize.statsHelp")}</p>
         </Card>
       )}
 

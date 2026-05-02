@@ -408,6 +408,8 @@ export interface TajweedProgress {
     lastPracticeDate: string;
   };
   reviews: Record<string, ReviewState>;
+  // Stable verseKeys ("surah:ayah") the user has marked memorized.
+  memorizedVerses: string[];
 }
 
 export interface QuranApiVerse {
