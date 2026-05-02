@@ -23,6 +23,10 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
 
   const displayOptions = isAr && question.optionsAr ? question.optionsAr : question.options;
   const displayCorrect = isAr && question.correctAnswerAr ? question.correctAnswerAr : question.correctAnswer;
+  // Authored Question records carry their own prompt; legacy random-from-examples
+  // questions don't and fall back to the static "identify the rule" header.
+  const promptText =
+    (isAr && question.prompt?.ar) || question.prompt?.en || t("practice.identifyRule");
 
   const handleSelect = (option: string) => {
     if (answered) return;
@@ -46,7 +50,7 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
       </div>
 
       <Card className="text-center space-y-3">
-        <p className="text-xs text-text-muted">{t("practice.identifyRule")}</p>
+        <p className="text-xs text-text-muted">{promptText}</p>
         <ArabicText text={question.example.arabic} quran size="lg" />
         <div className="pt-1">
           <span className="text-xs font-medium text-primary dark:text-primary-light">
