@@ -1,7 +1,9 @@
 #!/usr/bin/env node
-// Phase 2 verification: drives Chromium against the dev server and asserts the
-// authored question pool reaches the practice UI for qalqalah, with prompts,
-// authored options, and audio still playable. Mirrors verify-mushaf.mjs.
+// Phase 2 verification, updated for the Phase 3 practice hub: drives Chromium
+// against the dev server and asserts the authored question pool reaches the
+// per-module practice routes. The old module-filter dropdown has been replaced
+// by the hub at /practice (PracticeModuleCard grid), with each module on its
+// own route /practice/<id>.
 
 import { chromium } from "playwright-core";
 
@@ -33,40 +35,42 @@ async function main() {
     if (res.status() === 404) failed404s.push(res.url());
   });
 
-  // 1. Practice page loads with the qalqalah option in the filter dropdown,
-  // showing the authored question count (30).
+  // 1. Practice hub renders 9 module tiles + Mixed Review. Each module tile
+  //    surfaces its question count (30) somewhere in its card text.
   await page.goto(`${BASE}/practice`, { waitUntil: "networkidle" });
-  const qalqalahOption = await page.locator('option:has-text("Qalqalah")').first().textContent();
-  record(
-    "Qalqalah filter shows 30 authored questions",
-    /Qalqalah \(30\)/.test(qalqalahOption ?? ""),
-    `option text: ${qalqalahOption}`,
-  );
+  // Wait for client-side render so the cards (which read useProgress) mount.
+  await page.waitForTimeout(500);
 
-  // 1b. All 9 modules show (30) authored questions in the filter dropdown.
-  const modules = [
-    "Makharij",
-    "Noon Sakinah",
-    "Meem Sakinah",
-    "Ghunnah",
-    "Qalqalah",
-    "Madd",
-    "Laam",
-    "Heavy",
-    "Waqf",
+  const hubModules = [
+    { name: "Makharij", id: "makharij" },
+    { name: "Noon Sakinah", id: "noon-sakinah" },
+    { name: "Meem Sakinah", id: "meem-sakinah" },
+    { name: "Ghunnah", id: "ghunnah" },
+    { name: "Qalqalah", id: "qalqalah" },
+    { name: "Madd", id: "madd" },
+    { name: "Laam", id: "laam-raa" },
+    { name: "Heavy", id: "tafkheem-tarqeeq" },
+    { name: "Waqf", id: "waqf" },
   ];
-  for (const m of modules) {
-    const text = await page.locator(`option:has-text("${m}")`).first().textContent();
+  for (const m of hubModules) {
+    const card = page.locator(`a[href="/practice/${m.id}"]`).first();
+    const cardText = (await card.textContent({ timeout: 5000 }).catch(() => "")) ?? "";
     record(
-      `${m} filter shows 30 authored questions`,
-      /\(30\)/.test(text ?? ""),
-      `option text: ${text}`,
+      `${m.name} hub tile renders with 30 questions`,
+      /30/.test(cardText),
+      `card text excerpt: ${cardText.slice(0, 80).replace(/\s+/g, " ")}`,
     );
   }
+  const mixedCard = page.locator(`a[href="/practice/mixed"]`).first();
+  record(
+    "Mixed Review tile is on the hub",
+    (await mixedCard.count()) === 1,
+    `mixed tile count: ${await mixedCard.count()}`,
+  );
 
-  // 2. Select qalqalah, start the quiz.
-  await page.selectOption("#module-filter", "qalqalah");
-  // QuizSession is dynamic-imported with ssr: false, so wait for it to mount.
+  // 2. Navigate to /practice/qalqalah and start a quiz directly. The dropdown
+  //    is gone; the per-module route is the entry point.
+  await page.goto(`${BASE}/practice/qalqalah`, { waitUntil: "networkidle" });
   await page.waitForFunction(() => {
     return Array.from(document.querySelectorAll("button")).some((b) =>
       (b.textContent ?? "").trim().toLowerCase().includes("start"),
@@ -75,14 +79,8 @@ async function main() {
   await page.click('button:has-text("Start Quiz")');
   await page.waitForTimeout(400);
 
-  // 3. The first question's prompt is one of the authored prompts (not the
-  //    static "identify the rule" header). The qalqalah authored prompts all
-  //    contain "qalqalah" or "letter" or "level" in English.
-  const promptText = await page.locator("article p, .text-text-muted").first().textContent();
-  // Check the visible Card's first <p> contains an authored prompt by looking
-  // for a question mark or one of our key phrases.
+  // 3. The first question's prompt is one of the authored prompts.
   const allPText = await page.evaluate(() => {
-    const card = document.querySelector("article + div div") || document.querySelector("[class*='Card'], .text-center");
     return Array.from(document.querySelectorAll("p"))
       .map((p) => p.textContent ?? "")
       .filter((t) => t.length > 5);
@@ -96,25 +94,23 @@ async function main() {
     `paragraphs found: ${allPText.length}; first match preview: ${(allPText.find((t) => /\?/.test(t)) ?? "").slice(0, 60)}`,
   );
 
-  // 4. The question shows 4 options (the authored options).
+  // 4. The question shows 4 options.
   const optionButtons = await page.locator('button[role="radio"]').count();
   record("Question shows 4 options", optionButtons === 4, `count: ${optionButtons}`);
 
-  // 5. The verse fragment is one of the 5 verified examples (text content includes
-  //    one of these expected fragments).
+  // 5. The verse fragment is one of the verified examples.
   const expectedFragments = ["يَقْطَعُونَ", "يَجْعَلُونَ", "يَلِدْ", "الْفَلَقِ", "وَتَبَّ", "تَبَّتْ", "لَمْ يَلِدْ", "قُلْ أَعُوذُ"];
-  const cardText = await page.locator("article, body").first().innerText();
+  const cardText = await page.locator("body").first().innerText();
   const matchedFragment = expectedFragments.find((f) => cardText.includes(f));
   record(
     "Verse fragment matches a verified qalqalah example",
     !!matchedFragment,
-    matchedFragment ? `matched: ${matchedFragment}` : "no expected fragment found in question card",
+    matchedFragment ? `matched: ${matchedFragment}` : "no expected fragment found",
   );
 
-  // 6. Click the first option, expect either a green-correct or red-incorrect
-  //    state to appear (UI transitions to answered state).
+  // 6. Tapping an option marks the question answered.
   await page.locator('button[role="radio"]').first().click();
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(300);
   const answeredState = await page.locator(
     'button[role="radio"][aria-checked="true"], button[disabled]',
   ).count();
@@ -124,11 +120,46 @@ async function main() {
     `disabled/checked count: ${answeredState}`,
   );
 
-  // 7. No serious console errors.
+  // 6b. Phase 6: post-answer feedback shows the rule label and an "Open the
+  //     lesson section" link before the auto-advance fires (3s window).
+  const feedbackText = await page.locator('[aria-live="polite"]').first().textContent({ timeout: 2000 }).catch(() => "");
+  record(
+    "Post-answer feedback shows rule and lesson link",
+    /Rule|الحكم/.test(feedbackText ?? "") && /(Open|افتح)/.test(feedbackText ?? ""),
+    `feedback text excerpt: ${(feedbackText ?? "").slice(0, 100).replace(/\s+/g, " ")}`,
+  );
+
+  // 6c. Phase 6: lesson page shows a "Practice this module" CTA below
+  //     LessonNavigation. Use makharij (no prereq, never locked).
+  await page.goto(`${BASE}/learn/makharij`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(500);
+  const practiceCtaCount = await page.locator(`a[href="/practice/makharij"]`).count();
+  record(
+    "Lesson page shows Practice this module CTA",
+    practiceCtaCount >= 1,
+    `cta count: ${practiceCtaCount}`,
+  );
+
+  // 7. The back-to-hub link routes to /practice. Click it and confirm the URL.
+  await page.goto(`${BASE}/practice/qalqalah`, { waitUntil: "networkidle" });
+  await page.click('a[href="/practice"]');
+  await page.waitForURL(`${BASE}/practice`, { timeout: 5000 });
+  record("Back-to-hub link routes to /practice", page.url() === `${BASE}/practice`, `url: ${page.url()}`);
+
+  // 8. /practice/<unknown-module> returns a 404. The route uses notFound().
+  const notFoundResp = await page.goto(`${BASE}/practice/does-not-exist`, { waitUntil: "networkidle" });
+  record(
+    "Unknown module id triggers a not-found response",
+    notFoundResp?.status() === 404 || (await page.locator("body").innerText()).toLowerCase().includes("not found"),
+    `status: ${notFoundResp?.status()}`,
+  );
+
+  // 9. No serious console errors.
   const seriousErrors = consoleErrors.filter((e) => {
     if (e.includes("hydration") || e.includes("Hydration") || e.includes("Text content")) return false;
+    if (e.includes("Expected server HTML") || e.includes("did not match")) return false;
     if (e.includes("favicon")) return false;
-    if (e.includes("404") && failed404s.every((u) => /favicon|\.ico/.test(u))) return false;
+    if (e.includes("404") && failed404s.every((u) => /favicon|\.ico|does-not-exist/.test(u))) return false;
     return true;
   });
   record(
