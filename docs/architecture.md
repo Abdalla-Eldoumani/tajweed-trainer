@@ -13,18 +13,22 @@ How the app is wired together, top-down.
 |  |   AppProvider (SettingsProvider + SettingsSync)             |  |
 |  |   +-- useSettings()       <-- localStorage (SSR-safe)       |  |
 |  |   +-- useProgress()       <-- localStorage                  |  |
+|  |   +-- useReciters()       <-- localStorage (24h cache)      |  |
+|  |   +-- useModuleLock(id)   --> { locked, mounted, prereq }   |  |
 |  |   +-- useTranslation()    --> { t, lang, isAr, dir }        |  |
 |  |                                                             |  |
 |  |   Routes:                                                   |  |
 |  |   /                       Home                              |  |
 |  |   /learn                  Module index                      |  |
-|  |   /learn/[module]         Lesson page                       |  |
+|  |   /learn/[module]         Lesson page (lock-aware)          |  |
 |  |   /mushaf                 114-surah index                   |  |
 |  |   /mushaf/page/[page]     Page reader (1..604)              |  |
 |  |   /mushaf/surah/[surah]   Redirect to start page            |  |
-|  |   /practice               Quiz                              |  |
+|  |   /practice               Hub of module tiles               |  |
+|  |   /practice/[module]      Per-module quiz                   |  |
+|  |   /practice/mixed         Random across all modules         |  |
 |  |   /progress               Stats and streak                  |  |
-|  |   /settings               Preferences                       |  |
+|  |   /settings               Preferences (incl. reciter list)  |  |
 |  +-------------------------------------------------------------+  |
 |                            |                                      |
 |  +-------------------------+----------------------------------+   |
@@ -52,12 +56,12 @@ How the app is wired together, top-down.
 
 - **types.ts** — every TypeScript type used by the app. Optional `_ar` fields on the content types are additive so existing JSON keeps validating during translation work.
 - **quran-api.ts** — wraps Quran.com v4. Exposes `getTajweedSurah(n)`, `getTajweedPage(n)`, `getChaptersIndex()` (with bundled fallback), and `getStartPageForSurah(n)`. Memory cache (15 minutes by default, 7 days for chapters), exponential backoff. 4xx fails fast; 5xx and network errors retry.
-- **audio-api.ts** — wraps Al Quran Cloud. `fetchAudioUrl(surah, ayah, reciter)` with a 1-hour cache. The `RECITERS` array drives the Settings reciter picker.
+- **audio-api.ts** — wraps Al Quran Cloud. `fetchAudioUrl(surah, ayah, reciter)` with a 1-hour cache. `fetchReciterEditions()` pulls the full audio editions list from `/edition?format=audio&type=versebyverse`, validates each entry against `RECITER_IDENTIFIER_PATTERN`, and pins Husary and Alafasy at the front via `mergeWithDefaults`. `resolveReciterIdentifier()` aliases the legacy short ids (`husary`, `alafasy`) to the full alquran.cloud identifiers so persisted settings keep working.
 - **tajweed-colors.ts** — CSS-class to hex map for every tajweed rule the API emits, including dark-mode variants. Used by `TajweedText` and `ColorLegend`.
 - **storage.ts** — SSR-safe localStorage wrapper. `getSettings`, `setSettings`, `getProgress`, `setProgress`. Default settings include `lastMushafPage: 1` and `mushafBookmarks: []`.
 - **i18n.ts** — flat `key -> { en, ar }` dictionary, a `t(key, lang)` lookup, and the `useTranslation()` hook that pulls `lang` from settings and returns `{ t, lang, isAr, dir }`.
 - **utils.ts** — `cn()` for class merging, `formatSurahReference(name | { en, ar }, surah, ayah, locale)`, and `toArabicIndic(n)` for Arabic-Indic numerals.
-- **question-pool.ts** — collects every example across the rule files into a flat pool, builds a `RULE_AR_MAP` (English `rule_applied` to Arabic `rule_applied_ar`), and exposes `getRandomQuestions` with parallel `options` / `optionsAr` arrays.
+- **question-pool.ts** — collects every example across the rule files into a flat pool, builds a `RULE_AR_MAP` (English `rule_applied` to Arabic `rule_applied_ar`), and exposes `getRandomQuestions` with parallel `options` / `optionsAr` arrays. Authored Phase-2 questions in `src/data/questions/<module>.ts` take precedence over the legacy random-from-examples pool. `getModuleLastScore(progress, moduleId)` returns the most recent quiz score and total quizzes-taken count for the practice hub.
 
 ### `src/data/content/` — the source of truth
 
@@ -68,7 +72,7 @@ JSON files. Each entry that ships to the UI carries `verified: true`. The schema
 - **ui/** — primitive widgets (`Card`, `Button`, `Badge`, `ProgressBar`), Arabic-aware text wrappers (`ArabicText`, `TajweedText`), audio (`AudioPlayer`), Islamic ornaments (`Ornament`), framing (`QuranFrame`, `SectionBanner`), and the language switch (`LanguageToggle`).
 - **layout/** — `Sidebar` (desktop), `Header` and `MobileDrawer` (mobile), `AppProvider` (sets `<html dir lang>` from settings), and `nav-data` (single source for nav items and icons).
 - **learn/** — domain components for module pages: `ModuleCard`, `RuleCard`, `ExampleCard`, `LetterGrid`, `LetterCard`, `MakhrajDiagram`, `ColorLegend`, `LessonNavigation`.
-- **practice/** — `PracticeQuestion`, `QuizSession`, `StreakCounter`. The quiz reads from `question-pool.ts` and shows the locale-appropriate option text.
+- **practice/** — `PracticeQuestion` (now with post-answer feedback that surfaces the rule name, the authored explanation, and a link to `/learn/<moduleId>#<lessonAnchor>`), `QuizSession`, `StreakCounter`, and `PracticeModuleCard` (the tiles on the new `/practice` hub).
 - **mushaf/** — the 604-page reader:
   - `MushafFrame` is the outer ornate frame; the multi-color geometric band lives in CSS (`.mushaf-frame::after`).
   - `SurahCartouche` is the banner shown when a surah starts on the current page.
