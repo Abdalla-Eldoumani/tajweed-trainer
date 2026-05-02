@@ -345,7 +345,29 @@ export interface GlossaryData {
   verified: true;
 }
 
-export type ReciterId = 'husary' | 'alafasy';
+// Reciter id is the Al Quran Cloud edition `identifier` field. We constrain
+// it to the alquran.cloud format at runtime (`^[a-z0-9._-]+$`, length 1-64) in
+// `validateReciterIdentifier`. The two defaults (husary, alafasy) are aliased
+// to their full alquran.cloud identifiers (`ar.husary`, `ar.alafasy`) by the
+// resolver so persisted settings from before this expansion still work.
+export type ReciterId = string;
+
+// Built-in default reciter identifiers, kept as a const tuple so existing
+// code paths that compared against `"husary" | "alafasy"` keep working.
+export const DEFAULT_RECITER_IDS = ["husary", "alafasy"] as const;
+export type DefaultReciterId = (typeof DEFAULT_RECITER_IDS)[number];
+
+// Validation regex for a reciter identifier from the editions API.
+export const RECITER_IDENTIFIER_PATTERN = /^[a-z0-9._-]{1,64}$/;
+
+export interface ReciterEdition {
+  identifier: string;     // e.g. "ar.husary", "ar.alafasy"
+  language: string;       // ISO 639-1, e.g. "ar"
+  name: string;           // Native name
+  englishName: string;    // English transliteration of the reciter
+  format: "audio";
+  type: "versebyverse";
+}
 
 export interface UserSettings {
   reciter: ReciterId;
