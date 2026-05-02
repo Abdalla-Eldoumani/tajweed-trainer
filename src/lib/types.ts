@@ -441,3 +441,54 @@ export interface PracticeQuestion {
   optionsAr?: string[];
   moduleId: string;
 }
+
+// Authored question record for the per-module question files in
+// src/data/questions/. Richer than PracticeQuestion (the runtime UI shape) so
+// Phase 6 can surface the explanation and lesson anchor without a re-author.
+// The aggregator maps Question -> PracticeQuestion for current consumers.
+export type QuestionDifficulty = "easy" | "medium" | "hard";
+
+export interface QuestionOption {
+  id: string;
+  label: { en: string; ar?: string };
+}
+
+export interface QuestionSource {
+  surah: number;
+  ayah: number;
+  // ID of the Quran.com translation edition the gloss comes from. Null when
+  // the gloss is reused from an existing src/data/content/*.json example whose
+  // translation was hand-authored by the maintainer (not pulled from a
+  // numbered edition).
+  translationEditionId: number | null;
+  // Free-text origin marker. Either a path inside src/data/content/ for reused
+  // examples, or "quran.com api" / similar for snapshot-fetched verses.
+  provenance: string;
+}
+
+export interface Question {
+  id: string;
+  moduleId: string;
+  difficulty: QuestionDifficulty;
+  prompt: { en: string; ar?: string };
+  arabicText: string;
+  englishGloss: string;
+  options: QuestionOption[];
+  correctOptionId: string;
+  explanation: {
+    en: string;
+    ar?: string;
+    lessonAnchor: string;
+  };
+  source: QuestionSource;
+}
+
+// Verse snapshot record stored in src/data/verse-snapshots.json. Keyed
+// "<surah>:<ayah>" at the top level.
+export interface VerseSnapshot {
+  arabic: string;
+  gloss: string;
+  glossEditionId: number | null;
+  fetchedAt: string | null;
+  source: string;
+}
