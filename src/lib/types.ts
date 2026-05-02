@@ -387,6 +387,18 @@ export interface ModuleProgress {
   lastAccessed: string;
 }
 
+// Leitner box for spaced repetition. Each authored Question is tracked by its
+// stable id. Correct answer promotes one box (max 5); wrong resets to box 1.
+export type ReviewBox = 1 | 2 | 3 | 4 | 5;
+
+export interface ReviewState {
+  box: ReviewBox;
+  nextDueDate: string;   // ISO YYYY-MM-DD; due when today >= this
+  lastSeenDate: string;
+  timesSeen: number;
+  timesCorrect: number;
+}
+
 export interface TajweedProgress {
   modules: Record<string, ModuleProgress>;
   settings: UserSettings;
@@ -395,6 +407,7 @@ export interface TajweedProgress {
     longestStreak: number;
     lastPracticeDate: string;
   };
+  reviews: Record<string, ReviewState>;
 }
 
 export interface QuranApiVerse {

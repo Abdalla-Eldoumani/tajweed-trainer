@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { useProgress } from "@/hooks/useProgress";
+import { useReviews } from "@/hooks/useReviews";
 import { useTranslation } from "@/lib/i18n";
 import { MODULES } from "@/components/layout/nav-data";
 import learningPath from "@/data/content/learning-path.json";
@@ -15,6 +16,8 @@ const modules = learningPath.modules as LearningModule[];
 export default function ProgressPage() {
   const { t, isAr } = useTranslation();
   const { progress, moduleProgress, getOverallCompletion, resetProgress } = useProgress();
+  const { stats: reviewStatsFn } = useReviews();
+  const reviewStats = reviewStatsFn();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const totalLessons: Record<string, number> = {};
@@ -48,6 +51,31 @@ export default function ProgressPage() {
         </div>
         <ProgressBar value={overall} />
       </Card>
+
+      {reviewStats.total > 0 && (
+        <Card>
+          <h2 className="font-heading font-semibold mb-3">{t("review.statsTitle")}</h2>
+          <div className="flex flex-wrap gap-6 mb-2">
+            <div>
+              <div className="text-2xl font-bold text-primary dark:text-primary-light">
+                {reviewStats.total}
+              </div>
+              <p className="text-xs text-text-muted">{t("review.statsTotal")}</p>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-accent">{reviewStats.mastered}</div>
+              <p className="text-xs text-text-muted">{t("review.statsMastered")}</p>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                {reviewStats.due}
+              </div>
+              <p className="text-xs text-text-muted">{t("review.statsDue")}</p>
+            </div>
+          </div>
+          <p className="text-xs text-text-muted">{t("review.statsHelp")}</p>
+        </Card>
+      )}
 
       <Card>
         <h2 className="font-heading font-semibold mb-3">{t("progress.streak")}</h2>

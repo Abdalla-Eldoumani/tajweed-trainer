@@ -211,6 +211,21 @@ export function getRandomQuestions(count: number, moduleFilter?: string): Practi
   return shuffle([...authoredAll, ...legacyForUnauthored]).slice(0, count);
 }
 
+// Pulls questions whose stable ids appear in `dueIds`. Returned questions are
+// shuffled and capped at `count`. Ids no longer present in the authored pool
+// are dropped silently (e.g., a question was renamed).
+export function getDueQuestions(dueIds: string[], count: number): PracticeQuestion[] {
+  if (dueIds.length === 0) return [];
+  const dueSet = new Set(dueIds);
+  const matched: Question[] = [];
+  for (const list of Object.values(AUTHORED_BY_MODULE)) {
+    for (const q of list) {
+      if (dueSet.has(q.id)) matched.push(q);
+    }
+  }
+  return shuffle(matched).slice(0, count).map(questionToPractice);
+}
+
 // Most recent quiz score and total quizzes taken for a module. Reads
 // progress.modules[id].quizScores (the existing schema). Pure — caller passes
 // the progress snapshot so we don't pull useProgress into a server component.

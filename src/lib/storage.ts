@@ -1,4 +1,4 @@
-import type { TajweedProgress, UserSettings, ModuleProgress, Language } from "./types";
+import type { TajweedProgress, UserSettings, ModuleProgress, Language, ReviewState, ReviewBox } from "./types";
 import { validateReciterIdentifier } from "./audio-api";
 import { getCachedReciterEditions } from "@/hooks/useReciters";
 
@@ -24,6 +24,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
     longestStreak: 0,
     lastPracticeDate: "",
   },
+  reviews: {},
 };
 
 // Caps protect against pathological inputs from a tampered localStorage —
@@ -32,6 +33,9 @@ const MAX_BOOKMARKS = 200;
 const MAX_LESSONS_PER_MODULE = 200;
 const MAX_QUIZ_SCORES_PER_MODULE = 500;
 const MAX_MODULES = 100;
+const MAX_REVIEWS = 2000;
+
+const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 
 const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
 const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
@@ -118,6 +122,28 @@ function sanitizeModule(input: unknown): ModuleProgress {
   return { lessonsCompleted, quizScores, lastAccessed };
 }
 
+function sanitizeReview(input: unknown): ReviewState | null {
+  if (!isObject(input)) return null;
+  const box = VALID_BOXES.includes(input.box as ReviewBox) ? (input.box as ReviewBox) : 1;
+  const nextDueDate = typeof input.nextDueDate === "string" && input.nextDueDate.length <= 32 ? input.nextDueDate : "";
+  const lastSeenDate = typeof input.lastSeenDate === "string" && input.lastSeenDate.length <= 32 ? input.lastSeenDate : "";
+  const timesSeen = pickNumber(input.timesSeen, 0, 0, 100000);
+  const timesCorrect = pickNumber(input.timesCorrect, 0, 0, 100000);
+  return { box, nextDueDate, lastSeenDate, timesSeen, timesCorrect };
+}
+
+function sanitizeReviews(input: unknown): Record<string, ReviewState> {
+  if (!isObject(input)) return {};
+  const out: Record<string, ReviewState> = {};
+  const entries = Object.entries(input).slice(0, MAX_REVIEWS);
+  for (const [id, value] of entries) {
+    if (typeof id !== "string" || id.length === 0 || id.length >= 200) continue;
+    const review = sanitizeReview(value);
+    if (review) out[id] = review;
+  }
+  return out;
+}
+
 function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return DEFAULT_PROGRESS;
   const modules: Record<string, ModuleProgress> = {};
@@ -140,6 +166,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     modules,
     settings: sanitizeSettings(input.settings),
     streaks,
+    reviews: sanitizeReviews(input.reviews),
   };
 }
 
@@ -195,6 +222,17 @@ export function markLessonComplete(moduleId: string, lessonId: string): void {
     progress.modules[moduleId].lessonsCompleted.push(lessonId);
   }
   progress.modules[moduleId].lastAccessed = new Date().toISOString();
+  setProgress(progress);
+}
+
+export function getReviews(): Record<string, ReviewState> {
+  return getProgress().reviews;
+}
+
+export function setReview(questionId: string, state: ReviewState): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  progress.reviews[questionId] = state;
   setProgress(progress);
 }
 

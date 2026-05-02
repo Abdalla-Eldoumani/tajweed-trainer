@@ -261,6 +261,34 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "practice.hub.mixedBadge": { en: "All modules", ar: "كل الوحدات" },
   "practice.hub.backToHub": { en: "Practice hub", ar: "صفحة التدريب" },
+  "practice.hub.reviewTitle": { en: "Review Due", ar: "مراجعة مستحقّة" },
+  "practice.hub.reviewDesc": {
+    en: "Questions you've answered before, scheduled by spaced repetition.",
+    ar: "أسئلة أجبت عنها سابقا، مجدولة وفق المراجعة المتباعدة.",
+  },
+  "practice.hub.reviewBadge": { en: "Spaced", ar: "متباعد" },
+  "review.title": { en: "Review Due", ar: "مراجعة مستحقّة" },
+  "review.subtitle": {
+    en: "Revisit questions on a spaced schedule. Missed answers come back tomorrow; mastered ones every 30 days.",
+    ar: "راجع الأسئلة وفق جدول متباعد. تعود الأخطاء غدا، وما أتقنته كل 30 يوما.",
+  },
+  "review.dueCount": {
+    en: "{count} question(s) due for review.",
+    ar: "{count} سؤال/أسئلة جاهزة للمراجعة.",
+  },
+  "review.startReview": { en: "Start Review", ar: "ابدأ المراجعة" },
+  "review.empty": {
+    en: "No reviews due. Answer some practice questions to build a review queue.",
+    ar: "لا توجد مراجعات مستحقّة. أجب على أسئلة التدريب لبناء قائمة المراجعة.",
+  },
+  "review.statsTitle": { en: "Spaced Review", ar: "المراجعة المتباعدة" },
+  "review.statsTotal": { en: "Tracked", ar: "متابع" },
+  "review.statsMastered": { en: "Mastered", ar: "متقَن" },
+  "review.statsDue": { en: "Due now", ar: "مستحق الآن" },
+  "review.statsHelp": {
+    en: "Each question you answer is scheduled for review based on how well you remember it.",
+    ar: "يُجدول كل سؤال أجبت عنه للمراجعة بحسب إتقانك له.",
+  },
 
   // Progress
   "progress.title": { en: "Your Progress", ar: "تقدّمك" },

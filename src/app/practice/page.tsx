@@ -4,17 +4,21 @@ import { StreakCounter } from "@/components/practice/StreakCounter";
 import { PracticeModuleCard } from "@/components/practice/PracticeModuleCard";
 import { useTranslation } from "@/lib/i18n";
 import { useProgress } from "@/hooks/useProgress";
+import { useReviews } from "@/hooks/useReviews";
 import { MODULES } from "@/components/layout/nav-data";
 import { getAvailableModules, getModuleLastScore } from "@/lib/question-pool";
 
 export default function PracticePage() {
   const { t } = useTranslation();
   const { progress } = useProgress();
+  const { stats } = useReviews();
+  const reviewStats = stats();
   const availableModules = getAvailableModules();
   const moduleCountById = new Map(availableModules.map((m) => [m.id, m.count]));
   const totalQuestions = availableModules.reduce((acc, m) => acc + m.count, 0);
 
   const mixedSummary = getModuleLastScore(progress, "mixed");
+  const reviewSummary = getModuleLastScore(progress, "review");
 
   return (
     <div className="space-y-6">
@@ -36,6 +40,18 @@ export default function PracticePage() {
           description={{ en: t("practice.hub.mixedDesc"), ar: t("practice.hub.mixedDesc") }}
           badge={{ en: t("practice.hub.mixedBadge"), ar: t("practice.hub.mixedBadge") }}
         />
+        {reviewStats.due > 0 && (
+          <PracticeModuleCard
+            href="/practice/review"
+            titleEn={`Review Due (${reviewStats.due})`}
+            titleAr={`مراجعة مستحقّة (${reviewStats.due})`}
+            questionCount={reviewStats.due}
+            summary={reviewSummary}
+            accent="review"
+            description={{ en: t("practice.hub.reviewDesc"), ar: t("practice.hub.reviewDesc") }}
+            badge={{ en: t("practice.hub.reviewBadge"), ar: t("practice.hub.reviewBadge") }}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
