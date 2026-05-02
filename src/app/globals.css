@@ -416,15 +416,20 @@ html, body {
   background-color: rgba(212, 185, 106, 0.18);
 }
 
-/* Style the verse-end marker the API embeds: <span class="end">١</span> */
+/* Style the verse-end marker the API embeds: <span class="end">١</span>.
+   The container is sized as a circle for 1-2 digit ayah numbers and grows
+   into a stadium pill for 3-digit numbers (Al-Baqarah, Aal-Imran etc.).
+   white-space: nowrap stops a 3-digit number from breaking mid-digit. */
 .tajweed-text .end {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.6em;
+  box-sizing: border-box;
+  min-width: 1.6em;
   height: 1.6em;
+  padding: 0 0.3em;
   margin: 0 0.25em;
-  border-radius: 50%;
+  border-radius: 9999px;
   background: radial-gradient(circle, rgba(197, 165, 90, 0.18) 0%, rgba(197, 165, 90, 0.08) 70%, transparent 100%);
   border: 1.2px solid var(--gold-dark);
   color: var(--gold-dark);
@@ -433,6 +438,7 @@ html, body {
   vertical-align: middle;
   line-height: 1;
   font-family: var(--font-quran), 'Amiri Quran', serif;
+  white-space: nowrap;
 }
 
 .dark .tajweed-text .end {
