@@ -43,7 +43,7 @@ export default function QalqalahPage() {
         </p>
       </div>
 
-      <Card>
+      <Card id="qalqalah-letters">
         <h2 className="font-heading font-semibold mb-3">{t("qalqalah.fiveLetters")}</h2>
         <div className="flex flex-wrap justify-center gap-4 mb-4">
           {qalqalahData.letters.map((letter) => (
@@ -53,7 +53,7 @@ export default function QalqalahPage() {
             </div>
           ))}
         </div>
-        <div className="p-3 rounded-lg bg-accent/10 text-center">
+        <div id="qalqalah-mnemonic" className="p-3 rounded-lg bg-accent/10 text-center scroll-mt-20">
           <p className="text-xs font-semibold text-text-muted mb-1">{t("module.mnemonic")}</p>
           <ArabicText text={qalqalahData.mnemonic_ar} size="md" />
           {!isAr && <p className="text-xs text-text-muted mt-1">{qalqalahData.mnemonic_en}</p>}
@@ -62,21 +62,24 @@ export default function QalqalahPage() {
 
       <div className="space-y-4">
         {qalqalahData.levels.map((level) => (
-          <RuleCard
-            key={level.id}
-            titleEn={level.title_en}
-            titleAr={level.title_ar}
-            description={level.description}
-            descriptionAr={level.description_ar}
-            examples={level.examples}
-            color="#A30000"
-            defaultExpanded
-          />
+          // Anchor target for question explanations that link back to a specific
+          // level. scroll-mt-20 keeps the heading clear of the sticky header.
+          <div key={level.id} id={level.id} className="scroll-mt-20">
+            <RuleCard
+              titleEn={level.title_en}
+              titleAr={level.title_ar}
+              description={level.description}
+              descriptionAr={level.description_ar}
+              examples={level.examples}
+              color="#A30000"
+              defaultExpanded
+            />
+          </div>
         ))}
       </div>
 
       {qalqalahData.common_mistakes.length > 0 && (
-        <Card>
+        <Card id="qalqalah-mistakes">
           <h2 className="font-heading font-semibold text-red-600 dark:text-red-400 mb-3">{t("module.commonMistakes")}</h2>
           <ul className="space-y-2">
             {(isAr && qalqalahData.common_mistakes_ar ? qalqalahData.common_mistakes_ar : qalqalahData.common_mistakes).map((mistake, i) => (
