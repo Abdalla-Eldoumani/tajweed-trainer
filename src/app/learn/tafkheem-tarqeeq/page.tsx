@@ -43,7 +43,7 @@ export default function TafkheemTarqeeqPage() {
       </div>
 
       {/* Always Heavy */}
-      <Card>
+      <Card id="always-heavy" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? tafkheemData.always_heavy.title_ar : tafkheemData.always_heavy.title_en}</h2>
 
         <div className="flex flex-wrap justify-center gap-4 mt-4">
@@ -75,7 +75,7 @@ export default function TafkheemTarqeeqPage() {
       </Card>
 
       {/* Always Light */}
-      <Card>
+      <Card id="always-light" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? tafkheemData.always_light.title_ar : tafkheemData.always_light.title_en}</h2>
         <p className="text-sm text-text-muted mt-2">{isAr && tafkheemData.always_light.description_ar ? tafkheemData.always_light.description_ar : tafkheemData.always_light.description}</p>
 
@@ -87,7 +87,7 @@ export default function TafkheemTarqeeqPage() {
       </Card>
 
       {/* Variable Letters */}
-      <Card>
+      <Card id="variable-letters" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? tafkheemData.variable_letters.title_ar : tafkheemData.variable_letters.title_en}</h2>
 
         <div className="mt-4 space-y-3">
@@ -134,6 +134,7 @@ export default function TafkheemTarqeeqPage() {
         nextLabel={{ en: "Waqf", ar: "الوقف" }}
         onMarkComplete={() => markLessonComplete("tafkheem-tarqeeq", "tafkheem-tarqeeq-main")}
         isComplete={progress.lessonsCompleted.includes("tafkheem-tarqeeq-main")}
+        practiceModuleId="tafkheem-tarqeeq"
       />
     </div>
   );
