@@ -407,6 +407,16 @@ const translations: Record<string, { en: string; ar: string }> = {
   "speech.read": { en: "Read prompt aloud", ar: "اقرأ السؤال بصوت" },
   "speech.stop": { en: "Stop reading", ar: "إيقاف القراءة" },
 
+  // Insights (anonymous local analytics)
+  "insights.title": { en: "Insights", ar: "إحصائيات الاستخدام" },
+  "insights.quizStarts": { en: "Quizzes started", ar: "اختبارات بُدئت" },
+  "insights.quizFinishes": { en: "Quizzes finished", ar: "اختبارات مكتملة" },
+  "insights.topRoutes": { en: "Most-visited screens", ar: "أكثر الشاشات زيارة" },
+  "insights.localOnly": {
+    en: "All usage data stays on this device. Nothing is sent to a server.",
+    ar: "تبقى جميع بيانات الاستخدام على هذا الجهاز. لا يُرسل شيء إلى خادم.",
+  },
+
   // Search
   "search.title": { en: "Search", ar: "بحث" },
   "search.subtitle": {

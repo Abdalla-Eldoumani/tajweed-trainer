@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { SettingsProvider, useSettings } from "@/hooks/useSettings";
 import { PWARegister } from "./PWARegister";
+import { RouteAnalytics } from "./RouteAnalytics";
 
 function SettingsSync({ children }: { children: React.ReactNode }) {
   const { settings } = useSettings();
@@ -28,6 +29,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <SettingsProvider>
       <PWARegister />
+      <RouteAnalytics />
       <SettingsSync>{children}</SettingsSync>
     </SettingsProvider>
   );

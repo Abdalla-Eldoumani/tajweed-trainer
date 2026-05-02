@@ -412,6 +412,26 @@ export interface TajweedProgress {
   memorizedVerses: string[];
   // moduleId -> set of section anchor slugs the user has scrolled past.
   readSections: Record<string, string[]>;
+  analytics: AnalyticsEvent[];
+}
+
+// Local-only insights ring buffer. Never sent over the network. The fixed set
+// of event types keeps callers honest and lets the progress page summarize
+// usage without a query DSL.
+export type AnalyticsEventType =
+  | "route.view"
+  | "quiz.start"
+  | "quiz.finish"
+  | "review.start"
+  | "memorize.toggle"
+  | "search.query";
+
+export interface AnalyticsEvent {
+  type: AnalyticsEventType;
+  // Optional small string payload (path, moduleId, search term). Capped at
+  // 200 chars by the sanitizer so a tampered storage entry can't bloat memory.
+  meta?: string;
+  ts: string; // ISO timestamp
 }
 
 export interface QuranApiVerse {

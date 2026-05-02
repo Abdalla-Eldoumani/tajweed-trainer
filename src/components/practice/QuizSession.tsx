@@ -8,6 +8,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { getRandomQuestions, hasQuestionsForModule, getDueQuestions } from "@/lib/question-pool";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { useTranslation } from "@/lib/i18n";
 import type { PracticeQuestion as PracticeQuestionType } from "@/lib/types";
 
@@ -28,6 +29,7 @@ export function QuizSession({ moduleFilter, mode = "random" }: QuizSessionProps)
   const [transitioning, setTransitioning] = useState(false);
   const { saveQuizScore, updateStreak } = useProgress();
   const { dueIds, recordReview } = useReviews();
+  const { record: recordAnalytics } = useAnalytics();
 
   const hasQuestions = useMemo(() => hasQuestionsForModule(moduleFilter), [moduleFilter]);
   const dueCount = useMemo(() => (mode === "review" ? dueIds().length : 0), [mode, dueIds]);
@@ -41,7 +43,8 @@ export function QuizSession({ moduleFilter, mode = "random" }: QuizSessionProps)
     setFinished(false);
     setStarted(true);
     setTransitioning(false);
-  }, [mode, dueIds, moduleFilter]);
+    recordAnalytics(mode === "review" ? "review.start" : "quiz.start", moduleFilter);
+  }, [mode, dueIds, moduleFilter, recordAnalytics]);
 
   const handleAnswer = useCallback(
     (correct: boolean) => {
@@ -63,13 +66,14 @@ export function QuizSession({ moduleFilter, mode = "random" }: QuizSessionProps)
           const moduleKey = mode === "review" ? "review" : moduleFilter ?? "mixed";
           saveQuizScore(moduleKey, mode === "review" ? "review" : "quiz", percentage);
           updateStreak();
+          recordAnalytics("quiz.finish", `${moduleKey}:${percentage}`);
         } else {
           setCurrentIndex((i) => i + 1);
         }
         setTransitioning(false);
       }, 3000);
     },
-    [currentIndex, questions, score, mode, moduleFilter, saveQuizScore, updateStreak, recordReview]
+    [currentIndex, questions, score, mode, moduleFilter, saveQuizScore, updateStreak, recordReview, recordAnalytics]
   );
 
   if (!started) {

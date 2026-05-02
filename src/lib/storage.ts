@@ -1,4 +1,13 @@
-import type { TajweedProgress, UserSettings, ModuleProgress, Language, ReviewState, ReviewBox } from "./types";
+import type {
+  TajweedProgress,
+  UserSettings,
+  ModuleProgress,
+  Language,
+  ReviewState,
+  ReviewBox,
+  AnalyticsEvent,
+  AnalyticsEventType,
+} from "./types";
 import { validateReciterIdentifier } from "./audio-api";
 import { getCachedReciterEditions } from "@/hooks/useReciters";
 
@@ -27,6 +36,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   reviews: {},
   memorizedVerses: [],
   readSections: {},
+  analytics: [],
 };
 
 // Caps protect against pathological inputs from a tampered localStorage —
@@ -40,6 +50,15 @@ const MAX_MEMORIZED = 6236;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
+const MAX_ANALYTICS = 1000;
+const VALID_ANALYTICS_TYPES: readonly AnalyticsEventType[] = [
+  "route.view",
+  "quiz.start",
+  "quiz.finish",
+  "review.start",
+  "memorize.toggle",
+  "search.query",
+];
 
 const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 
@@ -150,6 +169,24 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
   return out;
 }
 
+function sanitizeAnalytics(input: unknown): AnalyticsEvent[] {
+  if (!Array.isArray(input)) return [];
+  const out: AnalyticsEvent[] = [];
+  // Take the most recent MAX_ANALYTICS — older events get evicted as the
+  // ring buffer fills up.
+  const recent = input.slice(-MAX_ANALYTICS);
+  for (const item of recent) {
+    if (!isObject(item)) continue;
+    const type = item.type;
+    if (typeof type !== "string" || !VALID_ANALYTICS_TYPES.includes(type as AnalyticsEventType)) continue;
+    const ts = typeof item.ts === "string" && item.ts.length <= 32 ? item.ts : "";
+    if (!ts) continue;
+    const meta = typeof item.meta === "string" && item.meta.length <= 200 ? item.meta : undefined;
+    out.push({ type: type as AnalyticsEventType, ts, meta });
+  }
+  return out;
+}
+
 function sanitizeReadSections(input: unknown): Record<string, string[]> {
   if (!isObject(input)) return {};
   const out: Record<string, string[]> = {};
@@ -205,6 +242,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     reviews: sanitizeReviews(input.reviews),
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
     readSections: sanitizeReadSections(input.readSections),
+    analytics: sanitizeAnalytics(input.analytics),
   };
 }
 
@@ -271,6 +309,23 @@ export function setReview(questionId: string, state: ReviewState): void {
   if (!isBrowser()) return;
   const progress = getProgress();
   progress.reviews[questionId] = state;
+  setProgress(progress);
+}
+
+export function getAnalytics(): AnalyticsEvent[] {
+  return getProgress().analytics;
+}
+
+export function recordAnalyticsEvent(type: AnalyticsEventType, meta?: string): void {
+  if (!isBrowser()) return;
+  if (!VALID_ANALYTICS_TYPES.includes(type)) return;
+  const progress = getProgress();
+  const safeMeta = typeof meta === "string" ? meta.slice(0, 200) : undefined;
+  const next: AnalyticsEvent[] = [
+    ...progress.analytics.slice(-MAX_ANALYTICS + 1),
+    { type, meta: safeMeta, ts: new Date().toISOString() },
+  ];
+  progress.analytics = next;
   setProgress(progress);
 }
 
