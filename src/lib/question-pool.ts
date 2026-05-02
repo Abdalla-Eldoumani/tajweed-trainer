@@ -1,4 +1,4 @@
-import type { QuranicExample, PracticeQuestion, Question } from "./types";
+import type { QuranicExample, PracticeQuestion, Question, TajweedProgress } from "./types";
 
 import noonData from "@/data/content/noon-sakinah-tanween.json";
 import meemData from "@/data/content/meem-sakinah.json";
@@ -209,6 +209,29 @@ export function getRandomQuestions(count: number, moduleFilter?: string): Practi
     (e) => (AUTHORED_BY_MODULE[e.moduleId] ?? []).length === 0,
   ).map(legacyToPractice);
   return shuffle([...authoredAll, ...legacyForUnauthored]).slice(0, count);
+}
+
+// Most recent quiz score and total quizzes taken for a module. Reads
+// progress.modules[id].quizScores (the existing schema). Pure — caller passes
+// the progress snapshot so we don't pull useProgress into a server component.
+export interface ModuleScoreSummary {
+  lastScore: number | null;
+  quizzesTaken: number;
+  lastDate: string | null;
+}
+
+export function getModuleLastScore(progress: TajweedProgress, moduleId: string): ModuleScoreSummary {
+  const scores = progress.modules[moduleId]?.quizScores ?? [];
+  if (scores.length === 0) {
+    return { lastScore: null, quizzesTaken: 0, lastDate: null };
+  }
+  // Latest by date string (ISO sorts lexicographically).
+  const latest = scores.reduce((acc, s) => (s.date > acc.date ? s : acc), scores[0]);
+  return {
+    lastScore: latest.score,
+    quizzesTaken: scores.length,
+    lastDate: latest.date,
+  };
 }
 
 export function getAvailableModules(): { id: string; name: string; count: number }[] {
