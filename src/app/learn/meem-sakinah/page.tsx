@@ -37,7 +37,7 @@ export default function MeemSakinahPage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div id="meem-sakinah-overview" className="scroll-mt-20">
         <SectionBanner
           title={isAr ? meemData.title_ar : meemData.title_en}
           subtitle={isAr ? meemData.title_en : meemData.title_ar}
@@ -49,18 +49,19 @@ export default function MeemSakinahPage() {
 
       <div className="space-y-4">
         {meemData.rules.map((rule) => (
-          <RuleCard
-            key={rule.id}
-            titleEn={rule.title_en}
-            titleAr={rule.title_ar}
-            description={rule.description}
-            descriptionAr={rule.description_ar}
-            letters={rule.letters}
-            examples={rule.examples}
-            commonMistakes={rule.common_mistakes}
-            commonMistakesAr={rule.common_mistakes_ar}
-            color={RULE_COLORS[rule.id] ?? "#1B5E20"}
-          />
+          <div key={rule.id} id={rule.id} className="scroll-mt-20">
+            <RuleCard
+              titleEn={rule.title_en}
+              titleAr={rule.title_ar}
+              description={rule.description}
+              descriptionAr={rule.description_ar}
+              letters={rule.letters}
+              examples={rule.examples}
+              commonMistakes={rule.common_mistakes}
+              commonMistakesAr={rule.common_mistakes_ar}
+              color={RULE_COLORS[rule.id] ?? "#1B5E20"}
+            />
+          </div>
         ))}
       </div>
 
@@ -71,6 +72,7 @@ export default function MeemSakinahPage() {
         nextLabel={{ en: "Ghunnah", ar: "الغنّة" }}
         onMarkComplete={() => markLessonComplete("meem-sakinah", "meem-sakinah-main")}
         isComplete={progress.lessonsCompleted.includes("meem-sakinah-main")}
+        practiceModuleId="meem-sakinah"
       />
     </div>
   );
