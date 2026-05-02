@@ -4,14 +4,31 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
+import { useModuleLock } from "@/hooks/useModuleLock";
+import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import tafkheemData from "@/data/content/tafkheem-tarqeeq.json";
 
 export default function TafkheemTarqeeqPage() {
+  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("tafkheem-tarqeeq");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("tafkheem-tarqeeq");
   const { t, isAr } = useTranslation();
+
+  if (!mounted) return <LearnLoading />;
+  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
+    return (
+      <LockedModuleScreen
+        moduleTitleEn={tafkheemData.title_en}
+        moduleTitleAr={tafkheemData.title_ar}
+        prereqId={prereqId}
+        prereqTitleEn={prereqTitleEn}
+        prereqTitleAr={prereqTitleAr}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8">
