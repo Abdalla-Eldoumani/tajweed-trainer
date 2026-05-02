@@ -99,6 +99,7 @@ export default function QalqalahPage() {
         nextLabel={{ en: "Madd", ar: "أحكام المد" }}
         onMarkComplete={() => markLessonComplete("qalqalah", "qalqalah-main")}
         isComplete={progress.lessonsCompleted.includes("qalqalah-main")}
+        practiceModuleId="qalqalah"
       />
     </div>
   );
