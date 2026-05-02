@@ -79,6 +79,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "learn.locked.startPrereq": { en: "Start the prerequisite", ar: "ابدأ الوحدة السابقة" },
   "learn.locked.backToList": { en: "Back to all modules", ar: "العودة إلى جميع الوحدات" },
+  "learn.practiceThisModule": { en: "Practice this module", ar: "تدرّب على هذه الوحدة" },
 
   // Module common
   "module.letters": { en: "Letters", ar: "الحروف" },
