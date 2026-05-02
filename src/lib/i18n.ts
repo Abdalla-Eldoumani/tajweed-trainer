@@ -236,6 +236,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   "practice.currentStreak": { en: "Current Streak", ar: "السلسلة الحالية" },
   "practice.longestStreak": { en: "Longest Streak", ar: "أطول سلسلة" },
   "practice.loadingQuestion": { en: "Loading next question...", ar: "جاري تحميل السؤال التالي..." },
+  "practice.feedback.correct": { en: "Correct", ar: "صحيح" },
+  "practice.feedback.incorrect": { en: "Incorrect", ar: "غير صحيح" },
+  "practice.feedback.rule": { en: "Rule", ar: "الحكم" },
+  "practice.feedback.openLesson": { en: "Open the lesson section", ar: "افتح قسم الدرس" },
 
   // Practice hub (per-module practice)
   "practice.hub.title": { en: "Practice", ar: "التدريب" },

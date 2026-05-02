@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Card } from "@/components/ui/Card";
@@ -27,6 +28,13 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
   // questions don't and fall back to the static "identify the rule" header.
   const promptText =
     (isAr && question.prompt?.ar) || question.prompt?.en || t("practice.identifyRule");
+  const explanationText = question.explanation
+    ? (isAr && question.explanation.ar) || question.explanation.en
+    : null;
+  const lessonHref = question.explanation?.lessonAnchor
+    ? `/learn/${question.moduleId}#${question.explanation.lessonAnchor}`
+    : `/learn/${question.moduleId}`;
+  const wasCorrect = selectedAnswer === displayCorrect;
 
   const handleSelect = (option: string) => {
     if (answered) return;
@@ -97,6 +105,43 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
           );
         })}
       </div>
+
+      {answered && (
+        <div
+          aria-live="polite"
+          className={cn(
+            "rounded-lg border-2 p-3 space-y-2",
+            wasCorrect
+              ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+              : "border-red-500 bg-red-50 dark:bg-red-900/20",
+          )}
+        >
+          <div className="flex items-center gap-2">
+            <span
+              className={cn(
+                "text-xs font-semibold uppercase tracking-wide",
+                wasCorrect ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400",
+              )}
+            >
+              {wasCorrect ? t("practice.feedback.correct") : t("practice.feedback.incorrect")}
+            </span>
+          </div>
+          <p className="text-sm">
+            <span className="text-text-muted">{t("practice.feedback.rule")}: </span>
+            <span className="font-medium">{displayCorrect}</span>
+          </p>
+          {explanationText && <p className="text-sm">{explanationText}</p>}
+          {question.explanation && (
+            <Link
+              href={lessonHref}
+              className="inline-flex items-center text-sm font-medium text-primary dark:text-primary-light hover:underline min-h-[44px]"
+            >
+              {t("practice.feedback.openLesson")}
+              <span aria-hidden className="ms-1">{isAr ? "←" : "→"}</span>
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }

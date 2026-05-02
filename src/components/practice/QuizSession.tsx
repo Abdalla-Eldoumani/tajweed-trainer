@@ -42,6 +42,8 @@ export function QuizSession({ moduleFilter }: QuizSessionProps) {
       if (correct) setScore((s) => s + 1);
       setTransitioning(true);
 
+      // 3000ms gives users a beat to read the post-answer feedback (rule
+      // name, explanation, lesson link) before auto-advancing.
       setTimeout(() => {
         if (currentIndex + 1 >= questions.length) {
           setFinished(true);
@@ -53,7 +55,7 @@ export function QuizSession({ moduleFilter }: QuizSessionProps) {
           setCurrentIndex((i) => i + 1);
         }
         setTransitioning(false);
-      }, 1500);
+      }, 3000);
     },
     [currentIndex, questions.length, score, moduleFilter, saveQuizScore, updateStreak]
   );
