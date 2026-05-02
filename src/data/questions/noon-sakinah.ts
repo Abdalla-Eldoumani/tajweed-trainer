@@ -472,8 +472,7 @@ export const questions: Question[] = [
     source: { surah: 30, ayah: 4, translationEditionId: null, provenance: PROVENANCE },
   },
 
-  // ---------- HARD (8) — pending next commit ----------
-  /* PENDING_HARD_START
+  // ---------- HARD (8) ----------
   {
     id: "noon-hard-idgham-condition",
     moduleId: "noon-sakinah",
@@ -642,5 +641,4 @@ export const questions: Question[] = [
     },
     source: { surah: 9, ayah: 109, translationEditionId: null, provenance: PROVENANCE },
   },
-  PENDING_HARD_END */
 ];
