@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { SettingsProvider, useSettings } from "@/hooks/useSettings";
+import { PWARegister } from "./PWARegister";
 
 function SettingsSync({ children }: { children: React.ReactNode }) {
   const { settings } = useSettings();
@@ -26,6 +27,7 @@ function SettingsSync({ children }: { children: React.ReactNode }) {
 export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <SettingsProvider>
+      <PWARegister />
       <SettingsSync>{children}</SettingsSync>
     </SettingsProvider>
   );
