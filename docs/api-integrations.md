@@ -65,6 +65,42 @@ The wrapper passes `per_page=50` to safely cover any edge-case page; the API ret
 - Auth: none
 - Rate limit: undocumented; per-ayah results are cached for 1 hour.
 
+### `GET /edition?format=audio&type=versebyverse`
+
+Used by `fetchReciterEditions(signal?)` to populate the reciter selector. Returns the full list of audio reciter editions exposed by the API.
+
+Response shape (relevant fields):
+
+```jsonc
+{
+  "code": 200,
+  "status": "OK",
+  "data": [
+    {
+      "identifier": "ar.husary",
+      "language": "ar",
+      "name": "محمود خليل الحصري",
+      "englishName": "Mahmoud Khalil Al-Husary",
+      "format": "audio",
+      "type": "versebyverse"
+    }
+  ]
+}
+```
+
+The wrapper validates each entry through `isAudioVerseEdition`:
+
+- `identifier` must match `/^[a-z0-9._-]{1,64}$/` — see `RECITER_IDENTIFIER_PATTERN` in `src/lib/types.ts`. This bounds what we'll concatenate into the audio URL path.
+- `language` is a non-empty string ≤ 16 chars.
+- `name` and `englishName` are non-empty strings ≤ 200 chars.
+- `format === "audio"` and `type === "versebyverse"`.
+
+Anything failing validation is dropped silently. If the call fails entirely, the wrapper returns just the two built-in defaults (`ar.husary`, `ar.alafasy`) so the UI always renders something.
+
+The merged list is cached client-side for 24 hours under the `tajweed-trainer-reciters` key (`src/hooks/useReciters.ts`). On read, every entry is re-validated against the same regex; tampered entries are dropped.
+
+`storage.sanitizeSettings` re-checks the persisted reciter id (`pickReciter`) against the cached list when reading `UserSettings`. An unknown id falls back to the husary default — a tampered storage value cannot make the app reference a reciter the editions API doesn't know.
+
 ### `GET /ayah/{surah}:{ayah}/{reciter}`
 
 Used by `fetchAudioUrl(surah, ayah, reciter)`. Reciters:
@@ -115,6 +151,23 @@ The wrapper uses `data.audio` directly (CDN: `cdn.islamic.network`). The CDN URL
 ## Sanity-checking new tajweed classes
 
 The API occasionally introduces new tajweed class names. The `tajweed-colors.ts` map covers the well-known ones. If a class is missing, the CSS falls back to default ink color so nothing disappears, but the rule won't be color-coded. To catch new classes during development, add a temporary console warning to `TajweedText` for any class not in the map (gated by `process.env.NODE_ENV === "development"`), then update `tajweed-colors.ts`.
+
+## Storage caps and validation contract
+
+`src/lib/storage.ts` enforces caps on every persisted field so a tampered or runaway localStorage entry can't bloat memory or break rendering:
+
+| Field | Cap | Rationale |
+|---|---|---|
+| `mushafBookmarks` | 200 entries | Each entry is an integer 1–604; deduped and sorted on read. |
+| `lessonsCompleted` per module | 200 entries | Module ids ≤ 100 chars; lesson ids ≤ 100 chars. |
+| `quizScores` per module | 500 entries | Each entry is `{ lessonId, score, date }`. |
+| `modules` map | 100 keys | Module-id strings 1–100 chars. |
+| `reviews` map | 2000 entries | Authored pool is ≈270; cap leaves headroom for growth without bloating memory. |
+| `reciter` | one of cached editions list, or `husary` fallback | Validated against `^[a-z0-9._-]{1,64}$` then membership in the cached list. |
+| `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
+| `lastMushafPage` | integer 1–604 | Out-of-range values fall back to 1. |
+
+Sanitization runs on every `getProgress()` read. Defaults absorb anything malformed without throwing.
 
 ## Why these two APIs
 
