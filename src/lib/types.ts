@@ -440,6 +440,13 @@ export interface PracticeQuestion {
   options: string[];
   optionsAr?: string[];
   moduleId: string;
+  // Optional fields populated when this PracticeQuestion was derived from an
+  // authored Question record. The runtime UI may render `prompt` instead of the
+  // static "identify the rule" header. Phase 6 surfaces `explanation` after the
+  // user answers; for now it is carried through so authored data isn't lost.
+  prompt?: { en: string; ar?: string };
+  explanation?: { en: string; ar?: string; lessonAnchor: string };
+  questionId?: string;
 }
 
 // Authored question record for the per-module question files in
