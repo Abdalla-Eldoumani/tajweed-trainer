@@ -2,16 +2,54 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { MODULES, NAV_ITEMS, ChevronIcon } from "./nav-data";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { useTranslation } from "@/lib/i18n";
+import { useProgress } from "@/hooks/useProgress";
+import learningPath from "@/data/content/learning-path.json";
+import type { LearningModule } from "@/lib/types";
+
+const learningModules = learningPath.modules as LearningModule[];
+
+const LockIndicator = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
 
 export function Sidebar() {
   const pathname = usePathname();
   const [learnExpanded, setLearnExpanded] = useState(pathname.startsWith("/learn"));
   const { t, isAr } = useTranslation();
+  // Lock indicators are a hint, not enforcement (the route gates itself).
+  // Render them only after mount to avoid hydration mismatch from localStorage.
+  const { progress } = useProgress();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const lockedModuleIds = useMemo(() => {
+    if (!mounted) return new Set<string>();
+    const set = new Set<string>();
+    for (const m of learningModules) {
+      if (!m.prerequisite) continue;
+      const prereqDone = (progress.modules[m.prerequisite]?.lessonsCompleted.length ?? 0) > 0;
+      if (!prereqDone) set.add(m.id);
+    }
+    return set;
+  }, [mounted, progress]);
 
   return (
     <>
@@ -78,18 +116,21 @@ export function Sidebar() {
                     </Link>
                     {MODULES.map((m) => {
                       const moduleActive = pathname === `/learn/${m.id}`;
+                      const isLocked = lockedModuleIds.has(m.id);
                       return (
                         <Link
                           key={m.id}
                           href={`/learn/${m.id}`}
                           className={cn(
-                            "block px-3 py-1.5 rounded text-xs transition-colors",
+                            "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs transition-colors",
                             moduleActive
                               ? "text-primary font-medium dark:text-primary-light"
                               : "text-text-muted hover:text-text dark:hover:text-text-dark"
                           )}
+                          aria-label={isLocked ? `${isAr ? m.labelAr : m.label} (${t("learn.locked")})` : undefined}
                         >
-                          {isAr ? m.labelAr : m.label}
+                          <span className="flex-1">{isAr ? m.labelAr : m.label}</span>
+                          {isLocked && <LockIndicator className="opacity-70 shrink-0" />}
                         </Link>
                       );
                     })}
