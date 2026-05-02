@@ -403,6 +403,21 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
 
+  // Backup and restore
+  "settings.backup.title": { en: "Backup & Restore", ar: "النسخ الاحتياطي والاستعادة" },
+  "settings.backup.description": {
+    en: "Export your progress to a JSON file or restore from a previous backup. Useful when switching browsers or devices.",
+    ar: "صدّر تقدّمك إلى ملف JSON أو استعد نسخة سابقة. مفيد عند تغيير المتصفح أو الجهاز.",
+  },
+  "settings.backup.export": { en: "Export backup", ar: "تصدير نسخة" },
+  "settings.backup.import": { en: "Restore backup", ar: "استعادة نسخة" },
+  "settings.backup.exported": { en: "Backup downloaded.", ar: "تم تنزيل النسخة." },
+  "settings.backup.imported": { en: "Backup restored. Reloading…", ar: "تم استعادة النسخة. جارٍ إعادة التحميل…" },
+  "settings.backup.invalid": {
+    en: "That file isn't a valid Tajweed Trainer backup.",
+    ar: "هذا الملف ليس نسخة احتياطية صالحة.",
+  },
+
   // Speech (TTS for prompts only — NOT for Quranic text)
   "speech.read": { en: "Read prompt aloud", ar: "اقرأ السؤال بصوت" },
   "speech.stop": { en: "Stop reading", ar: "إيقاف القراءة" },

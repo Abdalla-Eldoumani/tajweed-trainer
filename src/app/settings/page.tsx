@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { useReciters } from "@/hooks/useReciters";
 import { resolveReciterIdentifier } from "@/lib/audio-api";
+import { exportProgress, importProgress } from "@/lib/storage";
 import type { ReciterEdition } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +29,39 @@ export default function SettingsPage() {
   const { settings, updateSettings } = useSettings();
   const { t, isAr, lang } = useTranslation();
   const { editions, loading: recitersLoading } = useReciters();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [backupStatus, setBackupStatus] = useState<{ kind: "success" | "error"; key: string } | null>(null);
+
+  const handleExport = () => {
+    const data = exportProgress();
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tajweed-trainer-backup-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setBackupStatus({ kind: "success", key: "settings.backup.exported" });
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = typeof reader.result === "string" ? reader.result : "";
+      const ok = importProgress(text);
+      setBackupStatus({ kind: ok ? "success" : "error", key: ok ? "settings.backup.imported" : "settings.backup.invalid" });
+      if (ok) {
+        // Reload so cached hooks (settings, progress) re-read the new state.
+        window.setTimeout(() => window.location.reload(), 600);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
 
   // Group editions by language code, but always pin Arabic first since the
   // two defaults live there and most users expect them at the top. The two
@@ -219,6 +254,38 @@ export default function SettingsPage() {
             />
           </label>
         </div>
+      </Card>
+
+      {/* Backup & Restore */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-2">{t("settings.backup.title")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.backup.description")}</p>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={handleExport}>
+            {t("settings.backup.export")}
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+            {t("settings.backup.import")}
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={handleImport}
+            className="sr-only"
+            aria-hidden="true"
+          />
+        </div>
+        {backupStatus && (
+          <p
+            className={cn(
+              "text-xs mt-2",
+              backupStatus.kind === "success" ? "text-primary dark:text-primary-light" : "text-red-600 dark:text-red-400",
+            )}
+          >
+            {t(backupStatus.key)}
+          </p>
+        )}
       </Card>
     </div>
   );

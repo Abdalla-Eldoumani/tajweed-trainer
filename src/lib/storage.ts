@@ -329,6 +329,29 @@ export function recordAnalyticsEvent(type: AnalyticsEventType, meta?: string): v
   setProgress(progress);
 }
 
+// Returns a JSON snapshot of the entire progress object suitable for download
+// as a backup file. The snapshot already passes through sanitizeProgress on
+// read, so untrusted fields are stripped.
+export function exportProgress(): string {
+  return JSON.stringify(getProgress(), null, 2);
+}
+
+// Replaces stored progress with the parsed payload after sanitization. Returns
+// false when the input isn't valid JSON or doesn't deserialize to an object;
+// the caller surfaces that failure to the user.
+export function importProgress(payload: string): boolean {
+  if (!isBrowser()) return false;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(payload);
+  } catch {
+    return false;
+  }
+  const sanitized = sanitizeProgress(parsed);
+  setProgress(sanitized);
+  return true;
+}
+
 export function getReadSections(moduleId: string): string[] {
   return getProgress().readSections[moduleId] ?? [];
 }
