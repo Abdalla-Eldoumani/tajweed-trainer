@@ -73,6 +73,12 @@ const translations: Record<string, { en: string; ar: string }> = {
   "learn.prerequisite": { en: "Prerequisite", ar: "متطلب سابق" },
   "learn.locked": { en: "Locked", ar: "مقفل" },
   "learn.completed": { en: "Completed", ar: "مكتمل" },
+  "learn.locked.body": {
+    en: "This module is locked. Complete a lesson in the prerequisite module to unlock it.",
+    ar: "هذه الوحدة مقفلة. أكمل درسا واحدا من الوحدة السابقة لفتحها.",
+  },
+  "learn.locked.startPrereq": { en: "Start the prerequisite", ar: "ابدأ الوحدة السابقة" },
+  "learn.locked.backToList": { en: "Back to all modules", ar: "العودة إلى جميع الوحدات" },
 
   // Module common
   "module.letters": { en: "Letters", ar: "الحروف" },
