@@ -5,12 +5,18 @@ import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { ExampleCard } from "@/components/learn/ExampleCard";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import laamRaaData from "@/data/content/laam-raa-rules.json";
+
+const SECTIONS = laamRaaData.sections.flatMap((s) => [
+  s.id,
+  ...((s.subtypes ?? []).map((st) => st.id)),
+]);
 
 export default function LaamRaaPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("laam-raa");
@@ -155,6 +161,8 @@ export default function LaamRaaPage() {
         isComplete={progress.lessonsCompleted.includes("laam-raa-main")}
         practiceModuleId="laam-raa"
       />
+
+      <LessonProgress moduleId="laam-raa" sections={SECTIONS} />
     </div>
   );
 }

@@ -5,12 +5,20 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import qalqalahData from "@/data/content/qalqalah.json";
+
+const SECTIONS = [
+  "qalqalah-letters",
+  "qalqalah-mnemonic",
+  ...qalqalahData.levels.map((l) => l.id),
+  "qalqalah-mistakes",
+];
 
 export default function QalqalahPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("qalqalah");
@@ -101,6 +109,8 @@ export default function QalqalahPage() {
         isComplete={progress.lessonsCompleted.includes("qalqalah-main")}
         practiceModuleId="qalqalah"
       />
+
+      <LessonProgress moduleId="qalqalah" sections={SECTIONS} />
     </div>
   );
 }

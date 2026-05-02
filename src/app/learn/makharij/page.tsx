@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
@@ -28,6 +29,8 @@ const LetterGrid = dynamic(
 );
 import { useProgress } from "@/hooks/useProgress";
 import makharijData from "@/data/content/makharij.json";
+
+const SECTIONS = ["makharij-overview", ...makharijData.regions.map((r) => r.id)];
 
 export default function MakharijPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("makharij");
@@ -150,6 +153,8 @@ export default function MakharijPage() {
         isComplete={progress.lessonsCompleted.includes("makharij-main")}
         practiceModuleId="makharij"
       />
+
+      <LessonProgress moduleId="makharij" sections={SECTIONS} />
     </div>
   );
 }

@@ -4,12 +4,19 @@ import { RuleCard } from "@/components/learn/RuleCard";
 import { Card } from "@/components/ui/Card";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import ghunnahData from "@/data/content/ghunnah.json";
+
+const SECTIONS = [
+  "ghunnah-definition",
+  ...ghunnahData.rules.map((r) => r.id),
+  "ghunnah-prominence",
+];
 
 export default function GhunnahPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("ghunnah");
@@ -107,6 +114,8 @@ export default function GhunnahPage() {
         isComplete={progress.lessonsCompleted.includes("ghunnah-main")}
         practiceModuleId="ghunnah"
       />
+
+      <LessonProgress moduleId="ghunnah" sections={SECTIONS} />
     </div>
   );
 }

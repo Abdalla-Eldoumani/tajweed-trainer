@@ -410,6 +410,8 @@ export interface TajweedProgress {
   reviews: Record<string, ReviewState>;
   // Stable verseKeys ("surah:ayah") the user has marked memorized.
   memorizedVerses: string[];
+  // moduleId -> set of section anchor slugs the user has scrolled past.
+  readSections: Record<string, string[]>;
 }
 
 export interface QuranApiVerse {

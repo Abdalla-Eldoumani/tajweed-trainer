@@ -80,6 +80,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "learn.locked.startPrereq": { en: "Start the prerequisite", ar: "ابدأ الوحدة السابقة" },
   "learn.locked.backToList": { en: "Back to all modules", ar: "العودة إلى جميع الوحدات" },
   "learn.practiceThisModule": { en: "Practice this module", ar: "تدرّب على هذه الوحدة" },
+  "learn.sectionsRead": { en: "{read} / {total} sections read", ar: "{read} / {total} أقسام مقروءة" },
+  "learn.nextUnread": { en: "Jump to next unread section", ar: "اذهب إلى القسم التالي غير المقروء" },
 
   // Module common
   "module.letters": { en: "Letters", ar: "الحروف" },

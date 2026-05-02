@@ -5,12 +5,18 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import noonData from "@/data/content/noon-sakinah-tanween.json";
+
+const SECTIONS = [
+  "noon-sakinah-overview",
+  ...noonData.rules.flatMap((r) => [r.id, ...((r.subtypes ?? []).map((st) => st.id))]),
+];
 
 const RULE_COLORS: Record<string, string> = {
   "izhar-halqi": "#169200",
@@ -150,6 +156,8 @@ export default function NoonSakinahPage() {
         isComplete={progress.lessonsCompleted.includes("noon-sakinah-main")}
         practiceModuleId="noon-sakinah"
       />
+
+      <LessonProgress moduleId="noon-sakinah" sections={SECTIONS} />
     </div>
   );
 }

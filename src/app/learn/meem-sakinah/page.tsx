@@ -3,12 +3,15 @@
 import { RuleCard } from "@/components/learn/RuleCard";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import meemData from "@/data/content/meem-sakinah.json";
+
+const SECTIONS = ["meem-sakinah-overview", ...meemData.rules.map((r) => r.id)];
 
 const RULE_COLORS: Record<string, string> = {
   "ikhfaa-shafawi": "#D98000",
@@ -74,6 +77,8 @@ export default function MeemSakinahPage() {
         isComplete={progress.lessonsCompleted.includes("meem-sakinah-main")}
         practiceModuleId="meem-sakinah"
       />
+
+      <LessonProgress moduleId="meem-sakinah" sections={SECTIONS} />
     </div>
   );
 }

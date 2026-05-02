@@ -26,6 +26,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   },
   reviews: {},
   memorizedVerses: [],
+  readSections: {},
 };
 
 // Caps protect against pathological inputs from a tampered localStorage —
@@ -37,6 +38,8 @@ const MAX_MODULES = 100;
 const MAX_REVIEWS = 2000;
 const MAX_MEMORIZED = 6236;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
+const MAX_READ_SECTIONS_PER_MODULE = 50;
+const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
 
 const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 
@@ -147,6 +150,24 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
   return out;
 }
 
+function sanitizeReadSections(input: unknown): Record<string, string[]> {
+  if (!isObject(input)) return {};
+  const out: Record<string, string[]> = {};
+  for (const [moduleId, value] of Object.entries(input)) {
+    if (typeof moduleId !== "string" || moduleId.length === 0 || moduleId.length >= 100) continue;
+    if (!Array.isArray(value)) continue;
+    const slugs = new Set<string>();
+    for (const slug of value) {
+      if (typeof slug !== "string") continue;
+      if (!SECTION_SLUG_PATTERN.test(slug)) continue;
+      slugs.add(slug);
+      if (slugs.size >= MAX_READ_SECTIONS_PER_MODULE) break;
+    }
+    out[moduleId] = Array.from(slugs);
+  }
+  return out;
+}
+
 function sanitizeMemorized(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const out = new Set<string>();
@@ -183,6 +204,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     streaks,
     reviews: sanitizeReviews(input.reviews),
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
+    readSections: sanitizeReadSections(input.readSections),
   };
 }
 
@@ -249,6 +271,21 @@ export function setReview(questionId: string, state: ReviewState): void {
   if (!isBrowser()) return;
   const progress = getProgress();
   progress.reviews[questionId] = state;
+  setProgress(progress);
+}
+
+export function getReadSections(moduleId: string): string[] {
+  return getProgress().readSections[moduleId] ?? [];
+}
+
+export function markSectionRead(moduleId: string, sectionId: string): void {
+  if (!isBrowser()) return;
+  if (!SECTION_SLUG_PATTERN.test(sectionId)) return;
+  const progress = getProgress();
+  const current = progress.readSections[moduleId] ?? [];
+  if (current.includes(sectionId)) return;
+  if (current.length >= MAX_READ_SECTIONS_PER_MODULE) return;
+  progress.readSections[moduleId] = [...current, sectionId];
   setProgress(progress);
 }
 

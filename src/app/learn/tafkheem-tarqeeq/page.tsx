@@ -4,12 +4,15 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import tafkheemData from "@/data/content/tafkheem-tarqeeq.json";
+
+const SECTIONS = ["always-heavy", "always-light", "variable-letters"];
 
 export default function TafkheemTarqeeqPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("tafkheem-tarqeeq");
@@ -136,6 +139,8 @@ export default function TafkheemTarqeeqPage() {
         isComplete={progress.lessonsCompleted.includes("tafkheem-tarqeeq-main")}
         practiceModuleId="tafkheem-tarqeeq"
       />
+
+      <LessonProgress moduleId="tafkheem-tarqeeq" sections={SECTIONS} />
     </div>
   );
 }

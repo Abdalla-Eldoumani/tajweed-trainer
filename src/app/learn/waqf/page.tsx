@@ -4,12 +4,19 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
 import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import waqfData from "@/data/content/waqf-symbols.json";
+
+const SECTIONS = [
+  "waqf-overview",
+  ...waqfData.symbols.map((s) => s.id),
+  "stopping-effects",
+];
 
 export default function WaqfPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("waqf");
@@ -78,6 +85,8 @@ export default function WaqfPage() {
         isComplete={progress.lessonsCompleted.includes("waqf-main")}
         practiceModuleId="waqf"
       />
+
+      <LessonProgress moduleId="waqf" sections={SECTIONS} />
     </div>
   );
 }
