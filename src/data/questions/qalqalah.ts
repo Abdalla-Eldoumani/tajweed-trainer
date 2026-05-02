@@ -556,4 +556,243 @@ export const questions: Question[] = [
     },
     source: { surah: 111, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
+
+  // HARD (8) — edge cases, exceptions, multi-rule reasoning.
+  {
+    id: "qalqalah-hard-qaf-with-vowel",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "If the Qaaf in يَقْطَعُونَ carried a fatha instead of a sukoon, would qalqalah apply to it?",
+      ar: "لو كانت القاف في يَقْطَعُونَ مفتوحة بدلا من ساكنة، فهل تقع عليها القلقلة؟",
+    },
+    arabicText: "يَقْطَعُونَ",
+    englishGloss: "they cut",
+    options: [
+      { id: "opt-a", label: { en: "Yes — Qaaf is always qalqalah", ar: "نعم، القاف تُقلقل دائما" } },
+      { id: "opt-b", label: { en: "No — qalqalah requires the letter to have a sukoon", ar: "لا، تشترط القلقلة سكون الحرف" } },
+      { id: "opt-c", label: { en: "Yes, but only if at end of word", ar: "نعم، لكن إذا كانت في آخر الكلمة فقط" } },
+      { id: "opt-d", label: { en: "No — Qaaf is not a qalqalah letter", ar: "لا، القاف ليست من حروف القلقلة" } },
+    ],
+    correctOptionId: "opt-b",
+    explanation: {
+      en: "The lesson defines qalqalah as occurring only when one of the five letters has a sukoon. With a fatha, kasra, or damma, the letter is voweled and there is no qalqalah.",
+      ar: "تنصّ تعريفات الدرس على أنّ القلقلة لا تقع إلا على حرف من حروفها وهو ساكن. أمّا مع الحركة فلا قلقلة.",
+      lessonAnchor: "qalqalah-letters",
+    },
+    source: { surah: 2, ayah: 27, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "qalqalah-hard-vowel-sound-mistake",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "While reciting يَجْعَلُونَ a student adds a faint 'ji' sound to the bounce of Jeem. This is...",
+      ar: "أثناء تلاوة يَجْعَلُونَ ألحق طالب نبرة تشبه الكسرة بقلقلة الجيم. هذا...",
+    },
+    arabicText: "يَجْعَلُونَ",
+    englishGloss: "they make",
+    options: [
+      { id: "opt-a", label: { en: "Correct — qalqalah always carries the kasra of the next letter", ar: "صواب، فالقلقلة تحمل كسرة الحرف التالي دائما" } },
+      { id: "opt-b", label: { en: "Correct — Sughra is allowed to take a vowel", ar: "صواب، الصغرى يُسمح فيها بالحركة" } },
+      { id: "opt-c", label: { en: "A common mistake — qalqalah must be a pure bounce, not a vowel sound", ar: "خطأ شائع، القلقلة نبرة خالصة لا تشبه الحركة" } },
+      { id: "opt-d", label: { en: "A common mistake — only Kubra should bounce, not Sughra", ar: "خطأ شائع، القلقلة لا تقع إلا في الكبرى" } },
+    ],
+    correctOptionId: "opt-c",
+    explanation: {
+      en: "The lesson lists 'Adding a vowel sound to the echo' as a common mistake. Qalqalah must be a pure bounce — not 'ba', 'bu', or 'bi'.",
+      ar: "ذكر الدرس في الأخطاء الشائعة إلحاق حركة بالقلقلة، وقرّر أنها يجب أن تكون نبرة خالصة لا تشبه الفتحة أو الكسرة أو الضمّة.",
+      lessonAnchor: "qalqalah-mistakes",
+    },
+    source: { surah: 6, ayah: 136, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "qalqalah-hard-levels-distinguished-by",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "The three qalqalah levels (Sughra, Wusta, Kubra) are primarily distinguished by...",
+      ar: "تتميّز مراتب القلقلة الثلاث (الصغرى والوسطى والكبرى) أساسا بـ...",
+    },
+    arabicText: "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+    englishGloss: "He neither begets nor was He begotten",
+    options: [
+      {
+        id: "opt-a",
+        label: {
+          en: "The position of the qalqalah letter (mid-word, end-of-word mid-ayah, end-of-ayah)",
+          ar: "موضع حرف القلقلة (وسط الكلمة، آخرها في وسط الآية، آخر الآية)",
+        },
+      },
+      { id: "opt-b", label: { en: "Which of the five letters it is", ar: "أيّ الحروف الخمسة هو" } },
+      { id: "opt-c", label: { en: "The number of beats held", ar: "عدد الحركات" } },
+      { id: "opt-d", label: { en: "Whether the surah is Makki or Madani", ar: "كون السورة مكّيّة أم مدنيّة" } },
+    ],
+    correctOptionId: "opt-a",
+    explanation: {
+      en: "The lesson defines each level by the position of the qalqalah letter: Sughra (mid-word sukoon), Wusta (end-of-word sukoon, mid-ayah), Kubra (end-of-ayah, or stopping on the letter).",
+      ar: "عرّف الدرس كل مرتبة بموضع الحرف: الصغرى في وسط الكلمة، والوسطى في آخر الكلمة في وسط الآية، والكبرى في آخر الآية أو الوقف على الحرف.",
+      lessonAnchor: "qalqalah-sughra",
+    },
+    source: { surah: 112, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "qalqalah-hard-jahr-shiddah",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "According to the introduction of this lesson, why does qalqalah exist as a rule at all?",
+      ar: "بحسب مقدّمة الدرس، لِمَ احتاج علماء التجويد إلى تقرير حكم القلقلة؟",
+    },
+    arabicText: "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+    englishGloss: "He neither begets nor was He begotten",
+    options: [
+      {
+        id: "opt-a",
+        label: {
+          en: "Without it, these letters (which combine jahr and shiddah) would be cut off abruptly",
+          ar: "لولاها لانقطع صوت هذه الحروف فجأة لأنها تجمع بين الجهر والشدّة",
+        },
+      },
+      {
+        id: "opt-b",
+        label: {
+          en: "It distinguishes between Hafs and Warsh recitations",
+          ar: "تفرّق بين رواية حفص ورواية ورش",
+        },
+      },
+      {
+        id: "opt-c",
+        label: { en: "It marks where the reciter must pause", ar: "تدلّ على موضع الوقف" },
+      },
+      {
+        id: "opt-d",
+        label: { en: "It substitutes for a missing tashkeel", ar: "تنوب عن حركة محذوفة" },
+      },
+    ],
+    correctOptionId: "opt-a",
+    explanation: {
+      en: "The intro explains that the five qalqalah letters share the attributes of jahr (stoppage of breath flow) and shiddah (stoppage of sound flow). Without qalqalah, the sound of these letters would be cut off abruptly.",
+      ar: "تذكر المقدّمة أنّ حروف القلقلة الخمسة تجمع بين صفتي الجهر والشدّة، ولولا القلقلة لانقطع صوتها فجأة.",
+      lessonAnchor: "qalqalah-letters",
+    },
+    source: { surah: 112, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "qalqalah-hard-shaddah-on-baa",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "The Baa in وَتَبَّ at the end of 111:1 carries a shaddah. According to the lesson, this makes the Kubra qalqalah...",
+      ar: "الباء في وَتَبَّ آخر آية المسد الأولى عليها شدّة. وفق الدرس، فإنّ ذلك يجعل القلقلة الكبرى عليها...",
+    },
+    arabicText: "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
+    englishGloss: "May the hands of Abu Lahab perish, and may he perish",
+    options: [
+      { id: "opt-a", label: { en: "Even stronger than usual", ar: "أقوى وأظهر" } },
+      { id: "opt-b", label: { en: "Lighter than usual", ar: "أخفّ" } },
+      { id: "opt-c", label: { en: "Cancelled — shaddah removes qalqalah", ar: "ملغاة، فالشدّة تُسقط القلقلة" } },
+      { id: "opt-d", label: { en: "Identical to a regular Kubra", ar: "كقلقلة الكبرى المعتادة تماما" } },
+    ],
+    correctOptionId: "opt-a",
+    explanation: {
+      en: "The lesson explicitly notes that the shaddah on Baa in وَتَبَّ makes the qalqalah Kubra extra strong.",
+      ar: "نصّ الدرس على أنّ الشدّة على الباء في وَتَبَّ تجعل القلقلة الكبرى أقوى مما هي.",
+      lessonAnchor: "qalqalah-kubra",
+    },
+    source: { surah: 111, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "qalqalah-hard-non-five-letters",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "A reciter applies a small bounce to a sakin Kaaf (ك) thinking it is qalqalah. This is...",
+      ar: "أعطى قارئ نبرة قلقلة لكاف ساكنة ظنّا منه أنها من حروف القلقلة. هذا...",
+    },
+    arabicText: "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
+    englishGloss: "May the hands of Abu Lahab perish, and may he perish",
+    options: [
+      { id: "opt-a", label: { en: "Correct — Kaaf shares Qaaf's bounce", ar: "صواب، الكاف كالقاف في القلقلة" } },
+      {
+        id: "opt-b",
+        label: {
+          en: "A common mistake — only the five letters قطبجد qalqalah",
+          ar: "خطأ شائع، لا تُقلقل إلا الحروف الخمسة قطبجد",
+        },
+      },
+      { id: "opt-c", label: { en: "Acceptable in Sughra only", ar: "جائز في الصغرى فقط" } },
+      { id: "opt-d", label: { en: "Acceptable in Kubra only", ar: "جائز في الكبرى فقط" } },
+    ],
+    correctOptionId: "opt-b",
+    explanation: {
+      en: "Applying qalqalah to letters that are NOT in قطبجد is listed as a common mistake. The five qalqalah letters are fixed.",
+      ar: "ذكر الدرس من الأخطاء الشائعة تطبيق القلقلة على غير حروفها الخمسة. وحروف القلقلة محصورة في قطبجد.",
+      lessonAnchor: "qalqalah-mistakes",
+    },
+    source: { surah: 111, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "qalqalah-hard-sughra-too-strong",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "Pronouncing the qalqalah in يَقْطَعُونَ as forcefully as the qalqalah at the end of an ayah is...",
+      ar: "نطق القلقلة في يَقْطَعُونَ بقوّة كقوّة القلقلة في آخر الآية...",
+    },
+    arabicText: "يَقْطَعُونَ",
+    englishGloss: "they cut",
+    options: [
+      { id: "opt-a", label: { en: "Recommended — louder is clearer", ar: "مستحسن، فإظهارها أوضح" } },
+      {
+        id: "opt-b",
+        label: {
+          en: "A common mistake — Sughra should be subtle, not as strong as Kubra",
+          ar: "خطأ شائع، فالصغرى ينبغي أن تكون خفيفة لا كالكبرى",
+        },
+      },
+      { id: "opt-c", label: { en: "Required when stopping mid-word", ar: "واجب عند الوقف وسط الكلمة" } },
+      { id: "opt-d", label: { en: "Identical in either degree", ar: "سواء في الحالين" } },
+    ],
+    correctOptionId: "opt-b",
+    explanation: {
+      en: "The lesson lists 'Making the echo too strong in Sughra' as a common mistake. Sughra should be subtle; Kubra is the level where the echo is strongest.",
+      ar: "ذكر الدرس من الأخطاء الشائعة المبالغة في القلقلة الصغرى، وقرّر أنّها يجب أن تكون خفيفة، وأنّ القوّة إنّما تظهر في الكبرى.",
+      lessonAnchor: "qalqalah-mistakes",
+    },
+    source: { surah: 2, ayah: 27, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "qalqalah-hard-kubra-too-weak",
+    moduleId: "qalqalah",
+    difficulty: "hard",
+    prompt: {
+      en: "Stopping on الْفَلَقِ at the end of 113:1 with a barely audible bounce is...",
+      ar: "الوقف على الْفَلَقِ في آخر آية الفلق الأولى بقلقلة خفيّة بالكاد تُسمع...",
+    },
+    arabicText: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
+    englishGloss: "Say: I seek refuge in the Lord of daybreak",
+    options: [
+      {
+        id: "opt-a",
+        label: {
+          en: "A common mistake — Kubra must be clearly pronounced, not weak",
+          ar: "خطأ شائع، فالقلقلة الكبرى يجب أن تكون واضحة قويّة لا ضعيفة",
+        },
+      },
+      { id: "opt-b", label: { en: "Recommended — Kubra is meant to be subtle", ar: "مستحسن، فالكبرى تكون خفيفة" } },
+      {
+        id: "opt-c",
+        label: { en: "Acceptable when continuing without stopping", ar: "مقبول عند الوصل دون الوقف" },
+      },
+      { id: "opt-d", label: { en: "Required for Kubra", ar: "واجب في القلقلة الكبرى" } },
+    ],
+    correctOptionId: "opt-a",
+    explanation: {
+      en: "The lesson lists 'Making the echo too weak in Kubra' as a common mistake. Kubra is the strongest level and should be clearly pronounced.",
+      ar: "ذكر الدرس من الأخطاء الشائعة ضعف القلقلة الكبرى، وقرّر أنها يجب أن تكون واضحة قويّة.",
+      lessonAnchor: "qalqalah-mistakes",
+    },
+    source: { surah: 113, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
+  },
 ];
