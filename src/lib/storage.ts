@@ -1,4 +1,6 @@
-import type { TajweedProgress, UserSettings, ModuleProgress, ReciterId, Language } from "./types";
+import type { TajweedProgress, UserSettings, ModuleProgress, Language } from "./types";
+import { validateReciterIdentifier } from "./audio-api";
+import { getCachedReciterEditions } from "@/hooks/useReciters";
 
 const STORAGE_KEY = "tajweed-trainer-progress";
 
@@ -31,9 +33,20 @@ const MAX_LESSONS_PER_MODULE = 200;
 const MAX_QUIZ_SCORES_PER_MODULE = 500;
 const MAX_MODULES = 100;
 
-const VALID_RECITERS: readonly ReciterId[] = ["husary", "alafasy"];
 const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
 const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
+
+// Reciter validation runs against the cached editions list (or the static
+// defaults). An identifier that fails the format check or isn't in the list
+// is replaced with the husary default so a tampered storage entry never
+// leaves the app referencing a reciter the editions API doesn't know.
+function pickReciter(value: unknown): string {
+  if (!validateReciterIdentifier(value)) return DEFAULT_SETTINGS.reciter;
+  const known = getCachedReciterEditions();
+  if (value === "husary" || value === "alafasy") return value;
+  if (known.some((e) => e.identifier === value)) return value;
+  return DEFAULT_SETTINGS.reciter;
+}
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -67,7 +80,7 @@ function sanitizeSettings(input: unknown): UserSettings {
         .sort((a, b) => a - b)
     : [];
   return {
-    reciter: pickEnum(input.reciter, VALID_RECITERS, DEFAULT_SETTINGS.reciter),
+    reciter: pickReciter(input.reciter),
     playbackSpeed: ([0.5, 0.75, 1.0] as const).includes(input.playbackSpeed as 0.5 | 0.75 | 1.0)
       ? (input.playbackSpeed as number)
       : DEFAULT_SETTINGS.playbackSpeed,
