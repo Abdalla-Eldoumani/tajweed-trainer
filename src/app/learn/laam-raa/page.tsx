@@ -5,14 +5,31 @@ import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { ExampleCard } from "@/components/learn/ExampleCard";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
+import { useModuleLock } from "@/hooks/useModuleLock";
+import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import laamRaaData from "@/data/content/laam-raa-rules.json";
 
 export default function LaamRaaPage() {
+  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("laam-raa");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("laam-raa");
   const { t, isAr } = useTranslation();
+
+  if (!mounted) return <LearnLoading />;
+  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
+    return (
+      <LockedModuleScreen
+        moduleTitleEn={laamRaaData.title_en}
+        moduleTitleAr={laamRaaData.title_ar}
+        prereqId={prereqId}
+        prereqTitleEn={prereqTitleEn}
+        prereqTitleAr={prereqTitleAr}
+      />
+    );
+  }
 
   const laamSection = laamRaaData.sections[0]; // laam-shamsiyyah-qamariyyah
   const laamAllahSection = laamRaaData.sections[1]; // laam-lafzul-jalalah
