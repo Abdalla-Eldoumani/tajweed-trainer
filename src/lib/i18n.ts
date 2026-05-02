@@ -237,6 +237,26 @@ const translations: Record<string, { en: string; ar: string }> = {
   "practice.longestStreak": { en: "Longest Streak", ar: "أطول سلسلة" },
   "practice.loadingQuestion": { en: "Loading next question...", ar: "جاري تحميل السؤال التالي..." },
 
+  // Practice hub (per-module practice)
+  "practice.hub.title": { en: "Practice", ar: "التدريب" },
+  "practice.hub.subtitle": {
+    en: "Pick a module to practice on its own, or take a mixed review across every module.",
+    ar: "اختر وحدة للتدريب عليها وحدها، أو خذ مراجعة مختلطة من كل الوحدات.",
+  },
+  "practice.hub.questions": { en: "questions", ar: "سؤال" },
+  "practice.hub.taken": { en: "quizzes taken", ar: "اختبارات مأخوذة" },
+  "practice.hub.lastScore": { en: "Last score", ar: "آخر نتيجة" },
+  "practice.hub.notStarted": { en: "Not started yet", ar: "لم يبدأ بعد" },
+  "practice.hub.start": { en: "Start", ar: "ابدأ" },
+  "practice.hub.continue": { en: "Continue", ar: "تابع" },
+  "practice.hub.mixedTitle": { en: "Mixed Review", ar: "مراجعة مختلطة" },
+  "practice.hub.mixedDesc": {
+    en: "Random questions from every module you have content for.",
+    ar: "أسئلة عشوائية من كل وحدة فيها محتوى.",
+  },
+  "practice.hub.mixedBadge": { en: "All modules", ar: "كل الوحدات" },
+  "practice.hub.backToHub": { en: "Practice hub", ar: "صفحة التدريب" },
+
   // Progress
   "progress.title": { en: "Your Progress", ar: "تقدّمك" },
   "progress.description": { en: "Track your tajweed learning journey.", ar: "تابع مسيرتك في تعلّم التجويد." },
