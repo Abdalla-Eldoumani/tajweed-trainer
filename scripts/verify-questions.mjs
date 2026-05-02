@@ -43,6 +43,27 @@ async function main() {
     `option text: ${qalqalahOption}`,
   );
 
+  // 1b. All 9 modules show (30) authored questions in the filter dropdown.
+  const modules = [
+    "Makharij",
+    "Noon Sakinah",
+    "Meem Sakinah",
+    "Ghunnah",
+    "Qalqalah",
+    "Madd",
+    "Laam",
+    "Heavy",
+    "Waqf",
+  ];
+  for (const m of modules) {
+    const text = await page.locator(`option:has-text("${m}")`).first().textContent();
+    record(
+      `${m} filter shows 30 authored questions`,
+      /\(30\)/.test(text ?? ""),
+      `option text: ${text}`,
+    );
+  }
+
   // 2. Select qalqalah, start the quiz.
   await page.selectOption("#module-filter", "qalqalah");
   // QuizSession is dynamic-imported with ssr: false, so wait for it to mount.
