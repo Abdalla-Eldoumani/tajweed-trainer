@@ -10,9 +10,11 @@ All rules follow Hafs 'an 'Asim, the most widely used Qira'ah globally. Quranic 
 - **Nine learning modules**: Makharij Al-Huroof (articulation points), Noon Sakinah & Tanween, Meem Sakinah, Ghunnah, Qalqalah, Madd, Laam & Raa, Tafkheem & Tarqeeq, and Waqf.
 - **Bilingual UI and content**. Every visible English string has an Arabic counterpart. The language pill in the sidebar flips chrome, lesson content, common-mistake lists, surah names, weekday letters, and the 404 page. RTL handled correctly.
 - **Color-coded Quran text** rendered from the Quran.com Foundation API's `text_uthmani_tajweed` field, using the standard Tajweed-Mushaf palette.
-- **Audio playback** from Al Quran Cloud. Two reciters: Al-Husary mu'allim (slow and clear, default for learning) and Mishary Alafasy (melodic).
-- **Practice quizzes** built only from verified examples. Multiple-choice "identify the rule" with parallel English and Arabic option sets.
-- **Progress tracking** in `localStorage`: lesson completion, quiz history, daily streaks, Mushaf bookmarks, last page read.
+- **Audio playback** from Al Quran Cloud. Husary and Alafasy ship as defaults; the full reciter list is fetched at runtime from `/edition?format=audio&type=versebyverse`, cached for 24h, and surfaced in Settings as a language-grouped picker.
+- **Practice hub** at `/practice` with a tile per module (270 authored questions across 9 modules) and a Mixed Review tile drawing from every module. Each module has its own route at `/practice/<module>`.
+- **Module lock** in `/learn`: each module is gated by completing one lesson in its prerequisite. Locked URLs render a dedicated screen with a CTA to the prerequisite, never lesson content.
+- **Post-answer feedback** in the practice flow: every answer surfaces the rule name, a one-line explanation, and a deep link to the matching lesson section.
+- **Progress tracking** in `localStorage`: lesson completion, quiz history per module, daily streaks, Mushaf bookmarks, last page read.
 - **Dark mode** with adjusted tajweed colors so contrast holds up.
 
 ## Quick start
@@ -82,6 +84,11 @@ src/
 scripts/
   fetch-surah-names.mjs      One-shot: pulls /chapters and patches surah_name_ar
   verify-mushaf.mjs          21-check browser test for the Mushaf reader
+  verify-module-lock.mjs     11-check browser test for module gating
+  verify-questions.mjs       19-check browser test for the practice hub
+  verify-reciters.mjs        9-check browser test for reciter selector
+  verify-sanitizer.mjs       14 sanitizer tests, no browser
+  capture-responsive.mjs     screenshots 12 routes at 375/768/1440
 docs/
   architecture.md            System architecture and data flow
   content-schema.md          JSON content format and how to add a rule
