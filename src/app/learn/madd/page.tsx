@@ -53,7 +53,7 @@ export default function MaddPage() {
         </p>
       </div>
 
-      <Card>
+      <Card id="madd-letters" className="scroll-mt-20">
         <h2 className="font-heading font-semibold mb-3">{t("madd.letters")}</h2>
         <div className="flex flex-wrap justify-center gap-6">
           {maddData.madd_letters.map((letter) => (
@@ -68,15 +68,16 @@ export default function MaddPage() {
 
       <div className="space-y-4">
         {maddData.types.map((type) => (
-          <RuleCard
-            key={type.id}
-            titleEn={`${type.title_en} (${type.beats} beats)`}
-            titleAr={`${type.title_ar} (${type.beats} ${t("ghunnah.beats")})`}
-            description={type.description}
-            descriptionAr={type.description_ar}
-            examples={type.examples}
-            color={MADD_COLORS[type.id] ?? "#E06050"}
-          />
+          <div key={type.id} id={type.id} className="scroll-mt-20">
+            <RuleCard
+              titleEn={`${type.title_en} (${type.beats} beats)`}
+              titleAr={`${type.title_ar} (${type.beats} ${t("ghunnah.beats")})`}
+              description={type.description}
+              descriptionAr={type.description_ar}
+              examples={type.examples}
+              color={MADD_COLORS[type.id] ?? "#E06050"}
+            />
+          </div>
         ))}
       </div>
 
@@ -111,6 +112,7 @@ export default function MaddPage() {
         nextLabel={{ en: "Laam & Raa", ar: "اللام والراء" }}
         onMarkComplete={() => markLessonComplete("madd", "madd-main")}
         isComplete={progress.lessonsCompleted.includes("madd-main")}
+        practiceModuleId="madd"
       />
     </div>
   );
