@@ -295,6 +295,12 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.normal": { en: "Normal", ar: "عادي" },
   "settings.large": { en: "Large", ar: "كبير" },
   "settings.xlarge": { en: "Extra Large", ar: "كبير جدا" },
+  "settings.recitersLoading": { en: "Updating list…", ar: "جاري التحديث…" },
+  "settings.recitersDefault": { en: "default", ar: "افتراضي" },
+  "settings.recitersHelp": {
+    en: "More reciters appear once the editions list loads. Husary stays the default for teaching-style learning.",
+    ar: "تظهر مزيد من القرّاء بعد تحميل قائمة الإصدارات. يبقى الحصري الافتراضي للتعلّم على نمط المعلّم.",
+  },
 
   // Common
   "common.progress": { en: "Progress", ar: "التقدّم" },
