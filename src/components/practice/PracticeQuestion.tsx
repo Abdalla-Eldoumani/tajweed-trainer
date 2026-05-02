@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { formatSurahReference } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import { useSpeech } from "@/hooks/useSpeech";
 import type { PracticeQuestion as PracticeQuestionType } from "@/lib/types";
 
 interface PracticeQuestionProps {
@@ -19,6 +20,7 @@ interface PracticeQuestionProps {
 
 export function PracticeQuestion({ question, questionNumber, totalQuestions, onAnswer }: PracticeQuestionProps) {
   const { t, lang, isAr } = useTranslation();
+  const { supported: speechSupported, speaking, speak, cancel } = useSpeech();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
 
@@ -58,7 +60,35 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
       </div>
 
       <Card className="text-center space-y-3">
-        <p className="text-xs text-text-muted">{promptText}</p>
+        <div className="flex items-center justify-center gap-2">
+          <p className="text-xs text-text-muted">{promptText}</p>
+          {speechSupported && (
+            <button
+              type="button"
+              onClick={() => (speaking ? cancel() : speak(promptText, lang))}
+              aria-label={speaking ? t("speech.stop") : t("speech.read")}
+              aria-pressed={speaking}
+              className={cn(
+                "inline-flex items-center justify-center w-7 h-7 rounded-full transition-colors",
+                speaking
+                  ? "bg-primary/20 text-primary dark:text-primary-light"
+                  : "text-text-muted/70 hover:text-primary hover:bg-primary/10",
+              )}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                {speaking ? (
+                  <>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  </>
+                ) : (
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                )}
+              </svg>
+            </button>
+          )}
+        </div>
         <ArabicText text={question.example.arabic} quran size="lg" />
         <div className="pt-1">
           <span className="text-xs font-medium text-primary dark:text-primary-light">

@@ -401,6 +401,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
 
+  // Speech (TTS for prompts only — NOT for Quranic text)
+  "speech.read": { en: "Read prompt aloud", ar: "اقرأ السؤال بصوت" },
+  "speech.stop": { en: "Stop reading", ar: "إيقاف القراءة" },
+
   // Search
   "search.title": { en: "Search", ar: "بحث" },
   "search.subtitle": {
