@@ -40,7 +40,7 @@ export default function NoonSakinahPage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div id="noon-sakinah-overview" className="scroll-mt-20">
         <SectionBanner
           title={isAr ? noonData.title_ar : noonData.title_en}
           subtitle={isAr ? noonData.title_en : noonData.title_ar}
@@ -58,7 +58,7 @@ export default function NoonSakinahPage() {
             : (rule.subtypes ?? []).flatMap((st) => st.examples ?? []);
 
           return (
-            <div key={rule.id}>
+            <div key={rule.id} id={rule.id} className="scroll-mt-20">
               <RuleCard
                 titleEn={rule.title_en}
                 titleAr={rule.title_ar}
@@ -76,17 +76,18 @@ export default function NoonSakinahPage() {
               {rule.subtypes && (
                 <div className="ms-2 sm:ms-4 mt-2 space-y-2">
                   {rule.subtypes.map((st) => (
-                    <RuleCard
-                      key={st.id}
-                      titleEn={st.title_en}
-                      titleAr={st.title_ar ?? ""}
-                      description={st.description}
-                      descriptionAr={st.description_ar}
-                      letters={st.letters}
-                      examples={st.examples}
-                      color={color}
-                      mnemonicEn={st.mnemonic_en}
-                    />
+                    <div key={st.id} id={st.id} className="scroll-mt-20">
+                      <RuleCard
+                        titleEn={st.title_en}
+                        titleAr={st.title_ar ?? ""}
+                        description={st.description}
+                        descriptionAr={st.description_ar}
+                        letters={st.letters}
+                        examples={st.examples}
+                        color={color}
+                        mnemonicEn={st.mnemonic_en}
+                      />
+                    </div>
                   ))}
                 </div>
               )}
@@ -147,6 +148,7 @@ export default function NoonSakinahPage() {
         nextLabel={{ en: "Meem Sakinah", ar: "الميم الساكنة" }}
         onMarkComplete={() => markLessonComplete("noon-sakinah", "noon-sakinah-main")}
         isComplete={progress.lessonsCompleted.includes("noon-sakinah-main")}
+        practiceModuleId="noon-sakinah"
       />
     </div>
   );
