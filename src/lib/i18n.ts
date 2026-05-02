@@ -400,6 +400,16 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
+
+  // Search
+  "search.title": { en: "Search", ar: "بحث" },
+  "search.subtitle": {
+    en: "Find a surah, lesson module, tajweed rule, or waqf symbol.",
+    ar: "ابحث عن سورة أو وحدة درس أو حكم تجويد أو رمز وقف.",
+  },
+  "search.placeholder": { en: "Search surahs, modules, rules…", ar: "ابحث في السور والوحدات والأحكام…" },
+  "search.hint": { en: "Type at least 2 characters to search.", ar: "أدخل حرفين على الأقل للبحث." },
+  "search.noResults": { en: "No matches.", ar: "لا توجد نتائج." },
 };
 
 export function t(key: string, lang: Language): string {

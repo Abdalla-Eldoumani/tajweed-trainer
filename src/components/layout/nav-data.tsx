@@ -75,6 +75,15 @@ export function ChevronIcon({ className }: { className?: string }) {
   );
 }
 
+export function SearchIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+
 export function MushafIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -90,6 +99,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/learn", label: "Learn", labelAr: "تعلّم", icon: BookIcon, expandable: true },
   { href: "/mushaf", label: "Mushaf", labelAr: "المصحف", icon: MushafIcon },
   { href: "/practice", label: "Practice", labelAr: "تدريب", icon: PracticeIcon },
+  { href: "/search", label: "Search", labelAr: "بحث", icon: SearchIcon },
   { href: "/progress", label: "Progress", labelAr: "تقدّم", icon: ProgressIcon },
   { href: "/settings", label: "Settings", labelAr: "إعدادات", icon: SettingsIcon },
 ];
