@@ -162,12 +162,26 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `lessonsCompleted` per module | 200 entries | Module ids ≤ 100 chars; lesson ids ≤ 100 chars. |
 | `quizScores` per module | 500 entries | Each entry is `{ lessonId, score, date }`. |
 | `modules` map | 100 keys | Module-id strings 1–100 chars. |
-| `reviews` map | 2000 entries | Authored pool is ≈270; cap leaves headroom for growth without bloating memory. |
+| `reviews` map | 2000 entries | Authored pool is ≈270; cap leaves headroom. Per entry: `box` clamped to 1–5, dates capped at 32 chars, counters at 100,000. |
+| `memorizedVerses` | 6,236 entries | One per Quran ayah. Each entry validated against `^\d{1,3}:\d{1,3}$`; deduped on read. |
+| `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1–100 chars. |
+| `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
 | `reciter` | one of cached editions list, or `husary` fallback | Validated against `^[a-z0-9._-]{1,64}$` then membership in the cached list. |
 | `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
 | `lastMushafPage` | integer 1–604 | Out-of-range values fall back to 1. |
 
 Sanitization runs on every `getProgress()` read. Defaults absorb anything malformed without throwing.
+
+## Local-only data fields
+
+These four fields on `TajweedProgress` never leave the device. They aren't sent to any server, aren't shared between devices, and don't appear in any network request:
+
+- `reviews` — Leitner box state per question id, used by `/practice/review` and the spaced-repetition stats card on `/progress`.
+- `memorizedVerses` — verse keys the user has marked memorized, surfaced in the Mushaf reader and counted on `/progress`.
+- `readSections` — section anchors observed at 40% visibility on each lesson page, used by the floating progress chip.
+- `analytics` — a 1000-event FIFO ring buffer of route views and quiz events. Used by the Insights card on `/progress`. Removable through Reset Progress or by clearing the JSON backup before re-importing.
+
+Sanitization rejects malformed input (wrong types, oversized strings, unknown enum values) and replaces it with the matching default. A user who edits localStorage directly cannot make the app reference content it doesn't have or store an unbounded payload.
 
 ## Why these two APIs
 
