@@ -38,13 +38,37 @@ Set in `next.config.mjs` and applied to every response:
 - `npm audit` is part of the contributing checklist.
 - We track Next.js patch releases on the 14.x line so security fixes land without a major-version migration. Currently pinned to `^14.2.35`, which contains the fixes for the published Next.js advisories of that line.
 
+## Local-only analytics
+
+The `progress.analytics` field is a local 1000-event ring buffer that records route views and quiz starts/finishes. **It never leaves the device.** No network call is made when an event is recorded; the data is written straight to localStorage. The Insights card on `/progress` reads this buffer to surface usage stats.
+
+Users can reset analytics three ways:
+
+- Click "Reset all progress" on `/progress`.
+- Edit the JSON backup file (Settings → Backup & Restore → Export) and remove the `analytics` array, then re-import.
+- Clear site data in the browser.
+
+We do not ship third-party analytics SDKs (Plausible, Google Analytics, PostHog, etc.) and have no plans to. If a future version adds opt-in cross-device sync, it will be opt-in, documented, and reviewed.
+
+## PWA service worker
+
+`public/sw.js` is precached as part of the install. It uses scoped fetch handling:
+
+- **HTML**: network-first (so users always get the latest deploy when online).
+- **`/icon*.svg` and `/_next/static/*`**: cache-first (immutable assets).
+- **`api.quran.com` and `api.alquran.cloud`**: stale-while-revalidate (offline reads work, fresh data lands when the network returns).
+- **`cdn.islamic.network` audio**: cache-first with a 50-entry FIFO cap so the cache size stays bounded.
+
+The worker doesn't add tracking, doesn't intercept third-party domains beyond the listed APIs, and doesn't proxy POST requests. It registers only in production builds; dev (`npm run dev`) skips registration so HMR isn't fighting a stale shell.
+
 ## What we explicitly do not do
 
-- **No telemetry.** No analytics scripts, no third-party trackers.
+- **No third-party telemetry.** No analytics scripts, no third-party trackers. The local `analytics` field documented above is read-only, on-device, and never transmitted.
 - **No user accounts.** No authentication, no session cookies, no password storage.
-- **No server-side persistence.** All progress lives in the browser. There's nothing to leak.
+- **No server-side persistence.** All progress lives in the browser. Backup / Restore is a user-initiated file download / upload — never an automatic sync.
 - **No third-party iframes or embedded widgets.** Everything is first-party.
 - **No remote-code or remote-config behavior.** All branching is determined by code shipped in the build.
+- **No TTS of Quranic text.** The Web Speech API is used only to read the practice question prompt (UI text); verse audio always comes from the verified Al Quran Cloud reciters.
 
 ## Reporting a vulnerability
 
