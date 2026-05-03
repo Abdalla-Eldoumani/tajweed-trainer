@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.2.1 — 2026-05-02
+
+A second pass on the 0.2.0 branch that picks up the items the original release deliberately left out. Each item is wired with its own atomic commit and a smoke-tested verify script.
+
+### Added
+
+- **Spaced repetition (Leitner)**. Every authored question is tracked by stable id under `progress.reviews`. A correct answer promotes one box (intervals 1, 3, 7, 14, 30 days; max box 5 = mastered); a wrong answer drops to box 1. New: `src/lib/spaced-repetition.ts`, `useReviews` hook, `/practice/review` route, `getDueQuestions(dueIds, count)`, Review Due tile on `/practice` (only renders when `due > 0`), Spaced Review stats card on `/progress`. `QuizSession` accepts a `mode: "random" | "review"` prop and writes through `recordReview` after every answer.
+- **Memorization tracker** in the Mushaf reader. Per-verse heart toggle persists to `progress.memorizedVerses` (capped at 6,236 unique `surah:ayah` keys, format-validated). `useMemorization()` hook keeps the UI in sync. The reader toolbar exposes an eye toggle that activates recall mode: every memorized verse on the visible page is blurred (`blur-md`, 60% opacity) with a per-verse Reveal pill. The recall toggle is in-session state, not persisted. Memorization stats card appears on `/progress` once any verse is marked.
+- **Global search** at `/search`. Cached index covers all 114 surahs, the 9 lesson modules, every rule (with subtypes), tafkheem subsections, makharij regions, and waqf symbols. Simple ranked search by tokenized substring across title, subtitle, and a denormalized haystack; minimum query length 2. Each hit links to its canonical route (`/learn/<module>#<anchor>` for rules, `/mushaf/surah/<n>` for surahs). New top-level nav entry with a search icon.
+- **TTS for question prompts** via the Web Speech API. A small speaker button next to each prompt reads the prompt text aloud (`ar-SA` or `en-US` based on the active locale, rate 0.95). Single-utterance: starting a new readout cancels any in-flight one. The button hides when the browser doesn't expose `speechSynthesis`. **Quranic verse text is never read by TTS** — only UI prompts.
+- **Lesson section progress chip**. Each of the 9 lesson pages declares its anchor list, and `<LessonProgress moduleId sections>` mounts an `IntersectionObserver` (40% threshold) to mark sections read in `progress.readSections[moduleId]`. A fixed bottom-right chip shows "X / Y sections read" and links to the next unread anchor; it auto-hides when everything is read. New: `useReadSections` hook, `markSectionRead`, slug-validated against `^[a-z0-9][a-z0-9-]{0,80}$`, capped at 50 per module.
+- **Anonymous local analytics** with route and quiz instrumentation. `progress.analytics` is a 1000-event ring buffer keyed by a fixed `AnalyticsEventType` set (`route.view`, `quiz.start`, `quiz.finish`, `review.start`, `memorize.toggle`, `search.query`). Meta payloads are capped at 200 chars. `RouteAnalytics` (mounted in `AppProvider`) records a `route.view` on every navigation. `QuizSession` records `quiz.start` / `review.start` on entry and `quiz.finish` on completion. `/progress` adds an Insights card with quiz starts, finishes, and the top 5 most-visited routes. **Local-only — never transmitted.**
+- **Backup and restore** in Settings. `exportProgress()` returns a pretty-printed JSON snapshot of the full sanitized progress object; `importProgress(payload)` parses, sanitizes, and replaces. The Settings UI offers Export (downloads `tajweed-trainer-backup-YYYY-MM-DD.json`) and Restore (file picker, soft-reload after success). Failure surfaces a localized error message.
+- **Installable PWA**. `app/manifest.ts` (Next.js metadata route) ships the web manifest with a regular and a maskable SVG icon. `public/sw.js` ships a service worker with strategies: network-first for HTML, cache-first for `/icon*` and `/_next/static/*`, stale-while-revalidate for `api.quran.com` and `api.alquran.cloud`, and cache-first with a 50-entry FIFO cap for `cdn.islamic.network` audio. The worker registers via `<PWARegister/>` mounted in `AppProvider` (production builds only). `app/layout.tsx` adds `themeColor`, `applicationName`, `appleWebApp`, and explicit `icons`.
+
+### Changed
+
+- `TajweedProgress` extended with four new fields: `reviews: Record<string, ReviewState>`, `memorizedVerses: string[]`, `readSections: Record<string, string[]>`, `analytics: AnalyticsEvent[]`. All four are sanitized on every read with explicit validators and per-field caps (see `docs/api-integrations.md` "Storage caps").
+- `MushafPage` and `MushafReader` accept a `memorizationMode` prop and render the per-verse memorize toggle and the toolbar eye toggle.
+- `PracticeQuestion` renders an optional speaker button next to the prompt when the browser supports `speechSynthesis`.
+- `AppProvider` mounts `<PWARegister/>` and `<RouteAnalytics/>` once at the app shell level.
+- `SearchIcon` added to `nav-data.tsx`; the new `/search` route appears between `/practice` and `/progress` in both the desktop sidebar and the mobile drawer.
+- The 9 lesson pages each import `LessonProgress` and declare a top-level `SECTIONS` constant derived from JSON (rule ids, subtype ids, plus the static overview anchors).
+
+### Documentation
+
+- README features list, project layout, and scripts table updated for spaced repetition, memorization, search, TTS, lesson sequencing, analytics, backup, and PWA.
+- `docs/architecture.md` lists the new routes, hooks, and library files; updated layer diagrams reflect the spaced-repetition and memorization data flow.
+- `docs/api-integrations.md` storage caps table extended with `reviews`, `memorizedVerses`, `readSections`, and `analytics` rows; new section for the local-only data fields.
+- `docs/security.md` adds a section explaining that local analytics never leave the device and clarifying the PWA service worker's privacy posture.
+- `docs/i18n.md` updated to list the new translation namespaces (`review.*`, `memorize.*`, `search.*`, `speech.*`, `insights.*`, `learn.sectionsRead`, `settings.backup.*`, `mushaf.memorize*`).
+- `docs/development.md` documents `verify-newfeatures.mjs` and the new manual smoke checklist for offline / install behavior.
+
 ## 0.2.0 — 2026-05-02
 
 ### Added
