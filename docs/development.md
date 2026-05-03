@@ -27,6 +27,11 @@ Open `http://localhost:3000`. Hot reload is on; edits to TS, TSX, CSS, and JSON 
 | `npm run lint` | Run ESLint via `next lint`. |
 | `node scripts/fetch-surah-names.mjs` | One-shot: pulls `/chapters` and patches `surah_name_ar` into rule examples. |
 | `node scripts/verify-mushaf.mjs` | End-to-end browser test of the Mushaf reader (21 checks). |
+| `node scripts/verify-module-lock.mjs` | Browser test of module gating (11 checks). |
+| `node scripts/verify-questions.mjs` | Browser test of the practice hub and authored questions (19 checks). |
+| `node scripts/verify-reciters.mjs` | Browser test of the reciter selector (9 checks). |
+| `node scripts/verify-sanitizer.mjs` | Tajweed HTML sanitizer assertions (14 checks, no browser). |
+| `node scripts/verify-newfeatures.mjs` | Browser test of spaced repetition, memorization, search, TTS, and PWA endpoints (12 checks). |
 
 ## Project conventions
 
@@ -51,7 +56,9 @@ Strict mode. Avoid `any` unless absolutely necessary. New types belong in `src/l
 ### State
 
 - localStorage via `useSettings()` (preferences) and `useProgress()` (lesson completion, quiz history). Both are SSR-safe.
-- Don't read `localStorage` directly in components.
+- Specialized hooks for the new persistence fields: `useReviews()` (spaced repetition), `useMemorization()` (verse keys), `useReadSections(moduleId, sectionIds)` (lesson scroll progress), `useAnalytics()` (local analytics ring buffer). Each starts with empty initial state and populates from `getProgress()` after mount to keep SSR/CSR in sync.
+- `useSpeech()` wraps the Web Speech API for prompt readout; falls back to `supported: false` when unavailable.
+- Don't read `localStorage` directly in components. Reach for the hooks instead so the `mounted` pattern is enforced and sanitization fires on read.
 
 ### Naming
 
@@ -140,6 +147,19 @@ See [content-schema.md](content-schema.md). In short: edit the relevant JSON, se
 - The Mushaf reader pre-renders 50 SSG pages and ISRs the rest at 24 hours. To extend SSG coverage, expand the array in `generateStaticParams` of `src/app/mushaf/page/[page]/page.tsx`.
 - The chapters list cache is 7 days. Audio URLs cache 1 hour. Tajweed pages cache 15 minutes. Tweak in the respective wrapper.
 - Bundle sizes (gzipped, page bundles, not including shared chunks): home is around 5 kB, the largest module page is around 7 kB, and the Mushaf reader is around 5 kB. All comfortably below 200 kB First-Load JS.
+
+## Manual smoke checklist for installable / offline behavior
+
+After a structural change, walk through:
+
+1. `npm run build && npm start`. The dev server skips service-worker registration; you need a production build to exercise it.
+2. Open `http://localhost:3000` in Chromium. DevTools → Application → Manifest. Confirm `Tajweed Trainer`, the SVG icons, and the `standalone` display mode resolve.
+3. Application → Service Workers. Confirm `/sw.js` is registered and active. Reload once so the cache populates.
+4. Visit `/learn/qalqalah`, scroll, then go offline (DevTools → Network → Offline). Reload — the page still renders. The audio CDN is cached too (50-entry FIFO), so any verse you've already played will replay offline.
+5. Take a quiz, answer two questions. Confirm `progress.reviews` populates in localStorage and the Review Due tile appears on `/practice` after the third refresh.
+6. Mark a verse memorized in the Mushaf. Toggle the toolbar eye icon. Confirm the verse blurs with a Reveal pill.
+7. `/search` for "qalqalah" and "Al-Fatihah". Both should surface lesson and surah hits.
+8. Settings → Backup & Restore → Export. Open the file in a text editor; confirm `reviews`, `memorizedVerses`, and `analytics` are present and well-formed.
 
 ## Production deploy
 
