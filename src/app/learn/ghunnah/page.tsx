@@ -4,14 +4,38 @@ import { RuleCard } from "@/components/learn/RuleCard";
 import { Card } from "@/components/ui/Card";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
+import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
+import { useModuleLock } from "@/hooks/useModuleLock";
+import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import ghunnahData from "@/data/content/ghunnah.json";
 
+const SECTIONS = [
+  "ghunnah-definition",
+  ...ghunnahData.rules.map((r) => r.id),
+  "ghunnah-prominence",
+];
+
 export default function GhunnahPage() {
+  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("ghunnah");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("ghunnah");
   const { t, isAr } = useTranslation();
+
+  if (!mounted) return <LearnLoading />;
+  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
+    return (
+      <LockedModuleScreen
+        moduleTitleEn={ghunnahData.title_en}
+        moduleTitleAr={ghunnahData.title_ar}
+        prereqId={prereqId}
+        prereqTitleEn={prereqTitleEn}
+        prereqTitleAr={prereqTitleAr}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -25,7 +49,7 @@ export default function GhunnahPage() {
         </p>
       </div>
 
-      <Card>
+      <Card id="ghunnah-definition" className="scroll-mt-20">
         <h2 className="font-heading font-semibold mb-2">{t("ghunnah.definition")}</h2>
         <p className="text-sm text-text-muted">{isAr && ghunnahData.definition_ar ? ghunnahData.definition_ar : ghunnahData.definition}</p>
         <p className="text-sm font-medium mt-2 text-primary dark:text-primary-light">
@@ -35,20 +59,21 @@ export default function GhunnahPage() {
 
       <div className="space-y-4">
         {ghunnahData.rules.map((rule) => (
-          <RuleCard
-            key={rule.id}
-            titleEn={rule.title_en}
-            titleAr={rule.title_ar}
-            description={rule.description}
-            descriptionAr={rule.description_ar}
-            examples={rule.examples}
-            color="#169200"
-            defaultExpanded
-          />
+          <div key={rule.id} id={rule.id} className="scroll-mt-20">
+            <RuleCard
+              titleEn={rule.title_en}
+              titleAr={rule.title_ar}
+              description={rule.description}
+              descriptionAr={rule.description_ar}
+              examples={rule.examples}
+              color="#169200"
+              defaultExpanded
+            />
+          </div>
         ))}
       </div>
 
-      <Card variant="ornate">
+      <Card id="ghunnah-prominence" variant="ornate" className="scroll-mt-20">
         <h2 className="font-heading font-semibold mb-3">{t("ghunnah.ranking")}</h2>
         <div className="space-y-2">
           {ghunnahData.ghunnah_prominence_ranking.map((item) => (
@@ -87,7 +112,10 @@ export default function GhunnahPage() {
         nextLabel={{ en: "Qalqalah", ar: "القلقلة" }}
         onMarkComplete={() => markLessonComplete("ghunnah", "ghunnah-main")}
         isComplete={progress.lessonsCompleted.includes("ghunnah-main")}
+        practiceModuleId="ghunnah"
       />
+
+      <LessonProgress moduleId="ghunnah" sections={SECTIONS} />
     </div>
   );
 }

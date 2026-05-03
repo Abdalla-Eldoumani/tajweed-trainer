@@ -10,9 +10,17 @@ All rules follow Hafs 'an 'Asim, the most widely used Qira'ah globally. Quranic 
 - **Nine learning modules**: Makharij Al-Huroof (articulation points), Noon Sakinah & Tanween, Meem Sakinah, Ghunnah, Qalqalah, Madd, Laam & Raa, Tafkheem & Tarqeeq, and Waqf.
 - **Bilingual UI and content**. Every visible English string has an Arabic counterpart. The language pill in the sidebar flips chrome, lesson content, common-mistake lists, surah names, weekday letters, and the 404 page. RTL handled correctly.
 - **Color-coded Quran text** rendered from the Quran.com Foundation API's `text_uthmani_tajweed` field, using the standard Tajweed-Mushaf palette.
-- **Audio playback** from Al Quran Cloud. Two reciters: Al-Husary mu'allim (slow and clear, default for learning) and Mishary Alafasy (melodic).
-- **Practice quizzes** built only from verified examples. Multiple-choice "identify the rule" with parallel English and Arabic option sets.
-- **Progress tracking** in `localStorage`: lesson completion, quiz history, daily streaks, Mushaf bookmarks, last page read.
+- **Audio playback** from Al Quran Cloud. Husary and Alafasy ship as defaults; the full reciter list is fetched at runtime from `/edition?format=audio&type=versebyverse`, cached for 24h, and surfaced in Settings as a language-grouped picker.
+- **Practice hub** at `/practice` with a tile per module (270 authored questions across 9 modules), a Mixed Review tile drawing from every module, and a Review Due tile when spaced-repetition reviews are pending. Each module has its own route at `/practice/<module>`; spaced reviews live at `/practice/review`.
+- **Spaced repetition** with a Leitner box scheduler. Every answered question is tracked by stable id; correct answers promote one box (intervals 1, 3, 7, 14, 30 days), wrong answers reset to box 1.
+- **Memorization tracker** in the Mushaf reader. Tap the heart icon next to a verse to mark it memorized; tap the eye toggle in the toolbar to enter recall mode, which blurs every memorized verse so you can test yourself, with per-verse reveal.
+- **Module lock** in `/learn`: each module is gated by completing one lesson in its prerequisite. Locked URLs render a dedicated screen with a CTA to the prerequisite, never lesson content.
+- **Post-answer feedback** in the practice flow: every answer surfaces the rule name, a one-line explanation, and a deep link to the matching lesson section. Optional Web Speech API readout of the question prompt (UI text only, never the verse).
+- **Lesson section progress** chip on every lesson page. An IntersectionObserver counts how many anchored sections you've scrolled through; the floating chip shows "X / Y sections read" and jumps to the next unread one on tap.
+- **Global search** at `/search` across surahs, lesson modules, tajweed rules, and waqf symbols. Matches title and body fields, returns ranked results.
+- **Progress tracking** in `localStorage`: lesson completion, quiz history per module, daily streaks, Mushaf bookmarks, last page read, spaced-review boxes, memorized verses, read sections, and a 1000-event ring buffer of anonymous local insights (route views and quiz starts/finishes).
+- **Backup and restore**. Export your entire progress to a JSON file from Settings, or import a backup to roll forward when switching browsers or devices. No server involved.
+- **Installable PWA**. The app ships a web manifest, maskable icon, and a service worker (network-first HTML, cache-first static, stale-while-revalidate APIs, capped audio cache) so it can be installed and works offline for previously-visited content.
 - **Dark mode** with adjusted tajweed colors so contrast holds up.
 
 ## Quick start
@@ -27,10 +35,11 @@ Open `http://localhost:3000`.
 ```bash
 npm run build      # production build
 npm run lint       # eslint via next lint
-node scripts/verify-mushaf.mjs   # browser test of the Mushaf reader
+node scripts/verify-mushaf.mjs        # 21-check browser test for the Mushaf reader
+node scripts/verify-newfeatures.mjs   # spaced repetition, memorization, search, PWA, TTS
 ```
 
-The verify script needs the dev server running. It drives Chromium and runs 21 assertions against the Mushaf flow. See [docs/development.md](docs/development.md) for setup.
+The verify scripts need the dev server running. They drive Chromium against the live app. See [docs/development.md](docs/development.md) for setup.
 
 ## How it stays accurate
 
@@ -61,27 +70,42 @@ The Mushaf reader pre-renders a handful of the most-trafficked pages at build ti
 src/
   app/                       App Router routes
     page.tsx                 Home
-    learn/                   9 module pages
-    practice/                Quiz session
-    progress/                Progress and streak history
-    settings/                User preferences
-    mushaf/                  604-page reader
+    learn/                   9 module pages (with section-progress chip)
+    practice/                Hub of module tiles
+      [module]/              Per-module quiz
+      mixed/                 Random across all modules
+      review/                Spaced-repetition review queue
+    progress/                Progress, streak, review/memorize stats, insights
+    settings/                User preferences (incl. backup / restore)
+    search/                  Global search across surahs, modules, rules, waqf
+    mushaf/                  604-page reader (with memorization toggles)
       page.tsx               Surah index
       page/[page]/           /mushaf/page/{1..604}
       surah/[surah]/         /mushaf/surah/{1..114} -> redirect
+    manifest.ts              PWA web manifest (metadata route)
   components/
     ui/                      ArabicText, TajweedText, AudioPlayer, Card, Ornament, ...
     layout/                  Sidebar, Header, MobileDrawer, AppProvider, nav-data
     learn/                   ModuleCard, RuleCard, ExampleCard, LetterGrid, MakhrajDiagram, ...
     practice/                PracticeQuestion, QuizSession, StreakCounter
     mushaf/                  MushafFrame, SurahCartouche, BismillahLine, MushafPage, MushafReader, MushafIndex
-  hooks/                     useAudio, useSettings, useProgress, useLocalStorage
-  lib/                       types, i18n, quran-api, audio-api, tajweed-colors, storage, utils, question-pool
+  hooks/                     useAudio, useSettings, useProgress, useReciters, useReviews, useMemorization, useReadSections, useAnalytics, useSpeech, useModuleLock
+  lib/                       types, i18n, quran-api, audio-api, tajweed-colors, storage, utils, question-pool, search, spaced-repetition
   data/content/              Reviewed tajweed JSON (rule files, glossary, learning-path, surah-index)
   app/globals.css            Tajweed colors, Mushaf frame, Islamic patterns
+public/
+  icon.svg                   PWA icon (any purpose)
+  icon-maskable.svg          PWA icon (maskable purpose)
+  sw.js                      Service worker
 scripts/
   fetch-surah-names.mjs      One-shot: pulls /chapters and patches surah_name_ar
   verify-mushaf.mjs          21-check browser test for the Mushaf reader
+  verify-module-lock.mjs     11-check browser test for module gating
+  verify-questions.mjs       19-check browser test for the practice hub
+  verify-reciters.mjs        9-check browser test for reciter selector
+  verify-sanitizer.mjs       14 sanitizer tests, no browser
+  verify-newfeatures.mjs     12-check browser test for spaced repetition, memorization, search, TTS, PWA
+  capture-responsive.mjs     screenshots 12 routes at 375/768/1440
 docs/
   architecture.md            System architecture and data flow
   content-schema.md          JSON content format and how to add a rule

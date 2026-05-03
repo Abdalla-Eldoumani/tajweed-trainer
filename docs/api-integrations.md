@@ -65,6 +65,42 @@ The wrapper passes `per_page=50` to safely cover any edge-case page; the API ret
 - Auth: none
 - Rate limit: undocumented; per-ayah results are cached for 1 hour.
 
+### `GET /edition?format=audio&type=versebyverse`
+
+Used by `fetchReciterEditions(signal?)` to populate the reciter selector. Returns the full list of audio reciter editions exposed by the API.
+
+Response shape (relevant fields):
+
+```jsonc
+{
+  "code": 200,
+  "status": "OK",
+  "data": [
+    {
+      "identifier": "ar.husary",
+      "language": "ar",
+      "name": "محمود خليل الحصري",
+      "englishName": "Mahmoud Khalil Al-Husary",
+      "format": "audio",
+      "type": "versebyverse"
+    }
+  ]
+}
+```
+
+The wrapper validates each entry through `isAudioVerseEdition`:
+
+- `identifier` must match `/^[a-z0-9._-]{1,64}$/` — see `RECITER_IDENTIFIER_PATTERN` in `src/lib/types.ts`. This bounds what we'll concatenate into the audio URL path.
+- `language` is a non-empty string ≤ 16 chars.
+- `name` and `englishName` are non-empty strings ≤ 200 chars.
+- `format === "audio"` and `type === "versebyverse"`.
+
+Anything failing validation is dropped silently. If the call fails entirely, the wrapper returns just the two built-in defaults (`ar.husary`, `ar.alafasy`) so the UI always renders something.
+
+The merged list is cached client-side for 24 hours under the `tajweed-trainer-reciters` key (`src/hooks/useReciters.ts`). On read, every entry is re-validated against the same regex; tampered entries are dropped.
+
+`storage.sanitizeSettings` re-checks the persisted reciter id (`pickReciter`) against the cached list when reading `UserSettings`. An unknown id falls back to the husary default — a tampered storage value cannot make the app reference a reciter the editions API doesn't know.
+
 ### `GET /ayah/{surah}:{ayah}/{reciter}`
 
 Used by `fetchAudioUrl(surah, ayah, reciter)`. Reciters:
@@ -115,6 +151,37 @@ The wrapper uses `data.audio` directly (CDN: `cdn.islamic.network`). The CDN URL
 ## Sanity-checking new tajweed classes
 
 The API occasionally introduces new tajweed class names. The `tajweed-colors.ts` map covers the well-known ones. If a class is missing, the CSS falls back to default ink color so nothing disappears, but the rule won't be color-coded. To catch new classes during development, add a temporary console warning to `TajweedText` for any class not in the map (gated by `process.env.NODE_ENV === "development"`), then update `tajweed-colors.ts`.
+
+## Storage caps and validation contract
+
+`src/lib/storage.ts` enforces caps on every persisted field so a tampered or runaway localStorage entry can't bloat memory or break rendering:
+
+| Field | Cap | Rationale |
+|---|---|---|
+| `mushafBookmarks` | 200 entries | Each entry is an integer 1–604; deduped and sorted on read. |
+| `lessonsCompleted` per module | 200 entries | Module ids ≤ 100 chars; lesson ids ≤ 100 chars. |
+| `quizScores` per module | 500 entries | Each entry is `{ lessonId, score, date }`. |
+| `modules` map | 100 keys | Module-id strings 1–100 chars. |
+| `reviews` map | 2000 entries | Authored pool is ≈270; cap leaves headroom. Per entry: `box` clamped to 1–5, dates capped at 32 chars, counters at 100,000. |
+| `memorizedVerses` | 6,236 entries | One per Quran ayah. Each entry validated against `^\d{1,3}:\d{1,3}$`; deduped on read. |
+| `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1–100 chars. |
+| `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
+| `reciter` | one of cached editions list, or `husary` fallback | Validated against `^[a-z0-9._-]{1,64}$` then membership in the cached list. |
+| `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
+| `lastMushafPage` | integer 1–604 | Out-of-range values fall back to 1. |
+
+Sanitization runs on every `getProgress()` read. Defaults absorb anything malformed without throwing.
+
+## Local-only data fields
+
+These four fields on `TajweedProgress` never leave the device. They aren't sent to any server, aren't shared between devices, and don't appear in any network request:
+
+- `reviews` — Leitner box state per question id, used by `/practice/review` and the spaced-repetition stats card on `/progress`.
+- `memorizedVerses` — verse keys the user has marked memorized, surfaced in the Mushaf reader and counted on `/progress`.
+- `readSections` — section anchors observed at 40% visibility on each lesson page, used by the floating progress chip.
+- `analytics` — a 1000-event FIFO ring buffer of route views and quiz events. Used by the Insights card on `/progress`. Removable through Reset Progress or by clearing the JSON backup before re-importing.
+
+Sanitization rejects malformed input (wrong types, oversized strings, unknown enum values) and replaces it with the matching default. A user who edits localStorage directly cannot make the app reference content it doesn't have or store an unbounded payload.
 
 ## Why these two APIs
 

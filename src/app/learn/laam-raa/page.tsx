@@ -5,14 +5,37 @@ import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { ExampleCard } from "@/components/learn/ExampleCard";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
+import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
+import { useModuleLock } from "@/hooks/useModuleLock";
+import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import laamRaaData from "@/data/content/laam-raa-rules.json";
 
+const SECTIONS = laamRaaData.sections.flatMap((s) => [
+  s.id,
+  ...((s.subtypes ?? []).map((st) => st.id)),
+]);
+
 export default function LaamRaaPage() {
+  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("laam-raa");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("laam-raa");
   const { t, isAr } = useTranslation();
+
+  if (!mounted) return <LearnLoading />;
+  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
+    return (
+      <LockedModuleScreen
+        moduleTitleEn={laamRaaData.title_en}
+        moduleTitleAr={laamRaaData.title_ar}
+        prereqId={prereqId}
+        prereqTitleEn={prereqTitleEn}
+        prereqTitleAr={prereqTitleAr}
+      />
+    );
+  }
 
   const laamSection = laamRaaData.sections[0]; // laam-shamsiyyah-qamariyyah
   const laamAllahSection = laamRaaData.sections[1]; // laam-lafzul-jalalah
@@ -31,13 +54,13 @@ export default function LaamRaaPage() {
       </div>
 
       {/* Laam Shamsiyyah/Qamariyyah */}
-      <Card>
+      <Card id="laam-shamsiyyah-qamariyyah" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? laamSection.title_ar : laamSection.title_en}</h2>
         {!isAr && <ArabicText text={laamSection.title_ar} size="sm" className="text-text-muted" />}
         <p className="text-sm text-text-muted mt-2">{isAr && laamSection.description_ar ? laamSection.description_ar : laamSection.description}</p>
 
         {laamSection.subtypes?.map((st) => (
-          <div key={st.id} className="mt-4 p-4 rounded-lg bg-cream-dark dark:bg-gray-800">
+          <div key={st.id} id={st.id} className="mt-4 p-4 rounded-lg bg-cream-dark dark:bg-gray-800 scroll-mt-20">
             <h3 className="font-heading font-semibold text-sm">{isAr ? st.title_ar : st.title_en}</h3>
             {!isAr && <ArabicText text={st.title_ar} size="sm" className="text-text-muted" />}
             <p className="text-xs text-text-muted mt-2">{isAr && st.description_ar ? st.description_ar : st.description}</p>
@@ -64,7 +87,7 @@ export default function LaamRaaPage() {
       </Card>
 
       {/* Laam of Allah */}
-      <Card>
+      <Card id="laam-lafzul-jalalah" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? laamAllahSection.title_ar : laamAllahSection.title_en}</h2>
         {!isAr && <ArabicText text={laamAllahSection.title_ar} size="sm" className="text-text-muted" />}
         <p className="text-sm text-text-muted mt-2">{isAr && laamAllahSection.description_ar ? laamAllahSection.description_ar : laamAllahSection.description}</p>
@@ -85,7 +108,7 @@ export default function LaamRaaPage() {
       </Card>
 
       {/* Raa Rules */}
-      <Card>
+      <Card id="raa-rules" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? raaSection.title_ar : raaSection.title_en}</h2>
         {!isAr && <ArabicText text={raaSection.title_ar} size="sm" className="text-text-muted" />}
         <p className="text-sm text-text-muted mt-2">{isAr && raaSection.description_ar ? raaSection.description_ar : raaSection.description}</p>
@@ -136,7 +159,10 @@ export default function LaamRaaPage() {
         nextLabel={{ en: "Heavy & Light", ar: "التفخيم والترقيق" }}
         onMarkComplete={() => markLessonComplete("laam-raa", "laam-raa-main")}
         isComplete={progress.lessonsCompleted.includes("laam-raa-main")}
+        practiceModuleId="laam-raa"
       />
+
+      <LessonProgress moduleId="laam-raa" sections={SECTIONS} />
     </div>
   );
 }

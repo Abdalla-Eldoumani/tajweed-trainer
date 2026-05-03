@@ -5,6 +5,9 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { useProgress } from "@/hooks/useProgress";
+import { useReviews } from "@/hooks/useReviews";
+import { useMemorization } from "@/hooks/useMemorization";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { useTranslation } from "@/lib/i18n";
 import { MODULES } from "@/components/layout/nav-data";
 import learningPath from "@/data/content/learning-path.json";
@@ -15,6 +18,26 @@ const modules = learningPath.modules as LearningModule[];
 export default function ProgressPage() {
   const { t, isAr } = useTranslation();
   const { progress, moduleProgress, getOverallCompletion, resetProgress } = useProgress();
+  const { stats: reviewStatsFn } = useReviews();
+  const reviewStats = reviewStatsFn();
+  const { count: memorizedCount } = useMemorization();
+  const { events: analyticsEvents } = useAnalytics();
+  const insights = (() => {
+    const routeViews: Record<string, number> = {};
+    let quizStarts = 0;
+    let quizFinishes = 0;
+    for (const e of analyticsEvents) {
+      if (e.type === "quiz.start") quizStarts += 1;
+      else if (e.type === "quiz.finish") quizFinishes += 1;
+      else if (e.type === "route.view" && e.meta) {
+        routeViews[e.meta] = (routeViews[e.meta] ?? 0) + 1;
+      }
+    }
+    const topRoutes = Object.entries(routeViews)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    return { quizStarts, quizFinishes, topRoutes, total: analyticsEvents.length };
+  })();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const totalLessons: Record<string, number> = {};
@@ -48,6 +71,42 @@ export default function ProgressPage() {
         </div>
         <ProgressBar value={overall} />
       </Card>
+
+      {reviewStats.total > 0 && (
+        <Card>
+          <h2 className="font-heading font-semibold mb-3">{t("review.statsTitle")}</h2>
+          <div className="flex flex-wrap gap-6 mb-2">
+            <div>
+              <div className="text-2xl font-bold text-primary dark:text-primary-light">
+                {reviewStats.total}
+              </div>
+              <p className="text-xs text-text-muted">{t("review.statsTotal")}</p>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-accent">{reviewStats.mastered}</div>
+              <p className="text-xs text-text-muted">{t("review.statsMastered")}</p>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                {reviewStats.due}
+              </div>
+              <p className="text-xs text-text-muted">{t("review.statsDue")}</p>
+            </div>
+          </div>
+          <p className="text-xs text-text-muted">{t("review.statsHelp")}</p>
+        </Card>
+      )}
+
+      {memorizedCount > 0 && (
+        <Card>
+          <h2 className="font-heading font-semibold mb-3">{t("memorize.statsTitle")}</h2>
+          <div className="text-2xl font-bold text-primary dark:text-primary-light mb-1">
+            {memorizedCount}
+          </div>
+          <p className="text-xs text-text-muted mb-1">{t("memorize.statsCount")}</p>
+          <p className="text-xs text-text-muted">{t("memorize.statsHelp")}</p>
+        </Card>
+      )}
 
       <Card>
         <h2 className="font-heading font-semibold mb-3">{t("progress.streak")}</h2>
@@ -125,6 +184,38 @@ export default function ProgressPage() {
             </div>
           </Card>
         </div>
+      )}
+
+      {insights.total > 0 && (
+        <Card>
+          <h2 className="font-heading font-semibold mb-3">{t("insights.title")}</h2>
+          <div className="flex flex-wrap gap-6 mb-3">
+            <div>
+              <div className="text-2xl font-bold text-primary dark:text-primary-light">
+                {insights.quizStarts}
+              </div>
+              <p className="text-xs text-text-muted">{t("insights.quizStarts")}</p>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-accent">{insights.quizFinishes}</div>
+              <p className="text-xs text-text-muted">{t("insights.quizFinishes")}</p>
+            </div>
+          </div>
+          {insights.topRoutes.length > 0 && (
+            <>
+              <p className="text-xs font-medium mb-1">{t("insights.topRoutes")}</p>
+              <ul className="text-xs text-text-muted space-y-1">
+                {insights.topRoutes.map(([path, n]) => (
+                  <li key={path} className="flex justify-between gap-2">
+                    <span className="truncate min-w-0 flex-1">{path}</span>
+                    <span className="shrink-0 font-medium">{n}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <p className="text-xs text-text-muted mt-3">{t("insights.localOnly")}</p>
+        </Card>
       )}
 
       {/* Reset Progress */}

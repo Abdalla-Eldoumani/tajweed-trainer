@@ -5,9 +5,18 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
+import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
+import { useModuleLock } from "@/hooks/useModuleLock";
+import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import noonData from "@/data/content/noon-sakinah-tanween.json";
+
+const SECTIONS = [
+  "noon-sakinah-overview",
+  ...noonData.rules.flatMap((r) => [r.id, ...((r.subtypes ?? []).map((st) => st.id))]),
+];
 
 const RULE_COLORS: Record<string, string> = {
   "izhar-halqi": "#169200",
@@ -17,13 +26,27 @@ const RULE_COLORS: Record<string, string> = {
 };
 
 export default function NoonSakinahPage() {
+  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("noon-sakinah");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("noon-sakinah");
   const { t, isAr } = useTranslation();
 
+  if (!mounted) return <LearnLoading />;
+  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
+    return (
+      <LockedModuleScreen
+        moduleTitleEn={noonData.title_en}
+        moduleTitleAr={noonData.title_ar}
+        prereqId={prereqId}
+        prereqTitleEn={prereqTitleEn}
+        prereqTitleAr={prereqTitleAr}
+      />
+    );
+  }
+
   return (
     <div className="space-y-8">
-      <div>
+      <div id="noon-sakinah-overview" className="scroll-mt-20">
         <SectionBanner
           title={isAr ? noonData.title_ar : noonData.title_en}
           subtitle={isAr ? noonData.title_en : noonData.title_ar}
@@ -41,7 +64,7 @@ export default function NoonSakinahPage() {
             : (rule.subtypes ?? []).flatMap((st) => st.examples ?? []);
 
           return (
-            <div key={rule.id}>
+            <div key={rule.id} id={rule.id} className="scroll-mt-20">
               <RuleCard
                 titleEn={rule.title_en}
                 titleAr={rule.title_ar}
@@ -59,17 +82,18 @@ export default function NoonSakinahPage() {
               {rule.subtypes && (
                 <div className="ms-2 sm:ms-4 mt-2 space-y-2">
                   {rule.subtypes.map((st) => (
-                    <RuleCard
-                      key={st.id}
-                      titleEn={st.title_en}
-                      titleAr={st.title_ar ?? ""}
-                      description={st.description}
-                      descriptionAr={st.description_ar}
-                      letters={st.letters}
-                      examples={st.examples}
-                      color={color}
-                      mnemonicEn={st.mnemonic_en}
-                    />
+                    <div key={st.id} id={st.id} className="scroll-mt-20">
+                      <RuleCard
+                        titleEn={st.title_en}
+                        titleAr={st.title_ar ?? ""}
+                        description={st.description}
+                        descriptionAr={st.description_ar}
+                        letters={st.letters}
+                        examples={st.examples}
+                        color={color}
+                        mnemonicEn={st.mnemonic_en}
+                      />
+                    </div>
                   ))}
                 </div>
               )}
@@ -130,7 +154,10 @@ export default function NoonSakinahPage() {
         nextLabel={{ en: "Meem Sakinah", ar: "الميم الساكنة" }}
         onMarkComplete={() => markLessonComplete("noon-sakinah", "noon-sakinah-main")}
         isComplete={progress.lessonsCompleted.includes("noon-sakinah-main")}
+        practiceModuleId="noon-sakinah"
       />
+
+      <LessonProgress moduleId="noon-sakinah" sections={SECTIONS} />
     </div>
   );
 }

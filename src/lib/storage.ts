@@ -1,4 +1,15 @@
-import type { TajweedProgress, UserSettings, ModuleProgress, ReciterId, Language } from "./types";
+import type {
+  TajweedProgress,
+  UserSettings,
+  ModuleProgress,
+  Language,
+  ReviewState,
+  ReviewBox,
+  AnalyticsEvent,
+  AnalyticsEventType,
+} from "./types";
+import { validateReciterIdentifier } from "./audio-api";
+import { getCachedReciterEditions } from "@/hooks/useReciters";
 
 const STORAGE_KEY = "tajweed-trainer-progress";
 
@@ -22,6 +33,10 @@ const DEFAULT_PROGRESS: TajweedProgress = {
     longestStreak: 0,
     lastPracticeDate: "",
   },
+  reviews: {},
+  memorizedVerses: [],
+  readSections: {},
+  analytics: [],
 };
 
 // Caps protect against pathological inputs from a tampered localStorage —
@@ -30,10 +45,37 @@ const MAX_BOOKMARKS = 200;
 const MAX_LESSONS_PER_MODULE = 200;
 const MAX_QUIZ_SCORES_PER_MODULE = 500;
 const MAX_MODULES = 100;
+const MAX_REVIEWS = 2000;
+const MAX_MEMORIZED = 6236;
+const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
+const MAX_READ_SECTIONS_PER_MODULE = 50;
+const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
+const MAX_ANALYTICS = 1000;
+const VALID_ANALYTICS_TYPES: readonly AnalyticsEventType[] = [
+  "route.view",
+  "quiz.start",
+  "quiz.finish",
+  "review.start",
+  "memorize.toggle",
+  "search.query",
+];
 
-const VALID_RECITERS: readonly ReciterId[] = ["husary", "alafasy"];
+const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
+
 const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
 const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
+
+// Reciter validation runs against the cached editions list (or the static
+// defaults). An identifier that fails the format check or isn't in the list
+// is replaced with the husary default so a tampered storage entry never
+// leaves the app referencing a reciter the editions API doesn't know.
+function pickReciter(value: unknown): string {
+  if (!validateReciterIdentifier(value)) return DEFAULT_SETTINGS.reciter;
+  const known = getCachedReciterEditions();
+  if (value === "husary" || value === "alafasy") return value;
+  if (known.some((e) => e.identifier === value)) return value;
+  return DEFAULT_SETTINGS.reciter;
+}
 
 function isBrowser(): boolean {
   return typeof window !== "undefined";
@@ -67,7 +109,7 @@ function sanitizeSettings(input: unknown): UserSettings {
         .sort((a, b) => a - b)
     : [];
   return {
-    reciter: pickEnum(input.reciter, VALID_RECITERS, DEFAULT_SETTINGS.reciter),
+    reciter: pickReciter(input.reciter),
     playbackSpeed: ([0.5, 0.75, 1.0] as const).includes(input.playbackSpeed as 0.5 | 0.75 | 1.0)
       ? (input.playbackSpeed as number)
       : DEFAULT_SETTINGS.playbackSpeed,
@@ -105,6 +147,76 @@ function sanitizeModule(input: unknown): ModuleProgress {
   return { lessonsCompleted, quizScores, lastAccessed };
 }
 
+function sanitizeReview(input: unknown): ReviewState | null {
+  if (!isObject(input)) return null;
+  const box = VALID_BOXES.includes(input.box as ReviewBox) ? (input.box as ReviewBox) : 1;
+  const nextDueDate = typeof input.nextDueDate === "string" && input.nextDueDate.length <= 32 ? input.nextDueDate : "";
+  const lastSeenDate = typeof input.lastSeenDate === "string" && input.lastSeenDate.length <= 32 ? input.lastSeenDate : "";
+  const timesSeen = pickNumber(input.timesSeen, 0, 0, 100000);
+  const timesCorrect = pickNumber(input.timesCorrect, 0, 0, 100000);
+  return { box, nextDueDate, lastSeenDate, timesSeen, timesCorrect };
+}
+
+function sanitizeReviews(input: unknown): Record<string, ReviewState> {
+  if (!isObject(input)) return {};
+  const out: Record<string, ReviewState> = {};
+  const entries = Object.entries(input).slice(0, MAX_REVIEWS);
+  for (const [id, value] of entries) {
+    if (typeof id !== "string" || id.length === 0 || id.length >= 200) continue;
+    const review = sanitizeReview(value);
+    if (review) out[id] = review;
+  }
+  return out;
+}
+
+function sanitizeAnalytics(input: unknown): AnalyticsEvent[] {
+  if (!Array.isArray(input)) return [];
+  const out: AnalyticsEvent[] = [];
+  // Take the most recent MAX_ANALYTICS — older events get evicted as the
+  // ring buffer fills up.
+  const recent = input.slice(-MAX_ANALYTICS);
+  for (const item of recent) {
+    if (!isObject(item)) continue;
+    const type = item.type;
+    if (typeof type !== "string" || !VALID_ANALYTICS_TYPES.includes(type as AnalyticsEventType)) continue;
+    const ts = typeof item.ts === "string" && item.ts.length <= 32 ? item.ts : "";
+    if (!ts) continue;
+    const meta = typeof item.meta === "string" && item.meta.length <= 200 ? item.meta : undefined;
+    out.push({ type: type as AnalyticsEventType, ts, meta });
+  }
+  return out;
+}
+
+function sanitizeReadSections(input: unknown): Record<string, string[]> {
+  if (!isObject(input)) return {};
+  const out: Record<string, string[]> = {};
+  for (const [moduleId, value] of Object.entries(input)) {
+    if (typeof moduleId !== "string" || moduleId.length === 0 || moduleId.length >= 100) continue;
+    if (!Array.isArray(value)) continue;
+    const slugs = new Set<string>();
+    for (const slug of value) {
+      if (typeof slug !== "string") continue;
+      if (!SECTION_SLUG_PATTERN.test(slug)) continue;
+      slugs.add(slug);
+      if (slugs.size >= MAX_READ_SECTIONS_PER_MODULE) break;
+    }
+    out[moduleId] = Array.from(slugs);
+  }
+  return out;
+}
+
+function sanitizeMemorized(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+  const out = new Set<string>();
+  for (const v of input) {
+    if (typeof v !== "string") continue;
+    if (!VERSE_KEY_PATTERN.test(v)) continue;
+    out.add(v);
+    if (out.size >= MAX_MEMORIZED) break;
+  }
+  return Array.from(out);
+}
+
 function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return DEFAULT_PROGRESS;
   const modules: Record<string, ModuleProgress> = {};
@@ -127,6 +239,10 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     modules,
     settings: sanitizeSettings(input.settings),
     streaks,
+    reviews: sanitizeReviews(input.reviews),
+    memorizedVerses: sanitizeMemorized(input.memorizedVerses),
+    readSections: sanitizeReadSections(input.readSections),
+    analytics: sanitizeAnalytics(input.analytics),
   };
 }
 
@@ -183,6 +299,93 @@ export function markLessonComplete(moduleId: string, lessonId: string): void {
   }
   progress.modules[moduleId].lastAccessed = new Date().toISOString();
   setProgress(progress);
+}
+
+export function getReviews(): Record<string, ReviewState> {
+  return getProgress().reviews;
+}
+
+export function setReview(questionId: string, state: ReviewState): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  progress.reviews[questionId] = state;
+  setProgress(progress);
+}
+
+export function getAnalytics(): AnalyticsEvent[] {
+  return getProgress().analytics;
+}
+
+export function recordAnalyticsEvent(type: AnalyticsEventType, meta?: string): void {
+  if (!isBrowser()) return;
+  if (!VALID_ANALYTICS_TYPES.includes(type)) return;
+  const progress = getProgress();
+  const safeMeta = typeof meta === "string" ? meta.slice(0, 200) : undefined;
+  const next: AnalyticsEvent[] = [
+    ...progress.analytics.slice(-MAX_ANALYTICS + 1),
+    { type, meta: safeMeta, ts: new Date().toISOString() },
+  ];
+  progress.analytics = next;
+  setProgress(progress);
+}
+
+// Returns a JSON snapshot of the entire progress object suitable for download
+// as a backup file. The snapshot already passes through sanitizeProgress on
+// read, so untrusted fields are stripped.
+export function exportProgress(): string {
+  return JSON.stringify(getProgress(), null, 2);
+}
+
+// Replaces stored progress with the parsed payload after sanitization. Returns
+// false when the input isn't valid JSON or doesn't deserialize to an object;
+// the caller surfaces that failure to the user.
+export function importProgress(payload: string): boolean {
+  if (!isBrowser()) return false;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(payload);
+  } catch {
+    return false;
+  }
+  const sanitized = sanitizeProgress(parsed);
+  setProgress(sanitized);
+  return true;
+}
+
+export function getReadSections(moduleId: string): string[] {
+  return getProgress().readSections[moduleId] ?? [];
+}
+
+export function markSectionRead(moduleId: string, sectionId: string): void {
+  if (!isBrowser()) return;
+  if (!SECTION_SLUG_PATTERN.test(sectionId)) return;
+  const progress = getProgress();
+  const current = progress.readSections[moduleId] ?? [];
+  if (current.includes(sectionId)) return;
+  if (current.length >= MAX_READ_SECTIONS_PER_MODULE) return;
+  progress.readSections[moduleId] = [...current, sectionId];
+  setProgress(progress);
+}
+
+// Returns the new memorized state (true if marked, false if cleared) so the
+// caller can update its UI without reading back from storage.
+export function toggleMemorizedVerse(verseKey: string): boolean {
+  if (!isBrowser()) return false;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return false;
+  const progress = getProgress();
+  const set = new Set(progress.memorizedVerses);
+  let nowMemorized: boolean;
+  if (set.has(verseKey)) {
+    set.delete(verseKey);
+    nowMemorized = false;
+  } else {
+    if (set.size >= MAX_MEMORIZED) return progress.memorizedVerses.includes(verseKey);
+    set.add(verseKey);
+    nowMemorized = true;
+  }
+  progress.memorizedVerses = Array.from(set);
+  setProgress(progress);
+  return nowMemorized;
 }
 
 export function saveQuizScore(moduleId: string, lessonId: string, score: number): void {

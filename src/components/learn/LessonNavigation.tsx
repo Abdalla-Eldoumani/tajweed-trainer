@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/lib/i18n";
+import { useModuleLock } from "@/hooks/useModuleLock";
 
 type LocaleLabel = string | { en: string; ar?: string };
 
@@ -13,6 +14,10 @@ interface LessonNavigationProps {
   nextLabel?: LocaleLabel;
   onMarkComplete?: () => void;
   isComplete?: boolean;
+  // When set, renders a "Practice this module" CTA below the row that links to
+  // /practice/<id>. The CTA is suppressed while the module is still locked,
+  // matching the gating behavior in /learn/<id>.
+  practiceModuleId?: string;
 }
 
 function pickLabel(label: LocaleLabel | undefined, isAr: boolean): string | undefined {
@@ -41,48 +46,64 @@ export function LessonNavigation({
   nextLabel,
   onMarkComplete,
   isComplete,
+  practiceModuleId,
 }: LessonNavigationProps) {
   const { t, isAr } = useTranslation();
+  // Pass an empty string when no practice module is set so the hook still
+  // runs unconditionally (React rules-of-hooks), but the result is unused.
+  const lockState = useModuleLock(practiceModuleId ?? "");
+  const showPracticeCta = !!practiceModuleId && lockState.mounted && !lockState.locked;
 
   const prevText = pickLabel(prevLabel, isAr) ?? t("common.previous");
   const nextText = pickLabel(nextLabel, isAr) ?? t("common.next");
 
   return (
-    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between pt-6 mt-6">
-      <div className="gold-divider absolute -top-px left-0 right-0" />
-      <div className="w-full sm:w-auto">
-        {prevHref && (
-          <Link href={prevHref}>
-            <Button variant="ghost" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
-              <ChevronStartIcon />
-              {prevText}
+    <div className="pt-6 mt-6 space-y-4">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="gold-divider absolute -top-px left-0 right-0" />
+        <div className="w-full sm:w-auto">
+          {prevHref && (
+            <Link href={prevHref}>
+              <Button variant="ghost" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
+                <ChevronStartIcon />
+                {prevText}
+              </Button>
+            </Link>
+          )}
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          {onMarkComplete && (
+            <Button
+              variant={isComplete ? "secondary" : "primary"}
+              size="sm"
+              onClick={onMarkComplete}
+              disabled={isComplete}
+              className="w-full sm:w-auto min-h-[44px]"
+            >
+              {isComplete ? t("common.completed") : t("common.markComplete")}
             </Button>
-          </Link>
-        )}
+          )}
+
+          {nextHref && (
+            <Link href={nextHref} className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
+                {nextText}
+                <ChevronEndIcon />
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        {onMarkComplete && (
-          <Button
-            variant={isComplete ? "secondary" : "primary"}
-            size="sm"
-            onClick={onMarkComplete}
-            disabled={isComplete}
-            className="w-full sm:w-auto min-h-[44px]"
-          >
-            {isComplete ? t("common.completed") : t("common.markComplete")}
+      {showPracticeCta && (
+        <Link href={`/practice/${practiceModuleId}`} className="block">
+          <Button variant="primary" size="md" className="w-full min-h-[44px] gap-2">
+            {t("learn.practiceThisModule")}
+            <ChevronEndIcon />
           </Button>
-        )}
-
-        {nextHref && (
-          <Link href={nextHref} className="w-full sm:w-auto">
-            <Button variant="outline" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
-              {nextText}
-              <ChevronEndIcon />
-            </Button>
-          </Link>
-        )}
-      </div>
+        </Link>
+      )}
     </div>
   );
 }

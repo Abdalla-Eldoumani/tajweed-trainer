@@ -345,7 +345,29 @@ export interface GlossaryData {
   verified: true;
 }
 
-export type ReciterId = 'husary' | 'alafasy';
+// Reciter id is the Al Quran Cloud edition `identifier` field. We constrain
+// it to the alquran.cloud format at runtime (`^[a-z0-9._-]+$`, length 1-64) in
+// `validateReciterIdentifier`. The two defaults (husary, alafasy) are aliased
+// to their full alquran.cloud identifiers (`ar.husary`, `ar.alafasy`) by the
+// resolver so persisted settings from before this expansion still work.
+export type ReciterId = string;
+
+// Built-in default reciter identifiers, kept as a const tuple so existing
+// code paths that compared against `"husary" | "alafasy"` keep working.
+export const DEFAULT_RECITER_IDS = ["husary", "alafasy"] as const;
+export type DefaultReciterId = (typeof DEFAULT_RECITER_IDS)[number];
+
+// Validation regex for a reciter identifier from the editions API.
+export const RECITER_IDENTIFIER_PATTERN = /^[a-z0-9._-]{1,64}$/;
+
+export interface ReciterEdition {
+  identifier: string;     // e.g. "ar.husary", "ar.alafasy"
+  language: string;       // ISO 639-1, e.g. "ar"
+  name: string;           // Native name
+  englishName: string;    // English transliteration of the reciter
+  format: "audio";
+  type: "versebyverse";
+}
 
 export interface UserSettings {
   reciter: ReciterId;
@@ -365,6 +387,18 @@ export interface ModuleProgress {
   lastAccessed: string;
 }
 
+// Leitner box for spaced repetition. Each authored Question is tracked by its
+// stable id. Correct answer promotes one box (max 5); wrong resets to box 1.
+export type ReviewBox = 1 | 2 | 3 | 4 | 5;
+
+export interface ReviewState {
+  box: ReviewBox;
+  nextDueDate: string;   // ISO YYYY-MM-DD; due when today >= this
+  lastSeenDate: string;
+  timesSeen: number;
+  timesCorrect: number;
+}
+
 export interface TajweedProgress {
   modules: Record<string, ModuleProgress>;
   settings: UserSettings;
@@ -373,6 +407,31 @@ export interface TajweedProgress {
     longestStreak: number;
     lastPracticeDate: string;
   };
+  reviews: Record<string, ReviewState>;
+  // Stable verseKeys ("surah:ayah") the user has marked memorized.
+  memorizedVerses: string[];
+  // moduleId -> set of section anchor slugs the user has scrolled past.
+  readSections: Record<string, string[]>;
+  analytics: AnalyticsEvent[];
+}
+
+// Local-only insights ring buffer. Never sent over the network. The fixed set
+// of event types keeps callers honest and lets the progress page summarize
+// usage without a query DSL.
+export type AnalyticsEventType =
+  | "route.view"
+  | "quiz.start"
+  | "quiz.finish"
+  | "review.start"
+  | "memorize.toggle"
+  | "search.query";
+
+export interface AnalyticsEvent {
+  type: AnalyticsEventType;
+  // Optional small string payload (path, moduleId, search term). Capped at
+  // 200 chars by the sanitizer so a tampered storage entry can't bloat memory.
+  meta?: string;
+  ts: string; // ISO timestamp
 }
 
 export interface QuranApiVerse {
@@ -440,4 +499,62 @@ export interface PracticeQuestion {
   options: string[];
   optionsAr?: string[];
   moduleId: string;
+  // Optional fields populated when this PracticeQuestion was derived from an
+  // authored Question record. The runtime UI may render `prompt` instead of the
+  // static "identify the rule" header. Phase 6 surfaces `explanation` after the
+  // user answers; for now it is carried through so authored data isn't lost.
+  prompt?: { en: string; ar?: string };
+  explanation?: { en: string; ar?: string; lessonAnchor: string };
+  questionId?: string;
+}
+
+// Authored question record for the per-module question files in
+// src/data/questions/. Richer than PracticeQuestion (the runtime UI shape) so
+// Phase 6 can surface the explanation and lesson anchor without a re-author.
+// The aggregator maps Question -> PracticeQuestion for current consumers.
+export type QuestionDifficulty = "easy" | "medium" | "hard";
+
+export interface QuestionOption {
+  id: string;
+  label: { en: string; ar?: string };
+}
+
+export interface QuestionSource {
+  surah: number;
+  ayah: number;
+  // ID of the Quran.com translation edition the gloss comes from. Null when
+  // the gloss is reused from an existing src/data/content/*.json example whose
+  // translation was hand-authored by the maintainer (not pulled from a
+  // numbered edition).
+  translationEditionId: number | null;
+  // Free-text origin marker. Either a path inside src/data/content/ for reused
+  // examples, or "quran.com api" / similar for snapshot-fetched verses.
+  provenance: string;
+}
+
+export interface Question {
+  id: string;
+  moduleId: string;
+  difficulty: QuestionDifficulty;
+  prompt: { en: string; ar?: string };
+  arabicText: string;
+  englishGloss: string;
+  options: QuestionOption[];
+  correctOptionId: string;
+  explanation: {
+    en: string;
+    ar?: string;
+    lessonAnchor: string;
+  };
+  source: QuestionSource;
+}
+
+// Verse snapshot record stored in src/data/verse-snapshots.json. Keyed
+// "<surah>:<ayah>" at the top level.
+export interface VerseSnapshot {
+  arabic: string;
+  gloss: string;
+  glossEditionId: number | null;
+  fetchedAt: string | null;
+  source: string;
 }

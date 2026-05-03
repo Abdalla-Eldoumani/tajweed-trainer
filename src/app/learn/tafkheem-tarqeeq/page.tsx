@@ -4,14 +4,34 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
+import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
+import { useModuleLock } from "@/hooks/useModuleLock";
+import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import tafkheemData from "@/data/content/tafkheem-tarqeeq.json";
 
+const SECTIONS = ["always-heavy", "always-light", "variable-letters"];
+
 export default function TafkheemTarqeeqPage() {
+  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("tafkheem-tarqeeq");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("tafkheem-tarqeeq");
   const { t, isAr } = useTranslation();
+
+  if (!mounted) return <LearnLoading />;
+  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
+    return (
+      <LockedModuleScreen
+        moduleTitleEn={tafkheemData.title_en}
+        moduleTitleAr={tafkheemData.title_ar}
+        prereqId={prereqId}
+        prereqTitleEn={prereqTitleEn}
+        prereqTitleAr={prereqTitleAr}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -26,7 +46,7 @@ export default function TafkheemTarqeeqPage() {
       </div>
 
       {/* Always Heavy */}
-      <Card>
+      <Card id="always-heavy" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? tafkheemData.always_heavy.title_ar : tafkheemData.always_heavy.title_en}</h2>
 
         <div className="flex flex-wrap justify-center gap-4 mt-4">
@@ -58,7 +78,7 @@ export default function TafkheemTarqeeqPage() {
       </Card>
 
       {/* Always Light */}
-      <Card>
+      <Card id="always-light" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? tafkheemData.always_light.title_ar : tafkheemData.always_light.title_en}</h2>
         <p className="text-sm text-text-muted mt-2">{isAr && tafkheemData.always_light.description_ar ? tafkheemData.always_light.description_ar : tafkheemData.always_light.description}</p>
 
@@ -70,7 +90,7 @@ export default function TafkheemTarqeeqPage() {
       </Card>
 
       {/* Variable Letters */}
-      <Card>
+      <Card id="variable-letters" className="scroll-mt-20">
         <h2 className="font-heading font-semibold">{isAr ? tafkheemData.variable_letters.title_ar : tafkheemData.variable_letters.title_en}</h2>
 
         <div className="mt-4 space-y-3">
@@ -117,7 +137,10 @@ export default function TafkheemTarqeeqPage() {
         nextLabel={{ en: "Waqf", ar: "الوقف" }}
         onMarkComplete={() => markLessonComplete("tafkheem-tarqeeq", "tafkheem-tarqeeq-main")}
         isComplete={progress.lessonsCompleted.includes("tafkheem-tarqeeq-main")}
+        practiceModuleId="tafkheem-tarqeeq"
       />
+
+      <LessonProgress moduleId="tafkheem-tarqeeq" sections={SECTIONS} />
     </div>
   );
 }

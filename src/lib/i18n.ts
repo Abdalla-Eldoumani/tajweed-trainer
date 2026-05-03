@@ -73,6 +73,15 @@ const translations: Record<string, { en: string; ar: string }> = {
   "learn.prerequisite": { en: "Prerequisite", ar: "متطلب سابق" },
   "learn.locked": { en: "Locked", ar: "مقفل" },
   "learn.completed": { en: "Completed", ar: "مكتمل" },
+  "learn.locked.body": {
+    en: "This module is locked. Complete a lesson in the prerequisite module to unlock it.",
+    ar: "هذه الوحدة مقفلة. أكمل درسا واحدا من الوحدة السابقة لفتحها.",
+  },
+  "learn.locked.startPrereq": { en: "Start the prerequisite", ar: "ابدأ الوحدة السابقة" },
+  "learn.locked.backToList": { en: "Back to all modules", ar: "العودة إلى جميع الوحدات" },
+  "learn.practiceThisModule": { en: "Practice this module", ar: "تدرّب على هذه الوحدة" },
+  "learn.sectionsRead": { en: "{read} / {total} sections read", ar: "{read} / {total} أقسام مقروءة" },
+  "learn.nextUnread": { en: "Jump to next unread section", ar: "اذهب إلى القسم التالي غير المقروء" },
 
   // Module common
   "module.letters": { en: "Letters", ar: "الحروف" },
@@ -230,6 +239,58 @@ const translations: Record<string, { en: string; ar: string }> = {
   "practice.currentStreak": { en: "Current Streak", ar: "السلسلة الحالية" },
   "practice.longestStreak": { en: "Longest Streak", ar: "أطول سلسلة" },
   "practice.loadingQuestion": { en: "Loading next question...", ar: "جاري تحميل السؤال التالي..." },
+  "practice.feedback.correct": { en: "Correct", ar: "صحيح" },
+  "practice.feedback.incorrect": { en: "Incorrect", ar: "غير صحيح" },
+  "practice.feedback.rule": { en: "Rule", ar: "الحكم" },
+  "practice.feedback.openLesson": { en: "Open the lesson section", ar: "افتح قسم الدرس" },
+
+  // Practice hub (per-module practice)
+  "practice.hub.title": { en: "Practice", ar: "التدريب" },
+  "practice.hub.subtitle": {
+    en: "Pick a module to practice on its own, or take a mixed review across every module.",
+    ar: "اختر وحدة للتدريب عليها وحدها، أو خذ مراجعة مختلطة من كل الوحدات.",
+  },
+  "practice.hub.questions": { en: "questions", ar: "سؤال" },
+  "practice.hub.taken": { en: "quizzes taken", ar: "اختبارات مأخوذة" },
+  "practice.hub.lastScore": { en: "Last score", ar: "آخر نتيجة" },
+  "practice.hub.notStarted": { en: "Not started yet", ar: "لم يبدأ بعد" },
+  "practice.hub.start": { en: "Start", ar: "ابدأ" },
+  "practice.hub.continue": { en: "Continue", ar: "تابع" },
+  "practice.hub.mixedTitle": { en: "Mixed Review", ar: "مراجعة مختلطة" },
+  "practice.hub.mixedDesc": {
+    en: "Random questions from every module you have content for.",
+    ar: "أسئلة عشوائية من كل وحدة فيها محتوى.",
+  },
+  "practice.hub.mixedBadge": { en: "All modules", ar: "كل الوحدات" },
+  "practice.hub.backToHub": { en: "Practice hub", ar: "صفحة التدريب" },
+  "practice.hub.reviewTitle": { en: "Review Due", ar: "مراجعة مستحقّة" },
+  "practice.hub.reviewDesc": {
+    en: "Questions you've answered before, scheduled by spaced repetition.",
+    ar: "أسئلة أجبت عنها سابقا، مجدولة وفق المراجعة المتباعدة.",
+  },
+  "practice.hub.reviewBadge": { en: "Spaced", ar: "متباعد" },
+  "review.title": { en: "Review Due", ar: "مراجعة مستحقّة" },
+  "review.subtitle": {
+    en: "Revisit questions on a spaced schedule. Missed answers come back tomorrow; mastered ones every 30 days.",
+    ar: "راجع الأسئلة وفق جدول متباعد. تعود الأخطاء غدا، وما أتقنته كل 30 يوما.",
+  },
+  "review.dueCount": {
+    en: "{count} question(s) due for review.",
+    ar: "{count} سؤال/أسئلة جاهزة للمراجعة.",
+  },
+  "review.startReview": { en: "Start Review", ar: "ابدأ المراجعة" },
+  "review.empty": {
+    en: "No reviews due. Answer some practice questions to build a review queue.",
+    ar: "لا توجد مراجعات مستحقّة. أجب على أسئلة التدريب لبناء قائمة المراجعة.",
+  },
+  "review.statsTitle": { en: "Spaced Review", ar: "المراجعة المتباعدة" },
+  "review.statsTotal": { en: "Tracked", ar: "متابع" },
+  "review.statsMastered": { en: "Mastered", ar: "متقَن" },
+  "review.statsDue": { en: "Due now", ar: "مستحق الآن" },
+  "review.statsHelp": {
+    en: "Each question you answer is scheduled for review based on how well you remember it.",
+    ar: "يُجدول كل سؤال أجبت عنه للمراجعة بحسب إتقانك له.",
+  },
 
   // Progress
   "progress.title": { en: "Your Progress", ar: "تقدّمك" },
@@ -269,6 +330,12 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.normal": { en: "Normal", ar: "عادي" },
   "settings.large": { en: "Large", ar: "كبير" },
   "settings.xlarge": { en: "Extra Large", ar: "كبير جدا" },
+  "settings.recitersLoading": { en: "Updating list…", ar: "جاري التحديث…" },
+  "settings.recitersDefault": { en: "default", ar: "افتراضي" },
+  "settings.recitersHelp": {
+    en: "More reciters appear once the editions list loads. Husary stays the default for teaching-style learning.",
+    ar: "تظهر مزيد من القرّاء بعد تحميل قائمة الإصدارات. يبقى الحصري الافتراضي للتعلّم على نمط المعلّم.",
+  },
 
   // Common
   "common.progress": { en: "Progress", ar: "التقدّم" },
@@ -319,11 +386,61 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.searchSurah": { en: "Search surah", ar: "ابحث عن سورة" },
   "mushaf.bookmarkAdd": { en: "Add bookmark", ar: "إضافة إلى المفضلة" },
   "mushaf.bookmarkRemove": { en: "Remove bookmark", ar: "إزالة من المفضلة" },
+  "mushaf.memorizeOn": { en: "Hide memorized verses", ar: "إخفاء الآيات المحفوظة" },
+  "mushaf.memorizeOff": { en: "Show memorized verses", ar: "إظهار الآيات المحفوظة" },
+  "mushaf.memorizeMark": { en: "Mark verse as memorized", ar: "تحديد الآية كمحفوظة" },
+  "mushaf.memorizeUnmark": { en: "Unmark memorized verse", ar: "إلغاء تحديد الآية كمحفوظة" },
+  "mushaf.memorizeReveal": { en: "Reveal", ar: "كشف" },
+  "memorize.statsTitle": { en: "Memorization", ar: "الحفظ" },
+  "memorize.statsCount": { en: "Memorized verses", ar: "الآيات المحفوظة" },
+  "memorize.statsHelp": {
+    en: "Mark verses as memorized in the Mushaf, then toggle the eye icon to test recall.",
+    ar: "حدّد الآيات في المصحف كمحفوظة، ثم اضغط أيقونة العين لاختبار الاستذكار.",
+  },
   "mushaf.loadFailed": { en: "Could not load this page. Please try again.", ar: "تعذّر تحميل الصفحة. الرجاء المحاولة مرة أخرى." },
   "mushaf.retry": { en: "Retry", ar: "إعادة المحاولة" },
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
+
+  // Backup and restore
+  "settings.backup.title": { en: "Backup & Restore", ar: "النسخ الاحتياطي والاستعادة" },
+  "settings.backup.description": {
+    en: "Export your progress to a JSON file or restore from a previous backup. Useful when switching browsers or devices.",
+    ar: "صدّر تقدّمك إلى ملف JSON أو استعد نسخة سابقة. مفيد عند تغيير المتصفح أو الجهاز.",
+  },
+  "settings.backup.export": { en: "Export backup", ar: "تصدير نسخة" },
+  "settings.backup.import": { en: "Restore backup", ar: "استعادة نسخة" },
+  "settings.backup.exported": { en: "Backup downloaded.", ar: "تم تنزيل النسخة." },
+  "settings.backup.imported": { en: "Backup restored. Reloading…", ar: "تم استعادة النسخة. جارٍ إعادة التحميل…" },
+  "settings.backup.invalid": {
+    en: "That file isn't a valid Tajweed Trainer backup.",
+    ar: "هذا الملف ليس نسخة احتياطية صالحة.",
+  },
+
+  // Speech (TTS for prompts only — NOT for Quranic text)
+  "speech.read": { en: "Read prompt aloud", ar: "اقرأ السؤال بصوت" },
+  "speech.stop": { en: "Stop reading", ar: "إيقاف القراءة" },
+
+  // Insights (anonymous local analytics)
+  "insights.title": { en: "Insights", ar: "إحصائيات الاستخدام" },
+  "insights.quizStarts": { en: "Quizzes started", ar: "اختبارات بُدئت" },
+  "insights.quizFinishes": { en: "Quizzes finished", ar: "اختبارات مكتملة" },
+  "insights.topRoutes": { en: "Most-visited screens", ar: "أكثر الشاشات زيارة" },
+  "insights.localOnly": {
+    en: "All usage data stays on this device. Nothing is sent to a server.",
+    ar: "تبقى جميع بيانات الاستخدام على هذا الجهاز. لا يُرسل شيء إلى خادم.",
+  },
+
+  // Search
+  "search.title": { en: "Search", ar: "بحث" },
+  "search.subtitle": {
+    en: "Find a surah, lesson module, tajweed rule, or waqf symbol.",
+    ar: "ابحث عن سورة أو وحدة درس أو حكم تجويد أو رمز وقف.",
+  },
+  "search.placeholder": { en: "Search surahs, modules, rules…", ar: "ابحث في السور والوحدات والأحكام…" },
+  "search.hint": { en: "Type at least 2 characters to search.", ar: "أدخل حرفين على الأقل للبحث." },
+  "search.noResults": { en: "No matches.", ar: "لا توجد نتائج." },
 };
 
 export function t(key: string, lang: Language): string {

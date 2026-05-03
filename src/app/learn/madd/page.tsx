@@ -5,9 +5,15 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
+import { LessonProgress } from "@/components/learn/LessonProgress";
+import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
+import { useModuleLock } from "@/hooks/useModuleLock";
+import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import maddData from "@/data/content/madd-rules.json";
+
+const SECTIONS = ["madd-letters", ...maddData.types.map((t) => t.id)];
 
 const MADD_COLORS: Record<string, string> = {
   "madd-tabeeee": "#E06050",
@@ -20,9 +26,23 @@ const MADD_COLORS: Record<string, string> = {
 };
 
 export default function MaddPage() {
+  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("madd");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("madd");
   const { t, isAr } = useTranslation();
+
+  if (!mounted) return <LearnLoading />;
+  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
+    return (
+      <LockedModuleScreen
+        moduleTitleEn={maddData.title_en}
+        moduleTitleAr={maddData.title_ar}
+        prereqId={prereqId}
+        prereqTitleEn={prereqTitleEn}
+        prereqTitleAr={prereqTitleAr}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -36,7 +56,7 @@ export default function MaddPage() {
         </p>
       </div>
 
-      <Card>
+      <Card id="madd-letters" className="scroll-mt-20">
         <h2 className="font-heading font-semibold mb-3">{t("madd.letters")}</h2>
         <div className="flex flex-wrap justify-center gap-6">
           {maddData.madd_letters.map((letter) => (
@@ -51,15 +71,16 @@ export default function MaddPage() {
 
       <div className="space-y-4">
         {maddData.types.map((type) => (
-          <RuleCard
-            key={type.id}
-            titleEn={`${type.title_en} (${type.beats} beats)`}
-            titleAr={`${type.title_ar} (${type.beats} ${t("ghunnah.beats")})`}
-            description={type.description}
-            descriptionAr={type.description_ar}
-            examples={type.examples}
-            color={MADD_COLORS[type.id] ?? "#E06050"}
-          />
+          <div key={type.id} id={type.id} className="scroll-mt-20">
+            <RuleCard
+              titleEn={`${type.title_en} (${type.beats} beats)`}
+              titleAr={`${type.title_ar} (${type.beats} ${t("ghunnah.beats")})`}
+              description={type.description}
+              descriptionAr={type.description_ar}
+              examples={type.examples}
+              color={MADD_COLORS[type.id] ?? "#E06050"}
+            />
+          </div>
         ))}
       </div>
 
@@ -94,7 +115,10 @@ export default function MaddPage() {
         nextLabel={{ en: "Laam & Raa", ar: "اللام والراء" }}
         onMarkComplete={() => markLessonComplete("madd", "madd-main")}
         isComplete={progress.lessonsCompleted.includes("madd-main")}
+        practiceModuleId="madd"
       />
+
+      <LessonProgress moduleId="madd" sections={SECTIONS} />
     </div>
   );
 }
