@@ -5,10 +5,17 @@ import type {
   SurahHeader,
   VerseTajweed,
   RevelationPlace,
+  VerseWord,
+  TranslationResource,
+  TafsirResource,
 } from "./types";
 import surahIndex from "@/data/content/surah-index.json";
+import { sanitizeTafsirHtml } from "./sanitize";
 
 const BASE_URL = "https://api.quran.com/api/v4";
+// Word-by-word audio clips are served from the Quran.com audio CDN as relative
+// paths; absolute and protocol-relative forms are passed through unchanged.
+const WORD_AUDIO_CDN = "https://audio.qurancdn.com/";
 const cache = new Map<string, { data: unknown; timestamp: number }>();
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 const LONG_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days for chapter metadata
@@ -151,4 +158,98 @@ export async function getTajweedPage(pageNumber: number): Promise<MushafPageData
 export function getStartPageForSurah(surahNumber: number): number {
   const meta = BUNDLED_SURAH_INDEX.find((s) => s.number === surahNumber);
   return meta?.pages[0] ?? 1;
+}
+
+// --- Reading depth: translations, tafsir, word-by-word -----------------------
+// Every field is fetched from the authenticated Quran.com API and never
+// generated. Requests are made per chapter (not per ayah) and cached, per the
+// rate-limit edge case. Tafsir and translation HTML pass through the shared
+// sanitizer before they can reach a renderer.
+
+interface TranslationsApiResponse {
+  verses: Array<{ verse_key: string; translations?: Array<{ text?: string }> }>;
+}
+
+// verse_key ("s:a") -> sanitized translation text, for a whole chapter in one call.
+export async function getTranslationsForChapter(
+  surah: number,
+  translationId: number,
+): Promise<Record<string, string>> {
+  const url = `${BASE_URL}/verses/by_chapter/${surah}?translations=${translationId}&fields=text_uthmani&per_page=286`;
+  const data = await fetchWithCache<TranslationsApiResponse>(url);
+  const out: Record<string, string> = {};
+  for (const v of data.verses ?? []) {
+    const text = v.translations?.[0]?.text;
+    if (typeof text === "string") out[v.verse_key] = sanitizeTafsirHtml(text);
+  }
+  return out;
+}
+
+interface TafsirApiResponse {
+  tafsir?: { text?: string };
+  tafsirs?: Array<{ text?: string }>;
+}
+
+// Sanitized tafsir HTML for one verse; empty string when none is available.
+export async function getTafsirForVerse(verseKey: string, tafsirId: number): Promise<string> {
+  const url = `${BASE_URL}/quran/tafsirs/${tafsirId}?verse_key=${encodeURIComponent(verseKey)}`;
+  const data = await fetchWithCache<TafsirApiResponse>(url);
+  const text = data.tafsir?.text ?? data.tafsirs?.[0]?.text ?? "";
+  return typeof text === "string" ? sanitizeTafsirHtml(text) : "";
+}
+
+interface WordsApiResponse {
+  verses: Array<{
+    verse_key: string;
+    words?: Array<{
+      position?: number;
+      text_uthmani?: string;
+      transliteration?: { text?: string | null } | null;
+      translation?: { text?: string | null } | null;
+      audio_url?: string | null;
+    }>;
+  }>;
+}
+
+function toWordAudioUrl(path: string | null | undefined): string | null {
+  if (typeof path !== "string" || path.length === 0) return null;
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  if (path.startsWith("//")) return `https:${path}`;
+  return WORD_AUDIO_CDN + path.replace(/^\/+/, "");
+}
+
+// verse_key -> ordered words with per-word transliteration, gloss and audio URL.
+export async function getWordsForChapter(surah: number): Promise<Record<string, VerseWord[]>> {
+  const url = `${BASE_URL}/verses/by_chapter/${surah}?words=true&word_fields=text_uthmani,transliteration&per_page=286`;
+  const data = await fetchWithCache<WordsApiResponse>(url);
+  const out: Record<string, VerseWord[]> = {};
+  for (const v of data.verses ?? []) {
+    out[v.verse_key] = (v.words ?? []).map((w, i) => ({
+      position: typeof w.position === "number" ? w.position : i + 1,
+      textUthmani: typeof w.text_uthmani === "string" ? w.text_uthmani : "",
+      transliteration: w.transliteration?.text ?? null,
+      translation: w.translation?.text ?? null,
+      audioUrl: toWordAudioUrl(w.audio_url),
+    }));
+  }
+  return out;
+}
+
+interface ResourceApiResponse {
+  translations?: Array<{ id: number; name: string; author_name?: string; language_name?: string }>;
+  tafsirs?: Array<{ id: number; name: string; author_name?: string; language_name?: string }>;
+}
+
+function mapResource(t: { id: number; name: string; author_name?: string; language_name?: string }): TranslationResource {
+  return { id: t.id, name: t.name, authorName: t.author_name ?? "", languageName: t.language_name ?? "" };
+}
+
+export async function getResourceTranslations(): Promise<TranslationResource[]> {
+  const data = await fetchWithCache<ResourceApiResponse>(`${BASE_URL}/resources/translations`, LONG_CACHE_TTL);
+  return (data.translations ?? []).map(mapResource);
+}
+
+export async function getResourceTafsirs(): Promise<TafsirResource[]> {
+  const data = await fetchWithCache<ResourceApiResponse>(`${BASE_URL}/resources/tafsirs`, LONG_CACHE_TTL);
+  return (data.tafsirs ?? []).map(mapResource);
 }
