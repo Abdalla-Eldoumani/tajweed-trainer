@@ -1,7 +1,8 @@
 "use client";
 
-import { useAudio } from "@/hooks/useAudio";
+import { usePlayer } from "@/hooks/usePlayer";
 import { useSettings } from "@/hooks/useSettings";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { ReciterId } from "@/lib/types";
 
@@ -9,30 +10,44 @@ interface AudioPlayerProps {
   surah: number;
   ayah: number;
   reciter?: ReciterId;
+  surahName?: string | null;
   compact?: boolean;
   className?: string;
 }
 
-export function AudioPlayer({ surah, ayah, reciter, compact = false, className }: AudioPlayerProps) {
-  const { isPlaying, isLoading, error, currentTime, duration, play, pause, setSpeed } = useAudio();
+// Routes through the global player store: tapping plays this verse in single
+// mode through the one shared audio element and surfaces it in the mini-player.
+export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, className }: AudioPlayerProps) {
   const { settings, updateSettings } = useSettings();
+  const { t } = useTranslation();
+  const status = usePlayer((s) => s.status);
+  const isThis = usePlayer((s) => {
+    const c = s.queue[s.index];
+    return !!c && c.surah === surah && c.ayah === ayah;
+  });
+  const currentTime = usePlayer((s) => s.currentTime);
+  const duration = usePlayer((s) => s.duration);
 
   const activeReciter = reciter ?? settings.reciter;
+  const isPlaying = isThis && status === "playing";
+  const isLoading = isThis && status === "loading";
 
   const handlePlayPause = () => {
-    if (isPlaying) {
-      pause();
-    } else {
-      play(surah, ayah, activeReciter, settings.playbackSpeed);
-    }
+    if (isThis) usePlayer.getState().toggle();
+    else
+      usePlayer.getState().playVerse(surah, ayah, {
+        reciter: activeReciter,
+        speed: settings.playbackSpeed,
+        surahName: surahName ?? null,
+      });
   };
 
   const handleSpeedChange = (newSpeed: number) => {
     updateSettings({ playbackSpeed: newSpeed });
-    setSpeed(newSpeed);
+    if (isThis) usePlayer.getState().setSpeed(newSpeed);
   };
 
-  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progressPercent = isThis && duration > 0 ? (currentTime / duration) * 100 : 0;
 
   if (compact) {
     return (
@@ -43,17 +58,11 @@ export function AudioPlayer({ surah, ayah, reciter, compact = false, className }
           "inline-flex items-center justify-center w-11 h-11 rounded-full transition-colors",
           "bg-primary/10 text-primary hover:bg-primary/20 dark:bg-primary-light/20 dark:text-primary-light",
           "disabled:opacity-50",
-          className
+          className,
         )}
-        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-label={isPlaying ? t("player.pause") : t("player.play")}
       >
-        {isLoading ? (
-          <LoadingIcon />
-        ) : isPlaying ? (
-          <PauseIcon />
-        ) : (
-          <PlayIcon />
-        )}
+        {isLoading ? <LoadingIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>
     );
   }
@@ -64,17 +73,14 @@ export function AudioPlayer({ surah, ayah, reciter, compact = false, className }
         onClick={handlePlayPause}
         disabled={isLoading}
         className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
-        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-label={isPlaying ? t("player.pause") : t("player.play")}
       >
         {isLoading ? <LoadingIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>
 
       <div className="flex-1 min-w-0">
         <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-primary transition-all"
-            style={{ width: `${progressPercent}%` }}
-          />
+          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} />
         </div>
       </div>
 
@@ -82,14 +88,12 @@ export function AudioPlayer({ surah, ayah, reciter, compact = false, className }
         value={settings.playbackSpeed}
         onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
         className="text-xs bg-transparent border border-gray-300 dark:border-gray-600 rounded px-1.5 py-1"
-        aria-label="Playback speed"
+        aria-label={t("player.speed")}
       >
         <option value="0.5">0.5x</option>
         <option value="0.75">0.75x</option>
         <option value="1">1.0x</option>
       </select>
-
-      {error && <span className="text-xs text-red-500">{error}</span>}
     </div>
   );
 }
