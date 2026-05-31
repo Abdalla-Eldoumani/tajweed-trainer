@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { fetchAudioUrl } from "@/lib/audio-api";
+import { DEFAULT_RECITER_ID } from "@/lib/reciters";
 import type { ReciterId } from "@/lib/types";
 
 interface UseAudioReturn {
@@ -75,7 +76,7 @@ export function useAudio(): UseAudioReturn {
   }, []);
 
   const play = useCallback(
-    async (surah: number, ayah: number, reciter: ReciterId = "husary", speed: number = 1.0) => {
+    async (surah: number, ayah: number, reciter: ReciterId = DEFAULT_RECITER_ID, speed: number = 1.0) => {
       stopCurrent();
       setIsLoading(true);
       setError(null);
