@@ -3,22 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --primary: #1B5E20;
+  --primary: #165E2A;
   --primary-light: #4CAF50;
+  --primary-weak: #2E7D44;
   --accent: #D4A574;
-  --bg: #FDF8F0;
-  --bg-card: #FFFDF9;
-  --bg-card-dark: #2D2D44;
-  --text: #1A1A2E;
-  --text-muted: #6B7280;
+  --bg: #F7F3EA;
+  --bg-card: #FFFFFF;
+  --bg-card-dark: #141A2C;
+  --bg-subtle: #EFE8D8;
+  --text: #1A1F2E;
+  --text-muted: #5B6472;
 
-  --gold: #C5A55A;
-  --gold-light: #E8D5A3;
+  --gold: #B68A2E;
+  --gold-light: #D8BE86;
   --gold-dark: #8B7332;
-  --cream: #FDF8F0;
-  --cream-dark: #F5EDE0;
-  --border-ornate: #C5A55A;
-  --border-ornate-subtle: rgba(197, 165, 90, 0.3);
+  --gold-soft: #D8BE86;
+  --gold-hairline: rgba(182, 138, 46, 0.35);
+  --cream: #F7F3EA;
+  --cream-dark: #EFE8D8;
+  --border: #E3DAC7;
+  --border-ornate: #B68A2E;
+  --border-ornate-subtle: rgba(182, 138, 46, 0.3);
+  --ornament-1: var(--gold);
+  --ornament-2: #14506B;
+  --ornament-3: #B9A876;
 
   /* Tajweed letter colors, light scheme. One variable per API class; values
      mirror the active SCHEME in src/lib/tajweed-colors.ts. */
@@ -45,19 +53,29 @@
 }
 
 .dark {
-  --bg: #1A1A2E;
-  --bg-card: #2D2D44;
-  --bg-card-dark: #2D2D44;
-  --text: #F5F5F5;
-  --text-muted: #9CA3AF;
+  --primary: #3FB05E;
+  --primary-light: #4CAF50;
+  --primary-weak: #2E7D44;
+  --bg: #0B1020;
+  --bg-card: #141A2C;
+  --bg-card-dark: #141A2C;
+  --bg-subtle: #1B2236;
+  --text: #ECEFF6;
+  --text-muted: #9AA3B2;
 
-  --gold: #D4B96A;
+  --gold: #D8B25A;
   --gold-light: #A08940;
   --gold-dark: #F0E0B0;
-  --cream: #1E1E32;
-  --cream-dark: #252540;
+  --gold-soft: #8A6E32;
+  --gold-hairline: rgba(216, 178, 90, 0.32);
+  --cream: #141A2C;
+  --cream-dark: #1B2236;
+  --border: #283049;
   --border-ornate: #A08940;
   --border-ornate-subtle: rgba(160, 137, 64, 0.3);
+  --ornament-1: var(--gold);
+  --ornament-2: #2A6F92;
+  --ornament-3: #9A8A5A;
 
   /* Tajweed letter colors, dark scheme (lifts for the navy background). */
   --tajweed-ham_wasl: #B7BCC6;
@@ -239,29 +257,17 @@ html, body {
   border-radius: 0 0 4px 0;
 }
 
-/* Section banner (surah header style) */
+/* Section banner (surah header style) — flat surface with a single gold
+   hairline rule and a centered title. No gradient, no busy overlay. */
 .section-banner {
   position: relative;
   text-align: center;
   padding: 0.75rem 2rem;
-  background: linear-gradient(135deg, var(--primary) 0%, #2E7D32 100%);
-  color: white;
+  background: var(--bg-card);
+  color: var(--text);
   border-radius: 8px;
+  border: 1px solid var(--gold-hairline);
   overflow: hidden;
-}
-
-.section-banner::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.1;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='0.5'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3Ccircle cx='30' cy='30' r='12'/%3E%3Cpath d='M30 10L35 25H45L37 33L39 45L30 38L21 45L23 33L15 25H25Z'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 60px 60px;
-  pointer-events: none;
-}
-
-.dark .section-banner {
-  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
 }
 
 /* Gold divider */
@@ -306,52 +312,22 @@ html, body {
 /* Outer ornate frame for a Mushaf page — multi-color geometric band */
 .mushaf-frame {
   position: relative;
-  background: var(--cream);
-  border: 1px solid var(--gold-dark);
+  background: var(--bg-card);
+  border: 1px solid var(--gold);
   border-radius: 8px;
   padding: 14px;
 }
 
 .mushaf-frame::before {
-  /* Inner gold rule + decorative band */
+  /* The whole frame ornament: one quiet inner hairline rule, inset 6px. Uses
+     ornament/gold tokens only (never tajweed), so a palette change cannot
+     shift the frame. Replaces the old repeating multi-color band. */
   content: "";
   position: absolute;
   inset: 6px;
-  border: 1px solid var(--gold);
+  border: 1px solid var(--gold-hairline);
   border-radius: 5px;
   pointer-events: none;
-}
-
-.mushaf-frame::after {
-  /* Repeating gold ornamental band. Decoupled from tajweed tokens so changing
-     the tajweed palette can never shift the frame; phase 5 refines this to the
-     quiet double-gold rule. */
-  content: "";
-  position: absolute;
-  inset: 7px;
-  border-radius: 5px;
-  pointer-events: none;
-  background:
-    linear-gradient(var(--cream), var(--cream)) padding-box,
-    repeating-linear-gradient(
-      90deg,
-      var(--gold) 0,
-      var(--gold) 6px,
-      var(--gold-dark) 6px,
-      var(--gold-dark) 9px,
-      var(--gold) 9px,
-      var(--gold) 12px,
-      var(--border-ornate) 12px,
-      var(--border-ornate) 15px,
-      var(--gold) 15px,
-      var(--gold) 21px
-    ) border-box;
-  border: 8px solid transparent;
-  opacity: 0.85;
-}
-
-.dark .mushaf-frame::after {
-  opacity: 0.65;
 }
 
 /* Surah cartouche — ornamental banner shown when a surah starts */
@@ -420,8 +396,8 @@ html, body {
   padding: 0 0.3em;
   margin: 0 0.25em;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(197, 165, 90, 0.18) 0%, rgba(197, 165, 90, 0.08) 70%, transparent 100%);
-  border: 1.2px solid var(--gold-dark);
+  background: var(--bg-subtle);
+  border: 1px solid var(--gold-hairline);
   color: var(--gold-dark);
   font-size: 0.55em;
   font-weight: 600;
@@ -432,21 +408,23 @@ html, body {
 }
 
 .dark .tajweed-text .end {
-  background: radial-gradient(circle, rgba(212, 185, 106, 0.22) 0%, rgba(212, 185, 106, 0.08) 70%, transparent 100%);
-  border-color: var(--gold-light);
-  color: var(--gold-light);
+  background: var(--bg-subtle);
+  border-color: var(--gold-hairline);
+  color: var(--gold-dark);
 }
 
-/* Card elevated variant — gold inner stroke + soft glow */
+/* Card elevated variant — a quiet 1px gold hairline and a small neutral
+   shadow. No gold glow. */
 .card-elevated {
   position: relative;
   box-shadow:
-    inset 0 0 0 1px var(--border-ornate-subtle),
-    0 6px 24px -10px rgba(197, 165, 90, 0.45);
+    inset 0 0 0 1px var(--gold-hairline),
+    0 1px 2px rgba(16, 20, 32, 0.04),
+    0 2px 8px rgba(16, 20, 32, 0.04);
 }
 
 .dark .card-elevated {
   box-shadow:
-    inset 0 0 0 1px var(--border-ornate-subtle),
-    0 6px 24px -10px rgba(212, 185, 106, 0.35);
+    inset 0 0 0 1px var(--gold-hairline),
+    0 8px 24px -12px rgba(0, 0, 0, 0.4);
 }
