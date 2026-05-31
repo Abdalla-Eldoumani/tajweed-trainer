@@ -1,34 +1,252 @@
-export interface TajweedColor {
-  cssClass: string;
-  hex: string;
-  hexDark: string;
+// Tajweed color map: the single source of truth for the app's tajweed palette.
+//
+// Light values are transcribed verbatim from the Quranic Universal Library
+// (QUL), the data project shared by Quran.com and Tarteel:
+//   new / mushaf scheme: app/assets/stylesheets/shared/tajweed_color_new.scss
+//   classic scheme:      app/assets/stylesheets/shared/tajweed.scss
+// See .agent/TAJWEED_COLOR_REFERENCE.md. Light hexes are never invented or
+// adjusted here. Dark values are lifts for the deep-navy dark background (not
+// from QUL); scripts/verify-tajweed-colors.mjs contrast-checks them.
+//
+// Keys are the EXACT class names the Quran.com API emits in the
+// text_uthmani_tajweed field. Live enumeration on 2026-05-30 (surahs 38, 2,
+// 114 via api.quran.com/api/v4) returned these distinct classes:
+//   ghunnah, ham_wasl, idgham_ghunnah, idgham_mutajanisayn, idgham_shafawi,
+//   idgham_wo_ghunnah, ikhafa, ikhafa_shafawi, iqlab, laam_shamsiyah,
+//   madda_necessary, madda_normal, madda_obligatory, madda_permissible,
+//   qalaqah, slnt
+// All sixteen are mapped below. idgham_mutaqaribayn, the madda_obligatory_*
+// variants, and tafkheem were not in the sample but are kept (QUL lists them;
+// the first two can appear in other surahs, tafkheem is generally not emitted).
+// izhar / izhar_shafawi are not emitted and stay default ink by design.
+
+export type TajweedScheme = "new" | "classic";
+
+// The active palette. Flip to "classic" to switch the whole scheme from one
+// place (the two schemes differ only in the madd family and qalaqah). Default
+// is "new", confirmed by pixel-sampling the reference mushaf; see
+// .agent/TAJWEED_COLOR_REFERENCE.md.
+export const SCHEME: TajweedScheme = "new";
+
+export type TajweedGroup =
+  | "ghunnah-idgham"
+  | "madd"
+  | "qalqalah"
+  | "ikhfa-iqlab"
+  | "silent-laam"
+  | "tafkheem";
+
+interface SchemeColors {
+  light: string;
+  dark: string;
+}
+
+interface TajweedClassDef {
   nameEn: string;
   nameAr: string;
+  group: TajweedGroup;
+  new: SchemeColors;
+  classic: SchemeColors;
 }
 
-export const TAJWEED_COLORS: TajweedColor[] = [
-  { cssClass: "ghunnah", hex: "#169200", hexDark: "#1DBF00", nameEn: "Ghunnah", nameAr: "غنّة" },
-  { cssClass: "ikhfaa", hex: "#D98000", hexDark: "#F0A030", nameEn: "Ikhfaa", nameAr: "إخفاء" },
-  { cssClass: "ikhfaa_shafawi", hex: "#D98000", hexDark: "#F0A030", nameEn: "Ikhfaa Shafawi", nameAr: "إخفاء شفوي" },
-  { cssClass: "idgham_ghunnah", hex: "#9400A8", hexDark: "#C040D8", nameEn: "Idgham with Ghunnah", nameAr: "إدغام بغنة" },
-  { cssClass: "idgham_no_ghunnah", hex: "#0057D9", hexDark: "#4090FF", nameEn: "Idgham without Ghunnah", nameAr: "إدغام بلا غنة" },
-  { cssClass: "idgham_shafawi", hex: "#9400A8", hexDark: "#C040D8", nameEn: "Idgham Shafawi", nameAr: "إدغام شفوي" },
-  { cssClass: "idgham_mutajanisayn", hex: "#0057D9", hexDark: "#4090FF", nameEn: "Idgham Mutajanisayn", nameAr: "إدغام متجانسين" },
-  { cssClass: "idgham_mutaqaribayn", hex: "#0057D9", hexDark: "#4090FF", nameEn: "Idgham Mutaqaribayn", nameAr: "إدغام متقاربين" },
-  { cssClass: "iqlab", hex: "#26A69A", hexDark: "#40C4B8", nameEn: "Iqlab", nameAr: "إقلاب" },
-  { cssClass: "qalqalah", hex: "#A30000", hexDark: "#E03030", nameEn: "Qalqalah", nameAr: "قلقلة" },
-  { cssClass: "madda_normal", hex: "#E06050", hexDark: "#F08070", nameEn: "Madd (Normal)", nameAr: "مدّ طبيعي" },
-  { cssClass: "madda_obligatory", hex: "#D50000", hexDark: "#FF3030", nameEn: "Madd (Obligatory)", nameAr: "مدّ لازم" },
-  { cssClass: "madda_permissible", hex: "#E8567F", hexDark: "#F07090", nameEn: "Madd (Permissible)", nameAr: "مدّ جائز" },
-  { cssClass: "laam_shamsiyah", hex: "#707070", hexDark: "#909090", nameEn: "Laam Shamsiyyah", nameAr: "لام شمسية" },
-  { cssClass: "silent", hex: "#AAAAAA", hexDark: "#CCCCCC", nameEn: "Silent", nameAr: "حرف ساكن" },
-  { cssClass: "ham_wasl", hex: "#AAAAAA", hexDark: "#CCCCCC", nameEn: "Hamzat Al-Wasl", nameAr: "همزة الوصل" },
-];
+// Keyed by exact API class name. Light values verbatim from QUL; dark values
+// are contrast-checked lifts. Classic light values for the madd family and
+// qalaqah come from the classic QUL sheet; their dark lifts are authored here
+// (recorded in TAJWEED_COLOR_REFERENCE.md) so a flip to classic is not a broken
+// dark mode. Every other color is identical between the two schemes.
+const TAJWEED_DEFS: Record<string, TajweedClassDef> = {
+  ham_wasl: {
+    nameEn: "Hamzat al-Wasl",
+    nameAr: "همزة الوصل",
+    group: "silent-laam",
+    new: { light: "#AAAAAA", dark: "#B7BCC6" },
+    classic: { light: "#AAAAAA", dark: "#B7BCC6" },
+  },
+  slnt: {
+    nameEn: "Silent",
+    nameAr: "حرف لا يُنطق",
+    group: "silent-laam",
+    new: { light: "#AAAAAA", dark: "#B7BCC6" },
+    classic: { light: "#AAAAAA", dark: "#B7BCC6" },
+  },
+  laam_shamsiyah: {
+    nameEn: "Laam Shamsiyyah",
+    nameAr: "لام شمسية",
+    group: "silent-laam",
+    new: { light: "#AAAAAA", dark: "#B7BCC6" },
+    classic: { light: "#AAAAAA", dark: "#B7BCC6" },
+  },
+  idgham_mutajanisayn: {
+    nameEn: "Idgham Mutajanisayn",
+    nameAr: "إدغام متجانسين",
+    group: "ghunnah-idgham",
+    new: { light: "#A1A1A1", dark: "#B0B0B0" },
+    classic: { light: "#A1A1A1", dark: "#B0B0B0" },
+  },
+  idgham_mutaqaribayn: {
+    nameEn: "Idgham Mutaqaribayn",
+    nameAr: "إدغام متقاربين",
+    group: "ghunnah-idgham",
+    new: { light: "#A1A1A1", dark: "#B0B0B0" },
+    classic: { light: "#A1A1A1", dark: "#B0B0B0" },
+  },
+  ghunnah: {
+    nameEn: "Ghunnah",
+    nameAr: "غُنّة",
+    group: "ghunnah-idgham",
+    new: { light: "#FF7E1E", dark: "#FF8C36" },
+    classic: { light: "#FF7E1E", dark: "#FF8C36" },
+  },
+  madda_normal: {
+    nameEn: "Madd (natural, 2)",
+    nameAr: "مدّ طبيعي",
+    group: "madd",
+    new: { light: "#537FFF", dark: "#6E92FF" },
+    classic: { light: "#537FFF", dark: "#6E92FF" },
+  },
+  madda_permissible: {
+    nameEn: "Madd (permissible)",
+    nameAr: "مدّ جائز",
+    group: "madd",
+    new: { light: "#F38E02", dark: "#FBA53A" },
+    classic: { light: "#4050FF", dark: "#8AA6FF" },
+  },
+  madda_necessary: {
+    nameEn: "Madd (necessary, laazim)",
+    nameAr: "مدّ لازم",
+    group: "madd",
+    new: { light: "#A9045C", dark: "#E0529A" },
+    classic: { light: "#000EBC", dark: "#6E7CFF" },
+  },
+  madda_obligatory: {
+    nameEn: "Madd (obligatory)",
+    nameAr: "مدّ واجب متصل",
+    group: "madd",
+    new: { light: "#F2007F", dark: "#FF4DA6" },
+    classic: { light: "#2144C1", dark: "#5E84FF" },
+  },
+  madda_obligatory_mottasel: {
+    nameEn: "Madd (obligatory, muttasil)",
+    nameAr: "مدّ واجب متصل",
+    group: "madd",
+    new: { light: "#F2007F", dark: "#FF4DA6" },
+    classic: { light: "#2144C1", dark: "#5E84FF" },
+  },
+  madda_obligatory_monfasel: {
+    nameEn: "Madd (obligatory, munfasil)",
+    nameAr: "مدّ جائز منفصل",
+    group: "madd",
+    new: { light: "#F2007F", dark: "#FF4DA6" },
+    classic: { light: "#2144C1", dark: "#5E84FF" },
+  },
+  qalaqah: {
+    nameEn: "Qalqalah",
+    nameAr: "قلقلة",
+    group: "qalqalah",
+    new: { light: "#009EE6", dark: "#38B6F5" },
+    classic: { light: "#DD0008", dark: "#F45B5B" },
+  },
+  ikhafa: {
+    nameEn: "Ikhfa",
+    nameAr: "إخفاء",
+    group: "ikhfa-iqlab",
+    new: { light: "#9400A8", dark: "#C95BDC" },
+    classic: { light: "#9400A8", dark: "#C95BDC" },
+  },
+  ikhafa_shafawi: {
+    nameEn: "Ikhfa Shafawi",
+    nameAr: "إخفاء شفوي",
+    group: "ikhfa-iqlab",
+    new: { light: "#D500B7", dark: "#F45AD8" },
+    classic: { light: "#D500B7", dark: "#F45AD8" },
+  },
+  iqlab: {
+    nameEn: "Iqlab",
+    nameAr: "إقلاب",
+    group: "ikhfa-iqlab",
+    new: { light: "#26BFFD", dark: "#5BD0FF" },
+    classic: { light: "#26BFFD", dark: "#5BD0FF" },
+  },
+  idgham_shafawi: {
+    nameEn: "Idgham Shafawi",
+    nameAr: "إدغام شفوي",
+    group: "ghunnah-idgham",
+    new: { light: "#58B800", dark: "#7FD63A" },
+    classic: { light: "#58B800", dark: "#7FD63A" },
+  },
+  idgham_ghunnah: {
+    nameEn: "Idgham with Ghunnah",
+    nameAr: "إدغام بغنة",
+    group: "ghunnah-idgham",
+    new: { light: "#169200", dark: "#38C21F" },
+    classic: { light: "#169200", dark: "#38C21F" },
+  },
+  idgham_wo_ghunnah: {
+    nameEn: "Idgham without Ghunnah",
+    nameAr: "إدغام بلا غنة",
+    group: "ghunnah-idgham",
+    new: { light: "#169200", dark: "#38C21F" },
+    classic: { light: "#169200", dark: "#38C21F" },
+  },
+  tafkheem: {
+    nameEn: "Tafkheem",
+    nameAr: "تفخيم",
+    group: "tafkheem",
+    new: { light: "#006994", dark: "#3FA6C9" },
+    classic: { light: "#006994", dark: "#3FA6C9" },
+  },
+};
+
+export interface TajweedColor {
+  cssClass: string;
+  light: string;
+  dark: string;
+  nameEn: string;
+  nameAr: string;
+  group: TajweedGroup;
+  // Back-compat with the pre-rebuild shape (hex = active-scheme light, hexDark =
+  // active-scheme dark). Kept so ColorLegend keeps working until its rebuild.
+  hex: string;
+  hexDark: string;
+}
+
+function resolve(cssClass: string, def: TajweedClassDef): TajweedColor {
+  const { light, dark } = def[SCHEME];
+  return {
+    cssClass,
+    light,
+    dark,
+    nameEn: def.nameEn,
+    nameAr: def.nameAr,
+    group: def.group,
+    hex: light,
+    hexDark: dark,
+  };
+}
+
+// Every class resolved to the active scheme, in declaration order.
+export const TAJWEED_COLORS: TajweedColor[] = Object.entries(TAJWEED_DEFS).map(
+  ([cssClass, def]) => resolve(cssClass, def),
+);
+
+// Old class names the app used before the rebuild. A caller passing a legacy
+// name still resolves to the right color; the CSS keeps matching aliases too.
+const CLASS_ALIASES: Record<string, string> = {
+  ikhfaa: "ikhafa",
+  ikhfaa_shafawi: "ikhafa_shafawi",
+  idgham_no_ghunnah: "idgham_wo_ghunnah",
+  qalqalah: "qalaqah",
+  silent: "slnt",
+};
 
 export function getColorForClass(cssClass: string): TajweedColor | undefined {
-  return TAJWEED_COLORS.find((c) => c.cssClass === cssClass);
+  const key = CLASS_ALIASES[cssClass] ?? cssClass;
+  const def = TAJWEED_DEFS[key];
+  return def ? resolve(key, def) : undefined;
 }
 
+// Unique by color (light hex), so the legend shows one row per distinct color
+// rather than one per class. Matches the pre-rebuild behavior.
 export function getUniqueColors(): TajweedColor[] {
   const seen = new Set<string>();
   return TAJWEED_COLORS.filter((c) => {
@@ -36,4 +254,26 @@ export function getUniqueColors(): TajweedColor[] {
     seen.add(c.hex);
     return true;
   });
+}
+
+export const TAJWEED_GROUP_ORDER: TajweedGroup[] = [
+  "ghunnah-idgham",
+  "madd",
+  "qalqalah",
+  "ikhfa-iqlab",
+  "silent-laam",
+  "tafkheem",
+];
+
+export function getColorsByGroup(): Record<TajweedGroup, TajweedColor[]> {
+  const out: Record<TajweedGroup, TajweedColor[]> = {
+    "ghunnah-idgham": [],
+    madd: [],
+    qalqalah: [],
+    "ikhfa-iqlab": [],
+    "silent-laam": [],
+    tafkheem: [],
+  };
+  for (const c of TAJWEED_COLORS) out[c.group].push(c);
+  return out;
 }
