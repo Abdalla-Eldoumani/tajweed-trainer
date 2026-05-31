@@ -159,6 +159,41 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
 .qalqalah { color: var(--tajweed-qalaqah); }
 .silent { color: var(--tajweed-slnt); }
 
+/* Single-rule highlight drill: when an ancestor carries data-tajweed-drill the
+   whole verse is greyed and only the selected rule's letters keep their color,
+   so a learner can isolate one rule across a page. Driven entirely by the
+   tajweed class names; no per-letter re-tokenizing. The per-rule selectors are
+   one class more specific than the dimming rule, so they win. */
+[data-tajweed-drill] .tajweed-text,
+[data-tajweed-drill] .tajweed-text tajweed {
+  color: #b9b9b9;
+  transition: color 0.15s ease;
+}
+.dark [data-tajweed-drill] .tajweed-text,
+.dark [data-tajweed-drill] .tajweed-text tajweed {
+  color: #4a5160;
+}
+[data-tajweed-drill="ghunnah"] .tajweed-text .ghunnah { color: var(--tajweed-ghunnah); }
+[data-tajweed-drill="idgham_ghunnah"] .tajweed-text .idgham_ghunnah { color: var(--tajweed-idgham_ghunnah); }
+[data-tajweed-drill="idgham_wo_ghunnah"] .tajweed-text .idgham_wo_ghunnah { color: var(--tajweed-idgham_wo_ghunnah); }
+[data-tajweed-drill="idgham_shafawi"] .tajweed-text .idgham_shafawi { color: var(--tajweed-idgham_shafawi); }
+[data-tajweed-drill="idgham_mutajanisayn"] .tajweed-text .idgham_mutajanisayn { color: var(--tajweed-idgham_mutajanisayn); }
+[data-tajweed-drill="idgham_mutaqaribayn"] .tajweed-text .idgham_mutaqaribayn { color: var(--tajweed-idgham_mutaqaribayn); }
+[data-tajweed-drill="ikhafa"] .tajweed-text .ikhafa { color: var(--tajweed-ikhafa); }
+[data-tajweed-drill="ikhafa_shafawi"] .tajweed-text .ikhafa_shafawi { color: var(--tajweed-ikhafa_shafawi); }
+[data-tajweed-drill="iqlab"] .tajweed-text .iqlab { color: var(--tajweed-iqlab); }
+[data-tajweed-drill="qalaqah"] .tajweed-text .qalaqah { color: var(--tajweed-qalaqah); }
+[data-tajweed-drill="madda_normal"] .tajweed-text .madda_normal { color: var(--tajweed-madda_normal); }
+[data-tajweed-drill="madda_permissible"] .tajweed-text .madda_permissible { color: var(--tajweed-madda_permissible); }
+[data-tajweed-drill="madda_necessary"] .tajweed-text .madda_necessary { color: var(--tajweed-madda_necessary); }
+[data-tajweed-drill="madda_obligatory"] .tajweed-text .madda_obligatory { color: var(--tajweed-madda_obligatory); }
+[data-tajweed-drill="madda_obligatory_mottasel"] .tajweed-text .madda_obligatory_mottasel { color: var(--tajweed-madda_obligatory_mottasel); }
+[data-tajweed-drill="madda_obligatory_monfasel"] .tajweed-text .madda_obligatory_monfasel { color: var(--tajweed-madda_obligatory_monfasel); }
+[data-tajweed-drill="tafkheem"] .tajweed-text .tafkheem { color: var(--tajweed-tafkheem); }
+[data-tajweed-drill="ham_wasl"] .tajweed-text .ham_wasl { color: var(--tajweed-ham_wasl); }
+[data-tajweed-drill="slnt"] .tajweed-text .slnt { color: var(--tajweed-slnt); }
+[data-tajweed-drill="laam_shamsiyah"] .tajweed-text .laam_shamsiyah { color: var(--tajweed-laam_shamsiyah); }
+
 /* Ensure tajweed text spans inherit font */
 [class^="tajweed"] span,
 .tajweed-text span {
