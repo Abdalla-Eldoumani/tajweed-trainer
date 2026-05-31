@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-// Phase 4 verification: drives Chromium against the dev server and asserts
-// the reciter expansion. Confirms:
-//   - The settings page renders a <select> (the radio group is gone).
-//   - The two defaults (Husary, Alafasy) always render, even before the
-//     editions API responds.
-//   - Choosing a reciter persists to localStorage and is read back on reload.
-//   - A tampered localStorage entry falls back to husary on next load.
+// Phase 3 verification: drives Chromium against the dev server and asserts the
+// Quran.com reciter library in settings. Confirms:
+//   - The settings page renders a reciter <select> and a search input.
+//   - Reciters are grouped by style (Mujawwad / Murattal), with the default
+//     (id 12, Al-Husary muallim) and Alafasy (id 7) present.
+//   - Choosing a reciter persists the numeric id and survives reload.
+//   - The search input narrows the options.
+//   - A tampered localStorage reciter id falls back to the default (12).
 //
 // Mirrors the style of the other verify-* scripts.
 
@@ -35,125 +36,73 @@ async function main() {
     if (msg.type() === "error") consoleErrors.push(msg.text());
   });
 
-  // 1. Settings renders a <select> for reciter (radio group is gone).
   await page.goto(`${BASE}/settings`, { waitUntil: "networkidle" });
   await page.evaluate(() => localStorage.removeItem("tajweed-trainer-progress"));
-  await page.evaluate(() => localStorage.removeItem("tajweed-trainer-reciters"));
   await page.reload({ waitUntil: "networkidle" });
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
 
-  const reciterSelect = await page.locator('select[aria-label="Reciter"]').count();
-  record("Reciter select renders", reciterSelect === 1, `select count: ${reciterSelect}`);
+  // 1. The reciter select and search input render; the old radio group is gone.
+  record("Reciter select renders", (await page.locator('select[aria-label="Reciter"]').count()) === 1);
+  record("Reciter search input renders", (await page.locator('input[aria-label="Search reciters"]').count()) === 1);
+  record("Old reciter radio group is gone", (await page.locator('input[type="radio"][name="reciter"]').count()) === 0);
 
-  const radioCount = await page.locator('input[type="radio"][name="reciter"]').count();
-  record("Old reciter radio group is gone", radioCount === 0, `radio count: ${radioCount}`);
-
-  // 2. The two defaults (ar.husary, ar.alafasy) are present.
-  const defaultIds = await page.evaluate(() => {
-    const sel = document.querySelector('select[aria-label="Reciter"]');
-    if (!sel) return [];
-    return Array.from(sel.querySelectorAll("option")).map((o) => o.value);
-  });
-  record(
-    "Default reciter ids ar.husary and ar.alafasy are listed",
-    defaultIds.includes("ar.husary") && defaultIds.includes("ar.alafasy"),
-    `ids: ${defaultIds.slice(0, 6).join(", ")}${defaultIds.length > 6 ? "…" : ""}`,
+  // 2. The default (12) and Alafasy (7) are present.
+  const ids = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('select[aria-label="Reciter"] option')).map((o) => o.value),
   );
+  record("Default id 12 and Alafasy id 7 are listed", ids.includes("12") && ids.includes("7"), `ids: ${ids.join(",")}`);
 
-  // 3. Has at least one optgroup (the Arabic group, where the defaults live).
-  const optgroupLabels = await page.evaluate(() => {
-    const sel = document.querySelector('select[aria-label="Reciter"]');
-    if (!sel) return [];
-    return Array.from(sel.querySelectorAll("optgroup")).map((g) => g.label);
-  });
-  record(
-    "Reciter select uses optgroups",
-    optgroupLabels.length >= 1,
-    `groups: ${optgroupLabels.join(", ")}`,
+  // 3. Reciters are grouped by style.
+  const groups = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('select[aria-label="Reciter"] optgroup')).map((g) => g.label),
   );
+  record("Reciter select groups by style", groups.includes("Mujawwad") && groups.includes("Murattal"), `groups: ${groups.join(", ")}`);
 
-  // 4. Selecting Alafasy persists to localStorage.
-  await page.selectOption('select[aria-label="Reciter"]', "ar.alafasy");
+  // 4. Choosing Alafasy (7) persists.
+  await page.selectOption('select[aria-label="Reciter"]', "7");
   await page.waitForTimeout(150);
-  const persistedAlafasy = await page.evaluate(() => {
-    const raw = localStorage.getItem("tajweed-trainer-progress");
-    if (!raw) return null;
-    return JSON.parse(raw)?.settings?.reciter ?? null;
+  const persisted = await page.evaluate(() => {
+    const r = localStorage.getItem("tajweed-trainer-progress");
+    return r ? JSON.parse(r)?.settings?.reciter ?? null : null;
   });
-  record(
-    "Choosing Alafasy persists ar.alafasy to localStorage",
-    persistedAlafasy === "ar.alafasy",
-    `persisted: ${persistedAlafasy}`,
-  );
+  record("Choosing Alafasy persists id 7", persisted === "7", `persisted: ${persisted}`);
 
   // 5. Reload — the selection comes back.
   await page.reload({ waitUntil: "networkidle" });
   await page.waitForTimeout(300);
-  const selectedAfterReload = await page.evaluate(() => {
-    const sel = document.querySelector('select[aria-label="Reciter"]');
-    return sel?.value ?? null;
-  });
-  record(
-    "Reciter selection persists across reload",
-    selectedAfterReload === "ar.alafasy",
-    `selected after reload: ${selectedAfterReload}`,
-  );
+  const afterReload = await page.evaluate(() => document.querySelector('select[aria-label="Reciter"]')?.value ?? null);
+  record("Reciter selection persists across reload", afterReload === "7", `after reload: ${afterReload}`);
 
-  // 6. Tamper with localStorage — set an invalid reciter id. On next read,
-  //    sanitizeSettings should fall back to husary.
+  // 6. Search narrows the options.
+  await page.fill('input[aria-label="Search reciters"]', "Minshawi");
+  await page.waitForTimeout(250);
+  const narrowed = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('select[aria-label="Reciter"] option')).map((o) => o.textContent.trim()),
+  );
+  record(
+    "Search narrows the reciter options",
+    narrowed.length < ids.length && narrowed.some((t) => t.includes("Minshawi")),
+    `narrowed ${narrowed.length}/${ids.length}`,
+  );
+  await page.fill('input[aria-label="Search reciters"]', "");
+
+  // 7. A tampered reciter id falls back to the default (12).
   await page.evaluate(() => {
-    const raw = localStorage.getItem("tajweed-trainer-progress");
-    const parsed = raw ? JSON.parse(raw) : { settings: {} };
-    parsed.settings = { ...(parsed.settings ?? {}), reciter: "definitely-not-a-real-edition" };
-    localStorage.setItem("tajweed-trainer-progress", JSON.stringify(parsed));
+    const r = localStorage.getItem("tajweed-trainer-progress");
+    const p = r ? JSON.parse(r) : { settings: {} };
+    p.settings = { ...(p.settings ?? {}), reciter: "not-a-real-id" };
+    localStorage.setItem("tajweed-trainer-progress", JSON.stringify(p));
   });
   await page.reload({ waitUntil: "networkidle" });
   await page.waitForTimeout(300);
-  const fallback = await page.evaluate(() => {
-    const sel = document.querySelector('select[aria-label="Reciter"]');
-    return sel?.value ?? null;
-  });
-  // Falls back to "husary" (the alias) per pickReciter — the option list
-  // contains both `husary` and `ar.husary`-aliased identifier; we only emit
-  // `ar.husary` as a real option, so the alias-fallback rounds to husary
-  // and renders as ar.husary. Either is acceptable.
-  record(
-    "Tampered reciter id falls back to a default (husary)",
-    fallback === "husary" || fallback === "ar.husary",
-    `select value after tamper: ${fallback}`,
-  );
-
-  // 7. Editions cache file is populated after a successful API load. Allow
-  //    a network failure to leave it absent — defaults still render.
-  const cache = await page.evaluate(() => {
-    const raw = localStorage.getItem("tajweed-trainer-reciters");
-    if (!raw) return null;
-    try {
-      const parsed = JSON.parse(raw);
-      return { count: parsed.editions?.length ?? 0, hasFetchedAt: typeof parsed.fetchedAt === "number" };
-    } catch {
-      return null;
-    }
-  });
-  record(
-    "Editions cache is populated or absent (network-tolerant)",
-    cache === null || (cache.count >= 2 && cache.hasFetchedAt),
-    cache === null ? "cache absent (network failed, defaults rendered)" : `count=${cache.count}`,
-  );
+  const fallback = await page.evaluate(() => document.querySelector('select[aria-label="Reciter"]')?.value ?? null);
+  record("Tampered reciter id falls back to default 12", fallback === "12", `value after tamper: ${fallback}`);
 
   // 8. No serious console errors.
-  const seriousErrors = consoleErrors.filter((e) => {
-    if (e.includes("hydration") || e.includes("Hydration") || e.includes("Text content")) return false;
-    if (e.includes("Expected server HTML") || e.includes("did not match")) return false;
-    if (e.includes("favicon") || e.includes(".ico")) return false;
-    if (/Failed to load resource.*404/.test(e)) return false;
-    return true;
-  });
-  record(
-    "No serious console errors during reciter flow",
-    seriousErrors.length === 0,
-    seriousErrors.length ? `${seriousErrors.length} unexpected: ${seriousErrors.slice(0, 3).join(" | ")}` : "0 errors",
+  const serious = consoleErrors.filter(
+    (e) => !/hydration|Hydration|Text content|Expected server HTML|did not match|favicon|\.ico|Failed to load resource.*404/.test(e),
   );
+  record("No serious console errors", serious.length === 0, serious.slice(0, 3).join(" | ") || "0 errors");
 
   await browser.close();
 
