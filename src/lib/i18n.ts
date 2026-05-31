@@ -332,9 +332,13 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.xlarge": { en: "Extra Large", ar: "كبير جدا" },
   "settings.recitersLoading": { en: "Updating list…", ar: "جاري التحديث…" },
   "settings.recitersDefault": { en: "default", ar: "افتراضي" },
+  "settings.reciterSearch": { en: "Search reciters", ar: "ابحث عن قارئ" },
+  "settings.reciterStyleMujawwad": { en: "Mujawwad", ar: "مجوّد" },
+  "settings.reciterStyleMurattal": { en: "Murattal", ar: "مرتّل" },
+  "settings.reciterNoResults": { en: "No reciters match your search.", ar: "لا يوجد قارئ مطابق لبحثك." },
   "settings.recitersHelp": {
-    en: "More reciters appear once the editions list loads. Husary stays the default for teaching-style learning.",
-    ar: "تظهر مزيد من القرّاء بعد تحميل قائمة الإصدارات. يبقى الحصري الافتراضي للتعلّم على نمط المعلّم.",
+    en: "Reciters come from the Quran.com recitations, grouped by style. Al-Husary (muallim) is the default for teaching-style learning.",
+    ar: "القرّاء من تسجيلات Quran.com، مرتّبون حسب النمط. والحصري (المعلّم) هو الافتراضي للتعلّم على نمط المعلّم.",
   },
 
   // Common
