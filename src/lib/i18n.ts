@@ -465,6 +465,12 @@ const translations: Record<string, { en: string; ar: string }> = {
   "search.placeholder": { en: "Search surahs, modules, rules…", ar: "ابحث في السور والوحدات والأحكام…" },
   "search.hint": { en: "Type at least 2 characters to search.", ar: "أدخل حرفين على الأقل للبحث." },
   "search.noResults": { en: "No matches.", ar: "لا توجد نتائج." },
+
+  // Reading depth (translation and tafsir, fetched from the verified API)
+  "reading.showTafsir": { en: "Show tafsir", ar: "إظهار التفسير" },
+  "reading.hideTafsir": { en: "Hide tafsir", ar: "إخفاء التفسير" },
+  "reading.unavailable": { en: "Could not load — try again from the reader.", ar: "تعذّر التحميل — حاول من القارئ." },
+  "reading.noTafsir": { en: "No tafsir available for this verse.", ar: "لا يوجد تفسير لهذه الآية." },
 };
 
 export function t(key: string, lang: Language): string {
