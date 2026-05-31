@@ -363,6 +363,27 @@ export interface Recitation {
   style: string | null; // "Murattal" | "Mujawwad" | "Muallim" | null, verbatim from the API
 }
 
+// A translation or tafsir resource from the Quran.com /resources endpoints. Used
+// to populate the settings selectors and to validate a stored id at runtime.
+export interface TranslationResource {
+  id: number;
+  name: string;
+  authorName: string;
+  languageName: string;
+}
+
+export type TafsirResource = TranslationResource;
+
+// One word of a verse from the word-by-word endpoint: its Uthmani text, optional
+// transliteration and gloss, and its own audio clip. All from the API.
+export interface VerseWord {
+  position: number;
+  textUthmani: string;
+  transliteration: string | null;
+  translation: string | null;
+  audioUrl: string | null;
+}
+
 export interface UserSettings {
   reciter: ReciterId;
   playbackSpeed: number;
@@ -373,6 +394,12 @@ export interface UserSettings {
   language: Language;
   lastMushafPage?: number;
   mushafBookmarks?: number[];
+  // Reading-depth resource ids (Quran.com translation/tafsir resources) plus the
+  // word-by-word toggle. Confirmed against /resources/* at runtime; defaulted and
+  // clamped by sanitizeSettings so a tampered value can never reach a URL raw.
+  translationId?: number;
+  tafsirId?: number;
+  showWordByWord?: boolean;
 }
 
 export interface ModuleProgress {
