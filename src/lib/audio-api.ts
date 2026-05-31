@@ -1,6 +1,12 @@
 import { RECITER_IDENTIFIER_PATTERN, type ReciterId, type ReciterEdition } from "./types";
+import { DEFAULT_RECITER_ID, normalizeReciterId } from "./reciters";
 
 const BASE_URL = "https://api.alquran.cloud/v1";
+
+// Quran.com per-ayah audio. The by_ayah endpoint returns a path relative to the
+// audio CDN; prefix it with AUDIO_CDN to get the playable file URL.
+const QURAN_API = "https://api.quran.com/api/v4";
+const AUDIO_CDN = "https://verses.quran.com/";
 
 // Aliases for the two defaults so persisted settings written before this
 // expansion still resolve to a real alquran.cloud edition. New reciter ids
@@ -22,25 +28,28 @@ export function resolveReciterIdentifier(reciter: ReciterId): string {
   return reciter;
 }
 
-export function getAudioUrl(surah: number, ayah: number, reciter: ReciterId = "husary"): string {
-  const edition = resolveReciterIdentifier(reciter);
-  return `${BASE_URL}/ayah/${surah}:${ayah}/${edition}`;
+export function getAudioEndpoint(surah: number, ayah: number, reciter: ReciterId = DEFAULT_RECITER_ID): string {
+  return `${QURAN_API}/recitations/${normalizeReciterId(reciter)}/by_ayah/${surah}:${ayah}`;
 }
 
-export async function fetchAudioUrl(surah: number, ayah: number, reciter: ReciterId = "husary"): Promise<string> {
-  const cacheKey = `${surah}:${ayah}:${reciter}`;
+export async function fetchAudioUrl(surah: number, ayah: number, reciter: ReciterId = DEFAULT_RECITER_ID): Promise<string> {
+  const id = normalizeReciterId(reciter);
+  const cacheKey = `${surah}:${ayah}:${id}`;
   const cached = audioCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < AUDIO_CACHE_TTL) {
     return cached.url;
   }
 
-  const url = getAudioUrl(surah, ayah, reciter);
-  const response = await fetch(url);
+  const response = await fetch(getAudioEndpoint(surah, ayah, id));
   if (!response.ok) {
     throw new Error(`Audio API error: ${response.status}`);
   }
   const data = await response.json();
-  const audioUrl = data.data.audio;
+  const path = data?.audio_files?.[0]?.url;
+  if (typeof path !== "string" || path.length === 0) {
+    throw new Error("Audio API returned no file for this verse");
+  }
+  const audioUrl = AUDIO_CDN + path;
 
   audioCache.set(cacheKey, { url: audioUrl, timestamp: Date.now() });
   return audioUrl;
