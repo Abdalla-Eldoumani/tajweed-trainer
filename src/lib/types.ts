@@ -363,19 +363,6 @@ export interface Recitation {
   style: string | null; // "Murattal" | "Mujawwad" | "Muallim" | null, verbatim from the API
 }
 
-// --- legacy alquran.cloud reciter model, retained until migration cleanup ---
-export const DEFAULT_RECITER_IDS = ["husary", "alafasy"] as const;
-export type DefaultReciterId = (typeof DEFAULT_RECITER_IDS)[number];
-export const RECITER_IDENTIFIER_PATTERN = /^[a-z0-9._-]{1,64}$/;
-export interface ReciterEdition {
-  identifier: string;
-  language: string;
-  name: string;
-  englishName: string;
-  format: "audio";
-  type: "versebyverse";
-}
-
 export interface UserSettings {
   reciter: ReciterId;
   playbackSpeed: number;
