@@ -335,7 +335,9 @@ html, body {
 }
 
 .mushaf-frame::after {
-  /* Repeating geometric tile (gold/red/blue) used as the wide ornamental band */
+  /* Repeating gold ornamental band. Decoupled from tajweed tokens so changing
+     the tajweed palette can never shift the frame; phase 5 refines this to the
+     quiet double-gold rule. */
   content: "";
   position: absolute;
   inset: 7px;
@@ -347,12 +349,12 @@ html, body {
       90deg,
       var(--gold) 0,
       var(--gold) 6px,
-      var(--tajweed-qalqalah) 6px,
-      var(--tajweed-qalqalah) 9px,
+      var(--gold-dark) 6px,
+      var(--gold-dark) 9px,
       var(--gold) 9px,
       var(--gold) 12px,
-      var(--tajweed-idgham-no-ghunnah) 12px,
-      var(--tajweed-idgham-no-ghunnah) 15px,
+      var(--border-ornate) 12px,
+      var(--border-ornate) 15px,
       var(--gold) 15px,
       var(--gold) 21px
     ) border-box;
