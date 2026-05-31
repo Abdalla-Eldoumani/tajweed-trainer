@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import { useAudio } from "@/hooks/useAudio";
+import { usePlayer } from "@/hooks/usePlayer";
 import { useSettings } from "@/hooks/useSettings";
 import { useMemorization } from "@/hooks/useMemorization";
 import { useTranslation } from "@/lib/i18n";
@@ -10,7 +10,7 @@ import { TajweedText } from "@/components/ui/TajweedText";
 import { MushafFrame } from "./MushafFrame";
 import { SurahCartouche } from "./SurahCartouche";
 import { BismillahLine } from "./BismillahLine";
-import type { MushafPageData } from "@/lib/types";
+import type { MushafPageData, SurahHeader } from "@/lib/types";
 
 interface MushafPageProps {
   data: MushafPageData;
@@ -20,14 +20,34 @@ interface MushafPageProps {
 }
 
 export function MushafPage({ data, memorizationMode = false }: MushafPageProps) {
-  const { play } = useAudio();
   const { settings } = useSettings();
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
   const { isMemorized, toggle, mounted } = useMemorization();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
-  const handleVerseTap = (surah: number, ayah: number) => {
-    play(surah, ayah, settings.reciter, settings.playbackSpeed);
+  // Playback runs through the global store. Memorize mode only controls text
+  // visibility, so the two never contend for the shared audio element.
+  const surahNameOf = (header: SurahHeader | undefined): string | null =>
+    header ? (isAr ? header.nameArabic : header.nameSimple) : null;
+
+  // A plain tap plays just this verse and stops (single mode).
+  const handleVerseTap = (surah: number, ayah: number, header: SurahHeader | undefined) => {
+    usePlayer.getState().playVerse(surah, ayah, {
+      reciter: settings.reciter,
+      speed: settings.playbackSpeed,
+      surahName: surahNameOf(header),
+    });
+  };
+
+  // "Play from here" plays the rest of the surah continuously from this verse.
+  const handlePlayFromHere = (e: React.MouseEvent, surah: number, ayah: number, header: SurahHeader | undefined) => {
+    e.stopPropagation();
+    if (!header) return;
+    usePlayer.getState().playSurah(surah, ayah, header.versesCount, {
+      reciter: settings.reciter,
+      speed: settings.playbackSpeed,
+      surahName: surahNameOf(header),
+    });
   };
 
   const handleToggleMemorized = (e: React.MouseEvent, verseKey: string) => {
@@ -57,9 +77,8 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
           {data.verses.map((v, i) => {
             const prev = i > 0 ? data.verses[i - 1] : null;
             const beginsNewSurah = v.ayah === 1 && (!prev || prev.surah !== v.surah);
-            const surahMeta = beginsNewSurah
-              ? data.surahsOnPage.find((s) => s.number === v.surah)
-              : null;
+            const header = data.surahsOnPage.find((s) => s.number === v.surah);
+            const surahMeta = beginsNewSurah ? header : null;
 
             if (beginsNewSurah && !surahMeta && process.env.NODE_ENV !== "production") {
               console.warn(
@@ -81,12 +100,9 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
                 <span className="inline-flex items-baseline relative">
                   <button
                     type="button"
-                    onClick={() => handleVerseTap(v.surah, v.ayah)}
+                    onClick={() => handleVerseTap(v.surah, v.ayah, header)}
                     aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
-                    className={cn(
-                      "mushaf-verse",
-                      hideText && "select-none",
-                    )}
+                    className={cn("mushaf-verse", hideText && "select-none")}
                   >
                     <TajweedText
                       tajweedHtml={v.tajweedHtml}
@@ -96,6 +112,19 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
                       )}
                     />{" "}
                   </button>
+                  {mounted && (
+                    <button
+                      type="button"
+                      onClick={(e) => handlePlayFromHere(e, v.surah, v.ayah, header)}
+                      aria-label={`${t("player.playFromHere")} (${v.surah}:${v.ayah})`}
+                      title={t("player.playFromHere")}
+                      className="ms-1 inline-flex items-center justify-center w-6 h-6 align-middle rounded-full text-text-muted/40 hover:text-primary opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M4 5v14l8-7zM13 5v14l8-7z" />
+                      </svg>
+                    </button>
+                  )}
                   {mounted && (
                     <button
                       type="button"
