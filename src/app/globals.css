@@ -109,7 +109,9 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   }
 }
 
-/* Tajweed CSS classes matching Quran.com API output exactly */
+/* Tajweed letter colors. Each selector is the exact class name the Quran.com
+   API emits, reading a CSS variable set from the single source of truth in
+   src/lib/tajweed-colors.ts. Legacy pre-rebuild names follow as aliases. */
 .ham_wasl { color: var(--tajweed-ham_wasl); }
 .slnt { color: var(--tajweed-slnt); }
 .laam_shamsiyah { color: var(--tajweed-laam_shamsiyah); }
