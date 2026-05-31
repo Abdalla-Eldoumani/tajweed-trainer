@@ -28,6 +28,14 @@ export function resolveReciterIdentifier(reciter: ReciterId): string {
   return reciter;
 }
 
+// The by_ayah `url` may be relative ("Alafasy/mp3/001001.mp3"), protocol-
+// relative ("//mirrors.quranicaudio.com/..."), or absolute. Normalize to https.
+function toAudioFileUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  if (path.startsWith("//")) return `https:${path}`;
+  return AUDIO_CDN + path.replace(/^\/+/, "");
+}
+
 export function getAudioEndpoint(surah: number, ayah: number, reciter: ReciterId = DEFAULT_RECITER_ID): string {
   return `${QURAN_API}/recitations/${normalizeReciterId(reciter)}/by_ayah/${surah}:${ayah}`;
 }
@@ -49,7 +57,7 @@ export async function fetchAudioUrl(surah: number, ayah: number, reciter: Recite
   if (typeof path !== "string" || path.length === 0) {
     throw new Error("Audio API returned no file for this verse");
   }
-  const audioUrl = AUDIO_CDN + path;
+  const audioUrl = toAudioFileUrl(path);
 
   audioCache.set(cacheKey, { url: audioUrl, timestamp: Date.now() });
   return audioUrl;
