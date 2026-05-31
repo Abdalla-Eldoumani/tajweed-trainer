@@ -346,6 +346,11 @@ const translations: Record<string, { en: string; ar: string }> = {
   "common.loading": { en: "Loading...", ar: "جاري التحميل..." },
   "common.error": { en: "An error occurred.", ar: "حدث خطأ." },
   "common.colorLegend": { en: "Tajweed Color Legend", ar: "دليل ألوان التجويد" },
+  "legend.group.ghunnahIdgham": { en: "Ghunnah & Idgham", ar: "الغنة والإدغام" },
+  "legend.group.madd": { en: "Madd", ar: "المدّ" },
+  "legend.group.qalqalah": { en: "Qalqalah", ar: "القلقلة" },
+  "legend.group.ikhfaIqlab": { en: "Ikhfa & Iqlab", ar: "الإخفاء والإقلاب" },
+  "legend.group.silentLaam": { en: "Silent & Laam", ar: "الصامت واللام" },
   "common.bismillah": { en: "In the name of Allah, the Most Gracious, the Most Merciful", ar: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ" },
 
   // Not found
