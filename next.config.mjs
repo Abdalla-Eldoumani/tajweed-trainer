@@ -9,7 +9,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob:",
-  "media-src 'self' https://verses.quran.com https://*.quranicaudio.com",
+  "media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com",
   "connect-src 'self' https://api.quran.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
