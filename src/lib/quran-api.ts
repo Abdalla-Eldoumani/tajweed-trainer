@@ -11,6 +11,7 @@ import type {
 } from "./types";
 import surahIndex from "@/data/content/surah-index.json";
 import { sanitizeTafsirHtml } from "./sanitize";
+import { clampSurah, isValidResourceId, isValidVerseKey } from "./validate";
 
 const BASE_URL = "https://api.quran.com/api/v4";
 // Word-by-word audio clips are served from the Quran.com audio CDN as relative
@@ -175,7 +176,8 @@ export async function getTranslationsForChapter(
   surah: number,
   translationId: number,
 ): Promise<Record<string, string>> {
-  const url = `${BASE_URL}/verses/by_chapter/${surah}?translations=${translationId}&fields=text_uthmani&per_page=286`;
+  if (!isValidResourceId(translationId)) return {};
+  const url = `${BASE_URL}/verses/by_chapter/${clampSurah(surah)}?translations=${translationId}&fields=text_uthmani&per_page=286`;
   const data = await fetchWithCache<TranslationsApiResponse>(url);
   const out: Record<string, string> = {};
   for (const v of data.verses ?? []) {
@@ -192,6 +194,7 @@ interface TafsirApiResponse {
 
 // Sanitized tafsir HTML for one verse; empty string when none is available.
 export async function getTafsirForVerse(verseKey: string, tafsirId: number): Promise<string> {
+  if (!isValidVerseKey(verseKey) || !isValidResourceId(tafsirId)) return "";
   const url = `${BASE_URL}/quran/tafsirs/${tafsirId}?verse_key=${encodeURIComponent(verseKey)}`;
   const data = await fetchWithCache<TafsirApiResponse>(url);
   const text = data.tafsir?.text ?? data.tafsirs?.[0]?.text ?? "";
@@ -220,7 +223,7 @@ function toWordAudioUrl(path: string | null | undefined): string | null {
 
 // verse_key -> ordered words with per-word transliteration, gloss and audio URL.
 export async function getWordsForChapter(surah: number): Promise<Record<string, VerseWord[]>> {
-  const url = `${BASE_URL}/verses/by_chapter/${surah}?words=true&word_fields=text_uthmani,transliteration&per_page=286`;
+  const url = `${BASE_URL}/verses/by_chapter/${clampSurah(surah)}?words=true&word_fields=text_uthmani,transliteration&per_page=286`;
   const data = await fetchWithCache<WordsApiResponse>(url);
   const out: Record<string, VerseWord[]> = {};
   for (const v of data.verses ?? []) {
