@@ -413,6 +413,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.memorizeMark": { en: "Mark verse as memorized", ar: "تحديد الآية كمحفوظة" },
   "mushaf.memorizeUnmark": { en: "Unmark memorized verse", ar: "إلغاء تحديد الآية كمحفوظة" },
   "mushaf.memorizeReveal": { en: "Reveal", ar: "كشف" },
+  "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
+  "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
   "memorize.statsTitle": { en: "Memorization", ar: "الحفظ" },
   "memorize.statsCount": { en: "Memorized verses", ar: "الآيات المحفوظة" },
   "memorize.statsHelp": {
