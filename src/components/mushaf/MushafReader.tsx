@@ -9,6 +9,7 @@ import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
 import type { MushafPageData, SurahHeader } from "@/lib/types";
+import { getColorForClass } from "@/lib/tajweed-colors";
 
 interface MushafReaderProps {
   page: number;
@@ -17,6 +18,21 @@ interface MushafReaderProps {
 }
 
 const TOTAL_PAGES = 604;
+
+// Rules a learner can isolate with the highlight drill. Names are read from the
+// tajweed map; the CSS in globals.css greys everything except the chosen rule.
+const DRILL_CLASSES = [
+  "ghunnah",
+  "idgham_ghunnah",
+  "idgham_wo_ghunnah",
+  "idgham_shafawi",
+  "ikhafa",
+  "ikhafa_shafawi",
+  "iqlab",
+  "qalaqah",
+  "madda_normal",
+  "madda_necessary",
+] as const;
 
 const ChevronStart = ({ className }: { className?: string }) => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
@@ -60,6 +76,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // Memorization mode hides verse text the user has marked memorized so they
   // can recall it. Off by default; in-session state, not persisted.
   const [memorizationMode, setMemorizationMode] = useState(false);
+  // Single-rule highlight drill: greys every tajweed rule except the chosen one.
+  const [drill, setDrill] = useState("");
   useEffect(() => setMounted(true), []);
 
   // Persist last viewed page on mount and whenever the page changes.
@@ -137,6 +155,24 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             ))}
           </select>
 
+          <select
+            value={drill}
+            onChange={(e) => setDrill(e.target.value)}
+            className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            aria-label={t("mushaf.drill")}
+            title={t("mushaf.drill")}
+          >
+            <option value="">{t("mushaf.drillOff")}</option>
+            {DRILL_CLASSES.map((c) => {
+              const info = getColorForClass(c);
+              return (
+                <option key={c} value={c}>
+                  {info ? (isAr ? info.nameAr : info.nameEn) : c}
+                </option>
+              );
+            })}
+          </select>
+
           <button
             onClick={() => setMemorizationMode((v) => !v)}
             className={cn(
@@ -168,7 +204,9 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         </div>
       </div>
 
-      <MushafPage data={data} memorizationMode={memorizationMode} />
+      <div data-tajweed-drill={drill || undefined}>
+        <MushafPage data={data} memorizationMode={memorizationMode} />
+      </div>
 
       {/* Footer page indicator */}
       <p className="text-center text-xs text-text-muted">
