@@ -12,6 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
 const store = read("src", "hooks", "usePlayer.ts");
+const css = read("src", "app", "globals.css");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -50,6 +51,14 @@ function playsForRange(from, to, count) {
   return span * count;
 }
 record("range [1..3] x2 yields 6 plays", playsForRange(1, 3, 2) === 6, String(playsForRange(1, 3, 2)));
+
+// Single-rule highlight drill (CSS-driven, no per-letter re-tokenizing).
+record("Drill dims the verse when data-tajweed-drill is set", /\[data-tajweed-drill\][\s\S]*?\.tajweed-text/.test(css));
+record(
+  "Drill restores the selected rule's color",
+  /\[data-tajweed-drill="ghunnah"\][\s\S]*?\.ghunnah\s*\{[\s\S]*?var\(--tajweed-ghunnah\)/.test(css) &&
+    /\[data-tajweed-drill="ikhafa"\][\s\S]*?var\(--tajweed-ikhafa\)/.test(css),
+);
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);
