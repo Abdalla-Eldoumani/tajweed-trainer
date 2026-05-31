@@ -8,13 +8,12 @@ import type {
   AnalyticsEvent,
   AnalyticsEventType,
 } from "./types";
-import { validateReciterIdentifier } from "./audio-api";
-import { getCachedReciterEditions } from "@/hooks/useReciters";
+import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 
 const STORAGE_KEY = "tajweed-trainer-progress";
 
 const DEFAULT_SETTINGS: UserSettings = {
-  reciter: "husary",
+  reciter: DEFAULT_RECITER_ID,
   playbackSpeed: 1.0,
   fontSize: "normal",
   darkMode: false,
@@ -65,16 +64,12 @@ const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
 const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
 
-// Reciter validation runs against the cached editions list (or the static
-// defaults). An identifier that fails the format check or isn't in the list
-// is replaced with the husary default so a tampered storage entry never
-// leaves the app referencing a reciter the editions API doesn't know.
+// Resolves any stored value to a known Quran.com recitation id, migrating legacy
+// alquran.cloud identifiers and replacing anything unknown or tampered with the
+// default so the app never references a reciter that does not exist. See
+// src/lib/reciters.ts.
 function pickReciter(value: unknown): string {
-  if (!validateReciterIdentifier(value)) return DEFAULT_SETTINGS.reciter;
-  const known = getCachedReciterEditions();
-  if (value === "husary" || value === "alafasy") return value;
-  if (known.some((e) => e.identifier === value)) return value;
-  return DEFAULT_SETTINGS.reciter;
+  return normalizeReciterId(value);
 }
 
 function isBrowser(): boolean {
