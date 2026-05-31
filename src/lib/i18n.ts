@@ -357,6 +357,19 @@ const translations: Record<string, { en: string; ar: string }> = {
   "legend.group.silentLaam": { en: "Silent & Laam", ar: "الصامت واللام" },
   "common.bismillah": { en: "In the name of Allah, the Most Gracious, the Most Merciful", ar: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ" },
 
+  // Audio player
+  "player.play": { en: "Play", ar: "تشغيل" },
+  "player.pause": { en: "Pause", ar: "إيقاف مؤقت" },
+  "player.previous": { en: "Previous verse", ar: "الآية السابقة" },
+  "player.next": { en: "Next verse", ar: "الآية التالية" },
+  "player.close": { en: "Stop and close player", ar: "إيقاف وإغلاق المشغّل" },
+  "player.seek": { en: "Seek", ar: "تغيير الموضع" },
+  "player.speed": { en: "Playback speed", ar: "سرعة التشغيل" },
+  "player.playVerse": { en: "Play this verse", ar: "تشغيل هذه الآية" },
+  "player.playFromHere": { en: "Play from here", ar: "تشغيل من هنا" },
+  "player.modeSingle": { en: "Single verse", ar: "آية واحدة" },
+  "player.modeContinuous": { en: "Continuous", ar: "متتابع" },
+
   // Not found
   "notFound.title": { en: "Page Not Found", ar: "الصفحة غير موجودة" },
   "notFound.description": { en: "The page you are looking for does not exist.", ar: "الصفحة التي تبحث عنها غير موجودة." },
