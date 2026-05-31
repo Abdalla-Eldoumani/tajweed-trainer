@@ -117,6 +117,69 @@ record(
   sanitize("<![CDATA[<x>x</x>]]>وَ"),
 );
 
+// --- Tafsir sanitizer (rich HTML allowlist) ---
+// Source parity: the tafsir sanitizer and its allowlist exist as declared.
+record("Source defines sanitizeTafsirHtml", /export function sanitizeTafsirHtml/.test(src), "literal in source");
+record("Source uses a tafsir tag allowlist", /TAFSIR_ALLOWED_TAGS/.test(src), "allowlist present");
+
+const TAFSIR_ALLOWED = new Set([
+  "p", "br", "b", "strong", "i", "em", "u", "sup", "sub",
+  "h3", "h4", "blockquote", "ul", "ol", "li", "span", "div",
+]);
+function sanitizeTafsir(input) {
+  if (typeof input !== "string") return "";
+  let out = input.replace(/<!--[\s\S]*?-->/g, "").replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, "");
+  out = out.replace(/<(script|style|iframe|object|embed|svg|math|template|noscript|link|meta|base)\b[\s\S]*?<\/\1\s*>/gi, "");
+  out = out.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (full, rawTag) => {
+    const tag = String(rawTag).toLowerCase();
+    if (!TAFSIR_ALLOWED.has(tag)) return "";
+    return full.startsWith("</") ? `</${tag}>` : `<${tag}>`;
+  });
+  out = out.replace(/javascript\s*:/gi, "").replace(/data\s*:\s*text\/html/gi, "");
+  return out;
+}
+
+record(
+  "Tafsir keeps allowed formatting and strips attributes",
+  sanitizeTafsir('<p class="x" onclick="e()">Ibn <strong>Kathir</strong></p>') === "<p>Ibn <strong>Kathir</strong></p>",
+  sanitizeTafsir('<p class="x" onclick="e()">Ibn <strong>Kathir</strong></p>'),
+);
+record(
+  "Tafsir strips a script element and its contents",
+  !sanitizeTafsir("<p>ok</p><scr" + "ipt>alert(1)</scr" + "ipt>").toLowerCase().includes("alert"),
+  sanitizeTafsir("<p>ok</p><scr" + "ipt>alert(1)</scr" + "ipt>"),
+);
+record(
+  "Tafsir strips an iframe element and its contents",
+  sanitizeTafsir('<p>a</p><iframe src="x">b</iframe>') === "<p>a</p>",
+  sanitizeTafsir('<p>a</p><iframe src="x">b</iframe>'),
+);
+record(
+  "Tafsir drops img onerror entirely (img not allowed)",
+  sanitizeTafsir('<img src=x onerror="alert(1)">') === "",
+  sanitizeTafsir('<img src=x onerror="alert(1)">'),
+);
+record(
+  "Tafsir drops anchor tag, keeps text (no href surface)",
+  sanitizeTafsir('<a href="javascript:alert(1)">link</a>') === "link",
+  sanitizeTafsir('<a href="javascript:alert(1)">link</a>'),
+);
+record(
+  "Tafsir strips a style element and its contents",
+  sanitizeTafsir("<style>body{color:red}</style><p>x</p>") === "<p>x</p>",
+  sanitizeTafsir("<style>body{color:red}</style><p>x</p>"),
+);
+record(
+  "Tafsir strips javascript: in text",
+  !sanitizeTafsir("see javascript:alert(1)").toLowerCase().includes("javascript:"),
+  sanitizeTafsir("see javascript:alert(1)"),
+);
+record(
+  "Tafsir keeps a footnote sup marker, drops its attribute",
+  sanitizeTafsir('text<sup foot_note="12">1</sup>') === "text<sup>1</sup>",
+  sanitizeTafsir('text<sup foot_note="12">1</sup>'),
+);
+
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);
 if (failed.length > 0) {
