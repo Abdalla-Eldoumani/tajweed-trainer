@@ -7,6 +7,7 @@ import type {
   ReviewBox,
   AnalyticsEvent,
   AnalyticsEventType,
+  PlayerResume,
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 
@@ -212,6 +213,20 @@ function sanitizeMemorized(input: unknown): string[] {
   return Array.from(out);
 }
 
+function sanitizePlayerResume(input: unknown): PlayerResume | null {
+  if (!isObject(input)) return null;
+  const surah = pickNumber(input.surah, 0, 1, 114);
+  const ayah = pickNumber(input.ayah, 0, 1, 286);
+  if (surah < 1 || ayah < 1) return null;
+  return {
+    surah,
+    ayah,
+    mode: pickEnum(input.mode, ["single", "continuous"] as const, "single"),
+    offset: pickNumber(input.offset, 0, 0, 100000),
+    reciter: normalizeReciterId(input.reciter),
+  };
+}
+
 function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return DEFAULT_PROGRESS;
   const modules: Record<string, ModuleProgress> = {};
@@ -238,6 +253,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
     readSections: sanitizeReadSections(input.readSections),
     analytics: sanitizeAnalytics(input.analytics),
+    playerResume: sanitizePlayerResume(input.playerResume),
   };
 }
 
@@ -250,6 +266,14 @@ export function getProgress(): TajweedProgress {
   } catch {
     return DEFAULT_PROGRESS;
   }
+}
+
+export function getPlayerResume(): PlayerResume | null {
+  return getProgress().playerResume ?? null;
+}
+
+export function setPlayerResume(resume: PlayerResume | null): void {
+  setProgress({ ...getProgress(), playerResume: resume });
 }
 
 export function setProgress(progress: TajweedProgress): void {
