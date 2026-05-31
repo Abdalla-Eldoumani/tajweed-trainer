@@ -549,12 +549,20 @@ export interface Question {
   source: QuestionSource;
 }
 
-// Verse snapshot record stored in src/data/verse-snapshots.json. Keyed
-// "<surah>:<ayah>" at the top level.
+// Verse snapshot record stored in src/data/verse-snapshots.json, keyed
+// "<surah>:<ayah>" at the top level. Populated by
+// scripts/prefetch-tajweed-snapshots.mjs from the authenticated Quran.com API.
 export interface VerseSnapshot {
+  // text_uthmani_tajweed HTML; sanitized at render to color lesson example
+  // verses exactly like the mushaf.
+  tajweedHtml: string;
+  // Plain uthmani text (tags stripped) for reference and provenance.
   arabic: string;
-  gloss: string;
-  glossEditionId: number | null;
+  // ISO timestamp of the fetch; preserved across idempotent re-runs.
   fetchedAt: string | null;
+  // Provenance, e.g. "api.quran.com/api/v4 uthmani_tajweed".
   source: string;
+  // Optional gloss for snapshot-fetched question verses (see docs/CONTENT.md).
+  gloss?: string;
+  glossEditionId?: number | null;
 }
