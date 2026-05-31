@@ -33,6 +33,13 @@ interface PlayerState {
   pendingOffset: number;
   seekToken: number;
   seekTarget: number;
+  // Study-tool state: loop one ayah (repeatOne times), loop a verse range, and a
+  // stop-at-end-of-surah sleep flag. repeatsDone / rangeLoopsDone are counters.
+  repeatOne: number;
+  repeatsDone: number;
+  repeatRange: { from: number; to: number; count: number } | null;
+  rangeLoopsDone: number;
+  sleepEndOfSurah: boolean;
 
   current: () => QueueItem | null;
   hasNext: () => boolean;
@@ -48,6 +55,10 @@ interface PlayerState {
   seek: (t: number) => void;
   setSpeed: (s: number) => void;
   setMode: (m: PlayerMode, ayahCount?: number) => void;
+  setRepeatOne: (count: number) => void;
+  setRepeatRange: (from: number, to: number, count: number) => void;
+  clearRepeat: () => void;
+  setSleepEndOfSurah: (on: boolean) => void;
   stop: () => void;
   restore: () => void;
 
@@ -78,6 +89,11 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   pendingOffset: 0,
   seekToken: 0,
   seekTarget: 0,
+  repeatOne: 0,
+  repeatsDone: 0,
+  repeatRange: null,
+  rangeLoopsDone: 0,
+  sleepEndOfSurah: false,
 
   current: () => get().queue[get().index] ?? null,
   hasNext: () => get().index < get().queue.length - 1,
@@ -133,13 +149,13 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   next: () =>
     set((s) =>
       s.index < s.queue.length - 1
-        ? { index: s.index + 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, loadToken: s.loadToken + 1 }
+        ? { index: s.index + 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, loadToken: s.loadToken + 1 }
         : {},
     ),
   prev: () =>
     set((s) =>
       s.index > 0
-        ? { index: s.index - 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, loadToken: s.loadToken + 1 }
+        ? { index: s.index - 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, loadToken: s.loadToken + 1 }
         : { seekTarget: 0, seekToken: s.seekToken + 1, currentTime: 0 },
     ),
 
@@ -157,6 +173,17 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       // continuous -> single: keep only the current verse; it stops at its end.
       return { mode, queue: cur ? [cur] : [], index: 0 };
     }),
+
+  setRepeatOne: (count) =>
+    set({ repeatOne: Math.max(0, Math.floor(count) || 0), repeatsDone: 0, repeatRange: null }),
+  setRepeatRange: (from, to, count) =>
+    set(
+      from >= 1 && to >= from && count >= 1
+        ? { repeatRange: { from: Math.floor(from), to: Math.floor(to), count: Math.floor(count) }, rangeLoopsDone: 0, repeatOne: 0 }
+        : { repeatRange: null, rangeLoopsDone: 0 },
+    ),
+  clearRepeat: () => set({ repeatOne: 0, repeatsDone: 0, repeatRange: null, rangeLoopsDone: 0 }),
+  setSleepEndOfSurah: (on) => set({ sleepEndOfSurah: !!on }),
 
   stop: () => {
     set({ status: "idle", currentTime: 0 });
@@ -184,9 +211,66 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   onTime: (currentTime, duration) => set((s) => ({ currentTime, duration: duration || s.duration })),
   onEnded: () => {
     const s = get();
-    if (s.mode === "continuous" && s.index < s.queue.length - 1) return s.next();
-    // End of surah (continuous) stops; single returns to a paused state.
-    set({ status: s.mode === "single" ? "paused" : "idle", currentTime: 0 });
+
+    // Loop the current ayah a set number of times before moving on.
+    if (s.repeatOne > 0 && s.repeatsDone + 1 < s.repeatOne) {
+      return set({
+        repeatsDone: s.repeatsDone + 1,
+        status: "loading",
+        currentTime: 0,
+        duration: 0,
+        pendingOffset: 0,
+        loadToken: s.loadToken + 1,
+      });
+    }
+
+    // Loop a verse range [from,to] `count` times, then stop.
+    if (s.repeatRange) {
+      const cur = s.queue[s.index];
+      const { from, to, count } = s.repeatRange;
+      if (cur && cur.ayah < to && s.index < s.queue.length - 1) {
+        return set({
+          repeatsDone: 0,
+          index: s.index + 1,
+          status: "loading",
+          currentTime: 0,
+          duration: 0,
+          pendingOffset: 0,
+          loadToken: s.loadToken + 1,
+        });
+      }
+      if (s.rangeLoopsDone + 1 < count) {
+        return set({
+          repeatsDone: 0,
+          rangeLoopsDone: s.rangeLoopsDone + 1,
+          index: Math.max(0, from - 1),
+          status: "loading",
+          currentTime: 0,
+          duration: 0,
+          pendingOffset: 0,
+          loadToken: s.loadToken + 1,
+        });
+      }
+      set({ repeatsDone: 0, rangeLoopsDone: 0, repeatRange: null, status: "idle", currentTime: 0 });
+      get().persist();
+      return;
+    }
+
+    // Continuous mode auto-advances unless the sleep timer stops at the surah end.
+    if (s.mode === "continuous" && s.index < s.queue.length - 1 && !s.sleepEndOfSurah) {
+      return set({
+        repeatsDone: 0,
+        index: s.index + 1,
+        status: "loading",
+        currentTime: 0,
+        duration: 0,
+        pendingOffset: 0,
+        loadToken: s.loadToken + 1,
+      });
+    }
+
+    // End of surah (continuous) or the sleep boundary stops; single returns to paused.
+    set({ repeatsDone: 0, status: s.mode === "single" ? "paused" : "idle", currentTime: 0 });
     get().persist();
   },
 
