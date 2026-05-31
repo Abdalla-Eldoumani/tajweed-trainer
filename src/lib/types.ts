@@ -449,6 +449,17 @@ export interface TajweedProgress {
   analytics: AnalyticsEvent[];
   // Last playback position, so the mini-player can resume after a reload.
   playerResume?: PlayerResume | null;
+  // Verse bookmarks ("surah:ayah") and the last-read location, for navigation.
+  // Kept inside this consolidated model so export / import / reset cover them.
+  bookmarks: string[];
+  lastRead?: VerseLocation | null;
+}
+
+// Where the reader last was, so the home screen can offer "continue reading".
+export interface VerseLocation {
+  verseKey: string; // "surah:ayah"
+  page: number;     // mushaf page 1..604
+  ts: string;       // ISO timestamp
 }
 
 // Local-only insights ring buffer. Never sent over the network. The fixed set
