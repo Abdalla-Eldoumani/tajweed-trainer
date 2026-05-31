@@ -393,6 +393,19 @@ export interface ReviewState {
   timesCorrect: number;
 }
 
+export type PlayerMode = "single" | "continuous";
+export type PlaybackStatus = "idle" | "loading" | "playing" | "paused";
+
+// Enough to restore playback after a reload: which verse, in which mode, how far
+// into it, and with which reciter. Stored in the consolidated progress model.
+export interface PlayerResume {
+  surah: number;
+  ayah: number;
+  mode: PlayerMode;
+  offset: number; // seconds into the current ayah
+  reciter: ReciterId;
+}
+
 export interface TajweedProgress {
   modules: Record<string, ModuleProgress>;
   settings: UserSettings;
@@ -407,6 +420,8 @@ export interface TajweedProgress {
   // moduleId -> set of section anchor slugs the user has scrolled past.
   readSections: Record<string, string[]>;
   analytics: AnalyticsEvent[];
+  // Last playback position, so the mini-player can resume after a reload.
+  playerResume?: PlayerResume | null;
 }
 
 // Local-only insights ring buffer. Never sent over the network. The fixed set
