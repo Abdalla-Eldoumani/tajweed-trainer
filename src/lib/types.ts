@@ -345,26 +345,33 @@ export interface GlossaryData {
   verified: true;
 }
 
-// Reciter id is the Al Quran Cloud edition `identifier` field. We constrain
-// it to the alquran.cloud format at runtime (`^[a-z0-9._-]+$`, length 1-64) in
-// `validateReciterIdentifier`. The two defaults (husary, alafasy) are aliased
-// to their full alquran.cloud identifiers (`ar.husary`, `ar.alafasy`) by the
-// resolver so persisted settings from before this expansion still work.
+// Reciter id is the Quran.com recitation id as a string (for example "7" =
+// Alafasy, "12" = Al-Husary muallim). Validated against RECITER_ID_PATTERN and
+// the RECITATIONS list in src/lib/reciters.ts; legacy alquran.cloud identifiers
+// (husary, ar.alafasy, ...) are migrated by normalizeReciterId so persisted
+// settings still resolve.
 export type ReciterId = string;
 
-// Built-in default reciter identifiers, kept as a const tuple so existing
-// code paths that compared against `"husary" | "alafasy"` keep working.
+// A Quran.com recitation id is a small integer rendered as a string.
+export const RECITER_ID_PATTERN = /^[0-9]{1,3}$/;
+
+// A recitation from the Quran.com recitations resource.
+export interface Recitation {
+  id: string; // Quran.com recitation id, e.g. "7"
+  nameEn: string; // reciter name, transliterated
+  nameAr: string; // reciter name in Arabic
+  style: string | null; // "Murattal" | "Mujawwad" | "Muallim" | null, verbatim from the API
+}
+
+// --- legacy alquran.cloud reciter model, retained until migration cleanup ---
 export const DEFAULT_RECITER_IDS = ["husary", "alafasy"] as const;
 export type DefaultReciterId = (typeof DEFAULT_RECITER_IDS)[number];
-
-// Validation regex for a reciter identifier from the editions API.
 export const RECITER_IDENTIFIER_PATTERN = /^[a-z0-9._-]{1,64}$/;
-
 export interface ReciterEdition {
-  identifier: string;     // e.g. "ar.husary", "ar.alafasy"
-  language: string;       // ISO 639-1, e.g. "ar"
-  name: string;           // Native name
-  englishName: string;    // English transliteration of the reciter
+  identifier: string;
+  language: string;
+  name: string;
+  englishName: string;
   format: "audio";
   type: "versebyverse";
 }
