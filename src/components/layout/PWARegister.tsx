@@ -24,5 +24,15 @@ export function PWARegister() {
     }
   }, []);
 
+  // Ask the browser to keep our local data (bookmarks, progress, resume) from
+  // being evicted under storage pressure. Best-effort; a decline is fine and the
+  // manual backup in Settings remains the fallback.
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !navigator.storage || typeof navigator.storage.persist !== "function") {
+      return;
+    }
+    navigator.storage.persist().catch(() => {});
+  }, []);
+
   return null;
 }
