@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
+import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
@@ -104,10 +105,14 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist last viewed page on mount and whenever the page changes.
+  // Persist last viewed page on mount and whenever the page changes. lastRead is
+  // the consolidated-model location the home resume card reads; lastMushafPage is
+  // kept for the mushaf index's own resume affordance.
   useEffect(() => {
     updateSettings({ lastMushafPage: page });
-  }, [page, updateSettings]);
+    const first = data.verses[0];
+    if (first) setLastRead(`${first.surah}:${first.ayah}`, page);
+  }, [page, data, updateSettings]);
 
   // RTL keyboard navigation: in Arabic mode the right arrow advances, left goes back.
   useEffect(() => {
