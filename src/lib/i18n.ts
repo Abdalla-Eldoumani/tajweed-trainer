@@ -369,6 +369,17 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.playFromHere": { en: "Play from here", ar: "تشغيل من هنا" },
   "player.modeSingle": { en: "Single verse", ar: "آية واحدة" },
   "player.modeContinuous": { en: "Continuous", ar: "متتابع" },
+  "player.studyOptions": { en: "Repeat and sleep options", ar: "خيارات التكرار والإيقاف" },
+  "player.repeatVerse": { en: "Repeat verse", ar: "تكرار الآية" },
+  "player.off": { en: "Off", ar: "إيقاف" },
+  "player.times": { en: "×", ar: "×" },
+  "player.loopRange": { en: "Loop ayah range", ar: "تكرار مقطع من الآيات" },
+  "player.rangeFrom": { en: "From", ar: "من" },
+  "player.rangeTo": { en: "To", ar: "إلى" },
+  "player.loopStart": { en: "Loop", ar: "كرّر" },
+  "player.sleep": { en: "Sleep timer", ar: "مؤقّت الإيقاف" },
+  "player.min": { en: "min", ar: "دقيقة" },
+  "player.sleepEndOfSurah": { en: "End of surah", ar: "نهاية السورة" },
 
   // Not found
   "notFound.title": { en: "Page Not Found", ar: "الصفحة غير موجودة" },
