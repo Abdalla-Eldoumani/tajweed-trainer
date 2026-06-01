@@ -107,6 +107,15 @@ export function PlayerHost() {
     if (audioRef.current) audioRef.current.playbackRate = speed;
   }, [speed]);
 
+  // Minutes-based sleep timer: stop playback once the wall-clock deadline passes.
+  useEffect(() => {
+    const id = setInterval(() => {
+      const { sleepDeadline } = usePlayer.getState();
+      if (sleepDeadline && Date.now() >= sleepDeadline) usePlayer.getState().stop();
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   // Media Session: lock-screen / headset metadata and controls, where supported.
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
