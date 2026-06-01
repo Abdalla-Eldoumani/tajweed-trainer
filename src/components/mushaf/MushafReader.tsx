@@ -8,6 +8,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
+import { pageForJuz, TOTAL_JUZ } from "@/lib/navigation";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
@@ -182,6 +183,20 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             {surahs.map((s) => (
               <option key={s.number} value={s.number}>
                 {s.number}. {isAr ? s.nameArabic : s.nameSimple}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value=""
+            onChange={(e) => e.target.value && router.push(`/mushaf/page/${pageForJuz(Number(e.target.value))}`)}
+            className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            aria-label={t("mushaf.juzIndex")}
+          >
+            <option value="">{t("mushaf.juzIndex")}</option>
+            {Array.from({ length: TOTAL_JUZ }, (_, i) => i + 1).map((j) => (
+              <option key={j} value={j}>
+                {t("mushaf.juz")} {isAr ? toArabicIndic(j) : j}
               </option>
             ))}
           </select>
