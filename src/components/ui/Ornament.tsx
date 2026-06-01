@@ -65,14 +65,17 @@ export function MedallionOrnament({ className }: OrnamentProps) {
       <circle cx="100" cy="100" r="90" stroke="currentColor" strokeWidth="1" opacity="0.5" />
       <circle cx="100" cy="100" r="65" stroke="currentColor" strokeWidth="0.7" opacity="0.6" />
       <circle cx="100" cy="100" r="40" stroke="currentColor" strokeWidth="0.7" opacity="0.7" />
-      {/* 12-pointed star */}
+      {/* 12-pointed star. Coordinates are rounded so Node (server) and the
+          browser (client) serialize identical strings — trig differs in the last
+          float ULP between V8 builds, which otherwise trips a hydration mismatch. */}
       <g stroke="currentColor" strokeWidth="0.6" fill="none" opacity="0.7">
         {Array.from({ length: 12 }).map((_, i) => {
           const a = (i * 30 * Math.PI) / 180;
-          const x1 = 100 + Math.cos(a) * 25;
-          const y1 = 100 + Math.sin(a) * 25;
-          const x2 = 100 + Math.cos(a) * 80;
-          const y2 = 100 + Math.sin(a) * 80;
+          const r = (n: number) => Math.round(n * 1000) / 1000;
+          const x1 = r(100 + Math.cos(a) * 25);
+          const y1 = r(100 + Math.sin(a) * 25);
+          const x2 = r(100 + Math.cos(a) * 80);
+          const y2 = r(100 + Math.sin(a) * 80);
           return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
         })}
       </g>

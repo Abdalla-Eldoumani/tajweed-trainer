@@ -9,11 +9,15 @@ interface SectionBannerProps {
 
 export function SectionBanner({ title, subtitle, color, className }: SectionBannerProps) {
   return (
-    <div
-      className={cn("section-banner", className)}
-      style={color ? { background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)` } : undefined}
-    >
-      <h2 className="relative z-10 font-heading font-bold text-sm sm:text-base">
+    <div className={cn("section-banner", className)}>
+      <h2 className="relative z-10 font-heading font-bold text-sm sm:text-base flex items-center justify-center gap-2">
+        {color && (
+          <span
+            className="inline-block w-2 h-2 rounded-full"
+            style={{ background: color }}
+            aria-hidden="true"
+          />
+        )}
         {title}
       </h2>
       {subtitle && (

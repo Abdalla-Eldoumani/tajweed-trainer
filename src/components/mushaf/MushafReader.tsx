@@ -6,9 +6,16 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
+import { usePlayer } from "@/hooks/usePlayer";
+import { useBookmarks } from "@/hooks/useBookmarks";
+import { pageForJuz, TOTAL_JUZ } from "@/lib/navigation";
+import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
+import { ReadingDepth } from "@/components/learn/ReadingDepth";
+import { WordByWord } from "@/components/learn/WordByWord";
 import type { MushafPageData, SurahHeader } from "@/lib/types";
+import { getColorForClass } from "@/lib/tajweed-colors";
 
 interface MushafReaderProps {
   page: number;
@@ -17,6 +24,21 @@ interface MushafReaderProps {
 }
 
 const TOTAL_PAGES = 604;
+
+// Rules a learner can isolate with the highlight drill. Names are read from the
+// tajweed map; the CSS in globals.css greys everything except the chosen rule.
+const DRILL_CLASSES = [
+  "ghunnah",
+  "idgham_ghunnah",
+  "idgham_wo_ghunnah",
+  "idgham_shafawi",
+  "ikhafa",
+  "ikhafa_shafawi",
+  "iqlab",
+  "qalaqah",
+  "madda_normal",
+  "madda_necessary",
+] as const;
 
 const ChevronStart = ({ className }: { className?: string }) => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
@@ -54,18 +76,46 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { settings, updateSettings } = useSettings();
   const { t, isAr } = useTranslation();
   const router = useRouter();
+  const { isBookmarked: isVerseBookmarked, toggle: toggleVerseBm, mounted: bmMounted } = useBookmarks();
   // localStorage isn't available on the server, so any UI driven by it
   // (bookmark fill, last-page label) waits for client hydration.
   const [mounted, setMounted] = useState(false);
   // Memorization mode hides verse text the user has marked memorized so they
   // can recall it. Off by default; in-session state, not persisted.
   const [memorizationMode, setMemorizationMode] = useState(false);
+  // Single-rule highlight drill: greys every tajweed rule except the chosen one.
+  const [drill, setDrill] = useState("");
+  // A lesson "open in reader" link arrives as ?v=surah:ayah; we scroll that verse
+  // into view and start it (single mode). Read client-side so the statically
+  // generated page needs no Suspense boundary for useSearchParams.
+  const [targetVerseKey, setTargetVerseKey] = useState<string | null>(null);
+  // The verse whose reading-depth panel (translation, tafsir, word-by-word) is open.
+  const [selectedVerse, setSelectedVerse] = useState<string | null>(null);
   useEffect(() => setMounted(true), []);
 
-  // Persist last viewed page on mount and whenever the page changes.
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get("v");
+    if (!v || !/^\d{1,3}:\d{1,3}$/.test(v)) return;
+    setTargetVerseKey(v);
+    const [s, a] = v.split(":").map(Number);
+    const header = surahs.find((h) => h.number === s);
+    usePlayer.getState().playVerse(s, a, {
+      reciter: settings.reciter,
+      speed: settings.playbackSpeed,
+      surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
+    });
+    // Mount-only: the target is taken from the entry URL once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist last viewed page on mount and whenever the page changes. lastRead is
+  // the consolidated-model location the home resume card reads; lastMushafPage is
+  // kept for the mushaf index's own resume affordance.
   useEffect(() => {
     updateSettings({ lastMushafPage: page });
-  }, [page, updateSettings]);
+    const first = data.verses[0];
+    if (first) setLastRead(`${first.surah}:${first.ayah}`, page);
+  }, [page, data, updateSettings]);
 
   // RTL keyboard navigation: in Arabic mode the right arrow advances, left goes back.
   useEffect(() => {
@@ -137,6 +187,38 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             ))}
           </select>
 
+          <select
+            value=""
+            onChange={(e) => e.target.value && router.push(`/mushaf/page/${pageForJuz(Number(e.target.value))}`)}
+            className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            aria-label={t("mushaf.juzIndex")}
+          >
+            <option value="">{t("mushaf.juzIndex")}</option>
+            {Array.from({ length: TOTAL_JUZ }, (_, i) => i + 1).map((j) => (
+              <option key={j} value={j}>
+                {t("mushaf.juz")} {isAr ? toArabicIndic(j) : j}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={drill}
+            onChange={(e) => setDrill(e.target.value)}
+            className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            aria-label={t("mushaf.drill")}
+            title={t("mushaf.drill")}
+          >
+            <option value="">{t("mushaf.drillOff")}</option>
+            {DRILL_CLASSES.map((c) => {
+              const info = getColorForClass(c);
+              return (
+                <option key={c} value={c}>
+                  {info ? (isAr ? info.nameAr : info.nameEn) : c}
+                </option>
+              );
+            })}
+          </select>
+
           <button
             onClick={() => setMemorizationMode((v) => !v)}
             className={cn(
@@ -168,7 +250,59 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         </div>
       </div>
 
-      <MushafPage data={data} memorizationMode={memorizationMode} />
+      <div data-tajweed-drill={drill || undefined}>
+        <MushafPage
+          data={data}
+          memorizationMode={memorizationMode}
+          targetVerseKey={targetVerseKey}
+          onSelectVerse={setSelectedVerse}
+        />
+      </div>
+
+      {selectedVerse && /^\d{1,3}:\d{1,3}$/.test(selectedVerse) && (
+        <div className="rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-text-muted font-mono">{selectedVerse}</span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => toggleVerseBm(selectedVerse)}
+                aria-pressed={bmMounted && isVerseBookmarked(selectedVerse)}
+                aria-label={
+                  bmMounted && isVerseBookmarked(selectedVerse)
+                    ? t("mushaf.bookmarkVerseRemove")
+                    : t("mushaf.bookmarkVerse")
+                }
+                className={cn(
+                  "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors",
+                  bmMounted && isVerseBookmarked(selectedVerse)
+                    ? "text-gold-dark dark:text-gold-light bg-gold/15"
+                    : "text-text-muted hover:bg-bg-subtle",
+                )}
+              >
+                <BookmarkIcon filled={bmMounted && isVerseBookmarked(selectedVerse)} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedVerse(null)}
+                aria-label={t("reading.close")}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-text-muted hover:bg-bg-subtle"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+          {(() => {
+            const [sv, av] = selectedVerse.split(":").map(Number);
+            return (
+              <>
+                <ReadingDepth surah={sv} ayah={av} />
+                {settings.showWordByWord && <WordByWord surah={sv} ayah={av} />}
+              </>
+            );
+          })()}
+        </div>
+      )}
 
       {/* Footer page indicator */}
       <p className="text-center text-xs text-text-muted">

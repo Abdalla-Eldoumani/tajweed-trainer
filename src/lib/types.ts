@@ -345,28 +345,43 @@ export interface GlossaryData {
   verified: true;
 }
 
-// Reciter id is the Al Quran Cloud edition `identifier` field. We constrain
-// it to the alquran.cloud format at runtime (`^[a-z0-9._-]+$`, length 1-64) in
-// `validateReciterIdentifier`. The two defaults (husary, alafasy) are aliased
-// to their full alquran.cloud identifiers (`ar.husary`, `ar.alafasy`) by the
-// resolver so persisted settings from before this expansion still work.
+// Reciter id is the Quran.com recitation id as a string (for example "7" =
+// Alafasy, "12" = Al-Husary muallim). Validated against RECITER_ID_PATTERN and
+// the RECITATIONS list in src/lib/reciters.ts; legacy alquran.cloud identifiers
+// (husary, ar.alafasy, ...) are migrated by normalizeReciterId so persisted
+// settings still resolve.
 export type ReciterId = string;
 
-// Built-in default reciter identifiers, kept as a const tuple so existing
-// code paths that compared against `"husary" | "alafasy"` keep working.
-export const DEFAULT_RECITER_IDS = ["husary", "alafasy"] as const;
-export type DefaultReciterId = (typeof DEFAULT_RECITER_IDS)[number];
+// A Quran.com recitation id is a small integer rendered as a string.
+export const RECITER_ID_PATTERN = /^[0-9]{1,3}$/;
 
-// Validation regex for a reciter identifier from the editions API.
-export const RECITER_IDENTIFIER_PATTERN = /^[a-z0-9._-]{1,64}$/;
+// A recitation from the Quran.com recitations resource.
+export interface Recitation {
+  id: string; // Quran.com recitation id, e.g. "7"
+  nameEn: string; // reciter name, transliterated
+  nameAr: string; // reciter name in Arabic
+  style: string | null; // "Murattal" | "Mujawwad" | "Muallim" | null, verbatim from the API
+}
 
-export interface ReciterEdition {
-  identifier: string;     // e.g. "ar.husary", "ar.alafasy"
-  language: string;       // ISO 639-1, e.g. "ar"
-  name: string;           // Native name
-  englishName: string;    // English transliteration of the reciter
-  format: "audio";
-  type: "versebyverse";
+// A translation or tafsir resource from the Quran.com /resources endpoints. Used
+// to populate the settings selectors and to validate a stored id at runtime.
+export interface TranslationResource {
+  id: number;
+  name: string;
+  authorName: string;
+  languageName: string;
+}
+
+export type TafsirResource = TranslationResource;
+
+// One word of a verse from the word-by-word endpoint: its Uthmani text, optional
+// transliteration and gloss, and its own audio clip. All from the API.
+export interface VerseWord {
+  position: number;
+  textUthmani: string;
+  transliteration: string | null;
+  translation: string | null;
+  audioUrl: string | null;
 }
 
 export interface UserSettings {
@@ -379,6 +394,12 @@ export interface UserSettings {
   language: Language;
   lastMushafPage?: number;
   mushafBookmarks?: number[];
+  // Reading-depth resource ids (Quran.com translation/tafsir resources) plus the
+  // word-by-word toggle. Confirmed against /resources/* at runtime; defaulted and
+  // clamped by sanitizeSettings so a tampered value can never reach a URL raw.
+  translationId?: number;
+  tafsirId?: number;
+  showWordByWord?: boolean;
 }
 
 export interface ModuleProgress {
@@ -399,6 +420,19 @@ export interface ReviewState {
   timesCorrect: number;
 }
 
+export type PlayerMode = "single" | "continuous";
+export type PlaybackStatus = "idle" | "loading" | "playing" | "paused";
+
+// Enough to restore playback after a reload: which verse, in which mode, how far
+// into it, and with which reciter. Stored in the consolidated progress model.
+export interface PlayerResume {
+  surah: number;
+  ayah: number;
+  mode: PlayerMode;
+  offset: number; // seconds into the current ayah
+  reciter: ReciterId;
+}
+
 export interface TajweedProgress {
   modules: Record<string, ModuleProgress>;
   settings: UserSettings;
@@ -413,6 +447,19 @@ export interface TajweedProgress {
   // moduleId -> set of section anchor slugs the user has scrolled past.
   readSections: Record<string, string[]>;
   analytics: AnalyticsEvent[];
+  // Last playback position, so the mini-player can resume after a reload.
+  playerResume?: PlayerResume | null;
+  // Verse bookmarks ("surah:ayah") and the last-read location, for navigation.
+  // Kept inside this consolidated model so export / import / reset cover them.
+  bookmarks: string[];
+  lastRead?: VerseLocation | null;
+}
+
+// Where the reader last was, so the home screen can offer "continue reading".
+export interface VerseLocation {
+  verseKey: string; // "surah:ayah"
+  page: number;     // mushaf page 1..604
+  ts: string;       // ISO timestamp
 }
 
 // Local-only insights ring buffer. Never sent over the network. The fixed set
@@ -501,7 +548,7 @@ export interface PracticeQuestion {
   moduleId: string;
   // Optional fields populated when this PracticeQuestion was derived from an
   // authored Question record. The runtime UI may render `prompt` instead of the
-  // static "identify the rule" header. Phase 6 surfaces `explanation` after the
+  // static "identify the rule" header. The reader surfaces `explanation` after the
   // user answers; for now it is carried through so authored data isn't lost.
   prompt?: { en: string; ar?: string };
   explanation?: { en: string; ar?: string; lessonAnchor: string };
@@ -510,7 +557,7 @@ export interface PracticeQuestion {
 
 // Authored question record for the per-module question files in
 // src/data/questions/. Richer than PracticeQuestion (the runtime UI shape) so
-// Phase 6 can surface the explanation and lesson anchor without a re-author.
+// The reader can surface the explanation and lesson anchor without a re-author.
 // The aggregator maps Question -> PracticeQuestion for current consumers.
 export type QuestionDifficulty = "easy" | "medium" | "hard";
 
@@ -549,12 +596,20 @@ export interface Question {
   source: QuestionSource;
 }
 
-// Verse snapshot record stored in src/data/verse-snapshots.json. Keyed
-// "<surah>:<ayah>" at the top level.
+// Verse snapshot record stored in src/data/verse-snapshots.json, keyed
+// "<surah>:<ayah>" at the top level. Populated by
+// scripts/prefetch-tajweed-snapshots.mjs from the authenticated Quran.com API.
 export interface VerseSnapshot {
+  // text_uthmani_tajweed HTML; sanitized at render to color lesson example
+  // verses exactly like the mushaf.
+  tajweedHtml: string;
+  // Plain uthmani text (tags stripped) for reference and provenance.
   arabic: string;
-  gloss: string;
-  glossEditionId: number | null;
+  // ISO timestamp of the fetch; preserved across idempotent re-runs.
   fetchedAt: string | null;
+  // Provenance, e.g. "api.quran.com/api/v4 uthmani_tajweed".
   source: string;
+  // Optional gloss for snapshot-fetched question verses (see docs/CONTENT.md).
+  gloss?: string;
+  glossEditionId?: number | null;
 }

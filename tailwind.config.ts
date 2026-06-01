@@ -11,47 +11,41 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#1B5E20",
+          DEFAULT: "#165E2A",
           light: "#4CAF50",
+          weak: "#2E7D44",
         },
         accent: "#D4A574",
         gold: {
-          DEFAULT: "#C5A55A",
-          light: "#E8D5A3",
+          DEFAULT: "#B68A2E",
+          light: "#D8BE86",
           dark: "#8B7332",
+          soft: "#D8BE86",
         },
         cream: {
-          DEFAULT: "#FDF8F0",
-          dark: "#F5EDE0",
+          DEFAULT: "#F7F3EA",
+          dark: "#EFE8D8",
         },
         bg: {
-          DEFAULT: "#FDF8F0",
-          card: "#FFFDF9",
-          dark: "#1A1A2E",
-          "card-dark": "#2D2D44",
+          DEFAULT: "#F7F3EA",
+          card: "#FFFFFF",
+          subtle: "#EFE8D8",
+          dark: "#0B1020",
+          "card-dark": "#141A2C",
         },
         text: {
-          DEFAULT: "#1A1A2E",
-          muted: "#6B7280",
-          dark: "#F5F5F5",
+          DEFAULT: "#1A1F2E",
+          muted: "#5B6472",
+          dark: "#ECEFF6",
         },
         tajweed: {
-          ghunnah: "#169200",
-          ikhfaa: "#D98000",
-          "idgham-ghunnah": "#9400A8",
-          "idgham-no-ghunnah": "#0057D9",
-          iqlab: "#26A69A",
-          qalqalah: "#A30000",
-          "madd-normal": "#E06050",
-          "madd-obligatory": "#D50000",
-          "madd-permissible": "#E8567F",
-          "laam-shamsiyah": "#707070",
-          silent: "#AAAAAA",
-          "ikhfaa-shafawi": "#D98000",
-          "idgham-shafawi": "#9400A8",
-          "idgham-mutajanisayn": "#0057D9",
-          "idgham-mutaqaribayn": "#0057D9",
-          "ham-wasl": "#AAAAAA",
+          // Only text-tajweed-qalqalah is consumed (the qalqalah lesson letter).
+          // This is a MANUAL MIRROR of the active "new" scheme value for `qalaqah`
+          // in src/lib/tajweed-colors.ts; it does NOT auto-track SCHEME, so if you
+          // flip SCHEME to "classic" update this hex too (classic qalaqah = #DD0008).
+          // The mushaf and legend read colors from CSS variables and the map, not
+          // from Tailwind tokens, so no other tajweed token belongs here.
+          qalqalah: "#009EE6",
         },
       },
       fontFamily: {

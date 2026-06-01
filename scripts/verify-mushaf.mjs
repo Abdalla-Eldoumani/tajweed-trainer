@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Phase 3 verification: drives a real Chromium against the dev server and
+// Mushaf-reader verification: drives a real Chromium against the dev server and
 // asserts the Mushaf reader behaves correctly across the critical pages.
 // Not a build dep; only runs locally on demand.
 

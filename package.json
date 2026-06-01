@@ -6,14 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "verify": "tsc --noEmit && next lint && npm run verify:scripts",
+    "verify:scripts": "node scripts/verify-tajweed-colors.mjs && node scripts/verify-lesson-coloring.mjs && node scripts/verify-navigation.mjs && node scripts/verify-reading.mjs && node scripts/verify-reading-depth.mjs && node scripts/verify-reciters-data.mjs && node scripts/verify-sanitizer.mjs && node scripts/verify-security.mjs && node scripts/verify-study-tools.mjs",
+    "verify:ui": "node scripts/verify-module-lock.mjs && node scripts/verify-mushaf.mjs && node scripts/verify-newfeatures.mjs && node scripts/verify-questions.mjs && node scripts/verify-reciters.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "zustand": "5.0.14"
   },
   "devDependencies": {
     "@types/node": "^20.17.12",

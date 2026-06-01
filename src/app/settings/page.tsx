@@ -1,36 +1,43 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
-import { useReciters } from "@/hooks/useReciters";
-import { resolveReciterIdentifier } from "@/lib/audio-api";
 import { exportProgress, importProgress } from "@/lib/storage";
-import type { ReciterEdition } from "@/lib/types";
+import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
+import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
+import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
+import type { Recitation, TranslationResource } from "@/lib/types";
 import { cn } from "@/lib/utils";
-
-// Friendly language labels for the optgroup header. Falls back to the ISO
-// code in upper case when the language isn't in the table.
-const LANGUAGE_LABELS: Record<string, { en: string; ar: string }> = {
-  ar: { en: "Arabic", ar: "العربية" },
-  en: { en: "English", ar: "الإنجليزية" },
-  fr: { en: "French", ar: "الفرنسية" },
-  ur: { en: "Urdu", ar: "الأردية" },
-  fa: { en: "Persian", ar: "الفارسية" },
-};
-
-function languageLabel(code: string, lang: "en" | "ar"): string {
-  return LANGUAGE_LABELS[code]?.[lang] ?? code.toUpperCase();
-}
 
 export default function SettingsPage() {
   const { settings, updateSettings } = useSettings();
-  const { t, isAr, lang } = useTranslation();
-  const { editions, loading: recitersLoading } = useReciters();
+  const { t, isAr } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [backupStatus, setBackupStatus] = useState<{ kind: "success" | "error"; key: string } | null>(null);
+  const [reciterQuery, setReciterQuery] = useState("");
+  const [translations, setTranslations] = useState<TranslationResource[]>(CURATED_TRANSLATIONS);
+  const [tafsirs, setTafsirs] = useState<TranslationResource[]>(CURATED_TAFSIRS);
+
+  // Resource catalogues load from the API when online; offline the curated
+  // fallback keeps the selectors usable. English resources only, to keep the
+  // lists short for this app.
+  useEffect(() => {
+    getResourceTranslations()
+      .then((list) => {
+        const en = list.filter((r) => r.languageName === "english");
+        if (en.length) setTranslations(mergeResources(CURATED_TRANSLATIONS, en));
+      })
+      .catch(() => {});
+    getResourceTafsirs()
+      .then((list) => {
+        const en = list.filter((r) => r.languageName === "english");
+        if (en.length) setTafsirs(mergeResources(CURATED_TAFSIRS, en));
+      })
+      .catch(() => {});
+  }, []);
 
   const handleExport = () => {
     const data = exportProgress();
@@ -63,31 +70,35 @@ export default function SettingsPage() {
     e.target.value = "";
   };
 
-  // Group editions by language code, but always pin Arabic first since the
-  // two defaults live there and most users expect them at the top. The two
-  // defaults (ar.husary, ar.alafasy) keep their position because
-  // mergeWithDefaults already prepended them to the list.
-  const grouped = useMemo(() => {
-    const byLang = new Map<string, ReciterEdition[]>();
-    for (const e of editions) {
-      const list = byLang.get(e.language) ?? [];
-      list.push(e);
-      byLang.set(e.language, list);
-    }
-    const ordered: Array<[string, ReciterEdition[]]> = [];
-    if (byLang.has("ar")) ordered.push(["ar", byLang.get("ar")!]);
-    Array.from(byLang.entries()).forEach(([code, list]) => {
-      if (code !== "ar") ordered.push([code, list]);
-    });
-    return ordered;
-  }, [editions]);
-
-  // Selected value: preserve `husary` / `alafasy` aliases when they're set,
-  // otherwise echo the full identifier from settings.
+  // Reciters grouped into the two display styles (Mujawwad, then Murattal),
+  // narrowed by the search query against the English or Arabic name or style.
+  // The selected reciter always stays in the list so the control never loses
+  // its value while filtering.
   const selectedValue = settings.reciter;
-  const matchedEdition = editions.find(
-    (e) => e.identifier === selectedValue || e.identifier === resolveReciterIdentifier(selectedValue),
-  );
+  const reciterView = useMemo(() => {
+    const q = reciterQuery.trim();
+    const ql = q.toLowerCase();
+    const matchesQuery = (r: Recitation) =>
+      r.nameEn.toLowerCase().includes(ql) || r.nameAr.includes(q) || (r.style ?? "").toLowerCase().includes(ql);
+    const queryHits = q === "" ? RECITATIONS : RECITATIONS.filter(matchesQuery);
+    const visible = q === "" ? RECITATIONS : RECITATIONS.filter((r) => r.id === selectedValue || matchesQuery(r));
+    const groups: Array<{ key: ReciterStyleGroup; labelKey: string; list: Recitation[] }> = [
+      { key: "mujawwad", labelKey: "settings.reciterStyleMujawwad", list: [] },
+      { key: "murattal", labelKey: "settings.reciterStyleMurattal", list: [] },
+    ];
+    for (const r of visible) groups.find((x) => x.key === styleGroup(r))?.list.push(r);
+    return { groups: groups.filter((g) => g.list.length > 0), noResults: q !== "" && queryHits.length === 0 };
+  }, [reciterQuery, selectedValue]);
+
+  const reciterLabel = (r: Recitation): string => {
+    const base = isAr ? r.nameAr : r.nameEn;
+    const styled = r.style ? `${base} — ${r.style}` : base;
+    return r.id === DEFAULT_RECITER_ID ? `${styled} (${t("settings.recitersDefault")})` : styled;
+  };
+
+  // Keep the saved id selectable even if it is not in the loaded catalogue.
+  const ensurePresent = (list: TranslationResource[], id: number): TranslationResource[] =>
+    list.some((r) => r.id === id) ? list : [{ id, name: `#${id}`, authorName: "", languageName: "" }, ...list];
 
   return (
     <div className="space-y-6">
@@ -130,35 +141,33 @@ export default function SettingsPage() {
 
       {/* Reciter */}
       <Card>
-        <div className="flex items-center justify-between mb-3 gap-3">
-          <h2 className="font-heading font-semibold text-sm">{t("settings.reciter")}</h2>
-          {recitersLoading && (
-            <span className="text-xs text-text-muted" aria-live="polite">
-              {t("settings.recitersLoading")}
-            </span>
-          )}
-        </div>
+        <h2 className="font-heading font-semibold text-sm mb-3">{t("settings.reciter")}</h2>
+        <input
+          type="search"
+          value={reciterQuery}
+          onChange={(e) => setReciterQuery(e.target.value)}
+          placeholder={t("settings.reciterSearch")}
+          aria-label={t("settings.reciterSearch")}
+          className="w-full mb-2 px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
+        />
         <select
           value={selectedValue}
           onChange={(e) => updateSettings({ reciter: e.target.value })}
           aria-label={t("settings.reciter")}
           className="w-full px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
         >
-          {grouped.map(([code, list]) => (
-            <optgroup key={code} label={languageLabel(code, lang)}>
-              {list.map((edition) => (
-                <option key={edition.identifier} value={edition.identifier}>
-                  {edition.englishName}
-                  {edition.identifier === "ar.husary" && ` (${t("settings.recitersDefault")})`}
+          {reciterView.groups.map((group) => (
+            <optgroup key={group.key} label={t(group.labelKey)}>
+              {group.list.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {reciterLabel(r)}
                 </option>
               ))}
             </optgroup>
           ))}
         </select>
-        {matchedEdition && matchedEdition.language === "ar" && (
-          <p className="text-xs text-text-muted mt-2 font-arabic" dir="rtl" lang="ar">
-            {matchedEdition.name}
-          </p>
+        {reciterView.noResults && (
+          <p className="text-xs text-text-muted mt-2">{t("settings.reciterNoResults")}</p>
         )}
         <p className="text-xs text-text-muted mt-2">
           {t("settings.recitersHelp")}
@@ -253,6 +262,53 @@ export default function SettingsPage() {
               aria-label={t("settings.darkMode")}
             />
           </label>
+        </div>
+      </Card>
+
+      {/* Reading depth */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-3">{t("settings.readingDepth")}</h2>
+        <div className="space-y-3">
+          <label className="block">
+            <span className="text-sm">{t("settings.translationResource")}</span>
+            <select
+              value={settings.translationId ?? 131}
+              onChange={(e) => updateSettings({ translationId: Number(e.target.value) })}
+              aria-label={t("settings.translationResource")}
+              className="w-full mt-1 px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
+            >
+              {ensurePresent(translations, settings.translationId ?? 131).map((r) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="text-sm">{t("settings.tafsirResource")}</span>
+            <select
+              value={settings.tafsirId ?? 169}
+              onChange={(e) => updateSettings({ tafsirId: Number(e.target.value) })}
+              aria-label={t("settings.tafsirResource")}
+              className="w-full mt-1 px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
+            >
+              {ensurePresent(tafsirs, settings.tafsirId ?? 169).map((r) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">{t("settings.showWordByWord")}</span>
+            <input
+              type="checkbox"
+              checked={!!settings.showWordByWord}
+              onChange={(e) => updateSettings({ showWordByWord: e.target.checked })}
+              className="accent-primary w-4 h-4"
+              aria-label={t("settings.showWordByWord")}
+            />
+          </label>
+
+          <p className="text-xs text-text-muted">{t("settings.resourceOnline")}</p>
         </div>
       </Card>
 

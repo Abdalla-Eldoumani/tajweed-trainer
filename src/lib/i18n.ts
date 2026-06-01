@@ -60,6 +60,9 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "جميع الأحكام وفق رواية حفص عن عاصم، الأكثر انتشارا في العالم، بمصادر علمية موثّقة.",
   },
   "home.learningPath": { en: "Learning Path", ar: "مسار التعلّم" },
+  "home.dailyVerse": { en: "Verse of the day", ar: "آية اليوم" },
+  "home.resumeReading": { en: "Continue reading", ar: "تابع القراءة" },
+  "home.resumePage": { en: "Page", ar: "صفحة" },
 
   // Learn page
   "learn.title": { en: "Learn Tajweed", ar: "تعلّم التجويد" },
@@ -295,6 +298,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   // Progress
   "progress.title": { en: "Your Progress", ar: "تقدّمك" },
   "progress.description": { en: "Track your tajweed learning journey.", ar: "تابع مسيرتك في تعلّم التجويد." },
+  "progress.localData": {
+    en: "Your progress, bookmarks, and notes are stored only on this device. Back them up from Settings.",
+    ar: "تُحفظ بياناتك ومفضّلاتك على هذا الجهاز فقط. يمكنك نسخها احتياطيًا من الإعدادات.",
+  },
   "progress.overall": { en: "Overall Completion", ar: "نسبة الإكمال الكلّية" },
   "progress.streak": { en: "Streak", ar: "أيام متتالية" },
   "progress.current": { en: "Current", ar: "الحالية" },
@@ -332,9 +339,13 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.xlarge": { en: "Extra Large", ar: "كبير جدا" },
   "settings.recitersLoading": { en: "Updating list…", ar: "جاري التحديث…" },
   "settings.recitersDefault": { en: "default", ar: "افتراضي" },
+  "settings.reciterSearch": { en: "Search reciters", ar: "ابحث عن قارئ" },
+  "settings.reciterStyleMujawwad": { en: "Mujawwad", ar: "مجوّد" },
+  "settings.reciterStyleMurattal": { en: "Murattal", ar: "مرتّل" },
+  "settings.reciterNoResults": { en: "No reciters match your search.", ar: "لا يوجد قارئ مطابق لبحثك." },
   "settings.recitersHelp": {
-    en: "More reciters appear once the editions list loads. Husary stays the default for teaching-style learning.",
-    ar: "تظهر مزيد من القرّاء بعد تحميل قائمة الإصدارات. يبقى الحصري الافتراضي للتعلّم على نمط المعلّم.",
+    en: "Reciters come from the Quran.com recitations, grouped by style. Al-Husary (muallim) is the default for teaching-style learning.",
+    ar: "القرّاء من تسجيلات Quran.com، مرتّبون حسب النمط. والحصري (المعلّم) هو الافتراضي للتعلّم على نمط المعلّم.",
   },
 
   // Common
@@ -346,7 +357,37 @@ const translations: Record<string, { en: string; ar: string }> = {
   "common.loading": { en: "Loading...", ar: "جاري التحميل..." },
   "common.error": { en: "An error occurred.", ar: "حدث خطأ." },
   "common.colorLegend": { en: "Tajweed Color Legend", ar: "دليل ألوان التجويد" },
+  "legend.group.ghunnahIdgham": { en: "Ghunnah & Idgham", ar: "الغنة والإدغام" },
+  "legend.group.madd": { en: "Madd", ar: "المدّ" },
+  "legend.group.qalqalah": { en: "Qalqalah", ar: "القلقلة" },
+  "legend.group.ikhfaIqlab": { en: "Ikhfa & Iqlab", ar: "الإخفاء والإقلاب" },
+  "legend.group.silentLaam": { en: "Silent & Laam", ar: "الصامت واللام" },
   "common.bismillah": { en: "In the name of Allah, the Most Gracious, the Most Merciful", ar: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ" },
+
+  // Audio player
+  "player.play": { en: "Play", ar: "تشغيل" },
+  "player.pause": { en: "Pause", ar: "إيقاف مؤقت" },
+  "player.previous": { en: "Previous verse", ar: "الآية السابقة" },
+  "player.next": { en: "Next verse", ar: "الآية التالية" },
+  "player.close": { en: "Stop and close player", ar: "إيقاف وإغلاق المشغّل" },
+  "player.seek": { en: "Seek", ar: "تغيير الموضع" },
+  "player.speed": { en: "Playback speed", ar: "سرعة التشغيل" },
+  "player.playVerse": { en: "Play this verse", ar: "تشغيل هذه الآية" },
+  "player.playFromHere": { en: "Play from here", ar: "تشغيل من هنا" },
+  "player.modeSingle": { en: "Single verse", ar: "آية واحدة" },
+  "player.modeContinuous": { en: "Continuous", ar: "متتابع" },
+  "player.studyOptions": { en: "Repeat and sleep options", ar: "خيارات التكرار والإيقاف" },
+  "player.repeatVerse": { en: "Repeat verse", ar: "تكرار الآية" },
+  "player.off": { en: "Off", ar: "إيقاف" },
+  "player.times": { en: "×", ar: "×" },
+  "player.loopRange": { en: "Loop ayah range", ar: "تكرار مقطع من الآيات" },
+  "player.rangeFrom": { en: "From", ar: "من" },
+  "player.rangeTo": { en: "To", ar: "إلى" },
+  "player.loopStart": { en: "Loop", ar: "كرّر" },
+  "player.sleep": { en: "Sleep timer", ar: "مؤقّت الإيقاف" },
+  "player.min": { en: "min", ar: "دقيقة" },
+  "player.sleepEndOfSurah": { en: "End of surah", ar: "نهاية السورة" },
+  "lesson.openInReader": { en: "Open in reader", ar: "افتح في المصحف" },
 
   // Not found
   "notFound.title": { en: "Page Not Found", ar: "الصفحة غير موجودة" },
@@ -367,7 +408,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.languageEn": { en: "English", ar: "الإنجليزية" },
   "settings.languageAr": { en: "Arabic", ar: "العربية" },
 
-  // Mushaf reader (Phase 3)
+  // Mushaf reader
   "mushaf.title": { en: "Mushaf", ar: "المصحف" },
   "mushaf.subtitle": { en: "The complete Quran with tajweed coloring", ar: "المصحف الشريف ملوّنا بأحكام التجويد" },
   "mushaf.openReader": { en: "Open Mushaf", ar: "افتح المصحف" },
@@ -386,11 +427,16 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.searchSurah": { en: "Search surah", ar: "ابحث عن سورة" },
   "mushaf.bookmarkAdd": { en: "Add bookmark", ar: "إضافة إلى المفضلة" },
   "mushaf.bookmarkRemove": { en: "Remove bookmark", ar: "إزالة من المفضلة" },
+  "mushaf.verseBookmarks": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
+  "mushaf.bookmarkVerse": { en: "Bookmark this verse", ar: "حفظ هذه الآية في المفضّلة" },
+  "mushaf.bookmarkVerseRemove": { en: "Remove verse bookmark", ar: "إزالة الآية من المفضّلة" },
   "mushaf.memorizeOn": { en: "Hide memorized verses", ar: "إخفاء الآيات المحفوظة" },
   "mushaf.memorizeOff": { en: "Show memorized verses", ar: "إظهار الآيات المحفوظة" },
   "mushaf.memorizeMark": { en: "Mark verse as memorized", ar: "تحديد الآية كمحفوظة" },
   "mushaf.memorizeUnmark": { en: "Unmark memorized verse", ar: "إلغاء تحديد الآية كمحفوظة" },
   "mushaf.memorizeReveal": { en: "Reveal", ar: "كشف" },
+  "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
+  "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
   "memorize.statsTitle": { en: "Memorization", ar: "الحفظ" },
   "memorize.statsCount": { en: "Memorized verses", ar: "الآيات المحفوظة" },
   "memorize.statsHelp": {
@@ -441,6 +487,23 @@ const translations: Record<string, { en: string; ar: string }> = {
   "search.placeholder": { en: "Search surahs, modules, rules…", ar: "ابحث في السور والوحدات والأحكام…" },
   "search.hint": { en: "Type at least 2 characters to search.", ar: "أدخل حرفين على الأقل للبحث." },
   "search.noResults": { en: "No matches.", ar: "لا توجد نتائج." },
+  "search.verses": { en: "Quran verses", ar: "آيات القرآن" },
+  "search.inApp": { en: "In the app", ar: "في التطبيق" },
+
+  // Reading depth (translation and tafsir, fetched from the verified API)
+  "reading.showTafsir": { en: "Show tafsir", ar: "إظهار التفسير" },
+  "reading.hideTafsir": { en: "Hide tafsir", ar: "إخفاء التفسير" },
+  "reading.unavailable": { en: "Could not load — try again from the reader.", ar: "تعذّر التحميل — حاول من القارئ." },
+  "reading.noTafsir": { en: "No tafsir available for this verse.", ar: "لا يوجد تفسير لهذه الآية." },
+  "reading.wordByWord": { en: "Word by word", ar: "كلمة بكلمة" },
+  "reading.noWords": { en: "Word-by-word is unavailable for this verse.", ar: "التحليل كلمة بكلمة غير متاح لهذه الآية." },
+  "reading.details": { en: "Translation and tafsir", ar: "الترجمة والتفسير" },
+  "reading.close": { en: "Close", ar: "إغلاق" },
+  "settings.readingDepth": { en: "Reading depth", ar: "عمق القراءة" },
+  "settings.translationResource": { en: "Translation", ar: "الترجمة" },
+  "settings.tafsirResource": { en: "Tafsir", ar: "التفسير" },
+  "settings.showWordByWord": { en: "Word-by-word breakdown", ar: "التحليل كلمة بكلمة" },
+  "settings.resourceOnline": { en: "More options load when online.", ar: "تظهر خيارات أكثر عند الاتصال." },
 };
 
 export function t(key: string, lang: Language): string {

@@ -24,8 +24,8 @@ export function useModuleLock(moduleId: string): ModuleLockState {
 
   useEffect(() => setMounted(true), []);
 
-  const module = modules.find((m) => m.id === moduleId);
-  const prereqId = module?.prerequisite ?? null;
+  const mod = modules.find((m) => m.id === moduleId);
+  const prereqId = mod?.prerequisite ?? null;
   const prereq = prereqId ? modules.find((m) => m.id === prereqId) ?? null : null;
 
   const prereqLessonsCompleted = prereqId
