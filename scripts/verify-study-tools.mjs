@@ -13,6 +13,8 @@ const root = join(__dirname, "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
 const store = read("src", "hooks", "usePlayer.ts");
 const css = read("src", "app", "globals.css");
+const miniPlayer = read("src", "components", "ui", "MiniPlayer.tsx");
+const host = read("src", "components", "ui", "PlayerHost.tsx");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -20,7 +22,7 @@ function record(name, ok, details = "") {
   console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
 }
 
-for (const a of ["setRepeatOne", "setRepeatRange", "clearRepeat", "setSleepEndOfSurah"]) {
+for (const a of ["setRepeatOne", "setRepeatRange", "clearRepeat", "setSleepEndOfSurah", "setSleepTimer"]) {
   record(`Store exposes ${a}`, new RegExp("\\b" + a + ":").test(store));
 }
 record(
@@ -30,6 +32,14 @@ record(
 record("onEnded honors repeatOne", /onEnded[\s\S]*?repeatOne > 0[\s\S]*?repeatsDone \+ 1 < s\.repeatOne/.test(store));
 record("onEnded honors repeatRange", /onEnded[\s\S]*?repeatRange[\s\S]*?rangeLoopsDone \+ 1 < count/.test(store));
 record("Sleep flag halts auto-advance at surah end", /!s\.sleepEndOfSurah/.test(store));
+record("setRepeatRange repositions and restarts (not a no-op)", /setRepeatRange:[\s\S]*?index: startIndex[\s\S]*?loadToken: s\.loadToken \+ 1/.test(store));
+record("Store carries a minutes sleep deadline", /sleepDeadline:/.test(store));
+record("PlayerHost stops when the sleep deadline passes", /sleepDeadline[\s\S]*?Date\.now\(\)\s*>=\s*sleepDeadline[\s\S]*?\.stop\(\)/.test(host));
+
+// The controls are reachable from the player UI, not dead store code.
+for (const a of ["setRepeatOne", "setRepeatRange", "setSleepTimer", "setSleepEndOfSurah"]) {
+  record(`Mini player wires ${a}`, new RegExp("\\." + a + "\\(").test(miniPlayer));
+}
 
 // Deterministic re-impl mirroring onEnded: how many times an ayah plays for N.
 function playsForRepeatOne(n) {
