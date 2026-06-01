@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
+import { useBookmarks } from "@/hooks/useBookmarks";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
@@ -74,6 +75,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { settings, updateSettings } = useSettings();
   const { t, isAr } = useTranslation();
   const router = useRouter();
+  const { isBookmarked: isVerseBookmarked, toggle: toggleVerseBm, mounted: bmMounted } = useBookmarks();
   // localStorage isn't available on the server, so any UI driven by it
   // (bookmark fill, last-page label) waits for client hydration.
   const [mounted, setMounted] = useState(false);
@@ -246,14 +248,34 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         <div className="rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-text-muted font-mono">{selectedVerse}</span>
-            <button
-              type="button"
-              onClick={() => setSelectedVerse(null)}
-              aria-label={t("reading.close")}
-              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-text-muted hover:bg-bg-subtle"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => toggleVerseBm(selectedVerse)}
+                aria-pressed={bmMounted && isVerseBookmarked(selectedVerse)}
+                aria-label={
+                  bmMounted && isVerseBookmarked(selectedVerse)
+                    ? t("mushaf.bookmarkVerseRemove")
+                    : t("mushaf.bookmarkVerse")
+                }
+                className={cn(
+                  "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors",
+                  bmMounted && isVerseBookmarked(selectedVerse)
+                    ? "text-gold-dark dark:text-gold-light bg-gold/15"
+                    : "text-text-muted hover:bg-bg-subtle",
+                )}
+              >
+                <BookmarkIcon filled={bmMounted && isVerseBookmarked(selectedVerse)} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedVerse(null)}
+                aria-label={t("reading.close")}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-text-muted hover:bg-bg-subtle"
+              >
+                ✕
+              </button>
+            </div>
           </div>
           {(() => {
             const [sv, av] = selectedVerse.split(":").map(Number);
