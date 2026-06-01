@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
+import { usePlayer } from "@/hooks/usePlayer";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
 import type { MushafPageData, SurahHeader } from "@/lib/types";
@@ -78,7 +79,26 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const [memorizationMode, setMemorizationMode] = useState(false);
   // Single-rule highlight drill: greys every tajweed rule except the chosen one.
   const [drill, setDrill] = useState("");
+  // A lesson "open in reader" link arrives as ?v=surah:ayah; we scroll that verse
+  // into view and start it (single mode). Read client-side so the statically
+  // generated page needs no Suspense boundary for useSearchParams.
+  const [targetVerseKey, setTargetVerseKey] = useState<string | null>(null);
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get("v");
+    if (!v || !/^\d{1,3}:\d{1,3}$/.test(v)) return;
+    setTargetVerseKey(v);
+    const [s, a] = v.split(":").map(Number);
+    const header = surahs.find((h) => h.number === s);
+    usePlayer.getState().playVerse(s, a, {
+      reciter: settings.reciter,
+      speed: settings.playbackSpeed,
+      surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
+    });
+    // Mount-only: the target is taken from the entry URL once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Persist last viewed page on mount and whenever the page changes.
   useEffect(() => {
@@ -205,7 +225,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       </div>
 
       <div data-tajweed-drill={drill || undefined}>
-        <MushafPage data={data} memorizationMode={memorizationMode} />
+        <MushafPage data={data} memorizationMode={memorizationMode} targetVerseKey={targetVerseKey} />
       </div>
 
       {/* Footer page indicator */}
