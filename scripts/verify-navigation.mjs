@@ -19,6 +19,10 @@ try {
 } catch {
   pwa = "";
 }
+const nav = read("src", "lib", "navigation.ts");
+const reader = read("src", "components", "mushaf", "MushafReader.tsx");
+const mIndex = read("src", "components", "mushaf", "MushafIndex.tsx");
+const home = read("src", "app", "page.tsx");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -35,6 +39,21 @@ record("toggleVerseBookmark validates the verse key", /toggleVerseBookmark[\s\S]
 record("setLastRead clamps the page to 1..604", /sanitizeLastRead[\s\S]*?pickNumber\(input\.page,\s*1,\s*1,\s*604\)/.test(storage));
 record("Export/import cover the model (single store)", /export function exportProgress/.test(storage) && /export function importProgress/.test(storage));
 record("Durable storage requested via navigator.storage.persist", /navigator\.storage[\s\S]*?\.persist\(\)/.test(pwa));
+
+// Division navigation: juz jump returns the expected start pages.
+const STANDARD_JUZ = [1, 22, 42, 62, 82, 102, 121, 142, 162, 182, 201, 222, 242, 262, 282, 302, 322, 342, 362, 382, 402, 422, 442, 462, 482, 502, 522, 542, 562, 582];
+const juzInner = nav.match(/JUZ_START_PAGES\s*=\s*\[([\s\S]*?)\]/)?.[1] ?? "";
+const juzPages = juzInner.split(",").map((s) => s.trim()).filter((s) => s !== "").map(Number);
+record("Navigation exposes pageForJuz", /export function pageForJuz/.test(nav));
+record("Juz table has 30 start pages", juzPages.length === 30, String(juzPages.length));
+record("Juz start pages match the standard mushaf", JSON.stringify(juzPages) === JSON.stringify(STANDARD_JUZ));
+record("Reader wires the juz jump", /pageForJuz\(/.test(reader));
+
+// The new model is actually reachable from the UI (not dead code).
+record("Reader wires verse bookmarks", /useBookmarks/.test(reader));
+record("Mushaf index lists verse bookmarks", /useBookmarks/.test(mIndex));
+record("Home surfaces daily verse and resume", /DailyVerse/.test(home) && /ResumeReading/.test(home));
+record("Reader persists lastRead", /setLastRead\(/.test(reader));
 
 // Round-trip: bookmark sanitization re-implementation kept in sync with storage.ts.
 const VERSE_KEY = /^\d{1,3}:\d{1,3}$/;
