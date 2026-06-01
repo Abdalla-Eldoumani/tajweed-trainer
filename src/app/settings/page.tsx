@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { exportProgress, importProgress } from "@/lib/storage";
 import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
-import type { Recitation } from "@/lib/types";
+import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
+import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
+import type { Recitation, TranslationResource } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
@@ -16,6 +18,26 @@ export default function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [backupStatus, setBackupStatus] = useState<{ kind: "success" | "error"; key: string } | null>(null);
   const [reciterQuery, setReciterQuery] = useState("");
+  const [translations, setTranslations] = useState<TranslationResource[]>(CURATED_TRANSLATIONS);
+  const [tafsirs, setTafsirs] = useState<TranslationResource[]>(CURATED_TAFSIRS);
+
+  // Resource catalogues load from the API when online; offline the curated
+  // fallback keeps the selectors usable. English resources only, to keep the
+  // lists short for this app.
+  useEffect(() => {
+    getResourceTranslations()
+      .then((list) => {
+        const en = list.filter((r) => r.languageName === "english");
+        if (en.length) setTranslations(mergeResources(CURATED_TRANSLATIONS, en));
+      })
+      .catch(() => {});
+    getResourceTafsirs()
+      .then((list) => {
+        const en = list.filter((r) => r.languageName === "english");
+        if (en.length) setTafsirs(mergeResources(CURATED_TAFSIRS, en));
+      })
+      .catch(() => {});
+  }, []);
 
   const handleExport = () => {
     const data = exportProgress();
@@ -73,6 +95,10 @@ export default function SettingsPage() {
     const styled = r.style ? `${base} — ${r.style}` : base;
     return r.id === DEFAULT_RECITER_ID ? `${styled} (${t("settings.recitersDefault")})` : styled;
   };
+
+  // Keep the saved id selectable even if it is not in the loaded catalogue.
+  const ensurePresent = (list: TranslationResource[], id: number): TranslationResource[] =>
+    list.some((r) => r.id === id) ? list : [{ id, name: `#${id}`, authorName: "", languageName: "" }, ...list];
 
   return (
     <div className="space-y-6">
@@ -236,6 +262,53 @@ export default function SettingsPage() {
               aria-label={t("settings.darkMode")}
             />
           </label>
+        </div>
+      </Card>
+
+      {/* Reading depth */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-3">{t("settings.readingDepth")}</h2>
+        <div className="space-y-3">
+          <label className="block">
+            <span className="text-sm">{t("settings.translationResource")}</span>
+            <select
+              value={settings.translationId ?? 131}
+              onChange={(e) => updateSettings({ translationId: Number(e.target.value) })}
+              aria-label={t("settings.translationResource")}
+              className="w-full mt-1 px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
+            >
+              {ensurePresent(translations, settings.translationId ?? 131).map((r) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="text-sm">{t("settings.tafsirResource")}</span>
+            <select
+              value={settings.tafsirId ?? 169}
+              onChange={(e) => updateSettings({ tafsirId: Number(e.target.value) })}
+              aria-label={t("settings.tafsirResource")}
+              className="w-full mt-1 px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
+            >
+              {ensurePresent(tafsirs, settings.tafsirId ?? 169).map((r) => (
+                <option key={r.id} value={r.id}>{r.name}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">{t("settings.showWordByWord")}</span>
+            <input
+              type="checkbox"
+              checked={!!settings.showWordByWord}
+              onChange={(e) => updateSettings({ showWordByWord: e.target.checked })}
+              className="accent-primary w-4 h-4"
+              aria-label={t("settings.showWordByWord")}
+            />
+          </label>
+
+          <p className="text-xs text-text-muted">{t("settings.resourceOnline")}</p>
         </div>
       </Card>
 
