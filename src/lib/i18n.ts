@@ -483,6 +483,15 @@ const translations: Record<string, { en: string; ar: string }> = {
   "reading.hideTafsir": { en: "Hide tafsir", ar: "إخفاء التفسير" },
   "reading.unavailable": { en: "Could not load — try again from the reader.", ar: "تعذّر التحميل — حاول من القارئ." },
   "reading.noTafsir": { en: "No tafsir available for this verse.", ar: "لا يوجد تفسير لهذه الآية." },
+  "reading.wordByWord": { en: "Word by word", ar: "كلمة بكلمة" },
+  "reading.noWords": { en: "Word-by-word is unavailable for this verse.", ar: "التحليل كلمة بكلمة غير متاح لهذه الآية." },
+  "reading.details": { en: "Translation and tafsir", ar: "الترجمة والتفسير" },
+  "reading.close": { en: "Close", ar: "إغلاق" },
+  "settings.readingDepth": { en: "Reading depth", ar: "عمق القراءة" },
+  "settings.translationResource": { en: "Translation", ar: "الترجمة" },
+  "settings.tafsirResource": { en: "Tafsir", ar: "التفسير" },
+  "settings.showWordByWord": { en: "Word-by-word breakdown", ar: "التحليل كلمة بكلمة" },
+  "settings.resourceOnline": { en: "More options load when online.", ar: "تظهر خيارات أكثر عند الاتصال." },
 };
 
 export function t(key: string, lang: Language): string {
