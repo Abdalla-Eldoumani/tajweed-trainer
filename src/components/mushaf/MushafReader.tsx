@@ -9,6 +9,8 @@ import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
+import { ReadingDepth } from "@/components/learn/ReadingDepth";
+import { WordByWord } from "@/components/learn/WordByWord";
 import type { MushafPageData, SurahHeader } from "@/lib/types";
 import { getColorForClass } from "@/lib/tajweed-colors";
 
@@ -83,6 +85,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // into view and start it (single mode). Read client-side so the statically
   // generated page needs no Suspense boundary for useSearchParams.
   const [targetVerseKey, setTargetVerseKey] = useState<string | null>(null);
+  // The verse whose reading-depth panel (translation, tafsir, word-by-word) is open.
+  const [selectedVerse, setSelectedVerse] = useState<string | null>(null);
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -225,8 +229,38 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       </div>
 
       <div data-tajweed-drill={drill || undefined}>
-        <MushafPage data={data} memorizationMode={memorizationMode} targetVerseKey={targetVerseKey} />
+        <MushafPage
+          data={data}
+          memorizationMode={memorizationMode}
+          targetVerseKey={targetVerseKey}
+          onSelectVerse={setSelectedVerse}
+        />
       </div>
+
+      {selectedVerse && /^\d{1,3}:\d{1,3}$/.test(selectedVerse) && (
+        <div className="rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-text-muted font-mono">{selectedVerse}</span>
+            <button
+              type="button"
+              onClick={() => setSelectedVerse(null)}
+              aria-label={t("reading.close")}
+              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-text-muted hover:bg-bg-subtle"
+            >
+              ✕
+            </button>
+          </div>
+          {(() => {
+            const [sv, av] = selectedVerse.split(":").map(Number);
+            return (
+              <>
+                <ReadingDepth surah={sv} ayah={av} />
+                {settings.showWordByWord && <WordByWord surah={sv} ayah={av} />}
+              </>
+            );
+          })()}
+        </div>
+      )}
 
       {/* Footer page indicator */}
       <p className="text-center text-xs text-text-muted">
