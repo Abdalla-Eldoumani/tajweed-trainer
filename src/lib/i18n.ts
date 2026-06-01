@@ -60,6 +60,9 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "جميع الأحكام وفق رواية حفص عن عاصم، الأكثر انتشارا في العالم، بمصادر علمية موثّقة.",
   },
   "home.learningPath": { en: "Learning Path", ar: "مسار التعلّم" },
+  "home.dailyVerse": { en: "Verse of the day", ar: "آية اليوم" },
+  "home.resumeReading": { en: "Continue reading", ar: "تابع القراءة" },
+  "home.resumePage": { en: "Page", ar: "صفحة" },
 
   // Learn page
   "learn.title": { en: "Learn Tajweed", ar: "تعلّم التجويد" },
