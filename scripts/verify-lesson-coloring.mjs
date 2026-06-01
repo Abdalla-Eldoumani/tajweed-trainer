@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Verifies phase 2: every lesson example verse has an authenticated tajweed
+// Verifies that every lesson example verse has an authenticated tajweed
 // snapshot, ExampleCard renders through the tajweed renderer, and the legend
 // reads its colors from the tajweed map (never hand-coded hexes). Network-free;
 // reads source and data files only.

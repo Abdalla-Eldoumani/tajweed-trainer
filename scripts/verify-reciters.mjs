@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Phase 3 verification: drives Chromium against the dev server and asserts the
+// Reciter-settings verification: drives Chromium against the dev server and asserts the
 // Quran.com reciter library in settings. Confirms:
 //   - The settings page renders a reciter <select> and a search input.
 //   - Reciters are grouped by style (Mujawwad / Murattal), with the default

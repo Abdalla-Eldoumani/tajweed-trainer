@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Phase 2 verification, updated for the Phase 3 practice hub: drives Chromium
+// Practice-quiz verification, including the practice hub: drives Chromium
 // against the dev server and asserts the authored question pool reaches the
 // per-module practice routes. The old module-filter dropdown has been replaced
 // by the hub at /practice (PracticeModuleCard grid), with each module on its
@@ -120,7 +120,7 @@ async function main() {
     `disabled/checked count: ${answeredState}`,
   );
 
-  // 6b. Phase 6: post-answer feedback shows the rule label and an "Open the
+  // 6b. post-answer feedback shows the rule label and an "Open the
   //     lesson section" link before the auto-advance fires (3s window).
   const feedbackText = await page.locator('[aria-live="polite"]').first().textContent({ timeout: 2000 }).catch(() => "");
   record(
@@ -129,7 +129,7 @@ async function main() {
     `feedback text excerpt: ${(feedbackText ?? "").slice(0, 100).replace(/\s+/g, " ")}`,
   );
 
-  // 6c. Phase 6: lesson page shows a "Practice this module" CTA below
+  // 6c. lesson page shows a "Practice this module" CTA below
   //     LessonNavigation. Use makharij (no prereq, never locked).
   await page.goto(`${BASE}/learn/makharij`, { waitUntil: "networkidle" });
   await page.waitForTimeout(500);

@@ -548,7 +548,7 @@ export interface PracticeQuestion {
   moduleId: string;
   // Optional fields populated when this PracticeQuestion was derived from an
   // authored Question record. The runtime UI may render `prompt` instead of the
-  // static "identify the rule" header. Phase 6 surfaces `explanation` after the
+  // static "identify the rule" header. The reader surfaces `explanation` after the
   // user answers; for now it is carried through so authored data isn't lost.
   prompt?: { en: string; ar?: string };
   explanation?: { en: string; ar?: string; lessonAnchor: string };
@@ -557,7 +557,7 @@ export interface PracticeQuestion {
 
 // Authored question record for the per-module question files in
 // src/data/questions/. Richer than PracticeQuestion (the runtime UI shape) so
-// Phase 6 can surface the explanation and lesson anchor without a re-author.
+// The reader can surface the explanation and lesson anchor without a re-author.
 // The aggregator maps Question -> PracticeQuestion for current consumers.
 export type QuestionDifficulty = "easy" | "medium" | "hard";
 

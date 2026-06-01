@@ -408,7 +408,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.languageEn": { en: "English", ar: "الإنجليزية" },
   "settings.languageAr": { en: "Arabic", ar: "العربية" },
 
-  // Mushaf reader (Phase 3)
+  // Mushaf reader
   "mushaf.title": { en: "Mushaf", ar: "المصحف" },
   "mushaf.subtitle": { en: "The complete Quran with tajweed coloring", ar: "المصحف الشريف ملوّنا بأحكام التجويد" },
   "mushaf.openReader": { en: "Open Mushaf", ar: "افتح المصحف" },

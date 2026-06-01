@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Phase 1 verification: drives Chromium against the dev server and asserts the
+// Module-lock verification: drives Chromium against the dev server and asserts the
 // module-lock enforcement works end-to-end across the gates listed in the plan.
 // Mirrors the structure of verify-mushaf.mjs.
 

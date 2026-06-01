@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Phase 7 verification: smoke-tests the tajweed HTML sanitizer in
+// Sanitizer verification: smoke-tests the tajweed HTML sanitizer in
 // src/lib/sanitize.ts. The Quran.com Foundation API is trusted, but
 // `text_uthmani_tajweed` still flows through inline HTML rendering in
 // TajweedText, so the sanitizer is a defense-in-depth gate.

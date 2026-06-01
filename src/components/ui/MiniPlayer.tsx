@@ -26,7 +26,7 @@ const SlidersIcon = () => (
 
 // Persistent transport bar shown whenever something is queued. Mounted once in
 // AppProvider so it stays put across route changes. The expandable study panel
-// holds the repeat and sleep-timer controls (Phase 8 study tools).
+// holds the repeat and sleep-timer controls (study tools).
 export function MiniPlayer() {
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
