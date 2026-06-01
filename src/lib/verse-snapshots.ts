@@ -15,3 +15,9 @@ export function getVerseSnapshot(surah: number, ayah: number): VerseSnapshot | u
 export function getVerseSnapshotByKey(verseKey: string): VerseSnapshot | undefined {
   return SNAPSHOTS[verseKey];
 }
+
+// All snapshotted verse keys ("surah:ayah"), used to pick a daily verse from the
+// pre-fetched authenticated set without any network call.
+export function getSnapshotKeys(): string[] {
+  return Object.keys(SNAPSHOTS);
+}
