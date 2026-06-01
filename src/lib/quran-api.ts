@@ -11,7 +11,7 @@ import type {
 } from "./types";
 import surahIndex from "@/data/content/surah-index.json";
 import { sanitizeTafsirHtml } from "./sanitize";
-import { clampSurah, isValidResourceId, isValidVerseKey } from "./validate";
+import { clampSurah, isValidResourceId, isValidVerseKey, sanitizeSearchQuery } from "./validate";
 
 const BASE_URL = "https://api.quran.com/api/v4";
 // Word-by-word audio clips are served from the Quran.com audio CDN as relative
@@ -255,4 +255,30 @@ export async function getResourceTranslations(): Promise<TranslationResource[]> 
 export async function getResourceTafsirs(): Promise<TafsirResource[]> {
   const data = await fetchWithCache<ResourceApiResponse>(`${BASE_URL}/resources/tafsirs`, LONG_CACHE_TTL);
   return (data.tafsirs ?? []).map(mapResource);
+}
+
+// --- Full-text verse search -------------------------------------------------
+
+export interface VerseSearchResult {
+  verseKey: string;
+  text: string; // translation snippet from the API; never generated here
+}
+
+interface SearchApiResponse {
+  search?: {
+    results?: Array<{ verse_key: string; text?: string; translations?: Array<{ text?: string }> }>;
+  };
+}
+
+// Search the Quran by text via the API endpoint. The query is sanitized before
+// it reaches the URL; results below the 2-char minimum return empty. Verse text
+// comes from the API, never generated.
+export async function searchVerses(query: string): Promise<VerseSearchResult[]> {
+  const q = sanitizeSearchQuery(query);
+  if (q.length < 2) return [];
+  const url = `${BASE_URL}/search?q=${encodeURIComponent(q)}&size=20&page=0`;
+  const data = await fetchWithCache<SearchApiResponse>(url);
+  return (data.search?.results ?? [])
+    .map((r) => ({ verseKey: r.verse_key, text: r.translations?.[0]?.text ?? r.text ?? "" }))
+    .filter((r) => isValidVerseKey(r.verseKey));
 }
