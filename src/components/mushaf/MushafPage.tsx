@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useSettings } from "@/hooks/useSettings";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -17,9 +17,11 @@ interface MushafPageProps {
   // When true, verses the user has marked memorized are blurred so the user
   // can recall the text. Tap-to-reveal temporarily un-blurs a single verse.
   memorizationMode?: boolean;
+  // "surah:ayah" to scroll into view on mount (a lesson "open in reader" link).
+  targetVerseKey?: string | null;
 }
 
-export function MushafPage({ data, memorizationMode = false }: MushafPageProps) {
+export function MushafPage({ data, memorizationMode = false, targetVerseKey = null }: MushafPageProps) {
   const { settings } = useSettings();
   const { t, isAr } = useTranslation();
   const { isMemorized, toggle, mounted } = useMemorization();
@@ -32,6 +34,13 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
     const c = s.queue[s.index];
     return c ? `${c.surah}:${c.ayah}` : null;
   });
+
+  // Scroll a lesson-targeted verse into view once the page renders.
+  useEffect(() => {
+    if (!targetVerseKey) return;
+    const el = document.querySelector(`[data-verse-key="${CSS.escape(targetVerseKey)}"]`);
+    if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [targetVerseKey, data.pageNumber]);
 
   // Playback runs through the global store. Memorize mode only controls text
   // visibility, so the two never contend for the shared audio element.
@@ -106,7 +115,7 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
                     <BismillahLine surahNumber={v.surah} />
                   </header>
                 )}
-                <span className="inline-flex items-baseline relative">
+                <span data-verse-key={v.verseKey} className="inline-flex items-baseline relative">
                   <button
                     type="button"
                     onClick={() => handleVerseTap(v.surah, v.ayah, header)}
