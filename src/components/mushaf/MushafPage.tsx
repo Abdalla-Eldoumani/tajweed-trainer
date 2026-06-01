@@ -25,6 +25,14 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
   const { isMemorized, toggle, mounted } = useMemorization();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
+  // Subscribe to the verse the global player is on so the page can mark it while
+  // audio plays (continuous mode advances this as each ayah ends).
+  const playingKey = usePlayer((s) => {
+    if (s.status !== "playing" && s.status !== "loading") return null;
+    const c = s.queue[s.index];
+    return c ? `${c.surah}:${c.ayah}` : null;
+  });
+
   // Playback runs through the global store. Memorize mode only controls text
   // visibility, so the two never contend for the shared audio element.
   const surahNameOf = (header: SurahHeader | undefined): string | null =>
@@ -88,6 +96,7 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
 
             const memorized = mounted && isMemorized(v.verseKey);
             const hideText = memorizationMode && memorized && !revealed.has(v.verseKey);
+            const isPlaying = v.verseKey === playingKey;
 
             return (
               <Fragment key={v.verseKey}>
@@ -102,7 +111,8 @@ export function MushafPage({ data, memorizationMode = false }: MushafPageProps) 
                     type="button"
                     onClick={() => handleVerseTap(v.surah, v.ayah, header)}
                     aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
-                    className={cn("mushaf-verse", hideText && "select-none")}
+                    aria-current={isPlaying ? "true" : undefined}
+                    className={cn("mushaf-verse", hideText && "select-none", isPlaying && "mushaf-verse-playing")}
                   >
                     <TajweedText
                       tajweedHtml={v.tajweedHtml}
