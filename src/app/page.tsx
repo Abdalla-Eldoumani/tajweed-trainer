@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ColorLegend } from "@/components/learn/ColorLegend";
+import { DailyVerse } from "@/components/home/DailyVerse";
+import { ResumeReading } from "@/components/home/ResumeReading";
 import { MedallionOrnament, OrnamentalDivider } from "@/components/ui/Ornament";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
@@ -67,6 +69,9 @@ export default function HomePage() {
           </div>
         </Card>
       )}
+
+      <ResumeReading />
+      <DailyVerse />
 
       {/* Feature Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

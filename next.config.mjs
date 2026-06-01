@@ -1,16 +1,21 @@
 // Content Security Policy assembled once and shared by every response.
-// connect-src whitelists the two Quranic APIs we call (and the audio CDN
-// they hand us). media-src whitelists the audio CDN itself.
+// connect-src whitelists the Quran.com API we call; media-src whitelists the
+// audio CDNs it hands us (verses.quran.com and the quranicaudio.com mirrors).
 // script-src needs 'unsafe-inline' for Next's runtime hydration shims;
 // style-src needs it for inlined critical CSS.
+//
+// 'unsafe-eval' is only kept in development (webpack/HMR uses eval); the
+// production bundle does not need it, so it is dropped from prod responses.
+// Verify under `next build && next start` in a network-capable env.
+const isDev = process.env.NODE_ENV !== "production";
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob:",
-  "media-src 'self' https://cdn.islamic.network https://*.islamic.network",
-  "connect-src 'self' https://api.quran.com https://api.alquran.cloud https://cdn.islamic.network",
+  "media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com",
+  "connect-src 'self' https://api.quran.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Phase 5 — capture responsive screenshots at the three standard breakpoints
+// Capture responsive screenshots at the three standard breakpoints
 // across every route the prompt enumerates. Saves to
 // .playwright-mcp/responsive/<viewport>/<slug>.png so a human can scrub
 // through the outputs and flag anything that wraps/overflows badly.
@@ -29,7 +29,7 @@ const VIEWPORTS = [
   { name: "1440", width: 1440, height: 900 },
 ];
 
-// Routes per HANDOFF.md Phase 5. The "locked" entry hits /learn/madd which is
+// Routes for the responsive sweep. The "locked" entry hits /learn/madd which is
 // gated until the prerequisite (laam-raa) is unlocked, so it triggers the
 // LockedModuleScreen path.
 const ROUTES = [

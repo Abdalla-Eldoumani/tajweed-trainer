@@ -7,14 +7,15 @@ import type {
   ReviewBox,
   AnalyticsEvent,
   AnalyticsEventType,
+  PlayerResume,
+  VerseLocation,
 } from "./types";
-import { validateReciterIdentifier } from "./audio-api";
-import { getCachedReciterEditions } from "@/hooks/useReciters";
+import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 
 const STORAGE_KEY = "tajweed-trainer-progress";
 
 const DEFAULT_SETTINGS: UserSettings = {
-  reciter: "husary",
+  reciter: DEFAULT_RECITER_ID,
   playbackSpeed: 1.0,
   fontSize: "normal",
   darkMode: false,
@@ -23,6 +24,9 @@ const DEFAULT_SETTINGS: UserSettings = {
   language: "en",
   lastMushafPage: 1,
   mushafBookmarks: [],
+  translationId: 131,
+  tafsirId: 169,
+  showWordByWord: false,
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
@@ -37,6 +41,8 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   memorizedVerses: [],
   readSections: {},
   analytics: [],
+  bookmarks: [],
+  lastRead: null,
 };
 
 // Caps protect against pathological inputs from a tampered localStorage —
@@ -47,6 +53,7 @@ const MAX_QUIZ_SCORES_PER_MODULE = 500;
 const MAX_MODULES = 100;
 const MAX_REVIEWS = 2000;
 const MAX_MEMORIZED = 6236;
+const MAX_VERSE_BOOKMARKS = 500;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
@@ -65,16 +72,12 @@ const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
 const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
 
-// Reciter validation runs against the cached editions list (or the static
-// defaults). An identifier that fails the format check or isn't in the list
-// is replaced with the husary default so a tampered storage entry never
-// leaves the app referencing a reciter the editions API doesn't know.
+// Resolves any stored value to a known Quran.com recitation id, migrating legacy
+// alquran.cloud identifiers and replacing anything unknown or tampered with the
+// default so the app never references a reciter that does not exist. See
+// src/lib/reciters.ts.
 function pickReciter(value: unknown): string {
-  if (!validateReciterIdentifier(value)) return DEFAULT_SETTINGS.reciter;
-  const known = getCachedReciterEditions();
-  if (value === "husary" || value === "alafasy") return value;
-  if (known.some((e) => e.identifier === value)) return value;
-  return DEFAULT_SETTINGS.reciter;
+  return normalizeReciterId(value);
 }
 
 function isBrowser(): boolean {
@@ -122,6 +125,10 @@ function sanitizeSettings(input: unknown): UserSettings {
     language: pickEnum(input.language, VALID_LANGUAGES, DEFAULT_SETTINGS.language),
     lastMushafPage: pickNumber(input.lastMushafPage, 1, 1, 604),
     mushafBookmarks: bookmarks,
+    translationId: pickNumber(input.translationId, DEFAULT_SETTINGS.translationId ?? 131, 1, 1_000_000),
+    tafsirId: pickNumber(input.tafsirId, DEFAULT_SETTINGS.tafsirId ?? 169, 1, 1_000_000),
+    showWordByWord:
+      typeof input.showWordByWord === "boolean" ? input.showWordByWord : (DEFAULT_SETTINGS.showWordByWord ?? false),
   };
 }
 
@@ -217,6 +224,39 @@ function sanitizeMemorized(input: unknown): string[] {
   return Array.from(out);
 }
 
+function sanitizePlayerResume(input: unknown): PlayerResume | null {
+  if (!isObject(input)) return null;
+  const surah = pickNumber(input.surah, 0, 1, 114);
+  const ayah = pickNumber(input.ayah, 0, 1, 286);
+  if (surah < 1 || ayah < 1) return null;
+  return {
+    surah,
+    ayah,
+    mode: pickEnum(input.mode, ["single", "continuous"] as const, "single"),
+    offset: pickNumber(input.offset, 0, 0, 100000),
+    reciter: normalizeReciterId(input.reciter),
+  };
+}
+
+function sanitizeBookmarks(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+  const out = new Set<string>();
+  for (const v of input) {
+    if (typeof v !== "string" || !VERSE_KEY_PATTERN.test(v)) continue;
+    out.add(v);
+    if (out.size >= MAX_VERSE_BOOKMARKS) break;
+  }
+  return Array.from(out);
+}
+
+function sanitizeLastRead(input: unknown): VerseLocation | null {
+  if (!isObject(input)) return null;
+  if (typeof input.verseKey !== "string" || !VERSE_KEY_PATTERN.test(input.verseKey)) return null;
+  const page = pickNumber(input.page, 1, 1, 604);
+  const ts = typeof input.ts === "string" && input.ts.length <= 32 ? input.ts : "";
+  return { verseKey: input.verseKey, page, ts };
+}
+
 function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return DEFAULT_PROGRESS;
   const modules: Record<string, ModuleProgress> = {};
@@ -243,6 +283,9 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
     readSections: sanitizeReadSections(input.readSections),
     analytics: sanitizeAnalytics(input.analytics),
+    playerResume: sanitizePlayerResume(input.playerResume),
+    bookmarks: sanitizeBookmarks(input.bookmarks),
+    lastRead: sanitizeLastRead(input.lastRead),
   };
 }
 
@@ -255,6 +298,14 @@ export function getProgress(): TajweedProgress {
   } catch {
     return DEFAULT_PROGRESS;
   }
+}
+
+export function getPlayerResume(): PlayerResume | null {
+  return getProgress().playerResume ?? null;
+}
+
+export function setPlayerResume(resume: PlayerResume | null): void {
+  setProgress({ ...getProgress(), playerResume: resume });
 }
 
 export function setProgress(progress: TajweedProgress): void {
@@ -386,6 +437,42 @@ export function toggleMemorizedVerse(verseKey: string): boolean {
   progress.memorizedVerses = Array.from(set);
   setProgress(progress);
   return nowMemorized;
+}
+
+export function getBookmarks(): string[] {
+  return getProgress().bookmarks;
+}
+
+// Returns the new bookmarked state (true if added, false if removed).
+export function toggleVerseBookmark(verseKey: string): boolean {
+  if (!isBrowser()) return false;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return false;
+  const progress = getProgress();
+  const set = new Set(progress.bookmarks);
+  let nowBookmarked: boolean;
+  if (set.has(verseKey)) {
+    set.delete(verseKey);
+    nowBookmarked = false;
+  } else {
+    if (set.size >= MAX_VERSE_BOOKMARKS) return progress.bookmarks.includes(verseKey);
+    set.add(verseKey);
+    nowBookmarked = true;
+  }
+  progress.bookmarks = Array.from(set);
+  setProgress(progress);
+  return nowBookmarked;
+}
+
+export function getLastRead(): VerseLocation | null {
+  return getProgress().lastRead ?? null;
+}
+
+export function setLastRead(verseKey: string, page: number): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  progress.lastRead = { verseKey, page, ts: new Date().toISOString() };
+  setProgress(progress);
 }
 
 export function saveQuizScore(moduleId: string, lessonId: string, score: number): void {

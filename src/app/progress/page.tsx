@@ -62,6 +62,7 @@ export default function ProgressPage() {
       <div>
         <h1 className="font-heading text-2xl font-bold">{t("progress.title")}</h1>
         <p className="text-sm text-text-muted mt-2">{t("progress.description")}</p>
+        <p className="text-xs text-text-muted mt-2">{t("progress.localData")}</p>
       </div>
 
       <Card>

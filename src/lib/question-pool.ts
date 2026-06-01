@@ -23,7 +23,7 @@ interface ExampleWithModule {
   ruleName: string;
 }
 
-// ---------- Authored question pool (Phase 2) ---------- //
+// ---------- Authored question pool ---------- //
 
 // Per-module authored questions take precedence over legacy random-from-examples
 // for any module that has at least one authored entry. Modules with empty
@@ -74,7 +74,7 @@ function questionToPractice(q: Question): PracticeQuestion {
   };
 }
 
-// ---------- Legacy pool (random-from-examples, pre-Phase-2) ---------- //
+// ---------- Legacy pool (random-from-examples) ---------- //
 
 function collectLegacyExamples(): ExampleWithModule[] {
   const pool: ExampleWithModule[] = [];

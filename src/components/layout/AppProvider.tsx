@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { SettingsProvider, useSettings } from "@/hooks/useSettings";
 import { PWARegister } from "./PWARegister";
 import { RouteAnalytics } from "./RouteAnalytics";
+import { PlayerHost } from "@/components/ui/PlayerHost";
+import { MiniPlayer } from "@/components/ui/MiniPlayer";
 
 function SettingsSync({ children }: { children: React.ReactNode }) {
   const { settings } = useSettings();
@@ -31,6 +33,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       <PWARegister />
       <RouteAnalytics />
       <SettingsSync>{children}</SettingsSync>
+      <PlayerHost />
+      <MiniPlayer />
     </SettingsProvider>
   );
 }
