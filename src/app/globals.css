@@ -417,6 +417,20 @@ html, body {
   background-color: rgba(212, 185, 106, 0.18);
 }
 
+/* The verse currently playing through the global player. Green so it reads
+   distinctly from the gold tap/hover affordance. */
+.mushaf-verse-playing,
+.mushaf-verse-playing:hover {
+  background-color: rgba(22, 94, 42, 0.12);
+  box-shadow: 0 0 0 1px rgba(22, 94, 42, 0.28);
+}
+
+.dark .mushaf-verse-playing,
+.dark .mushaf-verse-playing:hover {
+  background-color: rgba(63, 176, 94, 0.18);
+  box-shadow: 0 0 0 1px rgba(63, 176, 94, 0.32);
+}
+
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
    The container is sized as a circle for 1-2 digit ayah numbers and grows
    into a stadium pill for 3-digit numbers (Al-Baqarah, Aal-Imran etc.).
