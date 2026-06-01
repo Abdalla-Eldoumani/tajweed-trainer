@@ -39,9 +39,11 @@ const config: Config = {
           dark: "#ECEFF6",
         },
         tajweed: {
-          // Only text-tajweed-qalqalah is consumed (the qalqalah lesson letter);
-          // its value tracks the active scheme in src/lib/tajweed-colors.ts. The
-          // mushaf and legend read colors from CSS variables and the map, not
+          // Only text-tajweed-qalqalah is consumed (the qalqalah lesson letter).
+          // This is a MANUAL MIRROR of the active "new" scheme value for `qalaqah`
+          // in src/lib/tajweed-colors.ts; it does NOT auto-track SCHEME, so if you
+          // flip SCHEME to "classic" update this hex too (classic qalaqah = #DD0008).
+          // The mushaf and legend read colors from CSS variables and the map, not
           // from Tailwind tokens, so no other tajweed token belongs here.
           qalqalah: "#009EE6",
         },
