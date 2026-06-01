@@ -6,9 +6,25 @@
 
 import surahIndex from "@/data/content/surah-index.json";
 import type { SurahHeader } from "./types";
-import { clampPage, clampSurah } from "./validate";
+import { clampPage, clampSurah, clampJuz } from "./validate";
 
 export const TOTAL_MUSHAF_PAGES = 604;
+export const TOTAL_JUZ = 30;
+
+// Start page of each juz in the standard Hafs 604-page Madinah mushaf. This is
+// fixed structural pagination (the same in every printing of that mushaf), not
+// Quranic text, so it is a constant here rather than fetched. Juz N starts on
+// JUZ_START_PAGES[N - 1].
+const JUZ_START_PAGES = [
+  1, 22, 42, 62, 82, 102, 121, 142, 162, 182,
+  201, 222, 242, 262, 282, 302, 322, 342, 362, 382,
+  402, 422, 442, 462, 482, 502, 522, 542, 562, 582,
+];
+
+// First mushaf page of a juz (1..30).
+export function pageForJuz(juz: number): number {
+  return JUZ_START_PAGES[clampJuz(juz) - 1] ?? 1;
+}
 
 // Sorted by surah number so start pages are ascending (surah order == page order).
 const INDEX = (surahIndex as SurahHeader[]).slice().sort((a, b) => a.number - b.number);
