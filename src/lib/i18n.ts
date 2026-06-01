@@ -298,6 +298,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   // Progress
   "progress.title": { en: "Your Progress", ar: "تقدّمك" },
   "progress.description": { en: "Track your tajweed learning journey.", ar: "تابع مسيرتك في تعلّم التجويد." },
+  "progress.localData": {
+    en: "Your progress, bookmarks, and notes are stored only on this device. Back them up from Settings.",
+    ar: "تُحفظ بياناتك ومفضّلاتك على هذا الجهاز فقط. يمكنك نسخها احتياطيًا من الإعدادات.",
+  },
   "progress.overall": { en: "Overall Completion", ar: "نسبة الإكمال الكلّية" },
   "progress.streak": { en: "Streak", ar: "أيام متتالية" },
   "progress.current": { en: "Current", ar: "الحالية" },
@@ -483,6 +487,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "search.placeholder": { en: "Search surahs, modules, rules…", ar: "ابحث في السور والوحدات والأحكام…" },
   "search.hint": { en: "Type at least 2 characters to search.", ar: "أدخل حرفين على الأقل للبحث." },
   "search.noResults": { en: "No matches.", ar: "لا توجد نتائج." },
+  "search.verses": { en: "Quran verses", ar: "آيات القرآن" },
+  "search.inApp": { en: "In the app", ar: "في التطبيق" },
 
   // Reading depth (translation and tafsir, fetched from the verified API)
   "reading.showTafsir": { en: "Show tafsir", ar: "إظهار التفسير" },
