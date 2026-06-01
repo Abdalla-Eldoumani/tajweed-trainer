@@ -26,6 +26,11 @@ record(
 );
 record("CSP blocks objects and framing", /object-src 'none'/.test(csp) && /frame-ancestors 'none'/.test(csp));
 record(
+  "CSP gates 'unsafe-eval' to development only",
+  /isDev\s*=\s*process\.env\.NODE_ENV/.test(csp) && /script-src[^`]*\$\{isDev \? " 'unsafe-eval'" : ""\}/.test(csp),
+);
+record("CSP keeps verse and tafsir HTML safe via the sanitizer", /sanitizeTafsirHtml/.test(api));
+record(
   "No analytics or ad origins in CSP",
   !/google-analytics|googletagmanager|doubleclick|facebook|hotjar|segment|mixpanel/i.test(csp),
 );
