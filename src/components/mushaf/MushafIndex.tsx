@@ -7,6 +7,8 @@ import { ArabicText } from "@/components/ui/ArabicText";
 import { OrnamentalDivider } from "@/components/ui/Ornament";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
+import { useBookmarks } from "@/hooks/useBookmarks";
+import { pageForSurah } from "@/lib/navigation";
 import { toArabicIndic, cn } from "@/lib/utils";
 import type { SurahHeader } from "@/lib/types";
 
@@ -24,6 +26,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
 
   const lastPage = settings.lastMushafPage ?? 0;
   const bookmarks = settings.mushafBookmarks ?? [];
+  const { list: verseBookmarks, mounted: bmMounted } = useBookmarks();
 
   const filteredSurahs = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -104,6 +107,31 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                 {t("mushaf.pageNumber")} {isAr ? toArabicIndic(p) : p}
               </Link>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Verse bookmarks */}
+      {bmMounted && verseBookmarks.length > 0 && (
+        <div>
+          <h2 className="font-heading text-sm font-semibold mb-2">{t("mushaf.verseBookmarks")}</h2>
+          <div className="flex flex-wrap gap-2">
+            {verseBookmarks.map((vk) => {
+              const [sv, av] = vk.split(":").map(Number);
+              const meta = surahs.find((s) => s.number === sv);
+              const label = meta
+                ? `${isAr ? meta.nameArabic : meta.nameSimple} ${isAr ? toArabicIndic(av) : av}`
+                : vk;
+              return (
+                <Link
+                  key={vk}
+                  href={`/mushaf/page/${pageForSurah(sv)}?v=${vk}`}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light text-xs font-medium hover:bg-primary/20"
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
