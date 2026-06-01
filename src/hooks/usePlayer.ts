@@ -40,6 +40,8 @@ interface PlayerState {
   repeatRange: { from: number; to: number; count: number } | null;
   rangeLoopsDone: number;
   sleepEndOfSurah: boolean;
+  // Wall-clock ms after which playback stops; null when no minutes timer is set.
+  sleepDeadline: number | null;
 
   current: () => QueueItem | null;
   hasNext: () => boolean;
@@ -59,6 +61,7 @@ interface PlayerState {
   setRepeatRange: (from: number, to: number, count: number) => void;
   clearRepeat: () => void;
   setSleepEndOfSurah: (on: boolean) => void;
+  setSleepTimer: (minutes: number | null) => void;
   stop: () => void;
   restore: () => void;
 
@@ -94,6 +97,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   repeatRange: null,
   rangeLoopsDone: 0,
   sleepEndOfSurah: false,
+  sleepDeadline: null,
 
   current: () => get().queue[get().index] ?? null,
   hasNext: () => get().index < get().queue.length - 1,
@@ -177,16 +181,44 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   setRepeatOne: (count) =>
     set({ repeatOne: Math.max(0, Math.floor(count) || 0), repeatsDone: 0, repeatRange: null }),
   setRepeatRange: (from, to, count) =>
-    set(
-      from >= 1 && to >= from && count >= 1
-        ? { repeatRange: { from: Math.floor(from), to: Math.floor(to), count: Math.floor(count) }, rangeLoopsDone: 0, repeatOne: 0 }
-        : { repeatRange: null, rangeLoopsDone: 0 },
-    ),
+    set((s) => {
+      const f = Math.floor(from);
+      const tt = Math.floor(to);
+      const c = Math.floor(count);
+      if (!(f >= 1 && tt >= f && c >= 1) || s.queue.length === 0) {
+        return { repeatRange: null, rangeLoopsDone: 0 };
+      }
+      // Reposition onto the range start and (re)start playback; onEnded then
+      // walks f..to and loops back c times. Assumes the continuous surah queue
+      // (index === ayah - 1) that playSurah builds, so range looping only makes
+      // sense once a surah is playing.
+      const startIndex = Math.min(Math.max(0, f - 1), s.queue.length - 1);
+      return {
+        repeatRange: { from: f, to: tt, count: c },
+        rangeLoopsDone: 0,
+        repeatsDone: 0,
+        repeatOne: 0,
+        mode: "continuous",
+        index: startIndex,
+        status: "loading",
+        currentTime: 0,
+        duration: 0,
+        pendingOffset: 0,
+        loadToken: s.loadToken + 1,
+      };
+    }),
   clearRepeat: () => set({ repeatOne: 0, repeatsDone: 0, repeatRange: null, rangeLoopsDone: 0 }),
-  setSleepEndOfSurah: (on) => set({ sleepEndOfSurah: !!on }),
+  // Sleep modes are mutually exclusive: choosing one clears the other.
+  setSleepEndOfSurah: (on) => set(on ? { sleepEndOfSurah: true, sleepDeadline: null } : { sleepEndOfSurah: false }),
+  setSleepTimer: (minutes) =>
+    set(
+      typeof minutes === "number" && minutes > 0
+        ? { sleepDeadline: Date.now() + minutes * 60000, sleepEndOfSurah: false }
+        : { sleepDeadline: null },
+    ),
 
   stop: () => {
-    set({ status: "idle", currentTime: 0 });
+    set({ status: "idle", currentTime: 0, sleepDeadline: null });
     get().persist();
   },
 
