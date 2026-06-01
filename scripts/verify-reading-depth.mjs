@@ -36,7 +36,7 @@ record("Tafsir routed through sanitizeTafsirHtml", /getTafsirForVerse[\s\S]*?san
 record("Translations routed through sanitizeTafsirHtml", /getTranslationsForChapter[\s\S]*?sanitizeTafsirHtml/.test(api));
 record("sanitizeTafsirHtml exists in sanitize.ts", /export function sanitizeTafsirHtml/.test(sanitize));
 record("Translations fetched per chapter (by_chapter)", /getTranslationsForChapter[\s\S]*?verses\/by_chapter/.test(api));
-record("Word-by-word fetched per chapter (by_chapter)", /getWordsForChapter[\s\S]*?verses\/by_chapter\/\$\{surah\}\?words=true/.test(api));
+record("Word-by-word fetched per chapter (by_chapter)", /getWordsForChapter[\s\S]*?verses\/by_chapter\/[^?`]*\?words=true/.test(api));
 record("Resource lists use the long cache", /getResourceTranslations[\s\S]*?LONG_CACHE_TTL/.test(api));
 record("No per-ayah translation fetch loop", !/by_key\/\$\{[\s\S]*?\}\?translations=/.test(api));
 
