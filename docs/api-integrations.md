@@ -1,6 +1,6 @@
 # API integrations
 
-The app pulls Quranic text and audio from two free, no-auth APIs. Both have a long track record of community use. Bundled JSON is the offline fallback.
+The app pulls Quranic text, reading-depth content, and audio from the free, no-auth Quran.com Foundation API v4. Bundled JSON is the offline fallback.
 
 ## Quran.com Foundation API v4
 
@@ -59,71 +59,29 @@ Used by `getTajweedPage(pageNumber)` for the Mushaf reader. Same fields plus `pa
 
 The wrapper passes `per_page=50` to safely cover any edge-case page; the API returns only what's actually on the page.
 
-## Al Quran Cloud API
+## Per-ayah audio (Quran.com)
 
-- Base URL: `https://api.alquran.cloud/v1`
-- Auth: none
-- Rate limit: undocumented; per-ayah results are cached for 1 hour.
+Per-ayah audio is also served by the Quran.com Foundation API v4, wrapped in `src/lib/audio-api.ts`.
 
-### `GET /edition?format=audio&type=versebyverse`
+The reciter catalogue is a static list of 12 recitations in `src/lib/reciters.ts` (`RECITATIONS`), captured from `GET /resources/recitations` (Arabic names cross-checked via `?language=ar`); the ids and styles are the API's own. `DEFAULT_RECITER_ID` is `"12"` — Al-Husary in the mu'allim (teaching) style, slow and clear, the default for learning. There is no runtime fetch of an editions list and no `useReciters` hook; both were removed with the provider switch.
 
-Used by `fetchReciterEditions(signal?)` to populate the reciter selector. Returns the full list of audio reciter editions exposed by the API.
+### `GET /recitations/{id}/by_ayah/{surah}:{ayah}`
+
+Used by `fetchAudioUrl(surah, ayah, reciter)` (endpoint built by `getAudioEndpoint`). `normalizeReciterId` resolves any stored or supplied value to a known recitation id, migrating legacy alquran.cloud identifiers (e.g. `ar.husary` → `12`, `ar.alafasy` → `7`) and falling back to `DEFAULT_RECITER_ID` when unknown or malformed. Per-(ayah, reciter) results are cached in memory for 1 hour.
 
 Response shape (relevant fields):
 
 ```jsonc
 {
-  "code": 200,
-  "status": "OK",
-  "data": [
-    {
-      "identifier": "ar.husary",
-      "language": "ar",
-      "name": "محمود خليل الحصري",
-      "englishName": "Mahmoud Khalil Al-Husary",
-      "format": "audio",
-      "type": "versebyverse"
-    }
+  "audio_files": [
+    { "url": "Husary/mp3/001001.mp3" }
   ]
 }
 ```
 
-The wrapper validates each entry through `isAudioVerseEdition`:
+The wrapper reads `data.audio_files[0].url`. That `url` may be relative (`"Husary/mp3/001001.mp3"`), protocol-relative (`"//mirrors.quranicaudio.com/..."`), or absolute; `toAudioFileUrl` normalizes it to https. Relative paths are prefixed with the audio CDN base `https://verses.quran.com/`; the resolved file ends up on `verses.quran.com` or a `*.quranicaudio.com` mirror.
 
-- `identifier` must match `/^[a-z0-9._-]{1,64}$/` — see `RECITER_IDENTIFIER_PATTERN` in `src/lib/types.ts`. This bounds what we'll concatenate into the audio URL path.
-- `language` is a non-empty string ≤ 16 chars.
-- `name` and `englishName` are non-empty strings ≤ 200 chars.
-- `format === "audio"` and `type === "versebyverse"`.
-
-Anything failing validation is dropped silently. If the call fails entirely, the wrapper returns just the two built-in defaults (`ar.husary`, `ar.alafasy`) so the UI always renders something.
-
-The merged list is cached client-side for 24 hours under the `tajweed-trainer-reciters` key (`src/hooks/useReciters.ts`). On read, every entry is re-validated against the same regex; tampered entries are dropped.
-
-`storage.sanitizeSettings` re-checks the persisted reciter id (`pickReciter`) against the cached list when reading `UserSettings`. An unknown id falls back to the husary default — a tampered storage value cannot make the app reference a reciter the editions API doesn't know.
-
-### `GET /ayah/{surah}:{ayah}/{reciter}`
-
-Used by `fetchAudioUrl(surah, ayah, reciter)`. Reciters:
-
-- `ar.husary`: Mahmoud Khalil Al-Husary, mu'allim recitation. Slow and clear, default for learning.
-- `ar.alafasy`: Mishary Rashid Alafasy, melodic style.
-
-Response shape:
-
-```jsonc
-{
-  "code": 200,
-  "status": "OK",
-  "data": {
-    "audio": "https://cdn.islamic.network/quran/audio/128/ar.husary/1.mp3",
-    "audioSecondary": ["https://..."],
-    "text": "بِسْمِ ٱللَّهِ ...",
-    "surah": { "number": 1, "englishName": "Al-Faatiha" }
-  }
-}
-```
-
-The wrapper uses `data.audio` directly (CDN: `cdn.islamic.network`). The CDN URLs follow a pattern (`/{bitrate}/{reciter}/{globalAyahId}.mp3`), but going through the API picks the right CDN host.
+Reciter ids cannot reference an unknown reciter: `normalizeReciterId` maps any value to a known id from `RECITATIONS` or the default, so the value concatenated into the URL path is always one the API knows.
 
 ## Caching
 
@@ -139,13 +97,23 @@ The wrapper uses `data.audio` directly (CDN: `cdn.islamic.network`). The CDN URL
 - 4xx fails fast (these are client errors that won't recover).
 - 5xx and network errors retry.
 
+## Network origins (CSP) and service worker
+
+The Content Security Policy is assembled once in `next.config.mjs` (the single source for all response headers; `vercel.json` carries only framework + buildCommand). The origins relevant to these integrations:
+
+- `connect-src 'self' https://api.quran.com` — the only cross-origin host the app fetches JSON from.
+- `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com` — the audio CDNs that per-ayah and per-word URLs resolve to.
+- `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR). `style-src`/`font-src` list no Google Fonts origins — all fonts are self-hosted via next/font.
+
+The service worker is served by the `src/app/sw.js/route.ts` route handler (`force-static`), which stamps a unique per-build version into `scripts/sw-template.js` so each deploy gets fresh cache namespaces and the activate step purges the previous build's caches. Its scope is deliberately limited to same-origin requests: HTML navigation (network-first) and same-origin static assets (cache-first). It does **not** intercept cross-origin Quran audio (mp3) or the Quran.com API — those stream/fetch natively, so the worker can never break audio playback. The trade-off is that Quran audio and API content are not available offline.
+
 ## Failure modes and what happens
 
 | Failure | UX | Code path |
 |---------|----|-----------|
 | Quran.com `/chapters` 5xx | Falls back to bundled `surah-index.json` | `getChaptersIndex` try/catch |
 | Quran.com `/verses/by_page/N` 5xx | Two retries with backoff. If still failing, the route renders an error UI | `fetchWithRetry` |
-| Al Quran Cloud audio failure | `useAudio` exposes `error` state; the AudioPlayer button shows a retry icon | `useAudio` hook |
+| Quran.com audio failure | The global `usePlayer` (zustand) store surfaces an error state on the mini-player; transport controls let the user retry | `fetchAudioUrl` → `PlayerHost` |
 | Browser offline | Bundled JSON serves the lesson content; only the Mushaf API render and audio fail | All consumer components handle missing data |
 
 ## Sanity-checking new tajweed classes
@@ -166,7 +134,7 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `memorizedVerses` | 6,236 entries | One per Quran ayah. Each entry validated against `^\d{1,3}:\d{1,3}$`; deduped on read. |
 | `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1–100 chars. |
 | `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
-| `reciter` | one of cached editions list, or `husary` fallback | Validated against `^[a-z0-9._-]{1,64}$` then membership in the cached list. |
+| `reciter` | one of the 12 `RECITATIONS` ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
 | `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
 | `lastMushafPage` | integer 1–604 | Out-of-range values fall back to 1. |
 
@@ -183,6 +151,6 @@ These four fields on `TajweedProgress` never leave the device. They aren't sent 
 
 Sanitization rejects malformed input (wrong types, oversized strings, unknown enum values) and replaces it with the matching default. A user who edits localStorage directly cannot make the app reference content it doesn't have or store an unbounded payload.
 
-## Why these two APIs
+## Why this API
 
-Both are operated by reputable Quranic projects with broad community use, both are CORS-friendly, and both expose the data without auth or quota juggling. If either ever shuts down, the fallback path is to bundle `text_uthmani_tajweed` for all 6,236 verses (about 3 MB minified) into the build. All components are written against the data shapes, not the network paths, so the swap is local to the wrappers.
+The Quran.com Foundation API v4 is operated by a reputable Quranic project with broad community use, is CORS-friendly, and exposes text, reading-depth content, and per-ayah audio without auth or quota juggling — text and audio now come from the same provider (audio was previously fetched from Al Quran Cloud). If it ever shuts down, the fallback path is to bundle `text_uthmani_tajweed` for all 6,236 verses (about 3 MB minified) into the build. All components are written against the data shapes, not the network paths, so the swap is local to the wrappers.

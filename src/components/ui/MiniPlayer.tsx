@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
+import { ayahCountForSurah } from "@/lib/navigation";
 
 const SPEEDS = [0.75, 1, 1.25] as const;
 const REPEAT_OPTIONS = [0, 2, 3, 5] as const;
@@ -190,9 +191,19 @@ export function MiniPlayer() {
                 {label}
                 {cur ? ` · ${cur.surah}:${cur.ayah}` : ""}
               </span>
-              <span className="shrink-0 text-[10px] uppercase tracking-wide">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!cur) return;
+                  if (mode === "continuous") usePlayer.getState().setMode("single");
+                  else usePlayer.getState().setMode("continuous", ayahCountForSurah(cur.surah));
+                }}
+                aria-label={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
+                title={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
+                className="shrink-0 text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 text-primary dark:text-primary-light hover:bg-bg-subtle"
+              >
                 {mode === "continuous" ? t("player.modeContinuous") : t("player.modeSingle")}
-              </span>
+              </button>
             </div>
             <input
               type="range"

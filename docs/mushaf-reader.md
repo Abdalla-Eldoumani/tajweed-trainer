@@ -8,7 +8,7 @@ A reproduction of the 604-page Madinan Mushaf, color-coded for tajweed, with tap
 - A surah index at `/mushaf` listing all 114 surahs as cards (Arabic name, Latin name, verse count, start page, Makkah / Madinah badge). Search by Latin name, filter by revelation place, and a "continue from page X" callout when there's a saved `lastMushafPage`.
 - The reader at `/mushaf/page/[page]/`: the Madinan layout with surah cartouche, Bismillah line on surah starts, tajweed-colored verses, gold verse-end markers in Arabic-Indic numerals, and a page / juz footer.
 - A surah jump at `/mushaf/surah/[surah]/` that redirects server-side to that surah's start page.
-- Tap a verse to play it. The audio plays through `useAudio().play(surah, ayah, reciter, speed)` with the user's reciter and speed from settings.
+- Tap a verse to play it. Tap routes through the global zustand player store (`usePlayer.getState().playVerse(surah, ayah, opts)`) in single mode, with the user's reciter and speed from settings. A per-verse "play from here" control and the toolbar "Play surah" button start continuous surah playback instead (`playSurah`). The persistent `MiniPlayer` (mounted once in `AppProvider`) is the transport and carries a single ↔ continuous mode toggle.
 - Per-page bookmark toggle, persisted to localStorage. Bookmarks appear on the index as quick-jump chips.
 - Keyboard navigation (`ArrowLeft` and `ArrowRight`), mirrored under RTL when the language is set to Arabic.
 - Arabic mode and dark mode are both supported. Every label translates; the gold frame stays legible on dark cream.
@@ -43,11 +43,16 @@ Composes the frame, cartouches, Bismillahs (when applicable), the flowing verses
 
 The client wrapper around `MushafPage`. It holds:
 
+- A prominent "Play surah" toolbar button. `playFullSurah` calls `usePlayer.getState().playSurah(surah, 1, versesCount, opts)` to play the whole surah continuously from verse 1, auto-advancing ayah to ayah; the `MiniPlayer` then pauses / resumes anywhere.
 - Prev / next page buttons (auto-disabled at boundaries).
 - Surah dropdown — selecting jumps to `/mushaf/surah/[n]`.
+- Juz dropdown — selecting jumps to that juz's start page via `pageForJuz`.
+- Rule-highlight drill dropdown — greys every tajweed rule except the chosen one (`data-tajweed-drill` plus CSS).
+- Memorization-mode eye toggle (in-session, not persisted) — blurs memorized verses on the page.
 - Bookmark toggle (filled gold star icon when bookmarked).
 - Keyboard navigation (`ArrowLeft` and `ArrowRight`, mirrored when the language is Arabic).
-- A `useEffect` that writes `lastMushafPage` to settings on mount.
+- A reading-depth panel that opens below the page when a verse's "details" control is tapped (translation, tafsir, optional word-by-word) with a per-verse bookmark toggle.
+- A `useEffect` that writes `lastMushafPage` and `lastRead` to settings on mount. An entry URL of `?v=surah:ayah` scrolls that verse into view and starts it in single mode.
 
 The `mounted` flag pattern defers the bookmark filled state until after hydration. The server can't read localStorage, so it always renders unfilled; the client takes over after mount. Without this, React warns about a hydration mismatch on the SVG `fill` attribute.
 
@@ -62,7 +67,7 @@ Currently unused. The API embeds verse-end markers as `<span class="end">N</span
 ## Routes
 
 - `src/app/mushaf/page.tsx` — server component. Calls `getChaptersIndex()` and passes the result to `<MushafIndex/>`.
-- `src/app/mushaf/page/[page]/page.tsx` — server component. `generateStaticParams()` yields pages 1 through 50 for static prerendering at build time; the rest fall through to ISR (`revalidate: 60 * 60 * 24`). Calls `getTajweedPage` and `getChaptersIndex` and passes both to `<MushafReader/>`.
+- `src/app/mushaf/page/[page]/page.tsx` — server component. `params` is a Promise (Next 16) and is awaited. `generateStaticParams()` pre-renders a spread of common entry points (page 1 and one per juz) at build time; the rest fall through to ISR (`export const revalidate = 86400`, a literal number of seconds). Calls `getTajweedPage` and `getChaptersIndex` and passes both to `<MushafReader/>`.
 - `src/app/mushaf/surah/[surah]/page.tsx` — server component. Looks up the surah's start page from the bundled index and `redirect`s. Pure server-side; no client JS.
 
 ## Data flow
@@ -96,7 +101,7 @@ Browser --> /mushaf/page/47
               |     <SurahCartouche surah={...}/>
               |     <BismillahLine surahNumber={...}/>   (conditional)
               +-- for each verse:
-                    <button class=mushaf-verse onClick=play>
+                    <button class=mushaf-verse onClick=playVerse>  (single mode, via usePlayer)
                       <TajweedText tajweedHtml={...}/>
                     </button>
 ```
@@ -132,7 +137,5 @@ A failing assertion lists the file path and the actual vs. expected value. Scree
 
 ## What's intentionally not here
 
-- **Per-word translation overlay.** Out of scope for a Mushaf reader; word-level meaning is what the lessons are for.
-- **Tafsir or interpretation.** Same reason.
+- **Always-on per-word translation overlay.** Word-level meaning and tafsir live in the on-demand reading-depth panel (tap a verse's "details" control), not as a persistent overlay on the page. The page itself stays a clean color-coded Mushaf.
 - **Multiple Mushaf layouts (Indo-Pak, etc.).** The Madinan layout is the most widely used; supporting variants would require a separate index and a verse-to-line mapping per script style.
-- **Continuous chapter audio.** Currently per-verse on tap. A queue with auto-advance is plausible but adds UX complexity (pause / resume, scroll-into-view, recovery on failure).

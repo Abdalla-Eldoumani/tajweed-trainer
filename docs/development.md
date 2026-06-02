@@ -4,7 +4,7 @@ How to run, test, and iterate on the project locally.
 
 ## Prerequisites
 
-- Node.js 20 or newer.
+- Node.js 24.
 - npm (bundled with Node).
 - A modern browser. The Mushaf verify script uses Chromium from `playwright-core`.
 
@@ -22,16 +22,19 @@ Open `http://localhost:3000`. Hot reload is on; edits to TS, TSX, CSS, and JSON 
 | Script | What it does |
 |--------|--------------|
 | `npm run dev` | Start the dev server on `localhost:3000`. |
-| `npm run build` | Production build. Validates types and SSG. Outputs to `.next/`. |
+| `npm run build` | Production build with Turbopack (Next 16). Validates types and SSG. Outputs to `.next/`. |
 | `npm start` | Serve the production build. |
-| `npm run lint` | Run ESLint via `next lint`. |
+| `npm run lint` | Run ESLint over the project (`eslint .`). `next lint` is deprecated in Next 16; the flat config in `eslint.config.mjs` drives it. |
+| `npm run verify` | Full non-browser gate: `tsc --noEmit`, then `eslint .`, then `npm run verify:scripts`. |
+| `npm run verify:scripts` | The headless verification scripts (tajweed colors, lesson coloring, navigation, reading, reading depth, reciters data, sanitizer, security, study tools). No browser required. |
+| `npm run verify:ui` | The Playwright browser suites: module lock, Mushaf, new features, questions, reciters. |
 | `node scripts/fetch-surah-names.mjs` | One-shot: pulls `/chapters` and patches `surah_name_ar` into rule examples. |
-| `node scripts/verify-mushaf.mjs` | End-to-end browser test of the Mushaf reader (21 checks). |
-| `node scripts/verify-module-lock.mjs` | Browser test of module gating (11 checks). |
-| `node scripts/verify-questions.mjs` | Browser test of the practice hub and authored questions (19 checks). |
-| `node scripts/verify-reciters.mjs` | Browser test of the reciter selector (9 checks). |
-| `node scripts/verify-sanitizer.mjs` | Tajweed HTML sanitizer assertions (14 checks, no browser). |
-| `node scripts/verify-newfeatures.mjs` | Browser test of spaced repetition, memorization, search, TTS, and PWA endpoints (12 checks). |
+| `node scripts/verify-mushaf.mjs` | End-to-end browser test of the Mushaf reader. |
+| `node scripts/verify-module-lock.mjs` | Browser test of module gating. |
+| `node scripts/verify-questions.mjs` | Browser test of the practice hub and authored questions. |
+| `node scripts/verify-reciters.mjs` | Browser test of the reciter selector. |
+| `node scripts/verify-sanitizer.mjs` | Tajweed HTML sanitizer assertions (no browser). |
+| `node scripts/verify-newfeatures.mjs` | Browser test of spaced repetition, memorization, search, TTS, and PWA endpoints. |
 
 ## Project conventions
 
@@ -99,9 +102,9 @@ A passing run looks like:
 PASS: Index renders 114 surah cards — actual: 114
 PASS: Search 'Fatihah' filters to 1 surah — actual: 1
 PASS: Page 1 (Al-Fatihah) has NO standalone BismillahLine — count: 0
-PASS: Tap verse triggers audio fetch — url: https://api.alquran.cloud/v1/ayah/1:1/ar.husary...
+PASS: Tap verse triggers audio fetch — url: https://api.quran.com/api/v4/recitations/.../by_ayah/1:1...
 ...
-21/21 checks passed.
+all checks passed.
 ```
 
 Screenshots are written to `mushaf-screenshots/` (created on first run): Al-Fatihah, Al-Baqarah's start, At-Tawbah's start, page 604, and the Arabic and dark variants. Skim them after a structural change.
@@ -154,8 +157,8 @@ After a structural change, walk through:
 
 1. `npm run build && npm start`. The dev server skips service-worker registration; you need a production build to exercise it.
 2. Open `http://localhost:3000` in Chromium. DevTools → Application → Manifest. Confirm `Tajweed Trainer`, the SVG icons, and the `standalone` display mode resolve.
-3. Application → Service Workers. Confirm `/sw.js` is registered and active. Reload once so the cache populates.
-4. Visit `/learn/qalqalah`, scroll, then go offline (DevTools → Network → Offline). Reload — the page still renders. The audio CDN is cached too (50-entry FIFO), so any verse you've already played will replay offline.
+3. Application → Service Workers. Confirm `/sw.js` is registered and active. It is served by the Next route handler `src/app/sw.js/route.ts` (not a static file) with a per-build version stamped from `scripts/sw-template.js`, so each deploy gets fresh cache namespaces. Reload once so the cache populates.
+4. Visit `/learn/qalqalah`, scroll, then go offline (DevTools → Network → Offline). Reload — the page still renders. The worker's scope is the app shell (HTML, network-first) and same-origin static assets (cache-first); it deliberately does not intercept the cross-origin Quran audio or the Quran.com API, so verses do not replay offline.
 5. Take a quiz, answer two questions. Confirm `progress.reviews` populates in localStorage and the Review Due tile appears on `/practice` after the third refresh.
 6. Mark a verse memorized in the Mushaf. Toggle the toolbar eye icon. Confirm the verse blurs with a Reveal pill.
 7. `/search` for "qalqalah" and "Al-Fatihah". Both should surface lesson and surah hits.

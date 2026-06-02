@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.3.0
+
+A platform upgrade plus the production audio/asset fix and continuous playback. Framework, fonts, service worker, and response headers were all reworked; the religious-content rule is unchanged (verse text, translation, tafsir, and audio still come only from the verified Quran.com API or committed snapshots).
+
+### Changed
+
+- **Framework upgrade**. Next.js 14.2 → 16.2.7 (builds run on Turbopack; `turbopack.root` is pinned in `next.config.mjs` so a stray parent lockfile is not inferred as the workspace root). React 18 → 19.2.7 (`react-dom` 19.2.7), `@types/react` → ^19, Node 24. Tailwind stays at 3.4.19 on purpose — Tailwind v4 is not required by Next 16 and would risk the tuned design.
+- **ESLint 9 flat config**. `eslint.config.mjs` spreads `eslint-config-next/core-web-vitals`; `.eslintrc.json` was removed. The lint script is now `eslint .` (not `next lint`, which Next 16 deprecates). `package.json` scripts: `dev`, `build`, `start`, `lint`, `verify`, `verify:scripts`, `verify:ui`.
+- **Next 15+ async route APIs**. Dynamic-route `params` is now a Promise — awaited in server routes, unwrapped with React `use()` in client routes (`practice/[module]`). Segment `revalidate` exports use a literal number of seconds (e.g. `86400`, `604800`).
+- **Self-hosted fonts via `next/font`**. Inter, Plus Jakarta Sans, JetBrains Mono, Amiri, and Amiri Quran are all self-hosted; the render-blocking Google Fonts `<link>` in `layout.tsx` was removed. Tailwind `fontFamily` tokens reference the `next/font` CSS variables (`var(--font-quran)`, `var(--font-amiri)`, `var(--font-inter)`, etc.).
+- **CSP and response headers consolidated** into `next.config.mjs` as the single source; `vercel.json` is trimmed to just `framework` + `buildCommand` (its competing headers removed). `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR); `style-src`/`font-src` no longer list `fonts.googleapis.com`/`fonts.gstatic.com` (fonts are self-hosted); `connect-src 'self' https://api.quran.com`; `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com`.
+
+### Added
+
+- **Build-stamped service worker (production fix)**. The static `public/sw.js` (`CACHE_VERSION = "v1"`) never invalidated caches across deploys, leaving users on a stale shell/assets. It was removed. The worker is now served by a Next route handler `src/app/sw.js/route.ts` (`force-static`) that stamps a unique per-build version into `scripts/sw-template.js`, so each deploy gets fresh cache namespaces and the activate step purges old caches. Scope is limited to the app shell (HTML, network-first) and same-origin static assets (cache-first); it does not intercept cross-origin Quran audio (mp3) or the Quran.com API, so the worker can never break audio playback (the trade-off is no offline Quran content).
+- **"Play surah" control** in the Mushaf reader toolbar. Plays the whole surah continuously, auto-advancing ayah to ayah, pausable anywhere.
+- **Mini-player mode toggle** between single and full-surah playback. A plain verse tap is single mode; per-verse "play from here" and "Play surah" are continuous.
+
+### Audio provider
+
+- Per-ayah audio comes from the Quran.com API (`/recitations/{id}/by_ayah/{key}`); the returned path resolves to `verses.quran.com` or `*.quranicaudio.com` (e.g. `mirrors.quranicaudio.com`). 12 reciters in `src/lib/reciters.ts`.
+
 ## 0.2.1 — 2026-05-02
 
 A second pass on the 0.2.0 branch that picks up the items the original release deliberately left out. Each item is wired with its own atomic commit and a smoke-tested verify script.

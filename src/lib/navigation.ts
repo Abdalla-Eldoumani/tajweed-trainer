@@ -26,6 +26,13 @@ export function pageForJuz(juz: number): number {
   return JUZ_START_PAGES[clampJuz(juz) - 1] ?? 1;
 }
 
+// Ayah count for a surah, from the bundled index. Used to build a continuous
+// playback queue when switching the player into full-surah mode.
+export function ayahCountForSurah(surah: number): number {
+  const meta = INDEX.find((s) => s.number === clampSurah(surah));
+  return meta ? meta.versesCount : 7;
+}
+
 // Sorted by surah number so start pages are ascending (surah order == page order).
 const INDEX = (surahIndex as SurahHeader[]).slice().sort((a, b) => a.number - b.number);
 

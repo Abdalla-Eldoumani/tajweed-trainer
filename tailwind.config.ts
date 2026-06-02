@@ -49,11 +49,11 @@ const config: Config = {
         },
       },
       fontFamily: {
-        quran: ['"Amiri Quran"', '"Scheherazade New"', "serif"],
-        arabic: ["Amiri", "serif"],
-        heading: ['"Plus Jakarta Sans"', "sans-serif"],
-        body: ["Inter", "sans-serif"],
-        mono: ['"JetBrains Mono"', "monospace"],
+        quran: ["var(--font-quran)", '"Amiri Quran"', '"Scheherazade New"', "serif"],
+        arabic: ["var(--font-amiri)", "Amiri", "serif"],
+        heading: ["var(--font-heading)", '"Plus Jakarta Sans"', "sans-serif"],
+        body: ["var(--font-inter)", "Inter", "sans-serif"],
+        mono: ["var(--font-mono)", '"JetBrains Mono"', "monospace"],
       },
       fontSize: {
         "arabic-sm": ["clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem)", { lineHeight: "2" }],

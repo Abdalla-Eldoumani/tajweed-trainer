@@ -1,33 +1,35 @@
 {
   "name": "tajweed-trainer",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "verify": "tsc --noEmit && next lint && npm run verify:scripts",
+    "lint": "eslint .",
+    "verify": "tsc --noEmit && eslint . && npm run verify:scripts",
     "verify:scripts": "node scripts/verify-tajweed-colors.mjs && node scripts/verify-lesson-coloring.mjs && node scripts/verify-navigation.mjs && node scripts/verify-reading.mjs && node scripts/verify-reading-depth.mjs && node scripts/verify-reciters-data.mjs && node scripts/verify-sanitizer.mjs && node scripts/verify-security.mjs && node scripts/verify-study-tools.mjs",
     "verify:ui": "node scripts/verify-module-lock.mjs && node scripts/verify-mushaf.mjs && node scripts/verify-newfeatures.mjs && node scripts/verify-questions.mjs && node scripts/verify-reciters.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "next": "^14.2.35",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "next": "16.2.7",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "tailwind-merge": "^2.6.0",
     "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@types/node": "^20.17.12",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
+    "@eslint/eslintrc": "^3.2.0",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.2.16",
+    "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.21",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "16.2.7",
+    "playwright-core": "^1.60.0",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^3.4.19",
     "typescript": "^5.7.3"
   }
 }

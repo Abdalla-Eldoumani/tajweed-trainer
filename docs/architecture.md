@@ -44,7 +44,8 @@ How the app is wired together, top-down.
 |  +-------------------------------------------------------------+  |
 |                            |                                      |
 |  +-------------------------+----------------------------------+   |
-|  |  Audio: <audio> elements driven by useAudio()              |   |
+|  |  Audio: one reused <audio> driven by usePlayer (zustand)   |   |
+|  |         + PlayerHost; MiniPlayer carries transport         |   |
 |  +------------------------------------------------------------+   |
 +-------------------------------------------------------------------+
                               |
@@ -52,15 +53,26 @@ How the app is wired together, top-down.
         |                     |                     |
         v                     v                     v
 +---------------+    +---------------+    +-------------------+
-| Quran.com     |    | Al Quran      |    | Bundled JSON      |
-| Foundation v4 |    | Cloud API     |    | (reviewed content)|
+| Quran.com     |    | Audio CDN     |    | Bundled JSON      |
+| Foundation v4 |    | (from API)    |    | (reviewed content)|
 |               |    |               |    |                   |
-| /chapters     |    | /ayah/{key}/  |    | rule files,       |
-| /verses/      |    |  ar.husary    |    | surah-index,      |
-|  by_page/N    |    |  ar.alafasy   |    | glossary,         |
-|               |    |               |    | learning-path     |
+| /chapters     |    | verses.quran  |    | rule files,       |
+| /verses/      |    |  .com,        |    | surah-index,      |
+|  by_page/N    |    | *.quranic-    |    | glossary,         |
+| /recitations/ |    |  audio.com    |    | learning-path     |
+|  {id}/by_ayah |    |               |    |                   |
 +---------------+    +---------------+    +-------------------+
 ```
+
+## Platform and build
+
+- **Framework:** Next.js 16.2.7 on React 19.2.7 (`react-dom` 19.2.7). Builds use Turbopack; the workspace root is pinned via `turbopack.root` in `next.config.mjs` so a stray parent-directory lockfile isn't inferred as the root.
+- **TypeScript** strict mode, `@types/react` ^19. **Tailwind** is kept at 3.4.19 on purpose (Tailwind v4 is deferred; Next 16 doesn't require it and the migration would risk the tuned design). Node 24.
+- **ESLint 9, flat config:** `eslint.config.mjs` spreads `eslint-config-next/core-web-vitals` directly (the old `.eslintrc.json` was removed). The lint script is `eslint .` — not `next lint`, which Next 16 deprecates. `package.json` scripts: `dev` / `build` / `start` / `lint` / `verify` / `verify:scripts` / `verify:ui`.
+- **Next 15+ async APIs:** dynamic route `params` is a Promise — `await`ed in server routes, unwrapped with React `use()` in the client `practice/[module]` route. Segment `export const revalidate` uses a literal seconds value (e.g. `86400`, `604800`).
+- **Fonts:** all fonts are self-hosted via `next/font` (Inter, Plus Jakarta Sans, JetBrains Mono, Amiri, Amiri Quran). There is no render-blocking Google Fonts `<link>` in `layout.tsx`; Tailwind `fontFamily` tokens reference the `next/font` CSS variables (`var(--font-quran)`, `var(--font-amiri)`, `var(--font-inter)`, etc.).
+- **Headers / CSP, single source:** all response headers and the Content-Security-Policy are assembled once in `next.config.mjs` (`headers()` applies them to every path); `vercel.json` is trimmed to `framework` + `buildCommand` (its competing headers removed). CSP highlights: `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR); `style-src` / `font-src` no longer list `fonts.googleapis.com` / `fonts.gstatic.com` (fonts are self-hosted); `connect-src 'self' https://api.quran.com`; `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com`.
+- Project version is **0.3.0**.
 
 ## Layers
 
@@ -68,7 +80,7 @@ How the app is wired together, top-down.
 
 - **types.ts** — every TypeScript type used by the app. Optional `_ar` fields on the content types are additive so existing JSON keeps validating during translation work. Includes `ReviewBox`, `ReviewState`, `AnalyticsEvent`, and `AnalyticsEventType` for the local-only persistence fields.
 - **quran-api.ts** — wraps Quran.com v4. Exposes `getTajweedSurah(n)`, `getTajweedPage(n)`, `getChaptersIndex()` (with bundled fallback), and `getStartPageForSurah(n)`. Memory cache (15 minutes by default, 7 days for chapters), exponential backoff. 4xx fails fast; 5xx and network errors retry.
-- **audio-api.ts** — wraps Al Quran Cloud. `fetchAudioUrl(surah, ayah, reciter)` with a 1-hour cache. `fetchReciterEditions()` pulls the full audio editions list from `/edition?format=audio&type=versebyverse`, validates each entry against `RECITER_IDENTIFIER_PATTERN`, and pins Husary and Alafasy at the front via `mergeWithDefaults`. `resolveReciterIdentifier()` aliases the legacy short ids (`husary`, `alafasy`) to the full alquran.cloud identifiers so persisted settings keep working.
+- **audio-api.ts** — wraps Quran.com per-ayah audio (`/recitations/{id}/by_ayah/{surah}:{ayah}`). `fetchAudioUrl(surah, ayah, reciter)` with a 1-hour cache; `toAudioFileUrl` normalizes the API's relative or protocol-relative path to an absolute https URL on the audio CDN (`verses.quran.com` / the `quranicaudio.com` mirrors). The reciter catalogue is static in `reciters.ts` (`RECITATIONS`, 12 reciters; `DEFAULT_RECITER_ID` is Al-Husary muallim). `normalizeReciterId()` migrates legacy alquran.cloud ids (`husary`, `ar.husary`, `alafasy`, `ar.alafasy`) to the Quran.com recitation ids so persisted settings keep working.
 - **tajweed-colors.ts** — CSS-class to hex map for every tajweed rule the API emits, including dark-mode variants. Used by `TajweedText` and `ColorLegend`.
 - **storage.ts** — SSR-safe localStorage wrapper. `getSettings`, `setSettings`, `getProgress`, `setProgress`. Default settings include `lastMushafPage: 1` and `mushafBookmarks: []`. Adds `reviews`, `memorizedVerses`, `readSections`, and `analytics` fields to `TajweedProgress`, each with its own sanitizer and cap. Helpers: `getReviews/setReview`, `toggleMemorizedVerse`, `getReadSections/markSectionRead`, `getAnalytics/recordAnalyticsEvent`, `exportProgress/importProgress`.
 - **i18n.ts** — flat `key -> { en, ar }` dictionary, a `t(key, lang)` lookup, and the `useTranslation()` hook that pulls `lang` from settings and returns `{ t, lang, isAr, dir }`.
@@ -97,7 +109,7 @@ JSON files. Each entry that ships to the UI carries `verified: true`. The schema
 
 ### `src/app/` — routes
 
-Next.js App Router. Most pages are server components that hydrate into client components for interaction. The Mushaf page route uses `generateStaticParams` for pages 1 through 50 and ISR (`revalidate: 60 * 60 * 24`) for the rest.
+Next.js App Router (Next 16). Most pages are server components that hydrate into client components for interaction. The Mushaf page route uses `generateStaticParams` for the common entry pages and ISR (`export const revalidate = 86400`, a literal seconds value) for the rest. Dynamic route `params` is now a Promise: server routes `await params`; the client `practice/[module]` route unwraps it with React `use()`.
 
 ### `scripts/`
 
@@ -119,8 +131,8 @@ Next.js App Router. Most pages are server components that hydrate into client co
 
 1. `src/app/mushaf/page/[page]/page.tsx` is a server component. It calls `getTajweedPage(parseInt(params.page))` and `getChaptersIndex()`.
 2. Both functions go through `fetchWithCache` and `fetchWithRetry`. Cache hits skip the network entirely. `getChaptersIndex()` falls back to the bundled `surah-index.json` if the network fails.
-3. The server component passes the resolved data to the client `MushafReader`, which renders `MushafPage` plus the toolbar.
-4. Tap a verse: `MushafPage.handleVerseTap(surah, ayah)` -> `useAudio().play(...)` -> `fetchAudioUrl` -> Al Quran Cloud CDN.
+3. The server component `await`s its Promise `params`, then passes the resolved data to the client `MushafReader`, which renders `MushafPage` plus the toolbar (including the prominent "Play surah" control).
+4. Tap a verse: it routes through the global `usePlayer` (zustand) store -> `fetchAudioUrl` -> the Quran.com audio CDN. A plain tap plays a single verse; per-verse "play from here" and the toolbar "Play surah" start continuous surah playback, auto-advancing ayah to ayah. `MiniPlayer` exposes a single <-> full-surah mode toggle.
 
 ### Spaced repetition (Leitner)
 
@@ -158,7 +170,8 @@ Next.js App Router. Most pages are server components that hydrate into client co
 
 1. `app/manifest.ts` (Next metadata route) serves `/manifest.webmanifest`. `app/layout.tsx` sets `themeColor`, `appleWebApp`, and `icons`.
 2. `<PWARegister/>` (mounted in `AppProvider`) registers `/sw.js` after the `load` event in production builds. Dev skips registration so HMR isn't fighting a stale precached shell.
-3. `public/sw.js` strategies: network-first for HTML, cache-first for `/icon*` and `/_next/static/*`, stale-while-revalidate for `api.quran.com` / `api.alquran.cloud`, and cache-first with a 50-entry FIFO cap for `cdn.islamic.network` audio.
+3. `/sw.js` is served by a Next route handler (`src/app/sw.js/route.ts`, `dynamic = "force-static"`) that reads `scripts/sw-template.js` and stamps a unique per-build `BUILD_VERSION` into the cache namespaces. Each deploy therefore gets fresh caches and the `activate` step purges every cache that isn't part of the current build. (The old static `public/sw.js` with a fixed `CACHE_VERSION` never invalidated across deploys — the production stale-shell/asset bug — and was removed.)
+4. Worker scope is deliberately limited to same-origin requests: network-first with cache fallback for HTML navigations (the app shell), cache-first for same-origin static assets (hashed `_next` files, icons, fonts). It does **not** intercept cross-origin Quran audio (mp3) or the Quran.com API — those stream/fetch natively, so the worker can never break audio playback (offline Quran content is the trade-off).
 
 ### Settings sync
 

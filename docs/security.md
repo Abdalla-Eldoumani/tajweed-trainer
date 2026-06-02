@@ -15,28 +15,28 @@ This is a client-side app with no user accounts, no server data, no payments, an
 
 ## Content Security Policy
 
-Set in `next.config.mjs` and applied to every response:
+The CSP and all response headers are assembled once in `next.config.mjs` and applied to every response. This is the single source — `vercel.json` is trimmed to just `framework` and `buildCommand`, with no competing headers of its own.
 
 | Directive | Allows |
 |-----------|--------|
 | `default-src 'self'` | Only same-origin by default. |
-| `script-src 'self' 'unsafe-inline' 'unsafe-eval'` | Self plus the inline shims Next.js needs for hydration. |
-| `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com` | Self plus inline critical CSS plus Google Fonts CSS. |
-| `font-src 'self' https://fonts.gstatic.com data:` | Self plus Google Fonts WOFF files. |
+| `script-src 'self' 'unsafe-inline'` (plus `'unsafe-eval'` in dev only) | Self plus the inline shims Next.js needs for hydration. |
+| `style-src 'self' 'unsafe-inline'` | Self plus inline critical CSS. |
+| `font-src 'self' data:` | Self-hosted fonts (next/font); no Google Fonts origins. |
 | `img-src 'self' data: blob:` | Self plus data and blob URIs (icons, ornaments). |
-| `media-src 'self' https://cdn.islamic.network https://*.islamic.network` | The Al Quran Cloud audio CDN. |
-| `connect-src 'self' https://api.quran.com https://api.alquran.cloud https://cdn.islamic.network` | The two Quranic APIs and their CDNs. |
+| `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com` | The Quran.com per-ayah audio origins. |
+| `connect-src 'self' https://api.quran.com` | The Quran.com API. |
 | `frame-ancestors 'none'` | No embedding. |
 | `base-uri 'self'` | No `<base>` redirection. |
 | `form-action 'self'` | Forms can only post back to the app (we don't have any). |
 | `object-src 'none'` | No `<object>` / `<embed>` / Flash. |
 
-`'unsafe-inline'` and `'unsafe-eval'` in `script-src` are required by Next.js's runtime today. To remove them, the build would need to switch to a nonce-based CSP via middleware, which is a larger change.
+`'unsafe-inline'` in `script-src` is still required by Next.js's runtime today; to remove it the build would need a nonce-based CSP via middleware, which is a larger change. `'unsafe-eval'` is dropped from production responses (it's kept only in dev, where the bundler/HMR uses `eval`). Fonts are self-hosted via `next/font`, so `fonts.googleapis.com` / `fonts.gstatic.com` are no longer listed in `style-src` / `font-src`.
 
 ## Dependency hygiene
 
 - `npm audit` is part of the contributing checklist.
-- We track Next.js patch releases on the 14.x line so security fixes land without a major-version migration. Currently pinned to `^14.2.35`, which contains the fixes for the published Next.js advisories of that line.
+- Next.js is on 16.2.7 (React 19.2.7); we track patch releases so security fixes land promptly.
 
 ## Local-only analytics
 
@@ -52,14 +52,14 @@ We do not ship third-party analytics SDKs (Plausible, Google Analytics, PostHog,
 
 ## PWA service worker
 
-`public/sw.js` is precached as part of the install. It uses scoped fetch handling:
+The worker is served by a Next route handler (`src/app/sw.js/route.ts`, `force-static`) that stamps a unique per-build version into the template `scripts/sw-template.js`. Every deploy therefore gets fresh cache namespaces, and the `activate` step purges any cache that isn't part of the current build. (The old static `public/sw.js` had a fixed `CACHE_VERSION` that never invalidated across deploys — that was the production bug that left users on stale shells and assets. It was removed.)
 
-- **HTML**: network-first (so users always get the latest deploy when online).
-- **`/icon*.svg` and `/_next/static/*`**: cache-first (immutable assets).
-- **`api.quran.com` and `api.alquran.cloud`**: stale-while-revalidate (offline reads work, fresh data lands when the network returns).
-- **`cdn.islamic.network` audio**: cache-first with a 50-entry FIFO cap so the cache size stays bounded.
+Scope is deliberately limited to same-origin requests:
 
-The worker doesn't add tracking, doesn't intercept third-party domains beyond the listed APIs, and doesn't proxy POST requests. It registers only in production builds; dev (`npm run dev`) skips registration so HMR isn't fighting a stale shell.
+- **HTML navigation**: network-first with cache fallback (so users always get the latest deploy when online).
+- **Same-origin static assets** (`.js`, `.css`, `.svg`, fonts, images): cache-first (immutable hashed files).
+
+Cross-origin Quran audio (mp3) and the Quran.com API are intentionally **not** intercepted — they stream/fetch natively, so the worker can never break audio playback. The trade-off is that Quran content is not available offline. The worker only ever touches same-origin requests, doesn't add tracking, and doesn't proxy POST requests. It registers only in production builds; dev (`npm run dev`) skips registration so HMR isn't fighting a stale shell.
 
 ## What we explicitly do not do
 
@@ -68,7 +68,7 @@ The worker doesn't add tracking, doesn't intercept third-party domains beyond th
 - **No server-side persistence.** All progress lives in the browser. Backup / Restore is a user-initiated file download / upload — never an automatic sync.
 - **No third-party iframes or embedded widgets.** Everything is first-party.
 - **No remote-code or remote-config behavior.** All branching is determined by code shipped in the build.
-- **No TTS of Quranic text.** The Web Speech API is used only to read the practice question prompt (UI text); verse audio always comes from the verified Al Quran Cloud reciters.
+- **No TTS of Quranic text.** The Web Speech API is used only to read the practice question prompt (UI text); verse audio always comes from the verified Quran.com API reciters.
 
 ## Reporting a vulnerability
 

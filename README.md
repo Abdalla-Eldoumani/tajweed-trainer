@@ -6,11 +6,11 @@ All rules follow Hafs 'an 'Asim, the most widely used Qira'ah globally. Quranic 
 
 ## Features
 
-- **Mushaf reader** at `/mushaf`. The full 604-page Madinan Quran with tajweed coloring and tap-to-play audio. Surah index with search and a Makkah/Madinah filter, page bookmarks, surah-aware navigation. The reader follows the Madinan layout: ornate gold/red/blue border, decorative cartouche on each surah header, separate Bismillah line on surah starts (with the two correct exceptions: Al-Fatihah, where the Bismillah is verse 1, and At-Tawbah, which has no Bismillah).
+- **Mushaf reader** at `/mushaf`. The full 604-page Madinan Quran with tajweed coloring and tap-to-play audio. A prominent **Play surah** control in the toolbar plays the whole surah continuously, auto-advancing ayah to ayah and pausable anywhere. Surah index with search and a Makkah/Madinah filter, page bookmarks, surah-aware navigation. The reader follows the Madinan layout: ornate gold/red/blue border, decorative cartouche on each surah header, separate Bismillah line on surah starts (with the two correct exceptions: Al-Fatihah, where the Bismillah is verse 1, and At-Tawbah, which has no Bismillah).
 - **Nine learning modules**: Makharij Al-Huroof (articulation points), Noon Sakinah & Tanween, Meem Sakinah, Ghunnah, Qalqalah, Madd, Laam & Raa, Tafkheem & Tarqeeq, and Waqf.
 - **Bilingual UI and content**. Every visible English string has an Arabic counterpart. The language pill in the sidebar flips chrome, lesson content, common-mistake lists, surah names, weekday letters, and the 404 page. RTL handled correctly.
 - **Color-coded Quran text** rendered from the Quran.com Foundation API's `text_uthmani_tajweed` field, using the standard Tajweed-Mushaf palette.
-- **Audio playback** from Al Quran Cloud. Husary and Alafasy ship as defaults; the full reciter list is fetched at runtime from `/edition?format=audio&type=versebyverse`, cached for 24h, and surfaced in Settings as a language-grouped picker.
+- **Audio playback** from the Quran.com Foundation API (`/recitations/{id}/by_ayah/{key}`, resolving to verses.quran.com or the quranicaudio.com mirrors). Twelve verified reciters in `src/lib/reciters.ts`, defaulting to Al-Husary in the muallim (teaching) style; the picker in Settings is grouped by recitation style. Playback runs through a global player: a plain verse tap plays just that verse (single mode), while "play from here" and **Play surah** play continuously, with a single-verse <-> full-surah mode toggle in the mini-player.
 - **Practice hub** at `/practice` with a tile per module (270 authored questions across 9 modules), a Mixed Review tile drawing from every module, and a Review Due tile when spaced-repetition reviews are pending. Each module has its own route at `/practice/<module>`; spaced reviews live at `/practice/review`.
 - **Spaced repetition** with a Leitner box scheduler. Every answered question is tracked by stable id; correct answers promote one box (intervals 1, 3, 7, 14, 30 days), wrong answers reset to box 1.
 - **Memorization tracker** in the Mushaf reader. Tap the heart icon next to a verse to mark it memorized; tap the eye toggle in the toolbar to enter recall mode, which blurs every memorized verse so you can test yourself, with per-verse reveal.
@@ -20,7 +20,7 @@ All rules follow Hafs 'an 'Asim, the most widely used Qira'ah globally. Quranic 
 - **Global search** at `/search` across surahs, lesson modules, tajweed rules, and waqf symbols. Matches title and body fields, returns ranked results.
 - **Progress tracking** in `localStorage`: lesson completion, quiz history per module, daily streaks, Mushaf bookmarks, last page read, spaced-review boxes, memorized verses, read sections, and a 1000-event ring buffer of anonymous local insights (route views and quiz starts/finishes).
 - **Backup and restore**. Export your entire progress to a JSON file from Settings, or import a backup to roll forward when switching browsers or devices. No server involved.
-- **Installable PWA**. The app ships a web manifest, maskable icon, and a service worker (network-first HTML, cache-first static, stale-while-revalidate APIs, capped audio cache) so it can be installed and works offline for previously-visited content.
+- **Installable PWA**. The app ships a web manifest, maskable icon, and a service worker (network-first HTML, cache-first same-origin static assets) so it can be installed and works offline for previously-visited shell content. The worker is served by a Next route handler (`src/app/sw.js/route.ts`) that stamps a unique per-build cache version, so each deploy gets fresh cache namespaces and the activate step purges old caches. It deliberately does not intercept cross-origin Quran audio or the Quran.com API, so the worker can never break playback (offline Quran content is the trade-off).
 - **Dark mode** with adjusted tajweed colors so contrast holds up.
 
 ## Quick start
@@ -33,13 +33,13 @@ npm run dev
 Open `http://localhost:3000`.
 
 ```bash
-npm run build      # production build
-npm run lint       # eslint via next lint
-node scripts/verify-mushaf.mjs        # 21-check browser test for the Mushaf reader
-node scripts/verify-newfeatures.mjs   # spaced repetition, memorization, search, PWA, TTS
+npm run build          # production build (Turbopack)
+npm run lint           # eslint . (flat config; Next 16 deprecates `next lint`)
+npm run verify         # tsc --noEmit + eslint + the non-browser verify scripts
+npm run verify:ui      # browser tests (Chromium) for mushaf, practice, reciters, module lock, new features
 ```
 
-The verify scripts need the dev server running. They drive Chromium against the live app. See [docs/development.md](docs/development.md) for setup.
+The `verify:ui` scripts need the dev server running. They drive Chromium against the live app. See [docs/development.md](docs/development.md) for setup.
 
 ## How it stays accurate
 
@@ -54,12 +54,16 @@ Tajweed is an oral science traced through chains of recitation back to the Proph
 
 | Layer | Tech |
 |-------|------|
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js 16 (App Router, Turbopack) |
+| UI runtime | React 19 |
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS 3.4 |
+| Lint | ESLint 9 (flat config, `eslint.config.mjs`) |
+| Fonts | Self-hosted via `next/font` (Inter, Plus Jakarta Sans, JetBrains Mono, Amiri, Amiri Quran) |
+| Node | 24 |
 | State | localStorage (SSR-safe via `useSettings` and `useProgress`) |
 | Tajweed text | [Quran.com Foundation API v4](https://api.quran.com/api/v4) |
-| Audio | [Al Quran Cloud](https://api.alquran.cloud/v1) |
+| Audio | [Quran.com Foundation API v4](https://api.quran.com/api/v4) (verses.quran.com / quranicaudio.com mirrors) |
 | Browser test | playwright-core against a locally cached Chromium |
 
 The Mushaf reader pre-renders a handful of the most-trafficked pages at build time and falls through to Incremental Static Regeneration (24-hour revalidation) for the rest.
@@ -83,29 +87,30 @@ src/
       page/[page]/           /mushaf/page/{1..604}
       surah/[surah]/         /mushaf/surah/{1..114} -> redirect
     manifest.ts              PWA web manifest (metadata route)
+    sw.js/route.ts           Service worker route handler (per-build cache version)
   components/
     ui/                      ArabicText, TajweedText, AudioPlayer, Card, Ornament, ...
     layout/                  Sidebar, Header, MobileDrawer, AppProvider, nav-data
     learn/                   ModuleCard, RuleCard, ExampleCard, LetterGrid, MakhrajDiagram, ...
     practice/                PracticeQuestion, QuizSession, StreakCounter
     mushaf/                  MushafFrame, SurahCartouche, BismillahLine, MushafPage, MushafReader, MushafIndex
-  hooks/                     useAudio, useSettings, useProgress, useReciters, useReviews, useMemorization, useReadSections, useAnalytics, useSpeech, useModuleLock
+  hooks/                     usePlayer, useSettings, useProgress, useReviews, useMemorization, useReadSections, useAnalytics, useSpeech, useModuleLock, useBookmarks
   lib/                       types, i18n, quran-api, audio-api, tajweed-colors, storage, utils, question-pool, search, spaced-repetition
   data/content/              Reviewed tajweed JSON (rule files, glossary, learning-path, surah-index)
   app/globals.css            Tajweed colors, Mushaf frame, Islamic patterns
 public/
   icon.svg                   PWA icon (any purpose)
   icon-maskable.svg          PWA icon (maskable purpose)
-  sw.js                      Service worker
 scripts/
   fetch-surah-names.mjs      One-shot: pulls /chapters and patches surah_name_ar
-  verify-mushaf.mjs          21-check browser test for the Mushaf reader
-  verify-module-lock.mjs     11-check browser test for module gating
-  verify-questions.mjs       19-check browser test for the practice hub
-  verify-reciters.mjs        9-check browser test for reciter selector
-  verify-sanitizer.mjs       14 sanitizer tests, no browser
-  verify-newfeatures.mjs     12-check browser test for spaced repetition, memorization, search, TTS, PWA
-  capture-responsive.mjs     screenshots 12 routes at 375/768/1440
+  sw-template.js             Service worker template (stamped with a per-build version)
+  verify-mushaf.mjs          Browser test for the Mushaf reader
+  verify-module-lock.mjs     Browser test for module gating
+  verify-questions.mjs       Browser test for the practice hub
+  verify-reciters.mjs        Browser test for reciter selector
+  verify-sanitizer.mjs       Sanitizer tests, no browser
+  verify-newfeatures.mjs     Browser test for spaced repetition, memorization, search, TTS, PWA
+  capture-responsive.mjs     screenshots routes at 375/768/1440
 docs/
   architecture.md            System architecture and data flow
   content-schema.md          JSON content format and how to add a rule
