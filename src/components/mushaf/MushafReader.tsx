@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -8,6 +8,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
+import { useMemorization } from "@/hooks/useMemorization";
 import { pageForJuz, TOTAL_JUZ } from "@/lib/navigation";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
@@ -78,11 +79,27 @@ const PlaySolid = () => (
   </svg>
 );
 
+const PlayFromHereIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M4 5v14l8-7zM13 5v14l8-7z" />
+  </svg>
+);
+
+const HeartIcon = ({ filled }: { filled: boolean }) => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  </svg>
+);
+
 export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { settings, updateSettings } = useSettings();
   const { t, isAr } = useTranslation();
   const router = useRouter();
   const { isBookmarked: isVerseBookmarked, toggle: toggleVerseBm, mounted: bmMounted } = useBookmarks();
+  const { isMemorized, toggle: toggleMemorized, mounted: memMounted } = useMemorization();
+  // The reading-depth panel renders below the page; scroll it into view when a
+  // verse is tapped so the translation/tafsir is never opened off-screen.
+  const panelRef = useRef<HTMLDivElement>(null);
   // localStorage isn't available on the server, so any UI driven by it
   // (bookmark fill, last-page label) waits for client hydration.
   const [mounted, setMounted] = useState(false);
@@ -139,6 +156,12 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     return () => window.removeEventListener("keydown", handler);
   }, [page, isAr, router]);
 
+  // Bring the reading-depth panel into view when a verse is selected (it renders
+  // below the page, so a tap near the top of a long page would otherwise be silent).
+  useEffect(() => {
+    if (selectedVerse) panelRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [selectedVerse]);
+
   const bookmarks = useMemo(() => settings.mushafBookmarks ?? [], [settings.mushafBookmarks]);
   // Hydration safety: server can't know which pages are bookmarked, so the
   // filled state stays false until after mount.
@@ -159,6 +182,27 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       reciter: settings.reciter,
       speed: settings.playbackSpeed,
       surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
+    });
+  };
+
+  // Play a single verse (single mode) from the reading-depth panel.
+  const playSingleVerse = (sv: number, av: number) => {
+    const header = surahs.find((s) => s.number === sv);
+    usePlayer.getState().playVerse(sv, av, {
+      reciter: settings.reciter,
+      speed: settings.playbackSpeed,
+      surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
+    });
+  };
+
+  // Play continuously from this verse to the end of its surah.
+  const playFromVerse = (sv: number, av: number) => {
+    const header = surahs.find((s) => s.number === sv);
+    if (!header) return;
+    usePlayer.getState().playSurah(sv, av, header.versesCount, {
+      reciter: settings.reciter,
+      speed: settings.playbackSpeed,
+      surahName: isAr ? header.nameArabic : header.nameSimple,
     });
   };
 
@@ -279,6 +323,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         </div>
       </div>
 
+      <p className="text-center text-xs text-text-muted px-2">{t("mushaf.openDetailsHint")}</p>
+
       <div data-tajweed-drill={drill || undefined}>
         <MushafPage
           data={data}
@@ -288,50 +334,89 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         />
       </div>
 
-      {selectedVerse && /^\d{1,3}:\d{1,3}$/.test(selectedVerse) && (
-        <div className="rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-text-muted font-mono">{selectedVerse}</span>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => toggleVerseBm(selectedVerse)}
-                aria-pressed={bmMounted && isVerseBookmarked(selectedVerse)}
-                aria-label={
-                  bmMounted && isVerseBookmarked(selectedVerse)
-                    ? t("mushaf.bookmarkVerseRemove")
-                    : t("mushaf.bookmarkVerse")
-                }
-                className={cn(
-                  "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors",
-                  bmMounted && isVerseBookmarked(selectedVerse)
-                    ? "text-gold-dark dark:text-gold-light bg-gold/15"
-                    : "text-text-muted hover:bg-bg-subtle",
+      {selectedVerse && /^\d{1,3}:\d{1,3}$/.test(selectedVerse) && (() => {
+        const [sv, av] = selectedVerse.split(":").map(Number);
+        const header = surahs.find((s) => s.number === sv);
+        const surahLabel = header ? (isAr ? header.nameArabic : header.nameSimple) : "";
+        const refLabel = isAr ? `${toArabicIndic(sv)}:${toArabicIndic(av)}` : `${sv}:${av}`;
+        const verseMemo = memMounted && isMemorized(selectedVerse);
+        const verseBm = bmMounted && isVerseBookmarked(selectedVerse);
+        return (
+          <div
+            ref={panelRef}
+            className="rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark p-4 space-y-3 scroll-mt-20"
+          >
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span className="text-sm font-heading font-semibold">
+                {surahLabel} <span className="text-text-muted font-mono text-xs">{refLabel}</span>
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => playSingleVerse(sv, av)}
+                  aria-label={t("player.playVerse")}
+                  title={t("player.playVerse")}
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-primary dark:text-primary-light hover:bg-primary/10 transition-colors"
+                >
+                  <PlaySolid />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => playFromVerse(sv, av)}
+                  aria-label={t("player.playFromHere")}
+                  title={t("player.playFromHere")}
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-primary dark:text-primary-light hover:bg-primary/10 transition-colors"
+                >
+                  <PlayFromHereIcon />
+                </button>
+                {memMounted && (
+                  <button
+                    type="button"
+                    onClick={() => toggleMemorized(selectedVerse)}
+                    aria-pressed={verseMemo}
+                    aria-label={verseMemo ? t("mushaf.memorizeUnmark") : t("mushaf.memorizeMark")}
+                    title={verseMemo ? t("mushaf.memorizeUnmark") : t("mushaf.memorizeMark")}
+                    className={cn(
+                      "inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors",
+                      verseMemo
+                        ? "text-primary dark:text-primary-light bg-primary/10"
+                        : "text-text-muted hover:bg-bg-subtle",
+                    )}
+                  >
+                    <HeartIcon filled={verseMemo} />
+                  </button>
                 )}
-              >
-                <BookmarkIcon filled={bmMounted && isVerseBookmarked(selectedVerse)} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedVerse(null)}
-                aria-label={t("reading.close")}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-text-muted hover:bg-bg-subtle"
-              >
-                ✕
-              </button>
+                <button
+                  type="button"
+                  onClick={() => toggleVerseBm(selectedVerse)}
+                  aria-pressed={verseBm}
+                  aria-label={verseBm ? t("mushaf.bookmarkVerseRemove") : t("mushaf.bookmarkVerse")}
+                  title={verseBm ? t("mushaf.bookmarkVerseRemove") : t("mushaf.bookmarkVerse")}
+                  className={cn(
+                    "inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors",
+                    verseBm
+                      ? "text-gold-dark dark:text-gold-light bg-gold/15"
+                      : "text-text-muted hover:bg-bg-subtle",
+                  )}
+                >
+                  <BookmarkIcon filled={verseBm} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedVerse(null)}
+                  aria-label={t("reading.close")}
+                  title={t("reading.close")}
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-text-muted hover:bg-bg-subtle transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
+            <ReadingDepth surah={sv} ayah={av} />
+            {settings.showWordByWord && <WordByWord surah={sv} ayah={av} />}
           </div>
-          {(() => {
-            const [sv, av] = selectedVerse.split(":").map(Number);
-            return (
-              <>
-                <ReadingDepth surah={sv} ayah={av} />
-                {settings.showWordByWord && <WordByWord surah={sv} ayah={av} />}
-              </>
-            );
-          })()}
-        </div>
-      )}
+        );
+      })()}
 
       {/* Footer page indicator */}
       <p className="text-center text-xs text-text-muted">

@@ -2,7 +2,6 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
-import { useSettings } from "@/hooks/useSettings";
 import { useMemorization } from "@/hooks/useMemorization";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
@@ -10,7 +9,7 @@ import { TajweedText } from "@/components/ui/TajweedText";
 import { MushafFrame } from "./MushafFrame";
 import { SurahCartouche } from "./SurahCartouche";
 import { BismillahLine } from "./BismillahLine";
-import type { MushafPageData, SurahHeader } from "@/lib/types";
+import type { MushafPageData } from "@/lib/types";
 
 interface MushafPageProps {
   data: MushafPageData;
@@ -24,9 +23,8 @@ interface MushafPageProps {
 }
 
 export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onSelectVerse }: MushafPageProps) {
-  const { settings } = useSettings();
-  const { t, isAr } = useTranslation();
-  const { isMemorized, toggle, mounted } = useMemorization();
+  const { t } = useTranslation();
+  const { isMemorized, mounted } = useMemorization();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
   // Subscribe to the verse the global player is on so the page can mark it while
@@ -44,36 +42,8 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
     if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
   }, [targetVerseKey, data.pageNumber]);
 
-  // Playback runs through the global store. Memorize mode only controls text
-  // visibility, so the two never contend for the shared audio element.
-  const surahNameOf = (header: SurahHeader | undefined): string | null =>
-    header ? (isAr ? header.nameArabic : header.nameSimple) : null;
-
-  // A plain tap plays just this verse and stops (single mode).
-  const handleVerseTap = (surah: number, ayah: number, header: SurahHeader | undefined) => {
-    usePlayer.getState().playVerse(surah, ayah, {
-      reciter: settings.reciter,
-      speed: settings.playbackSpeed,
-      surahName: surahNameOf(header),
-    });
-  };
-
-  // "Play from here" plays the rest of the surah continuously from this verse.
-  const handlePlayFromHere = (e: React.MouseEvent, surah: number, ayah: number, header: SurahHeader | undefined) => {
-    e.stopPropagation();
-    if (!header) return;
-    usePlayer.getState().playSurah(surah, ayah, header.versesCount, {
-      reciter: settings.reciter,
-      speed: settings.playbackSpeed,
-      surahName: surahNameOf(header),
-    });
-  };
-
-  const handleToggleMemorized = (e: React.MouseEvent, verseKey: string) => {
-    e.stopPropagation();
-    toggle(verseKey);
-  };
-
+  // Tapping a verse opens its reading-depth panel (translation, tafsir,
+  // word-by-word); the play / bookmark / memorize actions live in that panel.
   const handleReveal = (e: React.MouseEvent, verseKey: string) => {
     e.stopPropagation();
     setRevealed((prev) => {
@@ -120,8 +90,8 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                 <span data-verse-key={v.verseKey} className="inline-flex items-baseline relative">
                   <button
                     type="button"
-                    onClick={() => handleVerseTap(v.surah, v.ayah, header)}
-                    aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
+                    onClick={() => onSelectVerse?.(v.verseKey)}
+                    aria-label={`${t("mushaf.verseDetails")} (${v.surah}:${v.ayah})`}
                     aria-current={isPlaying ? "true" : undefined}
                     className={cn("mushaf-verse", hideText && "select-none", isPlaying && "mushaf-verse-playing")}
                   >
@@ -133,55 +103,6 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                       )}
                     />{" "}
                   </button>
-                  {mounted && (
-                    <button
-                      type="button"
-                      onClick={(e) => handlePlayFromHere(e, v.surah, v.ayah, header)}
-                      aria-label={`${t("player.playFromHere")} (${v.surah}:${v.ayah})`}
-                      title={t("player.playFromHere")}
-                      className="ms-1 inline-flex items-center justify-center w-6 h-6 align-middle rounded-full text-text-muted/40 hover:text-primary opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M4 5v14l8-7zM13 5v14l8-7z" />
-                      </svg>
-                    </button>
-                  )}
-                  {mounted && (
-                    <button
-                      type="button"
-                      onClick={(e) => handleToggleMemorized(e, v.verseKey)}
-                      aria-label={memorized ? t("mushaf.memorizeUnmark") : t("mushaf.memorizeMark")}
-                      aria-pressed={memorized}
-                      className={cn(
-                        "ms-1 inline-flex items-center justify-center w-6 h-6 align-middle rounded-full transition-opacity",
-                        memorized
-                          ? "text-primary dark:text-primary-light opacity-90"
-                          : "text-text-muted/40 hover:text-primary opacity-0 hover:opacity-100 focus:opacity-100",
-                      )}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill={memorized ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                      </svg>
-                    </button>
-                  )}
-                  {mounted && onSelectVerse && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelectVerse(v.verseKey);
-                      }}
-                      aria-label={t("reading.details")}
-                      title={t("reading.details")}
-                      className="ms-1 inline-flex items-center justify-center w-6 h-6 align-middle rounded-full text-text-muted/40 hover:text-primary opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9" />
-                        <line x1="12" y1="11" x2="12" y2="16" />
-                        <circle cx="12" cy="8" r="0.6" fill="currentColor" />
-                      </svg>
-                    </button>
-                  )}
                   {hideText && (
                     <button
                       type="button"

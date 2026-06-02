@@ -420,6 +420,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.juzIndex": { en: "Juz Index", ar: "فهرس الأجزاء" },
   "mushaf.bookmarks": { en: "Bookmarks", ar: "المفضلة" },
   "mushaf.tapToHear": { en: "Tap to hear this verse", ar: "اضغط لسماع الآية" },
+  "mushaf.verseDetails": { en: "View translation and tafsir", ar: "عرض الترجمة والتفسير" },
+  "mushaf.openDetailsHint": { en: "Tap any verse for translation, tafsir, and audio", ar: "اضغط أي آية لعرض الترجمة والتفسير والصوت" },
   "mushaf.pageNumber": { en: "Page", ar: "الصفحة" },
   "mushaf.previousPage": { en: "Previous page", ar: "الصفحة السابقة" },
   "mushaf.nextPage": { en: "Next page", ar: "الصفحة التالية" },
