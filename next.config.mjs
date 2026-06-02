@@ -11,8 +11,9 @@ const isDev = process.env.NODE_ENV !== "production";
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
+  // Fonts are self-hosted via next/font; no Google Fonts origins needed.
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
   "img-src 'self' data: blob:",
   "media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com",
   "connect-src 'self' https://api.quran.com",
