@@ -34,6 +34,11 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Pin the workspace root to this project so a stray parent-directory lockfile
+  // doesn't get inferred as the root (Next 16 / Turbopack root detection).
+  turbopack: {
+    root: import.meta.dirname,
+  },
   images: {
     unoptimized: true,
   },
