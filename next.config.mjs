@@ -28,7 +28,28 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+  // Deny every powerful feature the app never uses, shrinking the surface a
+  // post-XSS attacker could reach. The app only plays audio, which needs none
+  // of these.
+  {
+    key: "Permissions-Policy",
+    value: [
+      "camera=()",
+      "microphone=()",
+      "geolocation=()",
+      "interest-cohort=()",
+      "payment=()",
+      "usb=()",
+      "serial=()",
+      "bluetooth=()",
+      "hid=()",
+      "midi=()",
+      "display-capture=()",
+      "accelerometer=()",
+      "gyroscope=()",
+      "magnetometer=()",
+    ].join(", "),
+  },
   { key: "X-DNS-Prefetch-Control", value: "on" },
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ];
