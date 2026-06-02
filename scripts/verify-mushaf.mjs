@@ -107,16 +107,25 @@ async function main() {
   });
   record("Page 187 (At-Tawbah) has NO BismillahLine", standaloneBismillahTawbah === 0, `count: ${standaloneBismillahTawbah}`);
 
-  // 10. Tap a verse → audio request issued
+  // 10. Tap a verse → reading-depth panel opens (translation/tafsir); the
+  // panel's play button is what fetches audio now (tap no longer auto-plays).
   await page.goto(`${BASE}/mushaf/page/1`, { waitUntil: "networkidle" });
-  networkUrls.length = 0;
   await page.locator(".mushaf-verse").first().click();
+  await page.waitForTimeout(600);
+  const panelPlay = page.locator('button[aria-label="Play this verse"]');
+  const panelOpened = await panelPlay.count();
+  record("Tap verse opens the reading-depth panel", panelOpened >= 1, `panel play buttons: ${panelOpened}`);
+  const tafsirToggle = await page.locator('button:has-text("Show tafsir"), button:has-text("Hide tafsir")').count();
+  record("Reading-depth panel offers translation/tafsir", tafsirToggle >= 1, `tafsir toggles: ${tafsirToggle}`);
+  networkUrls.length = 0;
+  if (panelOpened >= 1) await panelPlay.first().click();
   await page.waitForTimeout(2500);
-  const audioRequest = networkUrls.find((u) => /alquran\.cloud|cdn\.islamic\.network|audio\/.+\.mp3/.test(u));
-  record("Tap verse triggers audio fetch", !!audioRequest, audioRequest ? `url: ${audioRequest.slice(0, 80)}...` : "no audio request seen");
+  const audioRequest = networkUrls.find((u) => /by_ayah|quranicaudio|verses\.quran\.com|\.mp3/.test(u));
+  record("Panel play button triggers audio fetch", !!audioRequest, audioRequest ? `url: ${audioRequest.slice(0, 80)}...` : "no audio request seen");
 
-  // 11. Bookmark toggle persists to localStorage
-  await page.click('button[aria-label*="bookmark"], button[aria-label*="ookmark"]');
+  // 11. Page-bookmark toggle persists to localStorage (toolbar control, distinct
+  // from the panel's per-verse bookmark which may also be on screen now).
+  await page.click('button[aria-label="Add bookmark"]');
   await page.waitForTimeout(200);
   const stored = await page.evaluate(() => {
     const raw = localStorage.getItem("tajweed-trainer-progress");
