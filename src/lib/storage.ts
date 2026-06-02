@@ -24,7 +24,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   language: "en",
   lastMushafPage: 1,
   mushafBookmarks: [],
-  translationId: 131,
+  translationId: 20,
   tafsirId: 169,
   showWordByWord: false,
 };
@@ -125,7 +125,7 @@ function sanitizeSettings(input: unknown): UserSettings {
     language: pickEnum(input.language, VALID_LANGUAGES, DEFAULT_SETTINGS.language),
     lastMushafPage: pickNumber(input.lastMushafPage, 1, 1, 604),
     mushafBookmarks: bookmarks,
-    translationId: pickNumber(input.translationId, DEFAULT_SETTINGS.translationId ?? 131, 1, 1_000_000),
+    translationId: pickNumber(input.translationId, DEFAULT_SETTINGS.translationId ?? 20, 1, 1_000_000),
     tafsirId: pickNumber(input.tafsirId, DEFAULT_SETTINGS.tafsirId ?? 169, 1, 1_000_000),
     showWordByWord:
       typeof input.showWordByWord === "boolean" ? input.showWordByWord : (DEFAULT_SETTINGS.showWordByWord ?? false),

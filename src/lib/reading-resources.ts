@@ -8,8 +8,8 @@ import type { TranslationResource } from "./types";
 // uncertain, per the source-everything rule.
 
 export const CURATED_TRANSLATIONS: TranslationResource[] = [
-  { id: 131, name: "The Clear Quran — Dr. Mustafa Khattab", authorName: "Mustafa Khattab", languageName: "english" },
   { id: 20, name: "Saheeh International", authorName: "Saheeh International", languageName: "english" },
+  { id: 85, name: "M.A.S. Abdel Haleem", authorName: "M.A.S. Abdel Haleem", languageName: "english" },
 ];
 
 export const CURATED_TAFSIRS: TranslationResource[] = [

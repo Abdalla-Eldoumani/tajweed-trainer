@@ -272,12 +272,12 @@ export default function SettingsPage() {
           <label className="block">
             <span className="text-sm">{t("settings.translationResource")}</span>
             <select
-              value={settings.translationId ?? 131}
+              value={settings.translationId ?? 20}
               onChange={(e) => updateSettings({ translationId: Number(e.target.value) })}
               aria-label={t("settings.translationResource")}
               className="w-full mt-1 px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
             >
-              {ensurePresent(translations, settings.translationId ?? 131).map((r) => (
+              {ensurePresent(translations, settings.translationId ?? 20).map((r) => (
                 <option key={r.id} value={r.id}>{r.name}</option>
               ))}
             </select>

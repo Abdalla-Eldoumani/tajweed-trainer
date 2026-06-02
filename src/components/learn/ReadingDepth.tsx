@@ -34,7 +34,7 @@ export function ReadingDepth({ surah, ayah }: ReadingDepthProps) {
     }
     let alive = true;
     setTranslationState("loading");
-    getTranslationsForChapter(surah, settings.translationId ?? 131)
+    getTranslationsForChapter(surah, settings.translationId ?? 20)
       .then((map) => {
         if (!alive) return;
         setTranslation(map[verseKey] ?? null);
@@ -69,9 +69,14 @@ export function ReadingDepth({ surah, ayah }: ReadingDepthProps) {
         <p className="text-text-muted">{t("reading.unavailable")}</p>
       )}
       {settings.showTranslation && translationState === "ready" && translation && (
-        <p className="text-text leading-relaxed" dir="auto">
-          {translation}
-        </p>
+        // Already sanitized by getTranslationsForChapter; rendered as HTML so the
+        // source's own footnote markers (e.g. <sup>) show as superscripts rather
+        // than literal text. Never generated content.
+        <p
+          className="text-text leading-relaxed"
+          dir="auto"
+          dangerouslySetInnerHTML={{ __html: translation }}
+        />
       )}
 
       <button

@@ -7,7 +7,7 @@ This guide is for adding or revising practice questions, lesson anchors, and the
 These are not best practices. They override anything else in this guide.
 
 1. **AI never generates Quranic text.** Not a single ayah, not a fragment, not a transliteration "to demonstrate". Every Arabic verse fragment in `src/data/questions/*.ts` and `src/data/content/*.json` was reused from pre-reviewed maintainer content, or pulled from the Quran.com Foundation API at authoring time. AI-generated verse text is never accepted.
-2. **AI never paraphrases or translates Quran or hadith.** Translations come from existing in-repo data (`translationEditionId: null`) or from a numbered Quran.com translation edition (e.g., `131` for Sahih International).
+2. **AI never paraphrases or translates Quran or hadith.** Translations come from existing in-repo data (`translationEditionId: null`) or from a numbered Quran.com translation edition (e.g., `20` for Saheeh International).
 3. **AI never invents tajweed rules, classifications, or examples.** Every claim in a question explanation must trace back to the corresponding lesson page at `src/app/learn/<module>/page.tsx` or to an entry in `src/data/content/`.
 4. **Hafs 'an 'Asim only.** No mixing of qira'aat. Beat counts, letter sets, and rule names follow Hafs 'an 'Asim.
 5. **When in doubt, omit.** A missing question is recoverable; a fabricated ruling is not.
@@ -126,7 +126,7 @@ The 0.2.0 question pool reused existing verified examples for all 270 questions,
   "<surah>:<ayah>": {
     "arabic": "<verse text from API>",
     "gloss": "<English from a numbered translation edition>",
-    "glossEditionId": 131,                        // 131 = Sahih International, etc.
+    "glossEditionId": 20,                         // 20 = Saheeh International, etc.
     "fetchedAt": "2026-05-02T12:00:00Z",
     "source": "https://api.quran.com/api/v4/verses/by_key/<surah>:<ayah>"
   }
