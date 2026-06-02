@@ -3,7 +3,7 @@ import { MushafReader } from "@/components/mushaf/MushafReader";
 import { getTajweedPage, getChaptersIndex, getBundledChaptersIndex } from "@/lib/quran-api";
 
 interface MushafPageRouteProps {
-  params: { page: string };
+  params: Promise<{ page: string }>;
 }
 
 const TOTAL_PAGES = 604;
@@ -14,19 +14,21 @@ export async function generateStaticParams() {
   return pages.map((p) => ({ page: String(p) }));
 }
 
-export const revalidate = 60 * 60 * 24; // 24 hours for ISR pages
+export const revalidate = 86400; // 24 hours (in seconds) for ISR pages
 
 export async function generateMetadata({ params }: MushafPageRouteProps) {
-  const pageNum = parseInt(params.page, 10);
+  const { page } = await params;
+  const pageNum = parseInt(page, 10);
   return {
     title: `Page ${pageNum} | Mushaf | Tajweed Trainer`,
   };
 }
 
 export default async function MushafPageRoute({ params }: MushafPageRouteProps) {
+  const { page } = await params;
   // Strict validation: only positive integers without leading zeros, in range.
-  if (!/^[1-9]\d*$/.test(params.page)) notFound();
-  const pageNum = parseInt(params.page, 10);
+  if (!/^[1-9]\d*$/.test(page)) notFound();
+  const pageNum = parseInt(page, 10);
   if (!Number.isInteger(pageNum) || pageNum < 1 || pageNum > TOTAL_PAGES) {
     notFound();
   }
