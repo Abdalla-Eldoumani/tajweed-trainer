@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { toSafeAudioUrl } from "../src/lib/media-url.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -48,6 +49,13 @@ record("validate.ts sanitizes the search query", /export function sanitizeSearch
 record("API imports the validators", /from "\.\/validate"/.test(api));
 record("Reading-depth wrappers clamp the surah", /clampSurah\(/.test(api));
 record("Reading-depth wrappers validate resource ids", /isValidResourceId\(/.test(api));
+
+// Audio URL allowlist (defense-in-depth against a tampered upstream response).
+record("Audio: relative path is pinned to the trusted CDN", toSafeAudioUrl("Alafasy/mp3/001001.mp3", "https://verses.quran.com/") === "https://verses.quran.com/Alafasy/mp3/001001.mp3");
+record("Audio: protocol-relative mirror is upgraded to https", toSafeAudioUrl("//mirrors.quranicaudio.com/x.mp3", "https://verses.quran.com/") === "https://mirrors.quranicaudio.com/x.mp3");
+record("Audio: plaintext http on an allowed host is upgraded", toSafeAudioUrl("http://verses.quran.com/x.mp3", "https://verses.quran.com/") === "https://verses.quran.com/x.mp3");
+record("Audio: an unexpected host is rejected", toSafeAudioUrl("https://evil.example.com/x.mp3", "https://verses.quran.com/") === null);
+record("Audio: empty path is rejected", toSafeAudioUrl("", "https://verses.quran.com/") === null && toSafeAudioUrl(null, "https://verses.quran.com/") === null);
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);

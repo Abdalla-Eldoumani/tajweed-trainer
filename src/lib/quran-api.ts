@@ -11,11 +11,12 @@ import type {
 } from "./types";
 import surahIndex from "@/data/content/surah-index.json";
 import { sanitizeTafsirHtml } from "./sanitize";
+import { toSafeAudioUrl } from "./media-url";
 import { clampSurah, isValidResourceId, isValidVerseKey, sanitizeSearchQuery } from "./validate";
 
 const BASE_URL = "https://api.quran.com/api/v4";
 // Word-by-word audio clips are served from the Quran.com audio CDN as relative
-// paths; absolute and protocol-relative forms are passed through unchanged.
+// paths; absolute/protocol-relative forms are accepted only on allowlisted hosts.
 const WORD_AUDIO_CDN = "https://audio.qurancdn.com/";
 const cache = new Map<string, { data: unknown; timestamp: number }>();
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
@@ -215,10 +216,7 @@ interface WordsApiResponse {
 }
 
 function toWordAudioUrl(path: string | null | undefined): string | null {
-  if (typeof path !== "string" || path.length === 0) return null;
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  if (path.startsWith("//")) return `https:${path}`;
-  return WORD_AUDIO_CDN + path.replace(/^\/+/, "");
+  return toSafeAudioUrl(path, WORD_AUDIO_CDN);
 }
 
 // verse_key -> ordered words with per-word transliteration, gloss and audio URL.

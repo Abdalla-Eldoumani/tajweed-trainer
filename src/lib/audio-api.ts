@@ -1,5 +1,7 @@
 import type { ReciterId } from "./types";
 import { DEFAULT_RECITER_ID, normalizeReciterId } from "./reciters";
+import { toSafeAudioUrl } from "./media-url";
+import { clampSurah, clampAyah } from "./validate";
 
 // Quran.com per-ayah audio. The by_ayah endpoint returns a path relative to the
 // audio CDN; prefix it with AUDIO_CDN to get the playable file URL.
@@ -9,16 +11,9 @@ const AUDIO_CDN = "https://verses.quran.com/";
 const audioCache = new Map<string, { url: string; timestamp: number }>();
 const AUDIO_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
-// The by_ayah `url` may be relative ("Alafasy/mp3/001001.mp3"), protocol-
-// relative ("//mirrors.quranicaudio.com/..."), or absolute. Normalize to https.
-function toAudioFileUrl(path: string): string {
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  if (path.startsWith("//")) return `https:${path}`;
-  return AUDIO_CDN + path.replace(/^\/+/, "");
-}
-
+// Self-clamp the division so the endpoint is well-formed regardless of caller.
 export function getAudioEndpoint(surah: number, ayah: number, reciter: ReciterId = DEFAULT_RECITER_ID): string {
-  return `${QURAN_API}/recitations/${normalizeReciterId(reciter)}/by_ayah/${surah}:${ayah}`;
+  return `${QURAN_API}/recitations/${normalizeReciterId(reciter)}/by_ayah/${clampSurah(surah)}:${clampAyah(ayah)}`;
 }
 
 export async function fetchAudioUrl(
@@ -42,7 +37,10 @@ export async function fetchAudioUrl(
   if (typeof path !== "string" || path.length === 0) {
     throw new Error("Audio API returned no file for this verse");
   }
-  const audioUrl = toAudioFileUrl(path);
+  const audioUrl = toSafeAudioUrl(path, AUDIO_CDN);
+  if (!audioUrl) {
+    throw new Error("Audio API returned a URL from an unexpected origin");
+  }
 
   audioCache.set(cacheKey, { url: audioUrl, timestamp: Date.now() });
   return audioUrl;
