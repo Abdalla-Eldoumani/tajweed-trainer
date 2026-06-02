@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.3.1 — 2026-06-01
+
+A security-hardening and bug-fix pass. No religious-content changes — verse text, translations, tafsir, and audio still come only from the verified Quran.com API.
+
+### Fixed
+
+- **Reading-depth panel is now discoverable.** Tapping any verse in the Mushaf reader opens its translation / tafsir / word-by-word panel, which scrolls into view. The old hover-only per-verse icons (play, memorize, details) were undiscoverable on touch and are gone; play this verse, play from here, memorize, and verse bookmark now live in the panel header.
+- **Translations now render.** The previous default translation resource id (131) is no longer served by the Quran.com API and returned nothing, so no translation ever appeared. The default is now Saheeh International (id 20) and the curated list drops the dead id. Footnote markers render as superscripts instead of literal text.
+
+### Security
+
+- **Mutation-XSS hardening.** The verse and tafsir HTML sanitizers (`src/lib/sanitize.ts`) were rewritten to escape every angle bracket before re-creating only known-safe tag shapes, closing a single-pass-regex tag-reassembly bypass (e.g. `<<img onerror=x>img ...>`). `verify-sanitizer.mjs` now imports the real sanitizer and tests the exact bypass payloads (29 cases).
+- **Audio URL allowlist.** API-provided audio URLs are constrained to expected hosts (`verses.quran.com`, `*.quranicaudio.com`, `audio.qurancdn.com`) and upgraded to https (`src/lib/media-url.ts`); `getAudioEndpoint` self-clamps surah / ayah.
+- **Permissions-Policy** denies every unused device feature (payment, USB, serial, bluetooth, screen capture, sensors).
+- **Service worker** caches navigations under a query-stripped key so distinct query strings cannot grow the cache without bound.
+- **Dependencies.** `npm audit fix` cleared the picomatch (high) and brace-expansion advisories and bumped the top-level postcss. The remaining advisory is Next's build-time-only nested postcss, which is non-exploitable here: only the app's own CSS passes through postcss, and the deployed artifact is static.
+
+### Changed
+
+- `vercel.json` builds via the canonical `npm run build` script. Security headers, CSP, and caching stay centralized in `next.config.mjs`, which Vercel honors.
+
 ## 0.3.0
 
 A platform upgrade plus the production audio/asset fix and continuous playback. Framework, fonts, service worker, and response headers were all reworked; the religious-content rule is unchanged (verse text, translation, tafsir, and audio still come only from the verified Quran.com API or committed snapshots).
