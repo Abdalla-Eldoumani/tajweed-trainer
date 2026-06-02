@@ -5,7 +5,7 @@ export const metadata = {
   title: "Mushaf | Tajweed Trainer",
 };
 
-export const revalidate = 60 * 60 * 24 * 7; // 7 days
+export const revalidate = 604800; // 7 days (in seconds)
 
 export default async function MushafIndexPage() {
   const surahs = await getChaptersIndex();
