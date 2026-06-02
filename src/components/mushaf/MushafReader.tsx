@@ -72,6 +72,12 @@ const EyeIcon = ({ closed }: { closed: boolean }) => (
   )
 );
 
+const PlaySolid = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M8 5v14l11-7z" />
+  </svg>
+);
+
 export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { settings, updateSettings } = useSettings();
   const { t, isAr } = useTranslation();
@@ -143,6 +149,19 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     updateSettings({ mushafBookmarks: next });
   };
 
+  // Play the whole surah continuously, auto-advancing ayah to ayah, from its
+  // first verse. The mini-player then lets the user pause/resume anywhere.
+  const playFullSurah = () => {
+    const first = data.verses[0];
+    if (!first) return;
+    const header = surahs.find((s) => s.number === first.surah);
+    usePlayer.getState().playSurah(first.surah, 1, header?.versesCount ?? first.ayah, {
+      reciter: settings.reciter,
+      speed: settings.playbackSpeed,
+      surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
+    });
+  };
+
   const prevPage = Math.max(1, page - 1);
   const nextPage = Math.min(TOTAL_PAGES, page + 1);
   const atStart = page === 1;
@@ -153,6 +172,16 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2">
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={playFullSurah}
+            aria-label={t("mushaf.playSurah")}
+            title={t("mushaf.playSurah")}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3 py-2 min-h-[44px] text-sm font-medium hover:bg-primary/90 transition-colors"
+          >
+            <PlaySolid />
+            <span className="hidden sm:inline">{t("mushaf.playSurah")}</span>
+          </button>
           <Link href={`/mushaf/page/${prevPage}`} aria-disabled={atStart} className={cn(atStart && "pointer-events-none opacity-40")}>
             <Button variant="outline" size="sm" className="gap-1 min-h-[44px]" aria-label={t("mushaf.previousPage")}>
               <ChevronStart />
