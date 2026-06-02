@@ -2,13 +2,14 @@ import { notFound, redirect } from "next/navigation";
 import { getStartPageForSurah } from "@/lib/quran-api";
 
 interface SurahRedirectRouteProps {
-  params: { surah: string };
+  params: Promise<{ surah: string }>;
 }
 
-export default function SurahRedirectRoute({ params }: SurahRedirectRouteProps) {
+export default async function SurahRedirectRoute({ params }: SurahRedirectRouteProps) {
+  const { surah } = await params;
   // Strict validation: only positive integers 1..114, no leading zeros.
-  if (!/^[1-9]\d*$/.test(params.surah)) notFound();
-  const surahNum = parseInt(params.surah, 10);
+  if (!/^[1-9]\d*$/.test(surah)) notFound();
+  const surahNum = parseInt(surah, 10);
   if (!Number.isInteger(surahNum) || surahNum < 1 || surahNum > 114) {
     notFound();
   }
