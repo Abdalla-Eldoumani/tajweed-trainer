@@ -103,8 +103,8 @@ JSON files. Each entry that ships to the UI carries `verified: true`. The schema
   - `MushafFrame` is the outer ornate frame; the multi-color geometric band lives in CSS (`.mushaf-frame::after`).
   - `SurahCartouche` is the banner shown when a surah starts on the current page.
   - `BismillahLine` is the standalone Bismillah; suppressed for surah 9 (At-Tawbah, no Bismillah at all) and surah 1 (Al-Fatihah, where Bismillah is verse 1).
-  - `MushafPage` composes the above with flowing tajweed-colored verse buttons that play audio on tap. Renders the per-verse memorize toggle (a small heart icon) and, when `memorizationMode` is on, blurs every memorized verse with a Reveal pill.
-  - `MushafReader` is the toolbar (prev / next, surah dropdown, eye toggle for memorization mode, bookmark) and keyboard navigation. RTL-aware.
+  - `MushafPage` composes the above with flowing tajweed-colored verse buttons. Tapping a verse opens the reading-depth panel (no inline per-verse controls); when `memorizationMode` is on it blurs every memorized verse with a Reveal pill.
+  - `MushafReader` is the toolbar (prev / next, surah dropdown, eye toggle for memorization mode, bookmark), keyboard navigation, and the reading-depth panel — the per-verse action hub (play this verse, play from here, memorize, bookmark) plus translation/tafsir/word-by-word. RTL-aware.
   - `MushafIndex` is the 114-surah grid with search, Makkah / Madinah filter, and the "continue from page X" callout.
 
 ### `src/app/` — routes
@@ -132,7 +132,7 @@ Next.js App Router (Next 16). Most pages are server components that hydrate into
 1. `src/app/mushaf/page/[page]/page.tsx` is a server component. It calls `getTajweedPage(parseInt(params.page))` and `getChaptersIndex()`.
 2. Both functions go through `fetchWithCache` and `fetchWithRetry`. Cache hits skip the network entirely. `getChaptersIndex()` falls back to the bundled `surah-index.json` if the network fails.
 3. The server component `await`s its Promise `params`, then passes the resolved data to the client `MushafReader`, which renders `MushafPage` plus the toolbar (including the prominent "Play surah" control).
-4. Tap a verse: it routes through the global `usePlayer` (zustand) store -> `fetchAudioUrl` -> the Quran.com audio CDN. A plain tap plays a single verse; per-verse "play from here" and the toolbar "Play surah" start continuous surah playback, auto-advancing ayah to ayah. `MiniPlayer` exposes a single <-> full-surah mode toggle.
+4. Tap a verse: it opens the reading-depth panel. Playback is triggered from the panel (play this verse / play from here) or the toolbar "Play surah" button, routing through the global `usePlayer` (zustand) store -> `fetchAudioUrl` -> the Quran.com audio CDN, auto-advancing ayah to ayah in continuous mode. `MiniPlayer` exposes a single <-> full-surah mode toggle.
 
 ### Spaced repetition (Leitner)
 
@@ -143,7 +143,7 @@ Next.js App Router (Next 16). Most pages are server components that hydrate into
 
 ### Memorization tracker
 
-1. The user taps the heart on a verse in `MushafPage`. `useMemorization().toggle(verseKey)` calls `toggleMemorizedVerse(verseKey)` in storage, which validates against `^\d{1,3}:\d{1,3}$` and caps the set at 6,236.
+1. The user taps a verse to open its reading-depth panel and toggles the memorize button there. `useMemorization().toggle(verseKey)` calls `toggleMemorizedVerse(verseKey)` in storage, which validates against `^\d{1,3}:\d{1,3}$` and caps the set at 6,236.
 2. The hook keeps a local `Set<string>` mirror so re-renders are O(1).
 3. The toolbar eye button in `MushafReader` flips an in-session `memorizationMode` flag; `MushafPage` blurs every memorized verse and renders a Reveal pill that toggles a per-verse `revealed` set.
 

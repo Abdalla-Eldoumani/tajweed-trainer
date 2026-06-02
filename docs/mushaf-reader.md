@@ -1,6 +1,6 @@
 # Mushaf reader
 
-A reproduction of the 604-page Madinan Mushaf, color-coded for tajweed, with tap-to-play audio. Lives at `/mushaf` (index) and `/mushaf/page/[page]/` (reader).
+A reproduction of the 604-page Madinan Mushaf, color-coded for tajweed. Tapping a verse opens a panel with its translation, tafsir, and audio. Lives at `/mushaf` (index) and `/mushaf/page/[page]/` (reader).
 
 ## What it does
 
@@ -8,7 +8,7 @@ A reproduction of the 604-page Madinan Mushaf, color-coded for tajweed, with tap
 - A surah index at `/mushaf` listing all 114 surahs as cards (Arabic name, Latin name, verse count, start page, Makkah / Madinah badge). Search by Latin name, filter by revelation place, and a "continue from page X" callout when there's a saved `lastMushafPage`.
 - The reader at `/mushaf/page/[page]/`: the Madinan layout with surah cartouche, Bismillah line on surah starts, tajweed-colored verses, gold verse-end markers in Arabic-Indic numerals, and a page / juz footer.
 - A surah jump at `/mushaf/surah/[surah]/` that redirects server-side to that surah's start page.
-- Tap a verse to play it. Tap routes through the global zustand player store (`usePlayer.getState().playVerse(surah, ayah, opts)`) in single mode, with the user's reciter and speed from settings. A per-verse "play from here" control and the toolbar "Play surah" button start continuous surah playback instead (`playSurah`). The persistent `MiniPlayer` (mounted once in `AppProvider`) is the transport and carries a single ↔ continuous mode toggle.
+- Tap a verse to open its reading-depth panel below the page (translation, tafsir, optional word-by-word). The panel is the per-verse action hub: play this verse (`usePlayer.getState().playVerse(surah, ayah, opts)`, single mode), play from here (`playSurah`, continuous), a memorize toggle, and a verse bookmark. It scrolls itself into view on open so a tap near the top of a long page is never silent. The toolbar "Play surah" button also starts continuous playback. The persistent `MiniPlayer` (mounted once in `AppProvider`) is the transport and carries a single ↔ continuous mode toggle.
 - Per-page bookmark toggle, persisted to localStorage. Bookmarks appear on the index as quick-jump chips.
 - Keyboard navigation (`ArrowLeft` and `ArrowRight`), mirrored under RTL when the language is set to Arabic.
 - Arabic mode and dark mode are both supported. Every label translates; the gold frame stays legible on dark cream.
@@ -37,7 +37,7 @@ A standalone Bismillah surrounded by ornamental dividers. Suppressed for surah 1
 
 ### `MushafPage`
 
-Composes the frame, cartouches, Bismillahs (when applicable), the flowing verses, and the footer. Verses are rendered as inline `<button>` elements wrapping `<TajweedText>`, so each verse is independently focusable (accessibility) and tappable (audio). The button class is `.mushaf-verse`, which adds a soft hover and focus background without breaking text justification.
+Composes the frame, cartouches, Bismillahs (when applicable), the flowing verses, and the footer. Verses are rendered as inline `<button>` elements wrapping `<TajweedText>`, so each verse is independently focusable (accessibility) and tappable. Tapping calls `onSelectVerse(verseKey)` to open the reading-depth panel; the page carries no inline per-verse action buttons. The button class is `.mushaf-verse`, which adds a soft hover and focus background without breaking text justification.
 
 ### `MushafReader`
 
@@ -51,7 +51,7 @@ The client wrapper around `MushafPage`. It holds:
 - Memorization-mode eye toggle (in-session, not persisted) — blurs memorized verses on the page.
 - Bookmark toggle (filled gold star icon when bookmarked).
 - Keyboard navigation (`ArrowLeft` and `ArrowRight`, mirrored when the language is Arabic).
-- A reading-depth panel that opens below the page when a verse's "details" control is tapped (translation, tafsir, optional word-by-word) with a per-verse bookmark toggle.
+- A reading-depth panel that opens below the page when a verse is tapped (translation, tafsir, optional word-by-word). The panel header is the per-verse action hub: play this verse, play from here, memorize toggle, and a verse bookmark. It scrolls itself into view on open. Translation defaults to Saheeh International (resource id 20); tafsir to Ibn Kathir (169).
 - A `useEffect` that writes `lastMushafPage` and `lastRead` to settings on mount. An entry URL of `?v=surah:ayah` scrolls that verse into view and starts it in single mode.
 
 The `mounted` flag pattern defers the bookmark filled state until after hydration. The server can't read localStorage, so it always renders unfilled; the client takes over after mount. Without this, React warns about a hydration mismatch on the SVG `fill` attribute.
@@ -137,5 +137,5 @@ A failing assertion lists the file path and the actual vs. expected value. Scree
 
 ## What's intentionally not here
 
-- **Always-on per-word translation overlay.** Word-level meaning and tafsir live in the on-demand reading-depth panel (tap a verse's "details" control), not as a persistent overlay on the page. The page itself stays a clean color-coded Mushaf.
+- **Always-on per-word translation overlay.** Word-level meaning and tafsir live in the on-demand reading-depth panel (tap a verse), not as a persistent overlay on the page. The page itself stays a clean color-coded Mushaf.
 - **Multiple Mushaf layouts (Indo-Pak, etc.).** The Madinan layout is the most widely used; supporting variants would require a separate index and a verse-to-line mapping per script style.
