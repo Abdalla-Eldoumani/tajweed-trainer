@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useTranslation } from "@/lib/i18n";
@@ -41,15 +42,16 @@ function ModuleNotFound({ id }: { id: string }) {
   );
 }
 
-export default function ModulePracticePage({ params }: { params: { module: string } }) {
+export default function ModulePracticePage({ params }: { params: Promise<{ module: string }> }) {
   const { t, isAr } = useTranslation();
+  const { module: moduleId } = use(params);
 
-  if (!VALID_MODULE_IDS.has(params.module)) {
-    return <ModuleNotFound id={params.module} />;
+  if (!VALID_MODULE_IDS.has(moduleId)) {
+    return <ModuleNotFound id={moduleId} />;
   }
 
-  const mod = MODULES.find((m) => m.id === params.module);
-  const label = mod ? (isAr ? mod.labelAr : mod.label) : params.module;
+  const mod = MODULES.find((m) => m.id === moduleId);
+  const label = mod ? (isAr ? mod.labelAr : mod.label) : moduleId;
 
   return (
     <div className="space-y-6">
@@ -66,7 +68,7 @@ export default function ModulePracticePage({ params }: { params: { module: strin
         <p className="text-sm text-text-muted mt-2">{t("practice.description")}</p>
       </div>
 
-      <QuizSession key={params.module} moduleFilter={params.module} mode="random" />
+      <QuizSession key={moduleId} moduleFilter={moduleId} mode="random" />
     </div>
   );
 }
