@@ -94,7 +94,7 @@ src/
     learn/                   ModuleCard, RuleCard, ExampleCard, LetterGrid, MakhrajDiagram, ...
     practice/                PracticeQuestion, QuizSession, StreakCounter
     mushaf/                  MushafFrame, SurahCartouche, BismillahLine, MushafPage, MushafReader, MushafIndex
-  hooks/                     useAudio, useSettings, useProgress, useReciters, useReviews, useMemorization, useReadSections, useAnalytics, useSpeech, useModuleLock
+  hooks/                     usePlayer, useSettings, useProgress, useReviews, useMemorization, useReadSections, useAnalytics, useSpeech, useModuleLock, useBookmarks
   lib/                       types, i18n, quran-api, audio-api, tajweed-colors, storage, utils, question-pool, search, spaced-repetition
   data/content/              Reviewed tajweed JSON (rule files, glossary, learning-path, surah-index)
   app/globals.css            Tajweed colors, Mushaf frame, Islamic patterns
