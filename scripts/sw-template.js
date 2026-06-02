@@ -44,15 +44,20 @@ function isSameOriginStatic(url) {
 }
 
 async function networkFirstHtml(request) {
+  // Cache under a query-stripped key. The shell HTML is identical regardless of
+  // query string, so this bounds the cache to one entry per route instead of
+  // letting distinct ?query values grow it without limit.
+  const url = new URL(request.url);
+  const cacheKey = url.origin + url.pathname;
   try {
     const network = await fetch(request);
     if (network && network.ok) {
       const cache = await caches.open(SHELL_CACHE);
-      cache.put(request, network.clone());
+      cache.put(cacheKey, network.clone());
     }
     return network;
   } catch {
-    const cached = await caches.match(request);
+    const cached = await caches.match(cacheKey);
     if (cached) return cached;
     const shell = await caches.match("/");
     if (shell) return shell;
