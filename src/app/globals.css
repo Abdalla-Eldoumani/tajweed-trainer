@@ -200,6 +200,15 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   font-family: inherit;
 }
 
+/* Headroom for the tallest harakat (a shadda stacked over a damma, a madd
+   alif) so the top mark never clips against a tight inline container, and a
+   touch of word-spacing so adjacent colored runs read as separate words. The
+   mushaf page sets its own larger line-height; this only adds breathing room. */
+.tajweed-text {
+  padding-block-start: 0.15em;
+  word-spacing: 0.05em;
+}
+
 @layer base {
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
