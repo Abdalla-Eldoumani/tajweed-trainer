@@ -17,7 +17,38 @@ export const RECITATIONS: Recitation[] = [
   { id: "10", nameEn: "Sa`ud ash-Shuraym", nameAr: "سعود الشريم", style: null },
   { id: "11", nameEn: "Mohamed al-Tablawi", nameAr: "محمد الطبلاوي", style: null },
   { id: "12", nameEn: "Mahmoud Khalil Al-Husary", nameAr: "محمود خليل الحصري", style: "Muallim" },
+  // EveryAyah reciters (ea-* ids). Names are id-joined from mp3quran.net and the
+  // English name confirms identity; styles are unlabelled at the source (null),
+  // so they group as murattal. Each per-ayah file was confirmed to resolve.
+  // These have no Quran.com endpoint; audio-api.ts builds the URL from
+  // EVERYAYAH_FOLDER below. The origin is allowlisted in media-url.ts + the CSP.
+  { id: "ea-ghamdi", nameEn: "Saad al-Ghamdi", nameAr: "سعد الغامدي", style: null },
+  { id: "ea-muaiqly", nameEn: "Maher al-Muaiqly", nameAr: "ماهر المعيقلي", style: null },
+  { id: "ea-ayyoub", nameEn: "Muhammad Ayyoub", nameAr: "محمد أيوب", style: null },
+  { id: "ea-hudhaifi", nameEn: "Ali al-Hudhaifi", nameAr: "علي بن عبدالرحمن الحذيفي", style: null },
+  { id: "ea-basfar", nameEn: "Abdullah Basfar", nameAr: "عبدالله بصفر", style: null },
+  { id: "ea-dossari", nameEn: "Yasser al-Dossari", nameAr: "ياسر الدوسري", style: null },
+  { id: "ea-juhani", nameEn: "Abdullah Awad al-Juhani", nameAr: "عبدالله عواد الجهني", style: null },
 ];
+
+// EveryAyah folder per ea-* reciter id. The per-ayah file path is
+// data/{folder}/{SSS}{AAA}.mp3 (surah/ayah zero-padded to 3); audio-api.ts
+// assembles it. Keep this in lockstep with the ea-* entries in RECITATIONS.
+export const EVERYAYAH_FOLDER: Record<string, string> = {
+  "ea-ghamdi": "Ghamadi_40kbps",
+  "ea-muaiqly": "MaherAlMuaiqly128kbps",
+  "ea-ayyoub": "Muhammad_Ayyoub_128kbps",
+  "ea-hudhaifi": "Hudhaify_128kbps",
+  "ea-basfar": "Abdullah_Basfar_192kbps",
+  "ea-dossari": "Yasser_Ad-Dussary_128kbps",
+  "ea-juhani": "Abdullaah_3awwaad_Al-Juhaynee_128kbps",
+};
+
+// True for EveryAyah-sourced reciters, which build a direct URL instead of
+// hitting the Quran.com by_ayah API.
+export function isEveryAyahReciter(id: string): boolean {
+  return Object.prototype.hasOwnProperty.call(EVERYAYAH_FOLDER, id);
+}
 
 // Default: Al-Husary in the muallim (teaching) style, slow and clear.
 export const DEFAULT_RECITER_ID = "12";
