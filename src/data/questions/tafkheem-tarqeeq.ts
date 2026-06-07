@@ -1,10 +1,12 @@
 import type { Question } from "@/lib/types";
 
-// Arabic words reused verbatim from src/data/content/tafkheem-tarqeeq.json
-// (always_heavy.tafkheem_levels examples and variable_letters examples).
-// Verses are pinned to verifiable surah:ayah locations from Al-Fatihah and
-// Juz 30 per Step 2.4.
-const PROVENANCE = "src/data/content/tafkheem-tarqeeq.json";
+// Each question's arabicText is drawn from the word's cited `source` surah:ayah
+// in the authenticated Quran text (Al-Fatihah and Juz 30), not from the lesson
+// JSON — several of these words illustrate a heavy/light letter that the lesson
+// describes but does not embed as a verse example. verify-content.mjs checks
+// every arabicText against the Uthmani text of its cited verse in
+// verse-snapshots.json.
+const PROVENANCE = "cited source surah:ayah (authenticated Quran text)";
 
 export const questions: Question[] = [
   // ---------- EASY (10) ----------
