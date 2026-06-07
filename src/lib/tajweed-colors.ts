@@ -4,9 +4,11 @@
 // (QUL), the data project shared by Quran.com and Tarteel:
 //   new / mushaf scheme: app/assets/stylesheets/shared/tajweed_color_new.scss
 //   classic scheme:      app/assets/stylesheets/shared/tajweed.scss
-// See .agent/TAJWEED_COLOR_REFERENCE.md. Light hexes are never invented or
-// adjusted here. Dark values are lifts for the deep-navy dark background (not
-// from QUL); scripts/verify-tajweed-colors.mjs contrast-checks them.
+// Light hexes are never invented or adjusted here. Dark values are lifts for the
+// deep-navy dark background (not from QUL); scripts/verify-tajweed-colors.mjs
+// contrast-checks them and enforces parity with the --tajweed-* variables in
+// src/app/globals.css. This map is the single source of truth: do not hand-edit
+// a hex in globals.css, change it here and the verify script keeps both in sync.
 //
 // Keys are the EXACT class names the Quran.com API emits in the
 // text_uthmani_tajweed field. Live enumeration on 2026-05-30 (surahs 38, 2,
@@ -24,8 +26,8 @@ export type TajweedScheme = "new" | "classic";
 
 // The active palette. Flip to "classic" to switch the whole scheme from one
 // place (the two schemes differ only in the madd family and qalaqah). Default
-// is "new", confirmed by pixel-sampling the reference mushaf; see
-// .agent/TAJWEED_COLOR_REFERENCE.md.
+// is "new", confirmed by pixel-sampling the reference mushaf. The classic-scheme
+// hexes are kept in the `classic` field of each entry below.
 export const SCHEME: TajweedScheme = "new";
 
 export type TajweedGroup =
@@ -52,8 +54,8 @@ interface TajweedClassDef {
 // Keyed by exact API class name. Light values verbatim from QUL; dark values
 // are contrast-checked lifts. Classic light values for the madd family and
 // qalaqah come from the classic QUL sheet; their dark lifts are authored here
-// (recorded in TAJWEED_COLOR_REFERENCE.md) so a flip to classic is not a broken
-// dark mode. Every other color is identical between the two schemes.
+// so a flip to classic is not a broken dark mode. Every other color is identical
+// between the two schemes.
 const TAJWEED_DEFS: Record<string, TajweedClassDef> = {
   ham_wasl: {
     nameEn: "Hamzat al-Wasl",
