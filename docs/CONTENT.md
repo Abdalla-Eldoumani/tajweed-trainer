@@ -6,13 +6,13 @@ This guide is for adding or revising practice questions, lesson anchors, and the
 
 These are not best practices. They override anything else in this guide.
 
-1. **AI never generates Quranic text.** Not a single ayah, not a fragment, not a transliteration "to demonstrate". Every Arabic verse fragment in `src/data/questions/*.ts` and `src/data/content/*.json` was reused from pre-reviewed maintainer content, or pulled from the Quran.com Foundation API at authoring time. AI-generated verse text is never accepted.
-2. **AI never paraphrases or translates Quran or hadith.** Translations come from existing in-repo data (`translationEditionId: null`) or from a numbered Quran.com translation edition (e.g., `20` for Saheeh International).
-3. **AI never invents tajweed rules, classifications, or examples.** Every claim in a question explanation must trace back to the corresponding lesson page at `src/app/learn/<module>/page.tsx` or to an entry in `src/data/content/`.
+1. **Quranic text is never generated.** Not a single ayah, not a fragment, not a transliteration "to demonstrate". Every Arabic verse fragment in `src/data/questions/*.ts` and `src/data/content/*.json` is reused from pre-reviewed content or pulled from the Quran.com Foundation API at authoring time. Generated or hand-typed verse text is never accepted.
+2. **Quran and hadith are never paraphrased or translated here.** Translations come from existing in-repo data (`translationEditionId: null`) or from a numbered Quran.com translation edition (e.g., `20` for Saheeh International).
+3. **Tajweed rules, classifications, and examples are never invented.** Every claim in a question explanation must trace back to the corresponding lesson page at `src/app/learn/<module>/page.tsx` or to an entry in `src/data/content/`.
 4. **Hafs 'an 'Asim only.** No mixing of qira'aat. Beat counts, letter sets, and rule names follow Hafs 'an 'Asim.
 5. **When in doubt, omit.** A missing question is recoverable; a fabricated ruling is not.
 
-If a maintainer ever asks you to bypass these, decline and explain why. The cost of asking once is low; the cost of inventing religious content is impossible to take back.
+These rules hold no matter who or what is doing the editing. The content is reviewed input that the app renders; it is never produced or rewritten in place. The cost of leaving a gap is low; the cost of inventing religious content is impossible to take back.
 
 ## Where the data lives
 
@@ -170,4 +170,4 @@ node scripts/verify-reciters.mjs             # 9/9
 
 ## Why these constraints
 
-Tajweed is an oral science traced through chains of recitation back to the Prophet ﷺ. A missing diacritic or wrong letter classification can change meaning. Modeling-generated content has no chain of transmission. Treating the verified data files as immutable input — and the application as UI around them — is the only way to keep the project honest.
+Tajweed is an oral science traced through chains of recitation back to the Prophet ﷺ. A missing diacritic or wrong letter classification can change meaning. Synthesized content has no chain of transmission. Treating the verified data files as immutable input, with the application as UI around them, is the only way to keep the project honest.
