@@ -26,6 +26,10 @@ interface PlayerState {
   speed: number;
   reciter: ReciterId;
   surahName: string | null;
+  // Non-null when the current verse failed to load (e.g. the chosen reciter has
+  // no audio for it). The host sets it; the mini-player shows it and points the
+  // user at the reciter picker. Cleared on the next successful (re)load attempt.
+  error: string | null;
   // The host watches these tokens to drive the single <audio> element
   // imperatively: loadToken forces a (re)load of the current verse, seekToken a
   // seek. pendingOffset is the position to seek to right after the next load.
@@ -64,6 +68,9 @@ interface PlayerState {
   setSleepTimer: (minutes: number | null) => void;
   stop: () => void;
   restore: () => void;
+  // The host reports a failed verse load here so the UI can prompt a reciter
+  // change; passing null clears it.
+  setError: (message: string | null) => void;
 
   // Called by the audio host in response to media element events.
   onLoaded: (duration: number) => void;
@@ -88,6 +95,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   speed: 1,
   reciter: DEFAULT_RECITER_ID,
   surahName: null,
+  error: null,
   loadToken: 0,
   pendingOffset: 0,
   seekToken: 0,
@@ -115,6 +123,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       currentTime: 0,
       duration: 0,
       pendingOffset: 0,
+      error: null,
       loadToken: s.loadToken + 1,
     })),
 
@@ -130,6 +139,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       currentTime: 0,
       duration: 0,
       pendingOffset: 0,
+      error: null,
       loadToken: s.loadToken + 1,
     })),
 
@@ -138,8 +148,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     if (s.status === "playing") return s.pause();
     if (s.queue.length === 0) return;
     // From a fully stopped state, force a reload; otherwise just resume.
-    if (s.status === "idle") set({ status: "loading", loadToken: s.loadToken + 1 });
-    else set({ status: "playing" });
+    if (s.status === "idle") set({ status: "loading", error: null, loadToken: s.loadToken + 1 });
+    else set({ status: "playing", error: null });
   },
 
   pause: () => {
@@ -153,13 +163,13 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   next: () =>
     set((s) =>
       s.index < s.queue.length - 1
-        ? { index: s.index + 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, loadToken: s.loadToken + 1 }
+        ? { index: s.index + 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, error: null, loadToken: s.loadToken + 1 }
         : {},
     ),
   prev: () =>
     set((s) =>
       s.index > 0
-        ? { index: s.index - 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, loadToken: s.loadToken + 1 }
+        ? { index: s.index - 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, error: null, loadToken: s.loadToken + 1 }
         : { seekTarget: 0, seekToken: s.seekToken + 1, currentTime: 0 },
     ),
 
@@ -218,9 +228,11 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     ),
 
   stop: () => {
-    set({ status: "idle", currentTime: 0, sleepDeadline: null });
+    set({ status: "idle", currentTime: 0, sleepDeadline: null, error: null });
     get().persist();
   },
+
+  setError: (message) => set({ error: message }),
 
   restore: () => {
     const r = getPlayerResume();
