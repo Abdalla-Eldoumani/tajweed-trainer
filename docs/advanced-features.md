@@ -1,10 +1,9 @@
-# Advanced features — gated findings
+# Advanced features and why they are deferred
 
-These are larger, optional features that each need a written feasibility/decision
-note before any code, because each carries a real cost or a stack decision. These
-are those notes. No code for them has been written. Where a claim needs
-confirmation from an external party (e.g. font licensing), that is called out
-explicitly rather than asserted.
+These are larger, optional features that each carry a real cost or a stack
+decision, so each gets a written feasibility note before any code. None of them
+is built yet. Where a claim needs confirmation from an external party (font
+licensing, for instance), that is called out explicitly rather than asserted.
 
 ---
 
@@ -26,16 +25,16 @@ own font. This is what produces exact line breaks and justification.
   app already fetches per page (`getTajweedPage`), so the data path largely exists.
 - *Tajweed coloring*: this is the hard interaction. The current color scheme works
   because `text_uthmani_tajweed` returns `<tajweed class>` spans around Unicode
-  text. QCF V4 glyph codes do **not** carry tajweed classes — coloring would have
-  to be reconstructed by aligning the QCF word codes with the tajweed markup word
-  by word. That alignment is non-trivial and is the main engineering cost.
+  text. QCF V4 glyph codes do **not** carry tajweed classes, so coloring would
+  have to be reconstructed by aligning the QCF word codes with the tajweed markup
+  word by word. That alignment is non-trivial and is the main engineering cost.
 - *Bundle size*: 604 page fonts. They are loaded on demand per page (not bundled),
   so the incremental cost is one ~5-20 KB woff2 per visited page, cached. Acceptable
   for a reader, but it adds 604 network assets to host or proxy.
 - *Licensing*: QCF fonts are distributed by the Quran.com Foundation. **Their exact
   redistribution/self-hosting terms must be confirmed with the Foundation before
-  shipping** — do not assume. Hotlinking their CDN may be permitted; bundling may
-  not. This is a blocker that is a question for a person, not code.
+  shipping**, so do not assume. Hotlinking their CDN may be permitted; bundling
+  may not. This is a blocker that is a question for a person, not code.
 
 **Decision.** Deferred. The current Amiri Quran Unicode rendering is correct and
 fully functional; QCF V4 is a fidelity upgrade, not a correctness fix. Pursue only
@@ -54,7 +53,7 @@ makhraj-aware), which is far heavier than anything that belongs in a Next.js sta
 export. Generic browser speech recognition (Web Speech API) is tuned for
 conversational language, not Quranic articulation, and will not reliably judge
 tajweed. Treating its output as correctness feedback would risk telling a user
-their correct recitation is wrong — unacceptable for this domain.
+their correct recitation is wrong, which is unacceptable for this domain.
 
 **Lighter step that could be scoped first.** A *record-and-self-compare* feature:
 let the user record themselves, then play their recording back against the
@@ -62,9 +61,9 @@ reference reciter (Husary) for the same ayah, side by side, with no automated
 judgement. This is honest (no model claims), fits the static app (MediaRecorder +
 the existing player), and is genuinely useful for self-correction.
 
-**Decision.** Automated feedback is its own initiative with its own research and
-scaffold; do not bolt it onto this app. The record-and-self-compare step is a
-reasonable future addition here if wanted — scope it explicitly before building.
+**Decision.** Automated feedback is its own project, with its own research and its
+own codebase; do not bolt it onto this app. The record-and-self-compare step is a
+reasonable future addition here if wanted. Scope it explicitly before building.
 
 ---
 
@@ -87,5 +86,5 @@ need without a server.
 
 ---
 
-*Recorded during the feature-completion and verification pass. None of these
-advanced features were implemented; these decisions gate them.*
+*None of these features is implemented. Each note records the decision so the
+trade-off is clear before anyone picks the work up.*
