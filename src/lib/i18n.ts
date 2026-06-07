@@ -390,6 +390,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.sleep": { en: "Sleep timer", ar: "مؤقّت الإيقاف" },
   "player.min": { en: "min", ar: "دقيقة" },
   "player.sleepEndOfSurah": { en: "End of surah", ar: "نهاية السورة" },
+  "player.dragHandle": {
+    en: "Move player. Drag, or use the arrow keys.",
+    ar: "تحريك المشغّل. اسحبه أو استخدم مفاتيح الأسهم.",
+  },
   "audio.unavailable": {
     en: "This reciter has no audio for this verse.",
     ar: "لا يتوفّر تسجيل لهذا القارئ في هذه الآية.",
