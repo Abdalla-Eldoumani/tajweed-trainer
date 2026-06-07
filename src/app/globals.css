@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Palette decision: the app keeps the green-on-cream identity below. A
+   deep-navy/gold/ivory alternative was considered and is recorded here as a
+   documented option, not applied. To adopt it, swap the :root and .dark token
+   values; the tajweed-* variables and the verify script are unaffected.
+
+   Light:  --bg #F4EFE3  --bg-card #FBF8F1  --bg-subtle #E8E0CF
+           --text #11203A (deep navy ink)   --text-muted #5A6478
+           --primary #11203A  --primary-weak #1C355C
+           --gold #B68A2E      --gold-hairline rgba(182,138,46,0.35)
+   Dark:   --bg #0A1224  --bg-card #111A30  --bg-subtle #18223C
+           --text #EEF1F8     --text-muted #99A2B6
+           --primary #C9A24A (gold-forward on navy)  --primary-weak #1C355C
+           --gold #D8B25A      --gold-hairline rgba(216,178,90,0.32)
+
+   The green identity is intentional (it reads as a Quranic study app and keeps
+   the printed-mushaf warmth); the navy option is filed for the maintainer. */
+
 :root {
   --primary: #165E2A;
   --primary-light: #4CAF50;
