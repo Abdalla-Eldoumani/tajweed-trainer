@@ -5,9 +5,9 @@ interface MushafFrameProps {
   className?: string;
 }
 
-// Multi-layer ornate Mushaf-style frame: outer gold rule, multi-color
-// geometric band (red/blue/gold), inner gold rule, content area.
-// The decorative styling lives in globals.css under `.mushaf-frame`.
+// Mushaf-style frame: a quiet double gold rule (outer rule plus an inner
+// hairline) with a single 8-point star at the head corner. The decorative
+// styling lives in globals.css under `.mushaf-frame`.
 export function MushafFrame({ children, className }: MushafFrameProps) {
   return (
     <div className={cn("mushaf-frame", className)}>
