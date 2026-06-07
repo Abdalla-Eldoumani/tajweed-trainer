@@ -32,8 +32,9 @@ function dedupeByColor(colors: TajweedColor[]): TajweedColor[] {
 
 // One legend cell: a small card whose specimen is the rule's own Arabic name,
 // set in the rule's actual color (read from the map via the CSS variable, never
-// hard-coded), with the English name as the label below. The specimen tile
-// carries a gold hairline so the light grays stay visible on a white card.
+// hard-coded), with the English name as the label. The specimen chip carries a
+// gold hairline so the light grays stay visible on a white card, and holds the
+// name on one line so multi-word names never spill outside the chip.
 function LegendCell({ color }: { color: TajweedColor }) {
   const swatch = `var(--tajweed-${color.cssClass})`;
   return (
@@ -43,11 +44,11 @@ function LegendCell({ color }: { color: TajweedColor }) {
       role="listitem"
     >
       <span
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border"
+        className="inline-flex h-9 shrink-0 items-center rounded-md border px-2"
         style={{ borderColor: "var(--gold-hairline)" }}
       >
         <span
-          className="font-arabic text-lg leading-none"
+          className="font-arabic text-base leading-none whitespace-nowrap"
           dir="rtl"
           lang="ar"
           style={{ color: swatch }}
