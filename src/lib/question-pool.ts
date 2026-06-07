@@ -45,11 +45,41 @@ for (const s of surahIndex as Array<{ number: number; nameSimple: string; nameAr
   surahNameByNumber.set(s.number, { en: s.nameSimple, ar: s.nameArabic });
 }
 
+// The authored pool was written answer-first, so most questions keep the correct
+// option at position A. Shuffle each question's options before display so position
+// carries no signal. Seed the shuffle from the question id (not Math.random) so the
+// order is stable across a session and identical on server and client — a random
+// order would reshuffle every render and mismatch SSR hydration.
+function seedFromId(id: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h = Math.imul(h ^ id.charCodeAt(i), 16777619);
+  }
+  return h >>> 0;
+}
+
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const result = [...arr];
+  let state = seed || 1;
+  for (let i = result.length - 1; i > 0; i--) {
+    state = (state + 0x6d2b79f5) | 0;
+    let t = Math.imul(state ^ (state >>> 15), 1 | state);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    const rnd = ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    const j = Math.floor(rnd * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 function questionToPractice(q: Question): PracticeQuestion {
   const surahName = surahNameByNumber.get(q.source.surah) ?? { en: "", ar: "" };
   const correct = q.options.find((o) => o.id === q.correctOptionId);
   const correctEn = correct?.label.en ?? "";
   const correctAr = correct?.label.ar;
+  // Correctness is checked by label downstream, so shuffling the option objects
+  // (en + ar together) keeps the right answer correct in both languages.
+  const shown = seededShuffle(q.options, seedFromId(q.id));
   return {
     example: {
       arabic: q.arabicText,
@@ -65,8 +95,8 @@ function questionToPractice(q: Question): PracticeQuestion {
     },
     correctAnswer: correctEn,
     correctAnswerAr: correctAr,
-    options: q.options.map((o) => o.label.en),
-    optionsAr: q.options.map((o) => o.label.ar ?? o.label.en),
+    options: shown.map((o) => o.label.en),
+    optionsAr: shown.map((o) => o.label.ar ?? o.label.en),
     moduleId: q.moduleId,
     prompt: q.prompt,
     explanation: q.explanation,
