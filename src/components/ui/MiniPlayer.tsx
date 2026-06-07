@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
 import { ayahCountForSurah } from "@/lib/navigation";
@@ -48,6 +49,7 @@ export function MiniPlayer() {
   const repeatRange = usePlayer((s) => s.repeatRange);
   const sleepEndOfSurah = usePlayer((s) => s.sleepEndOfSurah);
   const sleepActive = usePlayer((s) => s.sleepDeadline !== null);
+  const error = usePlayer((s) => s.error);
 
   // Range inputs are local; the store owns the active range once "Loop" is hit.
   const [from, setFrom] = useState(1);
@@ -85,6 +87,21 @@ export function MiniPlayer() {
         role="region"
         aria-label={t("player.play")}
       >
+        {error && (
+          <div
+            role="alert"
+            className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs"
+          >
+            <span className="text-red-600 dark:text-red-400">{t(error)}</span>
+            <Link
+              href="/settings"
+              className="shrink-0 font-medium text-primary dark:text-primary-light underline underline-offset-2 hover:no-underline"
+            >
+              {t("audio.changeReciter")}
+            </Link>
+          </div>
+        )}
+
         {showStudy && (
           <div className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
             <label className="flex items-center gap-1.5">
