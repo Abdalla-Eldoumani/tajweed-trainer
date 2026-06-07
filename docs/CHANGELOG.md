@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.4.0 — 2026-06-07
+
+Broader reciter choice, a movable audio player, a content-accuracy pass with a new offline check, and visual polish. No religious-content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
+
+### Added
+
+- **Seven more reciters** from everyayah.com, bringing the roster to nineteen: Saad al-Ghamdi, Maher al-Muaiqly, Muhammad Ayyoub, Ali al-Hudhaifi, Abdullah Basfar, Yasser al-Dossari, and Abdullah Awad al-Juhani. They live alongside the twelve Quran.com recitations in `src/lib/reciters.ts` (ids prefixed `ea-`). Each per-ayah file was confirmed to resolve before it was added, and the everyayah host is allowlisted in `src/lib/media-url.ts` and the CSP. If an ayah file ever 404s, playback falls back instead of stalling.
+- **Movable mini-player.** The mini-player can be dragged by its handle to any corner of the viewport; the position is clamped to stay on screen and persists in user settings, so it stays out of the way of whatever you are reading.
+- **Content check** via `scripts/verify-content.mjs`. It reads every practice question, confirms the Arabic fragment appears in the authenticated text of the verse it cites (folding orthographic differences that are not content differences), and hard-fails on structural problems (no valid answer, duplicate id, wrong option count). Offline, no key. See [content-audit.md](content-audit.md).
+- **Sourced practice questions** added across noon sakinah, meem sakinah, ghunnah, qalqalah, madd, laam and raa, and tafkheem and tarqeeq, each citing the surah:ayah its fragment comes from.
+
+### Changed
+
+- **Lessons re-checked against sources.** Every rule, letter set, beat count, and mnemonic in the nine lesson files was reviewed against named tajweed authorities for Hafs 'an 'Asim. The accuracy guarantees and the headline references are written up in [content-audit.md](content-audit.md).
+- **Quiz answer positions corrected** where the right option had drifted to a predictable slot.
+- **Ghunnah ranks regrouped into maratib.** The lesson now presents the ranks of ghunnah as grouped levels (akmal, kamilah, naqisah, anqas) rather than a flat one-to-five list, because the contexts that share a level share the same prominence. See `ghunnah_prominence_ranking_note` in `src/data/content/ghunnah.json`.
+- **Visual and Islamic polish.** Calmer surah cartouche and Quran frame, more vertical room for harakat on colored Quran lines, a redesigned color legend, and a refreshed responsive sweep in light and dark.
+
+### Deferred
+
+- **Tafkheem coloring in the Mushaf.** No clean, verified per-letter tafkheem dataset was available without the app classifying tajweed itself, which this project does not do. Coloring is held back rather than approximated. The Tafkheem and Tarqeeq lesson covers the heavy and light letters and stands on its own.
+
 ## 0.3.1 — 2026-06-01
 
 A security-hardening and bug-fix pass. No religious-content changes — verse text, translations, tafsir, and audio still come only from the verified Quran.com API.
@@ -104,7 +126,7 @@ A second pass on the 0.2.0 branch that picks up the items the original release d
 
 ### Out of scope (intentionally not added)
 
-PWA / offline support, spaced repetition, memorization tracker, lesson sequencing within a module, accounts / cross-device sync, search, hadith content, audio for question prompts. See `.agent/HANDOFF.md` for the reasoning.
+PWA / offline support, spaced repetition, memorization tracker, lesson sequencing within a module, accounts / cross-device sync, search, hadith content, audio for question prompts. These were held back to keep the release focused; most landed in 0.2.1.
 
 ## 0.1.0
 

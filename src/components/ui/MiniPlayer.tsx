@@ -1,13 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
 import { ayahCountForSurah } from "@/lib/navigation";
+import { getPlayerPosition, setPlayerPosition } from "@/lib/storage";
+import {
+  clampPlayerPosition,
+  reservedBottomFor,
+  KEYBOARD_STEP,
+  type PlayerPosition,
+  type PlayerSize,
+  type Viewport,
+} from "@/lib/player-position";
 
 const SPEEDS = [0.75, 1, 1.25] as const;
 const REPEAT_OPTIONS = [0, 2, 3, 5] as const;
 const SLEEP_MINUTES = [5, 10, 15, 30] as const;
+
+// Margin from the viewport edge for the default dock, so the card never sits
+// flush against the screen border.
+const DOCK_MARGIN = 8;
 
 function fmt(t: number): string {
   if (!Number.isFinite(t) || t < 0) return "0:00";
@@ -15,6 +29,26 @@ function fmt(t: number): string {
   const s = Math.floor(t % 60);
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
+
+// The default docked top-left: horizontally centered, sitting just above the
+// reserved bottom strip (the mobile tab bar) like the original docked bar. Pure
+// arithmetic against a measured viewport and player box; the caller clamps the
+// result so it is always on-screen.
+function defaultDock(viewport: Viewport, player: PlayerSize): PlayerPosition {
+  const reserved = reservedBottomFor(viewport);
+  return {
+    x: Math.round((viewport.width - player.width) / 2),
+    y: Math.round(viewport.height - player.height - reserved - DOCK_MARGIN),
+  };
+}
+
+const GripIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <circle cx="9" cy="6" r="1.6" /><circle cx="15" cy="6" r="1.6" />
+    <circle cx="9" cy="12" r="1.6" /><circle cx="15" cy="12" r="1.6" />
+    <circle cx="9" cy="18" r="1.6" /><circle cx="15" cy="18" r="1.6" />
+  </svg>
+);
 
 const SlidersIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -48,6 +82,7 @@ export function MiniPlayer() {
   const repeatRange = usePlayer((s) => s.repeatRange);
   const sleepEndOfSurah = usePlayer((s) => s.sleepEndOfSurah);
   const sleepActive = usePlayer((s) => s.sleepDeadline !== null);
+  const error = usePlayer((s) => s.error);
 
   // Range inputs are local; the store owns the active range once "Loop" is hit.
   const [from, setFrom] = useState(1);
@@ -72,19 +107,161 @@ export function MiniPlayer() {
     } else usePlayer.getState().setSleepTimer(Number(value));
   };
 
+  // --- Movable player -------------------------------------------------------
+  // The card is positioned by a fixed top-left corner driven from state and
+  // applied as a transform, never by remounting — the single <audio> lives in
+  // PlayerHost, a sibling mounted once in AppProvider, so moving this DOM never
+  // touches playback. null means "use the computed default dock"; we resolve it
+  // to a concrete point on mount once the box can be measured.
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const [pos, setPos] = useState<PlayerPosition | null>(null);
+  // True only while a pointer drag is in flight; used to suppress the position
+  // transition so the 1:1 follow has no easing (the spec's hard requirement).
+  const [dragging, setDragging] = useState(false);
+  // Pointer-down offset between the grab point and the card's top-left, so the
+  // card does not jump under the cursor when the drag starts.
+  const grabOffset = useRef({ dx: 0, dy: 0 });
+
+  const measure = useCallback((): PlayerSize => {
+    const el = cardRef.current;
+    return el
+      ? { width: el.offsetWidth, height: el.offsetHeight }
+      : { width: 0, height: 0 };
+  }, []);
+
+  const viewport = useCallback(
+    (): Viewport => ({ width: window.innerWidth, height: window.innerHeight }),
+    [],
+  );
+
+  // Resolve and clamp a candidate position to the live viewport, persist it, and
+  // apply it. Every path (mount restore, drag, resize, keyboard) funnels through
+  // here so nothing can land off-screen or skip persistence.
+  const commit = useCallback(
+    (next: PlayerPosition) => {
+      const clamped = clampPlayerPosition(next, viewport(), measure());
+      setPos(clamped);
+      setPlayerPosition(clamped);
+    },
+    [measure, viewport],
+  );
+
+  // On mount, restore the stored corner (or fall back to the default dock) and
+  // clamp it to the current viewport, so a value saved on a larger screen can
+  // never strand the card off-screen. Runs after `mounted` so the box has laid
+  // out and window is available.
+  useEffect(() => {
+    if (!mounted) return;
+    const size = measure();
+    const vp = viewport();
+    const stored = getPlayerPosition();
+    const start = stored ?? defaultDock(vp, size);
+    setPos(clampPlayerPosition(start, vp, size));
+    // Intentionally run once after mount; commit/measure are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted]);
+
+  // Re-clamp on resize and orientation change (and the mobile URL-bar show/hide
+  // that resizes the visual viewport) so the card stays fully on-screen and
+  // clear of the bottom nav as the available space changes.
+  useEffect(() => {
+    if (!mounted) return;
+    const onResize = () => {
+      setPos((prev) => {
+        const base = prev ?? defaultDock(viewport(), measure());
+        const clamped = clampPlayerPosition(base, viewport(), measure());
+        setPlayerPosition(clamped);
+        return clamped;
+      });
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, [mounted, measure, viewport]);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    // Only react to the primary button / a touch or pen contact.
+    if (e.button !== 0) return;
+    const current = pos ?? defaultDock(viewport(), measure());
+    grabOffset.current = { dx: e.clientX - current.x, dy: e.clientY - current.y };
+    // Capture so a drag that leaves the handle still tracks (mouse, touch, pen).
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setDragging(true);
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragging) return;
+    // Follow the pointer 1:1; clamp keeps it on-screen every frame.
+    commit({ x: e.clientX - grabOffset.current.dx, y: e.clientY - grabOffset.current.dy });
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragging) return;
+    setDragging(false);
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    // Position is already committed (and persisted) on the last move.
+  };
+
+  const onHandleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const base = pos ?? defaultDock(viewport(), measure());
+    let { x, y } = base;
+    switch (e.key) {
+      case "ArrowLeft": x -= KEYBOARD_STEP; break;
+      case "ArrowRight": x += KEYBOARD_STEP; break;
+      case "ArrowUp": y -= KEYBOARD_STEP; break;
+      case "ArrowDown": y += KEYBOARD_STEP; break;
+      default: return;
+    }
+    // Arrow keys move the card, not the page; stop the default scroll.
+    e.preventDefault();
+    commit({ x, y });
+  };
+
   return (
-    <div
-      aria-hidden={!visible}
-      className={`fixed inset-x-0 bottom-16 md:bottom-0 z-40 transition-all duration-200 ${
-        visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
-      }`}
-    >
+    // Full-viewport positioning layer that never blocks clicks; the card inside
+    // re-enables pointer events and is placed by a transform from the top-left.
+    <div aria-hidden={!visible} className="pointer-events-none fixed inset-0 z-40">
       <div
-        className="mx-auto max-w-4xl m-2 rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-3 py-2 safe-bottom"
-        style={{ boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)" }}
+        ref={cardRef}
+        // Anchor to the physical left edge (not logical `start`): the drag math
+        // is in physical pixels (clientX, innerWidth), so the x-translate origin
+        // must be the left edge in both LTR and RTL or it would flip off-screen.
+        className={`pointer-events-auto fixed left-0 top-0 w-[calc(100%-1rem)] max-w-4xl rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-3 py-2 safe-bottom ${
+          // No transition while dragging (1:1 follow) and none under reduced
+          // motion; otherwise a short settle on programmatic / keyboard moves.
+          dragging ? "" : "transition-transform duration-150 motion-reduce:transition-none"
+        } ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        style={{
+          boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)",
+          // Before the mount measurement resolves a position, keep the card off
+          // the initial paint (it matches the server render: nothing visible),
+          // then the transform applies once pos is known.
+          transform: pos ? `translate3d(${pos.x}px, ${pos.y}px, 0)` : "translate3d(-9999px, 0, 0)",
+          touchAction: "none",
+        }}
         role="region"
         aria-label={t("player.play")}
       >
+        {error && (
+          <div
+            role="alert"
+            className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs"
+          >
+            <span className="text-red-600 dark:text-red-400">{t(error)}</span>
+            <Link
+              href="/settings"
+              className="shrink-0 font-medium text-primary dark:text-primary-light underline underline-offset-2 hover:no-underline"
+            >
+              {t("audio.changeReciter")}
+            </Link>
+          </div>
+        )}
+
         {showStudy && (
           <div className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
             <label className="flex items-center gap-1.5">
@@ -158,6 +335,22 @@ export function MiniPlayer() {
         )}
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            // Dedicated grab affordance. Pointer events drive the drag; arrow
+            // keys nudge it when focused. Kept out of the transport tab flow's
+            // way — it is just one more focusable control, never a focus trap.
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onKeyDown={onHandleKeyDown}
+            aria-label={t("player.dragHandle")}
+            title={t("player.dragHandle")}
+            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
+          >
+            <GripIcon />
+          </button>
           <button
             type="button"
             onClick={() => usePlayer.getState().prev()}

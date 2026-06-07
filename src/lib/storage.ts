@@ -11,6 +11,7 @@ import type {
   VerseLocation,
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
+import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
 
 const STORAGE_KEY = "tajweed-trainer-progress";
 
@@ -129,6 +130,9 @@ function sanitizeSettings(input: unknown): UserSettings {
     tafsirId: pickNumber(input.tafsirId, DEFAULT_SETTINGS.tafsirId ?? 169, 1, 1_000_000),
     showWordByWord:
       typeof input.showWordByWord === "boolean" ? input.showWordByWord : (DEFAULT_SETTINGS.showWordByWord ?? false),
+    // Validated for shape only; the live viewport clamp runs at mount, since
+    // storage cannot know the viewport a value was saved on.
+    playerPosition: sanitizePlayerPosition(input.playerPosition),
   };
 }
 
@@ -306,6 +310,20 @@ export function getPlayerResume(): PlayerResume | null {
 
 export function setPlayerResume(resume: PlayerResume | null): void {
   setProgress({ ...getProgress(), playerResume: resume });
+}
+
+export function getPlayerPosition(): PlayerPosition | null {
+  return getProgress().settings.playerPosition ?? null;
+}
+
+// Persist the dragged player's top-left corner inside the consolidated settings
+// so export / import / reset cover it (no standalone localStorage key). The
+// stored value is shape-checked here and on read; the on-screen clamp against
+// the live viewport is the caller's job at mount.
+export function setPlayerPosition(position: PlayerPosition | null): void {
+  const progress = getProgress();
+  progress.settings = { ...progress.settings, playerPosition: position };
+  setProgress(progress);
 }
 
 export function setProgress(progress: TajweedProgress): void {

@@ -1,10 +1,12 @@
 import type { Question } from "@/lib/types";
 
-// Arabic words reused verbatim from src/data/content/tafkheem-tarqeeq.json
-// (always_heavy.tafkheem_levels examples and variable_letters examples).
-// Verses are pinned to verifiable surah:ayah locations from Al-Fatihah and
-// Juz 30 per Step 2.4.
-const PROVENANCE = "src/data/content/tafkheem-tarqeeq.json";
+// Each question's arabicText is drawn from the word's cited `source` surah:ayah
+// in the authenticated Quran text (Al-Fatihah and Juz 30), not from the lesson
+// JSON — several of these words illustrate a heavy/light letter that the lesson
+// describes but does not embed as a verse example. verify-content.mjs checks
+// every arabicText against the Uthmani text of its cited verse in
+// verse-snapshots.json.
+const PROVENANCE = "cited source surah:ayah (authenticated Quran text)";
 
 export const questions: Question[] = [
   // ---------- EASY (10) ----------
@@ -521,5 +523,26 @@ export const questions: Question[] = [
     correctOptionId: "opt-a",
     explanation: { en: "The makhraj defines WHERE the letter is produced. Sifah (attributes) like tafkheem/tarqeeq define HOW. Hence pairs like ت/ط share the makhraj but differ in attributes — ط has Isti'laa, ت does not. This is why mixing them up is a common pronunciation mistake.", ar: "المخرج يحدّد موضع الحرف، والصفات (كالتفخيم والترقيق) تحدّد كيفيته. ولذا تشترك أزواج كت/ط في المخرج وتختلف في الصفات — الطاء فيها استعلاء والتاء لا. ومن هنا كان الخلط بينها من الأخطاء الشائعة.", lessonAnchor: "always-heavy" },
     source: { surah: 1, ayah: 6, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "tafkheem-new-allah-laam-determiner",
+    moduleId: "tafkheem-tarqeeq",
+    difficulty: "medium",
+    prompt: { en: "The Laam of the name Allah is heavy in قَالَ اللَّهُ but light in بِسْمِ اللَّهِ. What single factor decides which?", ar: "لام لفظ الجلالة مفخّمة في قَالَ اللَّهُ ومرقّقة في بِسْمِ اللَّهِ. فما العامل الواحد الذي يحدّد ذلك؟" },
+    arabicText: "بِسْمِ اللَّهِ",
+    englishGloss: "in the name of Allah",
+    options: [
+      { id: "opt-a", label: { en: "The position of the word in the ayah", ar: "موضع الكلمة في الآية" } },
+      { id: "opt-b", label: { en: "The vowel BEFORE the Laam: heavy after Fathah or Dammah, light after Kasrah", ar: "الحركة قبل اللام: مفخّمة بعد فتح أو ضمّ، مرقّقة بعد كسر" } },
+      { id: "opt-c", label: { en: "Whether you stop or continue", ar: "الوقف أو الوصل" } },
+      { id: "opt-d", label: { en: "The Laam of Allah is always heavy", ar: "لام الجلالة مفخّمة دائما" } },
+    ],
+    correctOptionId: "opt-b",
+    explanation: {
+      en: "The Laam of the name Allah is heavy when preceded by a Fathah or Dammah and light when preceded by a Kasrah. In بِسْمِ the Kasrah on the Meem precedes it, so the Laam is light; in قَالَ the Fathah precedes it, so it is heavy.",
+      ar: "لام لفظ الجلالة مفخّمة إذا سبقها فتح أو ضمّ، ومرقّقة إذا سبقها كسر. ففي بِسْمِ تسبقها كسرة الميم فترقّق، وفي قَالَ تسبقها فتحة فتفخّم.",
+      lessonAnchor: "variable-letters",
+    },
+    source: { surah: 1, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
 ];

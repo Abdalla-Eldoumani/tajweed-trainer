@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Palette decision: the app keeps the green-on-cream identity below. A
+   deep-navy/gold/ivory alternative was considered and is recorded here as a
+   documented option, not applied. To adopt it, swap the :root and .dark token
+   values; the tajweed-* variables and the verify script are unaffected.
+
+   Light:  --bg #F4EFE3  --bg-card #FBF8F1  --bg-subtle #E8E0CF
+           --text #11203A (deep navy ink)   --text-muted #5A6478
+           --primary #11203A  --primary-weak #1C355C
+           --gold #B68A2E      --gold-hairline rgba(182,138,46,0.35)
+   Dark:   --bg #0A1224  --bg-card #111A30  --bg-subtle #18223C
+           --text #EEF1F8     --text-muted #99A2B6
+           --primary #C9A24A (gold-forward on navy)  --primary-weak #1C355C
+           --gold #D8B25A      --gold-hairline rgba(216,178,90,0.32)
+
+   The green identity is intentional (it reads as a Quranic study app and keeps
+   the printed-mushaf warmth); the navy option is filed for the maintainer. */
+
 :root {
   --primary: #165E2A;
   --primary-light: #4CAF50;
@@ -200,6 +217,15 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   font-family: inherit;
 }
 
+/* Headroom for the tallest harakat (a shadda stacked over a damma, a madd
+   alif) so the top mark never clips against a tight inline container, and a
+   touch of word-spacing so adjacent colored runs read as separate words. The
+   mushaf page sets its own larger line-height; this only adds breathing room. */
+.tajweed-text {
+  padding-block-start: 0.15em;
+  word-spacing: 0.05em;
+}
+
 @layer base {
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -254,42 +280,24 @@ html, body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23D4B96A' stroke-width='0.8'%3E%3Cpath d='M40 0L50 15L65 10L55 25L70 30L55 35L65 50L50 45L40 60L30 45L15 50L25 35L10 30L25 25L15 10L30 15Z'/%3E%3Cpath d='M0 40L10 25L0 10L15 20L20 5L25 20L40 15L35 30L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 25L80 10L65 20L60 5L55 20L40 15L45 30L40 40' opacity='0.5'/%3E%3Cpath d='M0 40L10 55L0 70L15 60L20 75L25 60L40 65L35 50L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 55L80 70L65 60L60 75L55 60L40 65L45 50L40 40' opacity='0.5'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Ornate Quran frame styling */
+/* Quran frame — a quiet double gold rule around Quranic text. Outer 1px gold on
+   the element, a second hairline rule inset 6px. No heavy border, no inset
+   band; the script is the focus. */
 .quran-frame {
   position: relative;
-  background: var(--cream);
-  border: 2px solid var(--border-ornate);
+  background: var(--bg-card);
+  border: 1px solid var(--gold);
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow:
-    inset 0 0 0 4px var(--cream),
-    inset 0 0 0 5px var(--border-ornate-subtle);
-}
-
-.quran-frame::before,
-.quran-frame::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border-ornate);
-  pointer-events: none;
 }
 
 .quran-frame::before {
-  top: 6px;
-  inset-inline-start: 6px;
-  border-inline-end: none;
-  border-bottom: none;
-  border-radius: 4px 0 0 0;
-}
-
-.quran-frame::after {
-  bottom: 6px;
-  inset-inline-end: 6px;
-  border-inline-start: none;
-  border-top: none;
-  border-radius: 0 0 4px 0;
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--gold-hairline);
+  border-radius: 8px;
+  pointer-events: none;
 }
 
 /* Section banner (surah header style) — flat surface with a single gold
@@ -344,7 +352,8 @@ html, body {
    Mushaf Reader styling
    ============================================ */
 
-/* Outer ornate frame for a Mushaf page — multi-color geometric band */
+/* Outer frame for a Mushaf page — a quiet double gold rule with one small
+   8-point star at the head corner. No multi-color band. */
 .mushaf-frame {
   position: relative;
   background: var(--bg-card);
@@ -354,7 +363,7 @@ html, body {
 }
 
 .mushaf-frame::before {
-  /* The whole frame ornament: one quiet inner hairline rule, inset 6px. Uses
+  /* The frame ornament: one quiet inner hairline rule, inset 6px. Uses
      ornament/gold tokens only (never tajweed), so a palette change cannot
      shift the frame. Replaces the old repeating multi-color band. */
   content: "";
@@ -365,14 +374,37 @@ html, body {
   pointer-events: none;
 }
 
-/* Surah cartouche — ornamental banner shown when a surah starts */
+.mushaf-frame::after {
+  /* A single 8-point star at the head corner, low opacity. Drawn from the
+     ornament gold (--ornament-1), never a tajweed token, so the frame stays
+     decoupled from the verse palette. */
+  content: "";
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 10px;
+  width: 16px;
+  height: 16px;
+  opacity: 0.45;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23B68A2E' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dark .mushaf-frame::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23D8B25A' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* Surah cartouche — banner shown when a surah starts. Flat card surface with a
+   single gold hairline and a small 8-point star at each end. No gradient; the
+   star sits at low opacity so the surah name stays the focus. */
 .surah-cartouche {
   position: relative;
   text-align: center;
   padding: 14px 24px;
   margin: 12px 0 10px;
-  background: linear-gradient(180deg, var(--cream-dark) 0%, var(--cream) 50%, var(--cream-dark) 100%);
-  border: 1.5px solid var(--gold-dark);
+  background: var(--bg-card);
+  border: 1px solid var(--gold-hairline);
   border-radius: 6px;
 }
 
@@ -381,20 +413,21 @@ html, body {
   content: "";
   position: absolute;
   top: 50%;
-  width: 28px;
-  height: 28px;
-  margin-top: -14px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23C5A55A' stroke-width='1'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='%23C5A55A' fill-opacity='0.18'/%3E%3C/g%3E%3C/svg%3E");
+  width: 22px;
+  height: 22px;
+  margin-top: -11px;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23B68A2E' stroke-width='1'/%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
 }
 
-.surah-cartouche::before { left: 6px; }
-.surah-cartouche::after { right: 6px; }
+.surah-cartouche::before { inset-inline-start: 8px; }
+.surah-cartouche::after { inset-inline-end: 8px; }
 
 .dark .surah-cartouche::before,
 .dark .surah-cartouche::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23D4B96A' stroke-width='1'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='%23D4B96A' fill-opacity='0.2'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23D8B25A' stroke-width='1'/%3E%3C/svg%3E");
 }
 
 /* Verses inside a Mushaf page render side-by-side as inline buttons.

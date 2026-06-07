@@ -81,46 +81,48 @@
       "verified": true
     }
   ],
+  "ghunnah_prominence_ranking_note": "The maratib al-ghunnah are grouped levels, not a strict 1-to-5 order: the two contexts at each level carry the same prominence. Source: ayatinstitute.com/ranks-of-ghunnah/.",
+  "ghunnah_prominence_ranking_note_ar": "مراتب الغنّة مراتب مجمَّعة لا ترتيب صارم من ١ إلى ٥؛ فالحكمان في المرتبة الواحدة سواء في مقدار الغنّة. المصدر: ayatinstitute.com/ranks-of-ghunnah/.",
   "ghunnah_prominence_ranking": [
     {
-      "rank": 1,
-      "context": "Noon/Meem Mushaddad",
-      "context_ar": "النون والميم المشدّدتان",
+      "level": 1,
+      "maratib_en": "Most complete (Akmal)",
+      "maratib_ar": "أكمل ما تكون",
+      "contexts": ["Noon/Meem Mushaddad", "Idgham with Ghunnah"],
+      "contexts_ar": ["النون والميم المشدّدتان", "الإدغام بغنّة"],
       "prominence": "Most prominent",
       "prominence_ar": "أعلى مراتب الغنّة",
       "beats": 2
     },
     {
-      "rank": 2,
-      "context": "Idgham with Ghunnah",
-      "context_ar": "الإدغام بغنّة",
+      "level": 2,
+      "maratib_en": "Complete (Kamilah)",
+      "maratib_ar": "كاملة",
+      "contexts": ["Ikhfaa Haqiqi", "Ikhfaa Shafawi", "Iqlab"],
+      "contexts_ar": ["الإخفاء الحقيقي", "الإخفاء الشفوي", "الإقلاب"],
       "prominence": "Strong",
       "prominence_ar": "قويّة",
       "beats": 2
     },
     {
-      "rank": 3,
-      "context": "Iqlab",
-      "context_ar": "الإقلاب",
-      "prominence": "Strong",
-      "prominence_ar": "قويّة",
-      "beats": 2
+      "level": 3,
+      "maratib_en": "Incomplete (Naqisah)",
+      "maratib_ar": "ناقصة",
+      "contexts": ["Izhar (Noon/Meem sakinah read clearly)"],
+      "contexts_ar": ["الإظهار (النون والميم الساكنتان تُنطقان بوضوح)"],
+      "prominence": "Minimal — the letter's inherent ghunnah, not prolonged",
+      "prominence_ar": "أدنى — الغنّة الأصلية في الحرف دون إطالة",
+      "beats": "inherent only (not held)"
     },
     {
-      "rank": 4,
-      "context": "Ikhfaa (Haqiqi & Shafawi)",
-      "context_ar": "الإخفاء (الحقيقي والشفوي)",
-      "prominence": "Moderate",
-      "prominence_ar": "متوسّطة",
-      "beats": 2
-    },
-    {
-      "rank": 5,
-      "context": "Izhar",
-      "context_ar": "الإظهار",
-      "prominence": "Natural/minimal",
-      "prominence_ar": "طبيعية/أدنى",
-      "beats": 0
+      "level": 4,
+      "maratib_en": "Most incomplete (Anqas)",
+      "maratib_ar": "أنقص",
+      "contexts": ["Voweled (moving) Noon/Meem"],
+      "contexts_ar": ["النون والميم المتحرّكتان"],
+      "prominence": "Least — shortest inherent ghunnah",
+      "prominence_ar": "الأقلّ — أقصر غنّة أصلية",
+      "beats": "inherent only (not held)"
     }
   ],
   "common_mistakes": [

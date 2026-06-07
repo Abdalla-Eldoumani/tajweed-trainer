@@ -33,7 +33,16 @@ export function PlayerHost() {
       get().onLoaded(Number.isFinite(audio.duration) ? audio.duration : 0);
     };
     audio.onended = () => get().onEnded();
-    audio.onerror = () => get().pause();
+    // A media error after the src is set (404, decode failure, network drop)
+    // means this reciter has no playable audio for the current verse. Pause and
+    // surface a clear message so the user can switch reciter; the control never
+    // sits silently dead. Ignore spurious errors when no src is loaded.
+    audio.onerror = () => {
+      if (!audio.currentSrc && !audio.src) return;
+      const st = get();
+      st.pause();
+      st.setError("audio.unavailable");
+    };
     get().restore();
     return () => {
       audio.pause();
@@ -80,7 +89,13 @@ export function PlayerHost() {
         }
       })
       .catch(() => {
-        if (seq === loadSeq.current) usePlayer.setState({ status: "paused" });
+        // The fetch failed (no file for this reciter/verse, or a network
+        // error). Pause and flag it so the mini-player can prompt a reciter
+        // change instead of leaving a dead control.
+        if (seq === loadSeq.current) {
+          usePlayer.setState({ status: "paused" });
+          usePlayer.getState().setError("audio.unavailable");
+        }
       });
   }, [loadToken]);
 

@@ -1,12 +1,11 @@
 import type { Question } from "@/lib/types";
 
-// Arabic words reused verbatim from src/data/content/laam-raa-rules.json (the
-// existing examples and the example_words / example fields). For words taught
-// in the lesson without an explicit surah:ayah, the surah:ayah pinned here is a
-// verifiable Quranic location of that word, drawn either from Al-Fatihah or
-// Juz 30 (per the Step 2.4 narrow range). The maintainer should spot-check
-// these references against a printed mushaf.
-const PROVENANCE = "src/data/content/laam-raa-rules.json";
+// Each question's arabicText is drawn from the word's cited `source` surah:ayah
+// in the authenticated Quran text, not from the lesson JSON. Many of these words
+// are also taught in the laam-raa lesson, but the cited verse is the anchor and
+// the only thing that can be verified. verify-content.mjs checks every arabicText
+// against the Uthmani text of its cited verse in verse-snapshots.json.
+const PROVENANCE = "cited source surah:ayah (authenticated Quran text)";
 
 export const questions: Question[] = [
   // ---------- EASY (10) ----------
@@ -523,5 +522,47 @@ export const questions: Question[] = [
     correctOptionId: "opt-a",
     explanation: { en: "The vocative form اللَّهُمَّ inherits the Allah-Laam rule. The lesson's listed common mistake (تفخيم في قُلِ اللَّهُمَّ) confirms that the same rule governs اللَّهُمَّ.", ar: "صيغة النداء اللَّهُمَّ تتبع نفس حكم لام الجلالة. والخطأ الشائع المذكور (تفخيم اللام في قُلِ اللَّهُمَّ) دليل أنّ الحكم نفسه يطبَّق عليها.", lessonAnchor: "laam-lafzul-jalalah" },
     source: { surah: 3, ayah: 26, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "laam-new-firaown-heavy-or-light",
+    moduleId: "laam-raa",
+    difficulty: "easy",
+    prompt: { en: "Is the Raa in فِرْعَوْنَ (79:17) heavy or light?", ar: "هل الراء في فِرْعَوْنَ (٧٩:١٧) مفخّمة أم مرقّقة؟" },
+    arabicText: "فِرْعَوْنَ",
+    englishGloss: "Pharaoh",
+    options: [
+      { id: "opt-a", label: { en: "Heavy — because of the Dammah after it", ar: "مفخّمة — للضمّة بعدها" } },
+      { id: "opt-b", label: { en: "Light — sakin Raa preceded by an original Kasrah, with no isti'la letter following", ar: "مرقّقة — راء ساكنة بعد كسرة أصلية ولا حرف استعلاء بعدها" } },
+      { id: "opt-c", label: { en: "Heavy — all sakin Raa are heavy", ar: "مفخّمة — كلّ راء ساكنة مفخّمة" } },
+      { id: "opt-d", label: { en: "It varies by reciter", ar: "تختلف بحسب القارئ" } },
+    ],
+    correctOptionId: "opt-b",
+    explanation: {
+      en: "A sakin Raa preceded by an original (asliyyah) Kasrah is light (muraqqaq); reading it heavy is a major error.",
+      ar: "الراء الساكنة بعد كسرة أصلية مرقّقة، وتفخيمها خطأ ظاهر.",
+      lessonAnchor: "raa-rules",
+    },
+    source: { surah: 79, ayah: 17, translationEditionId: null, provenance: PROVENANCE },
+  },
+  {
+    id: "laam-new-arjioo-heavy-or-light",
+    moduleId: "laam-raa",
+    difficulty: "medium",
+    prompt: { en: "Is the Raa in ارْجِعُوا (12:81) heavy or light?", ar: "هل الراء في ارْجِعُوا (١٢:٨١) مفخّمة أم مرقّقة؟" },
+    arabicText: "ارْجِعُوا",
+    englishGloss: "go back",
+    options: [
+      { id: "opt-a", label: { en: "Light — there is a Kasrah before it", ar: "مرقّقة — لوجود كسرة قبلها" } },
+      { id: "opt-b", label: { en: "Light — every sakin Raa is light", ar: "مرقّقة — كلّ راء ساكنة مرقّقة" } },
+      { id: "opt-c", label: { en: "Heavy — the Kasrah on Hamzat Al-Wasl is temporary, so it does not cause Tarqeeq", ar: "مفخّمة — الكسرة على همزة الوصل عارضة فلا توجب الترقيق" } },
+      { id: "opt-d", label: { en: "It varies by reciter", ar: "تختلف بحسب القارئ" } },
+    ],
+    correctOptionId: "opt-c",
+    explanation: {
+      en: "The Kasrah here sits on Hamzat Al-Wasl and is temporary (aaridah), so it does not lighten the Raa; the sakin Raa stays heavy.",
+      ar: "الكسرة هنا على همزة الوصل وهي عارضة، فلا ترقّق الراء، فتبقى الراء الساكنة مفخّمة.",
+      lessonAnchor: "raa-rules",
+    },
+    source: { surah: 12, ayah: 81, translationEditionId: null, provenance: PROVENANCE },
   },
 ];

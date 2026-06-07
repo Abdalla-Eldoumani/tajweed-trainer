@@ -1,3 +1,5 @@
+import type { PlayerPosition } from "./player-position";
+
 export type Language = 'en' | 'ar';
 
 export interface ArabicLetter {
@@ -221,7 +223,9 @@ export interface GhunnahData {
   duration: string;
   duration_ar?: string;
   rules: TajweedRule[];
-  ghunnah_prominence_ranking: { rank: number; context: string; context_ar?: string; prominence: string; prominence_ar?: string; beats: number }[];
+  ghunnah_prominence_ranking_note?: string;
+  ghunnah_prominence_ranking_note_ar?: string;
+  ghunnah_prominence_ranking: { level: number; maratib_en: string; maratib_ar?: string; contexts: string[]; contexts_ar?: string[]; prominence: string; prominence_ar?: string; beats: number | string }[];
   common_mistakes: string[];
   common_mistakes_ar?: string[];
   verified: true;
@@ -400,6 +404,11 @@ export interface UserSettings {
   translationId?: number;
   tafsirId?: number;
   showWordByWord?: boolean;
+  // Top-left corner of the dragged mini-player in viewport pixels. Absent means
+  // the player sits at its default dock. Re-clamped to the live viewport on
+  // load, so a value saved on a larger screen can never strand the player
+  // off-screen. Lives here so export / import / reset cover it.
+  playerPosition?: PlayerPosition | null;
 }
 
 export interface ModuleProgress {

@@ -795,4 +795,28 @@ export const questions: Question[] = [
     },
     source: { surah: 113, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
+  {
+    id: "qalqalah-new-falaq-kubra-vs-sughra",
+    moduleId: "qalqalah",
+    difficulty: "medium",
+    prompt: {
+      en: "The same letter ق gives Sughra mid-word but a stronger echo on الْفَلَقِ (113:1). Which level is it here, and why?",
+      ar: "القاف نفسها تُعطي الصغرى في وسط الكلمة، وقلقلةً أقوى في الْفَلَقِ (١١٣:١). فأيّ مرتبة هنا، ولماذا؟",
+    },
+    arabicText: "الْفَلَقِ",
+    englishGloss: "the daybreak",
+    options: [
+      { id: "opt-a", label: { en: "Sughra — ق always gives the minor level", ar: "الصغرى — القاف تعطي المرتبة الصغرى دائما" } },
+      { id: "opt-b", label: { en: "Wusta — it falls in the middle of the surah", ar: "الوسطى — لوقوعها في وسط السورة" } },
+      { id: "opt-c", label: { en: "Kubra — it is a qalqalah letter made sakin by stopping at the end of the ayah", ar: "الكبرى — حرف قلقلة سكن بالوقف في آخر الآية" } },
+      { id: "opt-d", label: { en: "None — qalqalah needs an original sukoon", ar: "لا قلقلة — لأنها تحتاج سكونا أصليّا" } },
+    ],
+    correctOptionId: "opt-c",
+    explanation: {
+      en: "A qalqalah letter is naturally moving mid-word (Sughra), but stopping at an ayah-end makes the final Qaaf sakin and gives the strongest echo, Qalqalah Kubra. The sukoon from stopping counts, not only an original sukoon.",
+      ar: "حرف القلقلة متحرّك في وسط الكلمة (صغرى)، لكنّ الوقف في آخر الآية يُسكِّن القاف الأخيرة فتقع القلقلة الكبرى أقوى المراتب. والسكون العارض بالوقف معتبر لا الأصليّ وحده.",
+      lessonAnchor: "qalqalah-kubra",
+    },
+    source: { surah: 113, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
+  },
 ];

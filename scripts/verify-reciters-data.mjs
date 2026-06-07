@@ -18,12 +18,13 @@ function record(name, ok, details = "") {
   console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
 }
 
-const ID_PATTERN = /^[0-9]{1,3}$/;
+// Quran.com ids are 1-3 digit numbers; EveryAyah ids are the ea-<slug> form.
+const ID_PATTERN = /^(?:[0-9]{1,3}|ea-[a-z]+)$/;
 const VALID_STYLES = new Set(["Murattal", "Mujawwad", "Muallim"]);
 
-// Parse the single-line RECITATIONS entries.
+// Parse the single-line RECITATIONS entries (both numeric and ea-* ids).
 const entries = [];
-const re = /\{ id: "(\d+)", nameEn: "([^"]+)", nameAr: "([^"]+)", style: (null|"[^"]+") \}/g;
+const re = /\{ id: "([a-z0-9-]+)", nameEn: "([^"]+)", nameAr: "([^"]+)", style: (null|"[^"]+") \}/g;
 let m;
 while ((m = re.exec(src)) !== null) {
   entries.push({ id: m[1], nameEn: m[2], nameAr: m[3], style: m[4] === "null" ? null : m[4].slice(1, -1) });
@@ -51,6 +52,32 @@ record(
   aliasTargets.length > 0 && aliasTargets.every((id) => ids.includes(id)),
   aliasTargets.join(", "),
 );
+
+// EveryAyah folder map: each ea-* reciter must have a well-formed folder, and
+// no folder may be orphaned (point at an id that is not in the list).
+const folderBlock = (src.match(/EVERYAYAH_FOLDER[^=]*=\s*\{([\s\S]*?)\}/) || [])[1] || "";
+const folderMap = new Map([...folderBlock.matchAll(/"([a-z0-9-]+)":\s*"([^"]+)"/g)].map((x) => [x[1], x[2]]));
+record("EVERYAYAH_FOLDER map parses", folderMap.size > 0, `${folderMap.size} folders`);
+
+const eaIds = ids.filter((id) => id.startsWith("ea-"));
+record("EveryAyah reciters are present", eaIds.length > 0, eaIds.join(", "));
+
+const missingFolder = eaIds.filter((id) => !folderMap.has(id));
+record("Every ea-* reciter has a folder", missingFolder.length === 0, missingFolder.join(", "));
+
+const orphanFolder = [...folderMap.keys()].filter((id) => !ids.includes(id));
+record("No EVERYAYAH_FOLDER entry is orphaned", orphanFolder.length === 0, orphanFolder.join(", "));
+
+// A folder must be a single plausible path segment (no slashes, dots, or spaces)
+// so the constructed data/{folder}/{sss}{aaa}.mp3 URL stays well-formed.
+const FOLDER_PATTERN = /^[A-Za-z0-9_-]+$/;
+const badFolder = [...folderMap.entries()].filter(([, folder]) => !FOLDER_PATTERN.test(folder));
+record("Every folder is a well-formed path segment", badFolder.length === 0, badFolder.map(([id]) => id).join(", "));
+
+// The ea-* ids group as murattal (style null) through the existing styleGroup;
+// none should carry a style label the source did not provide.
+const eaStyled = entries.filter((e) => e.id.startsWith("ea-") && e.style !== null);
+record("EveryAyah reciters carry no invented style", eaStyled.length === 0, eaStyled.map((e) => e.id).join(", "));
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);

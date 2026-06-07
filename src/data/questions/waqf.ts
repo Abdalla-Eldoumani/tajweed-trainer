@@ -1,9 +1,11 @@
 import type { Question } from "@/lib/types";
 
-// Arabic words/phrases reused verbatim from the lesson
-// (src/data/content/waqf-symbols.json) and pinned to verifiable surah:ayah
-// references. Per Step 2.4, all new verses draw from Al-Fatihah or Juz 30.
-const PROVENANCE = "src/data/content/waqf-symbols.json";
+// The waqf lesson describes stopping symbols and carries no embedded verse
+// examples, so each question's arabicText is drawn from the word's cited
+// `source` surah:ayah in the authenticated Quran text (Al-Fatihah and Juz 30),
+// NOT from the lesson JSON. verify-content.mjs checks every arabicText against
+// the Uthmani text of its cited verse in verse-snapshots.json.
+const PROVENANCE = "cited source surah:ayah (authenticated Quran text)";
 
 export const questions: Question[] = [
   // ---------- EASY (10) ----------

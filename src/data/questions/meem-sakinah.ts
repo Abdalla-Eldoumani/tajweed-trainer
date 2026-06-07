@@ -518,4 +518,25 @@ export const questions: Question[] = [
     explanation: { en: "Ikhfaa covers Baa (1), Idgham covers Meem (1), and Izhar covers everything else (26). Together: 28 letters — every Arabic letter has a defined behavior after Meem Sakinah.", ar: "الإخفاء يشمل الباء (واحد)، والإدغام يشمل الميم (واحد)، والإظهار يشمل ما سواهما (ستّة وعشرون). والمجموع: ثمانية وعشرون حرفا، فلكلّ حرف بعد الميم الساكنة حكم مقرّر.", lessonAnchor: "meem-sakinah-overview" },
     source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
   },
+  {
+    id: "meem-new-izhar-shafawi-no-ghunnah",
+    moduleId: "meem-sakinah",
+    difficulty: "medium",
+    prompt: { en: "In هُمْ فِيهَا (2:39), Meem Sakinah is followed by ف — name the rule and say whether it carries ghunnah.", ar: "في هُمْ فِيهَا (٢:٣٩)، تلي الميمَ الساكنة الفاءُ — سمِّ الحكم وبيّن هل فيه غنّة." },
+    arabicText: "هُمْ فِيهَا",
+    englishGloss: "they in it",
+    options: [
+      { id: "opt-a", label: { en: "Ikhfaa Shafawi, with ghunnah", ar: "إخفاء شفوي، بغنّة" } },
+      { id: "opt-b", label: { en: "Idgham Shafawi, with ghunnah", ar: "إدغام شفوي، بغنّة" } },
+      { id: "opt-c", label: { en: "Iqlab, with ghunnah", ar: "إقلاب، بغنّة" } },
+      { id: "opt-d", label: { en: "Izhar Shafawi, no ghunnah", ar: "إظهار شفوي، بلا غنّة" } },
+    ],
+    correctOptionId: "opt-d",
+    explanation: {
+      en: "Only Baa (ب) triggers Ikhfaa Shafawi; every other non-Meem letter — Faa (ف) here — is Izhar Shafawi, pronounced clearly with no ghunnah.",
+      ar: "الباء (ب) وحدها تستوجب الإخفاء الشفوي، وكلّ حرف آخر غير الميم — والفاء (ف) هنا — إظهار شفوي يُنطق واضحا بلا غنّة.",
+      lessonAnchor: "izhar-shafawi",
+    },
+    source: { surah: 2, ayah: 39, translationEditionId: null, provenance: PROVENANCE },
+  },
 ];
