@@ -1,3 +1,5 @@
+import type { PlayerPosition } from "./player-position";
+
 export type Language = 'en' | 'ar';
 
 export interface ArabicLetter {
@@ -402,6 +404,11 @@ export interface UserSettings {
   translationId?: number;
   tafsirId?: number;
   showWordByWord?: boolean;
+  // Top-left corner of the dragged mini-player in viewport pixels. Absent means
+  // the player sits at its default dock. Re-clamped to the live viewport on
+  // load, so a value saved on a larger screen can never strand the player
+  // off-screen. Lives here so export / import / reset cover it.
+  playerPosition?: PlayerPosition | null;
 }
 
 export interface ModuleProgress {
