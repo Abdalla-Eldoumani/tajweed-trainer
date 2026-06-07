@@ -221,7 +221,9 @@ export interface GhunnahData {
   duration: string;
   duration_ar?: string;
   rules: TajweedRule[];
-  ghunnah_prominence_ranking: { rank: number; context: string; context_ar?: string; prominence: string; prominence_ar?: string; beats: number }[];
+  ghunnah_prominence_ranking_note?: string;
+  ghunnah_prominence_ranking_note_ar?: string;
+  ghunnah_prominence_ranking: { level: number; maratib_en: string; maratib_ar?: string; contexts: string[]; contexts_ar?: string[]; prominence: string; prominence_ar?: string; beats: number | string }[];
   common_mistakes: string[];
   common_mistakes_ar?: string[];
   verified: true;

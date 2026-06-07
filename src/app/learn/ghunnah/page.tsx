@@ -77,18 +77,30 @@ export default function GhunnahPage() {
         <h2 className="font-heading font-semibold mb-3">{t("ghunnah.ranking")}</h2>
         <div className="space-y-2">
           {ghunnahData.ghunnah_prominence_ranking.map((item) => (
-            <div key={item.rank} className="flex items-center gap-3 text-sm">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light flex items-center justify-center text-xs font-bold">
-                {item.rank}
+            <div key={item.level} className="flex items-start gap-3 text-sm">
+              <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light flex items-center justify-center text-xs font-bold">
+                {item.level}
               </span>
               <div className="flex-1">
-                <span className="font-medium">{isAr && item.context_ar ? item.context_ar : item.context}</span>
+                <span className="font-medium">{isAr && item.maratib_ar ? item.maratib_ar : item.maratib_en}</span>
                 <span className="text-text-muted ms-2">({isAr && item.prominence_ar ? item.prominence_ar : item.prominence})</span>
+                <div className="text-xs text-text-muted">
+                  {(isAr && item.contexts_ar ? item.contexts_ar : item.contexts).join(isAr ? "، " : ", ")}
+                </div>
               </div>
-              <span className="text-xs text-text-muted">{item.beats} {t("ghunnah.beats")}</span>
+              {typeof item.beats === "number" && (
+                <span className="text-xs text-text-muted shrink-0">{item.beats} {t("ghunnah.beats")}</span>
+              )}
             </div>
           ))}
         </div>
+        {ghunnahData.ghunnah_prominence_ranking_note && (
+          <p className="text-xs text-text-muted mt-3">
+            {isAr && ghunnahData.ghunnah_prominence_ranking_note_ar
+              ? ghunnahData.ghunnah_prominence_ranking_note_ar
+              : ghunnahData.ghunnah_prominence_ranking_note}
+          </p>
+        )}
       </Card>
 
       {ghunnahData.common_mistakes.length > 0 && (
