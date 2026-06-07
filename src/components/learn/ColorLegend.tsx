@@ -30,6 +30,38 @@ function dedupeByColor(colors: TajweedColor[]): TajweedColor[] {
   });
 }
 
+// One legend cell: a small card whose specimen is the rule's own Arabic name,
+// set in the rule's actual color (read from the map via the CSS variable, never
+// hard-coded), with the English name as the label below. The specimen tile
+// carries a gold hairline so the light grays stay visible on a white card.
+function LegendCell({ color }: { color: TajweedColor }) {
+  const swatch = `var(--tajweed-${color.cssClass})`;
+  return (
+    <li
+      className="flex items-center gap-3 rounded-lg border bg-bg-card px-3 py-2 min-w-0 dark:bg-bg-card-dark"
+      style={{ borderColor: "var(--gold-hairline)" }}
+      role="listitem"
+    >
+      <span
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border"
+        style={{ borderColor: "var(--gold-hairline)" }}
+      >
+        <span
+          className="font-arabic text-lg leading-none"
+          dir="rtl"
+          lang="ar"
+          style={{ color: swatch }}
+        >
+          {color.nameAr}
+        </span>
+      </span>
+      <span className="font-heading text-sm font-medium min-w-0 flex-1 truncate">
+        {color.nameEn}
+      </span>
+    </li>
+  );
+}
+
 export function ColorLegend() {
   const { t } = useTranslation();
   const byGroup = getColorsByGroup();
@@ -46,32 +78,7 @@ export function ColorLegend() {
             </h4>
             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2" role="list">
               {dedupeByColor(byGroup[group]).map((c) => (
-                <li
-                  key={c.cssClass}
-                  className="flex items-center gap-2.5 rounded-lg border px-3 py-2 min-w-0"
-                  style={{ borderColor: "var(--border-ornate-subtle)" }}
-                  role="listitem"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="h-3.5 w-3.5 rounded-full shrink-0 border"
-                    style={{
-                      backgroundColor: `var(--tajweed-${c.cssClass})`,
-                      borderColor: "var(--border-ornate-subtle)",
-                    }}
-                  />
-                  <span className="font-heading text-sm font-medium flex-1 min-w-0 truncate">
-                    {c.nameEn}
-                  </span>
-                  <span
-                    className="font-arabic text-base shrink-0"
-                    dir="rtl"
-                    lang="ar"
-                    style={{ color: `var(--tajweed-${c.cssClass})` }}
-                  >
-                    {c.nameAr}
-                  </span>
-                </li>
+                <LegendCell key={c.cssClass} color={c} />
               ))}
             </ul>
           </section>
