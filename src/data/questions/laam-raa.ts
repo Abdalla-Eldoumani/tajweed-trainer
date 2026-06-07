@@ -1,12 +1,11 @@
 import type { Question } from "@/lib/types";
 
-// Arabic words reused verbatim from src/data/content/laam-raa-rules.json (the
-// existing examples and the example_words / example fields). For words taught
-// in the lesson without an explicit surah:ayah, the surah:ayah pinned here is a
-// verifiable Quranic location of that word, drawn either from Al-Fatihah or
-// Juz 30 (per the Step 2.4 narrow range). The maintainer should spot-check
-// these references against a printed mushaf.
-const PROVENANCE = "src/data/content/laam-raa-rules.json";
+// Each question's arabicText is drawn from the word's cited `source` surah:ayah
+// in the authenticated Quran text, not from the lesson JSON. Many of these words
+// are also taught in the laam-raa lesson, but the cited verse is the anchor and
+// the only thing that can be verified. verify-content.mjs checks every arabicText
+// against the Uthmani text of its cited verse in verse-snapshots.json.
+const PROVENANCE = "cited source surah:ayah (authenticated Quran text)";
 
 export const questions: Question[] = [
   // ---------- EASY (10) ----------
