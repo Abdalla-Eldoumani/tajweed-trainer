@@ -12,8 +12,9 @@ import type {
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
+import { emitProgressChanged } from "./progress-events";
 
-const STORAGE_KEY = "tajweed-trainer-progress";
+export const STORAGE_KEY = "tajweed-trainer-progress";
 
 const DEFAULT_SETTINGS: UserSettings = {
   reciter: DEFAULT_RECITER_ID,
@@ -28,6 +29,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   translationId: 20,
   tafsirId: 169,
   showWordByWord: false,
+  playerMinimized: false,
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
@@ -45,6 +47,11 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   bookmarks: [],
   lastRead: null,
 };
+
+// Stable reference handed to useSyncExternalStore as the server snapshot. It
+// must be the same object on every call or React re-renders forever during
+// hydration, so it is frozen and never rebuilt.
+export const EMPTY_PROGRESS: TajweedProgress = Object.freeze(DEFAULT_PROGRESS);
 
 // Caps protect against pathological inputs from a tampered localStorage —
 // e.g. a 100,000-entry bookmarks array that bloats every render.
@@ -133,6 +140,8 @@ function sanitizeSettings(input: unknown): UserSettings {
     // Validated for shape only; the live viewport clamp runs at mount, since
     // storage cannot know the viewport a value was saved on.
     playerPosition: sanitizePlayerPosition(input.playerPosition),
+    playerMinimized:
+      typeof input.playerMinimized === "boolean" ? input.playerMinimized : false,
   };
 }
 
@@ -330,9 +339,22 @@ export function setProgress(progress: TajweedProgress): void {
   if (!isBrowser()) return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    // Same-tab subscribers (useProgress and friends) re-read on this signal;
+    // the browser's own "storage" event covers other tabs.
+    emitProgressChanged();
   } catch {
     // Storage full or unavailable
   }
+}
+
+export function getPlayerMinimized(): boolean {
+  return getProgress().settings.playerMinimized ?? false;
+}
+
+export function setPlayerMinimized(minimized: boolean): void {
+  const progress = getProgress();
+  progress.settings = { ...progress.settings, playerMinimized: minimized };
+  setProgress(progress);
 }
 
 export function getSettings(): UserSettings {
