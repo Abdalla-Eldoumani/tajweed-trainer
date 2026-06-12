@@ -16,7 +16,7 @@ const MakhrajDiagram = dynamic(
   () => import("@/components/learn/MakhrajDiagram").then((mod) => ({ default: mod.MakhrajDiagram })),
   {
     ssr: false,
-    loading: () => <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />,
+    loading: () => <div className="h-64 bg-bg-subtle dark:bg-bg-subtle-dark rounded-xl animate-pulse" />,
   }
 );
 
@@ -24,7 +24,7 @@ const LetterGrid = dynamic(
   () => import("@/components/learn/LetterGrid").then((mod) => ({ default: mod.LetterGrid })),
   {
     ssr: false,
-    loading: () => <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />,
+    loading: () => <div className="h-48 bg-bg-subtle dark:bg-bg-subtle-dark rounded-xl animate-pulse" />,
   }
 );
 import { useProgress } from "@/hooks/useProgress";
@@ -104,7 +104,7 @@ export default function MakharijPage() {
           {activeRegion.sub_points && (
             <div className="mt-4 space-y-3">
               {activeRegion.sub_points.map((sp) => (
-                <div key={sp.id} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <div key={sp.id} className="p-3 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark">
                   <p className="text-xs font-medium mb-2">{isAr && sp.title_ar ? sp.title_ar : sp.title_en}</p>
                   <div className="flex flex-wrap gap-2">
                     {sp.letters.map((l) => (
@@ -123,7 +123,7 @@ export default function MakharijPage() {
           {activeRegion.letters && !activeRegion.sub_points && (
             <div className="mt-4 flex flex-wrap gap-2">
               {activeRegion.letters.map((l) => (
-                <div key={l.arabic + l.name_en} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <div key={l.arabic + l.name_en} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark">
                   <ArabicText text={l.arabic} size="md" />
                   <span className="text-xs text-text-muted">{isAr && (l as { name_ar?: string }).name_ar ? (l as { name_ar?: string }).name_ar : l.name_en}</span>
                   {(l as { condition?: string; condition_ar?: string }).condition && <span className="text-[10px] text-text-muted">({isAr && (l as { condition_ar?: string }).condition_ar ? (l as { condition_ar?: string }).condition_ar : (l as { condition?: string }).condition})</span>}
