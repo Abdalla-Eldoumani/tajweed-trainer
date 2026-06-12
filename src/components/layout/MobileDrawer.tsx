@@ -7,10 +7,7 @@ import { cn } from "@/lib/utils";
 import { MODULES, NAV_ITEMS, ChevronIcon } from "./nav-data";
 import { useTranslation } from "@/lib/i18n";
 import { useProgress } from "@/hooks/useProgress";
-import learningPath from "@/data/content/learning-path.json";
-import type { LearningModule } from "@/lib/types";
-
-const learningModules = learningPath.modules as LearningModule[];
+import { getLockedModuleIds } from "@/lib/module-unlock";
 
 const LockIndicator = ({ className }: { className?: string }) => (
   <svg
@@ -47,13 +44,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   useEffect(() => setMounted(true), []);
   const lockedModuleIds = useMemo(() => {
     if (!mounted) return new Set<string>();
-    const set = new Set<string>();
-    for (const m of learningModules) {
-      if (!m.prerequisite) continue;
-      const prereqDone = (progress.modules[m.prerequisite]?.lessonsCompleted.length ?? 0) > 0;
-      if (!prereqDone) set.add(m.id);
-    }
-    return set;
+    return getLockedModuleIds(progress);
   }, [mounted, progress]);
 
   useEffect(() => {
@@ -92,7 +83,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
       {/* Drawer panel */}
       <div
         className={cn(
-          "fixed top-0 bottom-0 w-[280px] z-50 bg-bg-card dark:bg-bg-card-dark flex flex-col transition-transform duration-300 ease-in-out",
+          "fixed top-0 bottom-0 w-[280px] z-50 bg-[var(--margin-bg)] text-[var(--margin-text)] flex flex-col transition-transform duration-300 ease-in-out",
           isAr ? "right-0" : "left-0",
           open
             ? "translate-x-0"
@@ -104,19 +95,19 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         aria-label={t("nav.toggleMenu")}
       >
         {/* Header with close button */}
-        <div className="flex items-center justify-between p-4 border-b border-gold-light/30 dark:border-gold-dark/20">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--margin-line)]">
           <div>
-            <h2 className="text-base font-heading font-bold text-primary dark:text-primary-light">
+            <h2 className="text-base font-heading font-bold text-[var(--margin-active)]">
               {t("app.title")}
             </h2>
-            <p className="text-xs font-arabic text-text-muted" dir="rtl" lang="ar">
+            <p className="text-xs font-arabic text-[var(--margin-muted)]" dir="rtl" lang="ar">
               {t("app.titleAr")}
             </p>
           </div>
           <button
             ref={closeRef}
             onClick={onClose}
-            className="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="w-11 h-11 flex items-center justify-center rounded-lg text-[var(--margin-text)] hover:bg-[var(--margin-hover-bg)]"
             aria-label={t("nav.closeMenu")}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -142,8 +133,8 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors w-full min-h-[44px]",
                       isActive
-                        ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
-                        : "text-text-muted hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? "bg-[var(--margin-active-bg)] text-[var(--margin-active)]"
+                        : "text-[var(--margin-muted)] hover:bg-[var(--margin-hover-bg)] hover:text-[var(--margin-text)]"
                     )}
                   >
                     <item.icon className="w-5 h-5" />
@@ -157,8 +148,8 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors min-h-[44px]",
                       isActive
-                        ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
-                        : "text-text-muted hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? "bg-[var(--margin-active-bg)] text-[var(--margin-active)]"
+                        : "text-[var(--margin-muted)] hover:bg-[var(--margin-hover-bg)] hover:text-[var(--margin-text)]"
                     )}
                   >
                     <item.icon className="w-5 h-5" />
@@ -174,8 +165,8 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                       className={cn(
                         "flex items-center px-3 py-2 rounded text-xs font-medium transition-colors min-h-[44px]",
                         pathname === "/learn"
-                          ? "text-primary dark:text-primary-light"
-                          : "text-text-muted hover:text-text dark:hover:text-text-dark"
+                          ? "text-[var(--margin-active)]"
+                          : "text-[var(--margin-muted)] hover:text-[var(--margin-text)]"
                       )}
                     >
                       {t("nav.allModules")}
@@ -191,8 +182,8 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                           className={cn(
                             "flex items-center gap-1.5 px-3 py-2 rounded text-xs transition-colors min-h-[44px]",
                             moduleActive
-                              ? "text-primary font-medium dark:text-primary-light"
-                              : "text-text-muted hover:text-text dark:hover:text-text-dark"
+                              ? "text-[var(--margin-active)] font-medium"
+                              : "text-[var(--margin-muted)] hover:text-[var(--margin-text)]"
                           )}
                           aria-label={isLocked ? `${isAr ? m.labelAr : m.label} (${t("learn.locked")})` : undefined}
                         >
