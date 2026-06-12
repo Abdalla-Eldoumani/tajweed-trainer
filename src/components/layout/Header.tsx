@@ -12,10 +12,10 @@ export function Header() {
 
   return (
     <>
-      <header className="md:hidden sticky top-0 z-40 bg-bg-card dark:bg-bg-card-dark border-b border-gold-light/30 dark:border-gold-dark/20">
+      <header className="md:hidden sticky top-0 z-40 bg-[var(--margin-bg)] text-[var(--margin-text)] border-b border-[var(--margin-line)]">
         <div className="flex items-center justify-between px-4 h-14">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-base font-heading font-bold text-primary dark:text-primary-light">
+            <span className="text-base font-heading font-bold text-[var(--margin-active)]">
               {t("app.title")}
             </span>
           </Link>
@@ -24,7 +24,7 @@ export function Header() {
             <LanguageToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="p-3 rounded-lg text-[var(--margin-text)] hover:bg-[var(--margin-hover-bg)]"
               aria-label={t("nav.toggleMenu")}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
