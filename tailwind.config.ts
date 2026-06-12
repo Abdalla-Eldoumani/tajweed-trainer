@@ -10,34 +10,44 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Manuscript palette: lapis ink for interaction, gold leaf for
+        // ornament, vellum ivory for ground. Light values are duplicated as
+        // CSS variables in globals.css for the var-driven surfaces (frames,
+        // ornaments, tajweed); dark mode flips through the .dark variable
+        // block plus explicit dark: utilities, matching the existing pattern.
         primary: {
-          DEFAULT: "#165E2A",
-          light: "#4CAF50",
-          weak: "#2E7D44",
+          DEFAULT: "#1E4279",
+          light: "#D9B45C",
+          weak: "#2A5694",
         },
-        accent: "#D4A574",
+        "on-primary": "#FFFFFF",
+        ink: "#101726",
+        accent: "#B0552F",
         gold: {
-          DEFAULT: "#B68A2E",
-          light: "#D8BE86",
-          dark: "#8B7332",
-          soft: "#D8BE86",
+          DEFAULT: "#D4A843",
+          light: "#E3C77F",
+          dark: "#8F6F1E",
+          soft: "#E3C77F",
+          deep: "#B8902F",
         },
         cream: {
-          DEFAULT: "#F7F3EA",
-          dark: "#EFE8D8",
+          DEFAULT: "#F5F1E8",
+          dark: "#ECE5D3",
         },
         bg: {
-          DEFAULT: "#F7F3EA",
-          card: "#FFFFFF",
-          subtle: "#EFE8D8",
-          dark: "#0B1020",
-          "card-dark": "#141A2C",
+          DEFAULT: "#F5F1E8",
+          card: "#FCFAF3",
+          subtle: "#ECE5D3",
+          "subtle-dark": "#1A2336",
+          dark: "#0A0F1C",
+          "card-dark": "#121A2E",
         },
         text: {
-          DEFAULT: "#1A1F2E",
-          muted: "#5B6472",
-          dark: "#ECEFF6",
+          DEFAULT: "#131B2E",
+          muted: "#555F77",
+          dark: "#EDEAE0",
         },
+        border: "var(--border)",
         tajweed: {
           // Only text-tajweed-qalqalah is consumed (the qalqalah lesson letter).
           // This is a MANUAL MIRROR of the active "new" scheme value for `qalaqah`
@@ -51,7 +61,7 @@ const config: Config = {
       fontFamily: {
         quran: ["var(--font-quran)", '"Amiri Quran"', '"Scheherazade New"', "serif"],
         arabic: ["var(--font-amiri)", "Amiri", "serif"],
-        heading: ["var(--font-heading)", '"Plus Jakarta Sans"', "sans-serif"],
+        heading: ["var(--font-heading)", "Spectral", "serif"],
         body: ["var(--font-inter)", "Inter", "sans-serif"],
         mono: ["var(--font-mono)", '"JetBrains Mono"', "monospace"],
       },
