@@ -67,8 +67,13 @@ export function LockedModuleScreen({
         </div>
 
         <div className="flex flex-col gap-2 pt-2">
-          <Link href={`/learn/${prereqId}`}>
+          <Link href={`/practice/${prereqId}`}>
             <Button size="md" className="w-full">
+              {t("learn.locked.takeQuiz")}
+            </Button>
+          </Link>
+          <Link href={`/learn/${prereqId}`}>
+            <Button variant="outline" size="md" className="w-full">
               {t("learn.locked.startPrereq")}
             </Button>
           </Link>
