@@ -63,22 +63,34 @@ export function PlayerHost() {
     const s = usePlayer.getState();
     const cur = s.current();
     if (!cur) return;
-    const wantPlay = s.status === "loading" || s.status === "playing";
     audio.playbackRate = s.speed;
     fetchAudioUrl(cur.surah, cur.ayah, s.reciter)
       .then((url) => {
         if (seq !== loadSeq.current || !audioRef.current) return;
+        // stop() does not bump loadToken, so the seq guard alone cannot see a
+        // close that landed while the URL was in flight. Re-read the store and
+        // drop the load rather than resurrect audio the user already stopped;
+        // toggling back from idle issues a fresh loadToken anyway.
+        const now = usePlayer.getState();
+        if (now.status === "idle" || !now.current()) return;
         audio.src = url;
         audio.load();
-        if (wantPlay) {
+        // Derive the intent at resolve time, not before the fetch: a pause (or
+        // stop) that landed mid-fetch must win over the stale wish to play.
+        if (now.status === "loading" || now.status === "playing") {
           audio
             .play()
             .then(() => {
-              if (seq === loadSeq.current) usePlayer.setState({ status: "playing" });
+              if (seq !== loadSeq.current) return;
+              if (usePlayer.getState().status === "idle") return;
+              usePlayer.setState({ status: "playing" });
             })
             .catch(() => {
-              // Autoplay blocked or load failed; wait for a user gesture.
-              if (seq === loadSeq.current) usePlayer.setState({ status: "paused" });
+              // Autoplay blocked or load failed; wait for a user gesture. A
+              // stop that raced the rejection keeps the player hidden.
+              if (seq !== loadSeq.current) return;
+              if (usePlayer.getState().status === "idle") return;
+              usePlayer.setState({ status: "paused" });
             });
         }
         // Warm the next ayah in continuous mode so the gap stays minimal.
@@ -91,11 +103,13 @@ export function PlayerHost() {
       .catch(() => {
         // The fetch failed (no file for this reciter/verse, or a network
         // error). Pause and flag it so the mini-player can prompt a reciter
-        // change instead of leaving a dead control.
-        if (seq === loadSeq.current) {
-          usePlayer.setState({ status: "paused" });
-          usePlayer.getState().setError("audio.unavailable");
-        }
+        // change instead of leaving a dead control. After a stop, stay
+        // silent: repainting the bar with an error would undo the close.
+        if (seq !== loadSeq.current) return;
+        const now = usePlayer.getState();
+        if (now.status === "idle" || !now.current()) return;
+        usePlayer.setState({ status: "paused" });
+        usePlayer.getState().setError("audio.unavailable");
       });
   }, [loadToken]);
 
