@@ -133,7 +133,7 @@ export default function HomePage() {
         <div className="space-y-2">
           {modules.map((module) => (
             <Link key={module.id} href={`/learn/${module.id}`}>
-              <div className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-cream-dark dark:hover:bg-gray-800 transition-colors">
+              <div className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors">
                 <span className="w-8 h-8 rounded-full bg-gold-light/30 text-gold-dark dark:bg-gold-dark/20 dark:text-gold-light flex items-center justify-center text-xs font-bold border border-gold-light/40 dark:border-gold-dark/30">
                   {module.order}
                 </span>
