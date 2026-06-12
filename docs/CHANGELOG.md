@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.5.0 — 2026-06-12
+
+A guided learning path, a calmer quiz flow, a minimizable player, and a new visual identity. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
+
+### Added
+
+- **Quiz-gated learning path.** Modules now unlock by finishing the previous module's practice quiz instead of by merely opening a lesson. The rule lives in one place (`src/lib/module-unlock.ts`) and every surface reads it: the learn grid, the practice hub, lesson and quiz routes, the sidebar, and the mobile drawer. Locked screens point at the prerequisite quiz first, with its lessons as the secondary path, and finishing a quiz unlocks the next module live without a reload. There is no pass mark: sitting the quiz is the gate, the score is feedback.
+- **Minimizable player pill.** The movable mini-player can collapse to a compact pill that keeps playback running, with the drag handle, a play and pause control, and the current verse label. Minimized state and position persist across navigation and reload, and the pill re-clamps to the viewport when its size changes.
+
+### Changed
+
+- **Quiz feedback waits for you.** Answers no longer auto-advance on a timer. The explanation stays up until Continue, which takes focus so Enter advances; the last question reads "Finish quiz"; and after a wrong answer the lesson link becomes a filled call-to-action for reviewing the rule.
+- **Vellum and lapis repalette.** The interface moved from green-on-cream to the manuscript triad of classical Quranic illumination: vellum ivory ground, lapis ink for interaction, gold leaf for ornament, and red ochre as a rare accent. Dark mode is the same manuscript at night, a navy ground with gold-forward controls. The navigation chrome (sidebar, mobile header, drawer, and tab bar) is now a constant illuminated margin in both themes, and headings moved to Spectral. Tajweed letter colors are a separate system and are unchanged.
+
+### Fixed
+
+- **Playback follows the last action.** Rapid reciter switches mid-playback and closing the player while a verse is still loading no longer resurrect audio or repaint the bar with stale errors: in-flight loads are dropped the moment the player stops or changes course.
+- **Stable first render.** All components share one tab-wide progress snapshot, so the sidebar, learn grid, and practice hub always agree about what is unlocked, and storage writes that land during a render no longer trigger React's setState-during-render warning. Settings persist from an effect instead of inside the state updater, so saves cannot run mid-render under StrictMode.
+
 ## 0.4.0 — 2026-06-07
 
 Broader reciter choice, a movable audio player, a content-accuracy pass with a new offline check, and visual polish. No religious-content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
