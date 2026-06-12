@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { getSettings, setSettings as saveSettings } from "@/lib/storage";
 import type { UserSettings } from "@/lib/types";
 
@@ -26,17 +26,26 @@ const SettingsContext = createContext<SettingsContextValue>({
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettingsState] = useState<UserSettings>(() => getSettings());
+  const hydrated = useRef(false);
 
   useEffect(() => {
     setSettingsState(getSettings());
   }, []);
 
+  // Persist from an effect, never inside the updater: StrictMode double-invokes
+  // updaters, and the storage write emits the progress change bus, which must
+  // not fire mid-render. The first pass is skipped because that value was just
+  // read from storage.
+  useEffect(() => {
+    if (!hydrated.current) {
+      hydrated.current = true;
+      return;
+    }
+    saveSettings(settings);
+  }, [settings]);
+
   const updateSettings = useCallback((updates: Partial<UserSettings>) => {
-    setSettingsState((prev) => {
-      const next = { ...prev, ...updates };
-      saveSettings(next);
-      return next;
-    });
+    setSettingsState((prev) => ({ ...prev, ...updates }));
   }, []);
 
   return (
