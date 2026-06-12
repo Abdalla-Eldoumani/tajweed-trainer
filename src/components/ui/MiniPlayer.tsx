@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
 import { ayahCountForSurah } from "@/lib/navigation";
-import { getPlayerPosition, setPlayerPosition } from "@/lib/storage";
+import { getPlayerPosition, setPlayerPosition, getPlayerMinimized, setPlayerMinimized } from "@/lib/storage";
 import {
   clampPlayerPosition,
   reservedBottomFor,
@@ -50,6 +50,60 @@ const GripIcon = () => (
   </svg>
 );
 
+const PrevIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M6 5h2v14H6z" />
+    <path d="M18 5v14L9 12z" />
+  </svg>
+);
+
+const NextIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M16 5h2v14h-2z" />
+    <path d="M6 5v14l9-7z" />
+  </svg>
+);
+
+const PlayIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M7 4.5v15l13-7.5z" />
+  </svg>
+);
+
+const PauseIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M7 5h3.5v14H7z" />
+    <path d="M13.5 5H17v14h-3.5z" />
+  </svg>
+);
+
+const LoadingIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="animate-pulse">
+    <circle cx="5" cy="12" r="2" />
+    <circle cx="12" cy="12" r="2" />
+    <circle cx="19" cy="12" r="2" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+const MinimizeIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
+const ExpandIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="6 15 12 9 18 15" />
+  </svg>
+);
+
 const SlidersIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
     <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
@@ -66,7 +120,22 @@ export function MiniPlayer() {
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [showStudy, setShowStudy] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // Collapsed pill state. Minimizing keeps playback and the drag handle; only
+  // the explicit stop control dismisses the player. Restored after mount (the
+  // server render shows nothing) and persisted so it survives navigation.
+  const [minimized, setMinimized] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    setMinimized(getPlayerMinimized());
+  }, []);
+
+  const toggleMinimized = () => {
+    // Persist beside the setState call, not inside the updater: StrictMode
+    // double-invokes updaters, and the storage write must not run mid-render.
+    const next = !minimized;
+    setMinimized(next);
+    setPlayerMinimized(next);
+  };
 
   const status = usePlayer((s) => s.status);
   const cur = usePlayer((s) => s.queue[s.index] ?? null);
@@ -109,12 +178,20 @@ export function MiniPlayer() {
 
   // --- Movable player -------------------------------------------------------
   // The card is positioned by a fixed top-left corner driven from state and
-  // applied as a transform, never by remounting — the single <audio> lives in
+  // applied as a transform, never by remounting: the single <audio> lives in
   // PlayerHost, a sibling mounted once in AppProvider, so moving this DOM never
   // touches playback. null means "use the computed default dock"; we resolve it
   // to a concrete point on mount once the box can be measured.
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState<PlayerPosition | null>(null);
+  // Mirror of pos for the resize listener and the re-clamp effect, so they can
+  // read the latest position without re-subscribing on every move and without
+  // a functional updater (persisting from inside one is a render-phase side
+  // effect that StrictMode double-fires).
+  const posRef = useRef<PlayerPosition | null>(null);
+  useEffect(() => {
+    posRef.current = pos;
+  }, [pos]);
   // True only while a pointer drag is in flight; used to suppress the position
   // transition so the 1:1 follow has no easing (the spec's hard requirement).
   const [dragging, setDragging] = useState(false);
@@ -167,12 +244,7 @@ export function MiniPlayer() {
   useEffect(() => {
     if (!mounted) return;
     const onResize = () => {
-      setPos((prev) => {
-        const base = prev ?? defaultDock(viewport(), measure());
-        const clamped = clampPlayerPosition(base, viewport(), measure());
-        setPlayerPosition(clamped);
-        return clamped;
-      });
+      commit(posRef.current ?? defaultDock(viewport(), measure()));
     };
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
@@ -180,7 +252,20 @@ export function MiniPlayer() {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
     };
-  }, [mounted, measure, viewport]);
+  }, [mounted, commit, measure, viewport]);
+
+  // Collapsing to the pill (or expanding back) changes the card's size, so the
+  // stored corner may now hang off-screen; re-clamp and persist only when the
+  // position actually moved.
+  useEffect(() => {
+    if (!mounted) return;
+    const prev = posRef.current;
+    if (prev === null) return;
+    const clamped = clampPlayerPosition(prev, viewport(), measure());
+    if (clamped.x === prev.x && clamped.y === prev.y) return;
+    setPos(clamped);
+    setPlayerPosition(clamped);
+  }, [minimized, mounted, measure, viewport]);
 
   const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     // Only react to the primary button / a touch or pen contact.
@@ -231,7 +316,9 @@ export function MiniPlayer() {
         // Anchor to the physical left edge (not logical `start`): the drag math
         // is in physical pixels (clientX, innerWidth), so the x-translate origin
         // must be the left edge in both LTR and RTL or it would flip off-screen.
-        className={`pointer-events-auto fixed left-0 top-0 w-[calc(100%-1rem)] max-w-4xl rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-3 py-2 safe-bottom ${
+        className={`pointer-events-auto fixed left-0 top-0 rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark ${
+          minimized ? "w-auto max-w-[260px] px-1.5 py-1" : "w-[calc(100%-1rem)] max-w-4xl px-3 py-2 safe-bottom"
+        } ${
           // No transition while dragging (1:1 follow) and none under reduced
           // motion; otherwise a short settle on programmatic / keyboard moves.
           dragging ? "" : "transition-transform duration-150 motion-reduce:transition-none"
@@ -247,7 +334,7 @@ export function MiniPlayer() {
         role="region"
         aria-label={t("player.play")}
       >
-        {error && (
+        {!minimized && error && (
           <div
             role="alert"
             className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs"
@@ -262,7 +349,7 @@ export function MiniPlayer() {
           </div>
         )}
 
-        {showStudy && (
+        {!minimized && showStudy && (
           <div className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
             <label className="flex items-center gap-1.5">
               <span className="text-text-muted">{t("player.repeatVerse")}</span>
@@ -334,12 +421,54 @@ export function MiniPlayer() {
           </div>
         )}
 
+        {/* The drag handle appears in both layouts with the same pointer and
+            keyboard wiring, so muscle memory carries across minimize. */}
+        {minimized ? (
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              onKeyDown={onHandleKeyDown}
+              aria-label={t("player.dragHandle")}
+              title={t("player.dragHandle")}
+              className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
+            >
+              <GripIcon />
+            </button>
+            <button
+              type="button"
+              onClick={() => usePlayer.getState().toggle()}
+              aria-label={playing ? t("player.pause") : t("player.play")}
+              className="p-2 min-w-[40px] min-h-[40px] rounded-lg bg-primary/10 dark:bg-primary-light/20 hover:bg-primary/20 inline-flex items-center justify-center"
+            >
+              {status === "loading" ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />}
+            </button>
+            <span
+              className={`max-w-[120px] truncate text-xs px-1 ${error ? "text-red-600 dark:text-red-400" : "text-text-muted"}`}
+            >
+              {label}
+              {cur ? ` · ${cur.surah}:${cur.ayah}` : ""}
+            </span>
+            <button
+              type="button"
+              onClick={toggleMinimized}
+              aria-label={t("player.expand")}
+              title={t("player.expand")}
+              className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            >
+              <ExpandIcon />
+            </button>
+          </div>
+        ) : (
         <div className="flex items-center gap-2">
           <button
             type="button"
             // Dedicated grab affordance. Pointer events drive the drag; arrow
             // keys nudge it when focused. Kept out of the transport tab flow's
-            // way — it is just one more focusable control, never a focus trap.
+            // way: it is just one more focusable control, never a focus trap.
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
@@ -347,7 +476,7 @@ export function MiniPlayer() {
             onKeyDown={onHandleKeyDown}
             aria-label={t("player.dragHandle")}
             title={t("player.dragHandle")}
-            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
+            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
           >
             <GripIcon />
           </button>
@@ -356,26 +485,26 @@ export function MiniPlayer() {
             onClick={() => usePlayer.getState().prev()}
             disabled={!hasPrev}
             aria-label={t("player.previous")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle"
+            className="p-2 min-w-[40px] min-h-[40px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
-            ⏮
+            <PrevIcon />
           </button>
           <button
             type="button"
             onClick={() => usePlayer.getState().toggle()}
             aria-label={playing ? t("player.pause") : t("player.play")}
-            className="p-2 min-w-[44px] min-h-[44px] rounded-lg bg-primary/10 dark:bg-primary-light/20 hover:bg-primary/20"
+            className="p-2 min-w-[44px] min-h-[44px] rounded-lg bg-primary/10 dark:bg-primary-light/20 hover:bg-primary/20 inline-flex items-center justify-center"
           >
-            {status === "loading" ? "…" : playing ? "⏸" : "▶"}
+            {status === "loading" ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />}
           </button>
           <button
             type="button"
             onClick={() => usePlayer.getState().next()}
             disabled={!hasNext}
             aria-label={t("player.next")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle"
+            className="p-2 min-w-[40px] min-h-[40px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
-            ⏭
+            <NextIcon />
           </button>
 
           <div className="flex-1 min-w-0">
@@ -393,7 +522,7 @@ export function MiniPlayer() {
                 }}
                 aria-label={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
                 title={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
-                className="shrink-0 text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 text-primary dark:text-primary-light hover:bg-bg-subtle"
+                className="shrink-0 text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 text-primary dark:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
               >
                 {mode === "continuous" ? t("player.modeContinuous") : t("player.modeSingle")}
               </button>
@@ -423,7 +552,7 @@ export function MiniPlayer() {
             className={`p-2 min-w-[40px] min-h-[40px] rounded-lg ${
               showStudy || repeatOne > 0 || repeatRange || sleepEndOfSurah || sleepActive
                 ? "text-primary dark:text-primary-light bg-primary/10 dark:bg-primary-light/20"
-                : "text-text-muted hover:bg-bg-subtle"
+                : "text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
             }`}
           >
             <SlidersIcon />
@@ -434,21 +563,32 @@ export function MiniPlayer() {
             aria-label={t("player.speed")}
             className="text-xs rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
           >
-            {SPEEDS.map((s) => (
-              <option key={s} value={s}>
-                {s}×
+            {SPEEDS.map((sp) => (
+              <option key={sp} value={sp}>
+                {sp}×
               </option>
             ))}
           </select>
           <button
             type="button"
+            onClick={toggleMinimized}
+            aria-label={t("player.minimize")}
+            title={t("player.minimize")}
+            className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+          >
+            <MinimizeIcon />
+          </button>
+          <button
+            type="button"
             onClick={() => usePlayer.getState().stop()}
             aria-label={t("player.close")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg hover:bg-bg-subtle"
+            title={t("player.close")}
+            className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
-            ✕
+            <CloseIcon />
           </button>
         </div>
+        )}
       </div>
     </div>
   );
