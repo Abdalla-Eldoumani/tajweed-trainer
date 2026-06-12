@@ -60,7 +60,7 @@ export default function LaamRaaPage() {
         <p className="text-sm text-text-muted mt-2">{isAr && laamSection.description_ar ? laamSection.description_ar : laamSection.description}</p>
 
         {laamSection.subtypes?.map((st) => (
-          <div key={st.id} id={st.id} className="mt-4 p-4 rounded-lg bg-cream-dark dark:bg-gray-800 scroll-mt-20">
+          <div key={st.id} id={st.id} className="mt-4 p-4 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark scroll-mt-20">
             <h3 className="font-heading font-semibold text-sm">{isAr ? st.title_ar : st.title_en}</h3>
             {!isAr && <ArabicText text={st.title_ar} size="sm" className="text-text-muted" />}
             <p className="text-xs text-text-muted mt-2">{isAr && st.description_ar ? st.description_ar : st.description}</p>
@@ -93,7 +93,7 @@ export default function LaamRaaPage() {
         <p className="text-sm text-text-muted mt-2">{isAr && laamAllahSection.description_ar ? laamAllahSection.description_ar : laamAllahSection.description}</p>
 
         {laamAllahSection.rules?.map((rule, i) => (
-          <div key={i} className="mt-3 p-3 rounded-lg bg-cream-dark dark:bg-gray-800">
+          <div key={i} className="mt-3 p-3 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark">
             <p className="text-xs font-medium">{isAr && rule.condition_ar ? rule.condition_ar : rule.condition}</p>
             <p className="text-xs text-primary dark:text-primary-light mt-1">{isAr && rule.result_ar ? rule.result_ar : rule.result}</p>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -118,7 +118,7 @@ export default function LaamRaaPage() {
             <h3 className="text-xs font-semibold mb-2">{t("laamRaa.heavyRaa")}</h3>
             <div className="space-y-2">
               {raaSection.tafkheem_cases.map((c, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs p-2 rounded bg-cream-dark dark:bg-gray-800">
+                <div key={i} className="flex items-start gap-2 text-xs p-2 rounded bg-bg-subtle dark:bg-bg-subtle-dark">
                   <span className="text-primary dark:text-primary-light shrink-0 font-bold">&uarr;</span>
                   <div>
                     <p className="font-medium">{isAr && c.condition_ar ? c.condition_ar : c.condition}</p>
@@ -137,7 +137,7 @@ export default function LaamRaaPage() {
             <h3 className="text-xs font-semibold mb-2">{t("laamRaa.lightRaa")}</h3>
             <div className="space-y-2">
               {raaSection.tarqeeq_cases.map((c, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs p-2 rounded bg-cream-dark dark:bg-gray-800">
+                <div key={i} className="flex items-start gap-2 text-xs p-2 rounded bg-bg-subtle dark:bg-bg-subtle-dark">
                   <span className="text-blue-500 shrink-0 font-bold">&darr;</span>
                   <div>
                     <p className="font-medium">{isAr && c.condition_ar ? c.condition_ar : c.condition}</p>
