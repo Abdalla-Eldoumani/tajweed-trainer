@@ -8,7 +8,7 @@ const QuizSession = dynamic(
   () => import("@/components/practice/QuizSession").then((mod) => ({ default: mod.QuizSession })),
   {
     ssr: false,
-    loading: () => <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />,
+    loading: () => <div className="h-64 bg-bg-subtle dark:bg-bg-subtle-dark rounded-xl animate-pulse" />,
   },
 );
 
