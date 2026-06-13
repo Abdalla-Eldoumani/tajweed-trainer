@@ -19,7 +19,7 @@ const AUDIO_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 // is [wordStartIndex, wordEndIndexExclusive, startMs, endMs] — timing metadata
 // about the verified recitation audio, not generated content. Most Quran.com
 // reciters expose it; the EveryAyah reciters and a few Quran.com ones do not,
-// in which case there is simply no highlight (see .agent/RECITERS.md).
+// in which case there is simply no highlight.
 export type WordSegment = [number, number, number, number];
 
 const segmentCache = new Map<string, { segments: WordSegment[] | null; timestamp: number }>();
