@@ -48,10 +48,27 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   lastRead: null,
 };
 
+// Callers mutate what getProgress() returns before writing it back, so every
+// handout of the default state must be a fresh clone. Sharing (or freezing)
+// the literal breaks a first visit: the very first analytics write mutates
+// the object it was handed.
+function cloneDefaultProgress(): TajweedProgress {
+  return structuredClone(DEFAULT_PROGRESS);
+}
+
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === "object") {
+    for (const nested of Object.values(value)) deepFreeze(nested);
+    Object.freeze(value);
+  }
+  return value;
+}
+
 // Stable reference handed to useSyncExternalStore as the server snapshot. It
 // must be the same object on every call or React re-renders forever during
-// hydration, so it is frozen and never rebuilt.
-export const EMPTY_PROGRESS: TajweedProgress = Object.freeze(DEFAULT_PROGRESS);
+// hydration. Deep-frozen on its own clone so nothing can pollute the shared
+// empty state; live reads go through cloneDefaultProgress() instead.
+export const EMPTY_PROGRESS: TajweedProgress = deepFreeze(structuredClone(DEFAULT_PROGRESS));
 
 // Caps protect against pathological inputs from a tampered localStorage —
 // e.g. a 100,000-entry bookmarks array that bloats every render.
@@ -271,7 +288,7 @@ function sanitizeLastRead(input: unknown): VerseLocation | null {
 }
 
 function sanitizeProgress(input: unknown): TajweedProgress {
-  if (!isObject(input)) return DEFAULT_PROGRESS;
+  if (!isObject(input)) return cloneDefaultProgress();
   const modules: Record<string, ModuleProgress> = {};
   if (isObject(input.modules)) {
     const entries = Object.entries(input.modules).slice(0, MAX_MODULES);
@@ -287,7 +304,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
         longestStreak: pickNumber(input.streaks.longestStreak, 0, 0, 100000),
         lastPracticeDate: typeof input.streaks.lastPracticeDate === "string" ? input.streaks.lastPracticeDate : "",
       }
-    : DEFAULT_PROGRESS.streaks;
+    : { ...DEFAULT_PROGRESS.streaks };
   return {
     modules,
     settings: sanitizeSettings(input.settings),
@@ -303,13 +320,13 @@ function sanitizeProgress(input: unknown): TajweedProgress {
 }
 
 export function getProgress(): TajweedProgress {
-  if (!isBrowser()) return DEFAULT_PROGRESS;
+  if (!isBrowser()) return cloneDefaultProgress();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_PROGRESS;
+    if (!raw) return cloneDefaultProgress();
     return sanitizeProgress(JSON.parse(raw));
   } catch {
-    return DEFAULT_PROGRESS;
+    return cloneDefaultProgress();
   }
 }
 
@@ -538,7 +555,7 @@ export function resetProgress(): void {
   const progress = getProgress();
   // Keep settings, reset everything else
   setProgress({
-    ...DEFAULT_PROGRESS,
+    ...cloneDefaultProgress(),
     settings: progress.settings,
   });
 }
