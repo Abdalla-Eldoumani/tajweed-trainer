@@ -10,22 +10,25 @@ export function StreakCounter() {
   const { t } = useTranslation();
   const { currentStreak, longestStreak, lastPracticeDate } = progress.streaks;
 
+  // Streak dates are stored as UTC day strings (toISOString), so the calendar
+  // computes and compares in UTC end to end — otherwise a user near local
+  // midnight could see "today" highlighted on the wrong pill.
+  const todayStr = new Date().toISOString().split("T")[0];
   const days = Array.from({ length: 7 }).map((_, i) => {
     const date = new Date();
-    date.setDate(date.getDate() - (6 - i));
+    date.setUTCDate(date.getUTCDate() - (6 - i));
     const dateStr = date.toISOString().split("T")[0];
-    const isToday = i === 6;
+    const isToday = dateStr === todayStr;
 
     let isPracticed = false;
     if (lastPracticeDate && currentStreak > 0) {
-      const lastDate = new Date(lastPracticeDate + "T00:00:00");
-      const streakStart = new Date(lastDate);
-      streakStart.setDate(streakStart.getDate() - (currentStreak - 1));
+      const streakStart = new Date(lastPracticeDate + "T00:00:00Z");
+      streakStart.setUTCDate(streakStart.getUTCDate() - (currentStreak - 1));
       const streakStartStr = streakStart.toISOString().split("T")[0];
       isPracticed = dateStr >= streakStartStr && dateStr <= lastPracticeDate;
     }
 
-    return { dateStr, isToday, isPracticed, dayLabel: t(`weekday.short.${date.getDay()}`) };
+    return { dateStr, isToday, isPracticed, dayLabel: t(`weekday.short.${date.getUTCDay()}`) };
   });
 
   return (
