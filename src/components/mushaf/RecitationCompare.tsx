@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { useRecorder } from "@/hooks/useRecorder";
 import { fetchAudioUrl } from "@/lib/audio-api";
@@ -38,15 +38,22 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
   const { supported, state, url, record, stop, reset } = useRecorder();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Own one clip element for this panel and release it on unmount, so a
+  // reciter/own-take clip can't keep playing after the panel closes.
+  useEffect(() => {
+    const audio = new Audio();
+    audioRef.current = audio;
+    return () => {
+      audio.pause();
+      audio.removeAttribute("src");
+    };
+  }, []);
+
   if (!supported) return null;
 
   const playClip = (src: string | null) => {
-    if (!src) return;
-    let audio = audioRef.current;
-    if (!audio) {
-      audio = new Audio();
-      audioRef.current = audio;
-    }
+    const audio = audioRef.current;
+    if (!src || !audio) return;
     audio.src = src;
     audio.play().catch(() => {});
   };

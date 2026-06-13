@@ -59,11 +59,11 @@ Used by `getTajweedPage(pageNumber)` for the Mushaf reader. Same fields plus `pa
 
 The wrapper passes `per_page=50` to safely cover any edge-case page; the API returns only what's actually on the page.
 
-## Per-ayah audio (Quran.com)
+## Per-ayah audio (Quran.com + EveryAyah)
 
-Per-ayah audio is also served by the Quran.com Foundation API v4, wrapped in `src/lib/audio-api.ts`.
+Per-ayah audio is served by the Quran.com Foundation API v4 (for the numeric reciter ids) and by EveryAyah (for the `ea-*` reciters), wrapped in `src/lib/audio-api.ts`.
 
-The reciter catalogue is a static list of 12 recitations in `src/lib/reciters.ts` (`RECITATIONS`), captured from `GET /resources/recitations` (Arabic names cross-checked via `?language=ar`); the ids and styles are the API's own. `DEFAULT_RECITER_ID` is `"12"` — Al-Husary in the mu'allim (teaching) style, slow and clear, the default for learning. There is no runtime fetch of an editions list and no `useReciters` hook; both were removed with the provider switch.
+The reciter catalogue is a static list of 19 recitations in `src/lib/reciters.ts` (`RECITATIONS`): 12 Quran.com reciters captured from `GET /resources/recitations` (Arabic names cross-checked via `?language=ar`; the ids and styles are the API's own) plus 7 EveryAyah reciters (`ea-*`) that resolve to a deterministic file URL with no API round-trip. `DEFAULT_RECITER_ID` is `"12"` — Al-Husary in the mu'allim (teaching) style, slow and clear, the default for learning. There is no runtime fetch of an editions list and no `useReciters` hook; both were removed with the provider switch.
 
 ### `GET /recitations/{id}/by_ayah/{surah}:{ayah}`
 
@@ -102,7 +102,7 @@ Reciter ids cannot reference an unknown reciter: `normalizeReciterId` maps any v
 The Content Security Policy is assembled once in `next.config.mjs` (the single source for all response headers; `vercel.json` carries only framework + buildCommand). The origins relevant to these integrations:
 
 - `connect-src 'self' https://api.quran.com` — the only cross-origin host the app fetches JSON from.
-- `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com` — the audio CDNs that per-ayah and per-word URLs resolve to.
+- `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com` — the audio hosts that per-ayah and per-word URLs resolve to.
 - `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR). `style-src`/`font-src` list no Google Fonts origins — all fonts are self-hosted via next/font.
 
 The service worker is served by the `src/app/sw.js/route.ts` route handler (`force-static`), which stamps a unique per-build version into `scripts/sw-template.js` so each deploy gets fresh cache namespaces and the activate step purges the previous build's caches. Its scope is deliberately limited to same-origin requests: HTML navigation (network-first) and same-origin static assets (cache-first). It does **not** intercept cross-origin Quran audio (mp3) or the Quran.com API — those stream/fetch natively, so the worker can never break audio playback. The trade-off is that Quran audio and API content are not available offline.
@@ -134,7 +134,7 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `memorizedVerses` | 6,236 entries | One per Quran ayah. Each entry validated against `^\d{1,3}:\d{1,3}$`; deduped on read. |
 | `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1–100 chars. |
 | `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
-| `reciter` | one of the 12 `RECITATIONS` ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
+| `reciter` | one of the 19 `RECITATIONS` ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
 | `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
 | `lastMushafPage` | integer 1–604 | Out-of-range values fall back to 1. |
 

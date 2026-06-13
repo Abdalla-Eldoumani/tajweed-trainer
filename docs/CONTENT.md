@@ -159,7 +159,7 @@ This is the most invasive content change. Steps:
 npm run build
 
 # Pure tests (no browser)
-node scripts/verify-sanitizer.mjs            # 14/14
+node scripts/verify-sanitizer.mjs            # all cases pass
 
 # Browser tests (require dev server running)
 node scripts/verify-mushaf.mjs               # 21/21

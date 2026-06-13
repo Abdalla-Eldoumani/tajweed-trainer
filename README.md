@@ -65,7 +65,7 @@ The same rule is why per-letter tafkheem coloring in the Mushaf is not shipped: 
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS 3.4 |
 | Lint | ESLint 9 (flat config, `eslint.config.mjs`) |
-| Fonts | Self-hosted via `next/font` (Inter, Plus Jakarta Sans, JetBrains Mono, Amiri, Amiri Quran) |
+| Fonts | Self-hosted via `next/font` (Inter, Spectral, JetBrains Mono, Amiri, Amiri Quran) |
 | Node | 24 |
 | State | localStorage (SSR-safe via `useSettings` and `useProgress`) |
 | Tajweed text | [Quran.com Foundation API v4](https://api.quran.com/api/v4) |

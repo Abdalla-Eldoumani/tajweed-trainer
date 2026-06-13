@@ -54,7 +54,7 @@ Strict mode. Avoid `any` unless absolutely necessary. New types belong in `src/l
 - Tailwind only. No CSS modules, no styled-components.
 - Custom CSS lives in `src/app/globals.css` (tajweed colors, mushaf frame, ornaments).
 - Use Tailwind logical properties (`ms-*`, `me-*`, `border-s`, `border-e`) so RTL flips correctly.
-- Custom fonts: `font-quran` (Amiri Quran), `font-arabic` (Amiri), `font-heading` (Plus Jakarta Sans), `font-mono` (JetBrains Mono), default body (Inter).
+- Custom fonts: `font-quran` (Amiri Quran), `font-arabic` (Amiri), `font-heading` (Spectral), `font-mono` (JetBrains Mono), default body (Inter).
 
 ### State
 
@@ -65,7 +65,7 @@ Strict mode. Avoid `any` unless absolutely necessary. New types belong in `src/l
 
 ### Naming
 
-- Files: PascalCase for components (`MushafPage.tsx`), camelCase for hooks and utilities (`useAudio.ts`, `quran-api.ts`).
+- Files: PascalCase for components (`MushafPage.tsx`), camelCase for hooks and utilities (`usePlayer.ts`, `quran-api.ts`).
 - IDs in JSON: kebab-case (`noon-sakinah`, `madd-tabeeee`).
 - Tailwind classes: source order (layout, spacing, color, typography). The `cn()` helper merges duplicates.
 

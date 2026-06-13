@@ -10,7 +10,7 @@ This is a client-side app with no user accounts, no server data, no payments, an
 - **Clickjacking and framing.** `X-Frame-Options: DENY` and `frame-ancestors 'none'` prevent the app from being embedded.
 - **MIME sniffing.** `X-Content-Type-Options: nosniff`.
 - **Information leakage on outbound requests.** `Referrer-Policy: strict-origin-when-cross-origin`.
-- **Browser API access.** `Permissions-Policy` denies camera, microphone, geolocation, and the FLoC interest cohort.
+- **Browser API access.** `Permissions-Policy` denies 14 powerful features the app never needs: camera, microphone, geolocation, the FLoC interest cohort, payment, usb, serial, bluetooth, hid, midi, display-capture, accelerometer, gyroscope, and magnetometer.
 - **Forced HTTPS.** `Strict-Transport-Security` set to 2 years with subdomain inclusion and preload eligibility.
 
 ## Content Security Policy
@@ -24,7 +24,7 @@ The CSP and all response headers are assembled once in `next.config.mjs` and app
 | `style-src 'self' 'unsafe-inline'` | Self plus inline critical CSS. |
 | `font-src 'self' data:` | Self-hosted fonts (next/font); no Google Fonts origins. |
 | `img-src 'self' data: blob:` | Self plus data and blob URIs (icons, ornaments). |
-| `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com` | The Quran.com per-ayah audio origins. |
+| `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com` | The per-ayah audio origins (Quran.com CDNs plus EveryAyah). |
 | `connect-src 'self' https://api.quran.com` | The Quran.com API. |
 | `frame-ancestors 'none'` | No embedding. |
 | `base-uri 'self'` | No `<base>` redirection. |
