@@ -1,4 +1,4 @@
-import type { QuranicExample, PracticeQuestion, Question, TajweedProgress } from "./types";
+import type { QuranicExample, PracticeQuestion, Question } from "./types";
 
 import noonData from "@/data/content/noon-sakinah-tanween.json";
 import meemData from "@/data/content/meem-sakinah.json";
@@ -256,28 +256,10 @@ export function getDueQuestions(dueIds: string[], count: number): PracticeQuesti
   return shuffle(matched).slice(0, count).map(questionToPractice);
 }
 
-// Most recent quiz score and total quizzes taken for a module. Reads
-// progress.modules[id].quizScores (the existing schema). Pure — caller passes
-// the progress snapshot so we don't pull useProgress into a server component.
-export interface ModuleScoreSummary {
-  lastScore: number | null;
-  quizzesTaken: number;
-  lastDate: string | null;
-}
-
-export function getModuleLastScore(progress: TajweedProgress, moduleId: string): ModuleScoreSummary {
-  const scores = progress.modules[moduleId]?.quizScores ?? [];
-  if (scores.length === 0) {
-    return { lastScore: null, quizzesTaken: 0, lastDate: null };
-  }
-  // Latest by date string (ISO sorts lexicographically).
-  const latest = scores.reduce((acc, s) => (s.date > acc.date ? s : acc), scores[0]);
-  return {
-    lastScore: latest.score,
-    quizzesTaken: scores.length,
-    lastDate: latest.date,
-  };
-}
+// getModuleLastScore and ModuleScoreSummary moved to ./practice-scores so the
+// practice hub can read scores without importing this whole content-heavy
+// module. Re-exported here for any caller that still reaches for them.
+export { getModuleLastScore, type ModuleScoreSummary } from "./practice-scores";
 
 export function getAvailableModules(): { id: string; name: string; count: number }[] {
   const counts = new Map<string, number>();

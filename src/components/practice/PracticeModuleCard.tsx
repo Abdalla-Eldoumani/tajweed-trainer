@@ -6,7 +6,7 @@ import { ArabicText } from "@/components/ui/ArabicText";
 import { Card } from "@/components/ui/Card";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic } from "@/lib/utils";
-import type { ModuleScoreSummary } from "@/lib/question-pool";
+import type { ModuleScoreSummary } from "@/lib/practice-scores";
 
 interface PracticeModuleCardProps {
   href: string;
