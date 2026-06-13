@@ -21,6 +21,7 @@ import { MedallionOrnament, OrnamentalDivider } from "@/components/ui/Ornament";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
 import learningPath from "@/data/content/learning-path.json";
+import basmala from "@/data/basmala.json";
 import type { LearningModule } from "@/lib/types";
 
 const modules = learningPath.modules as LearningModule[];
@@ -41,7 +42,7 @@ export default function HomePage() {
       <div className="relative text-center py-10 islamic-pattern-bg rounded-xl overflow-hidden">
         <MedallionOrnament className="absolute inset-0 m-auto w-72 h-72 opacity-[0.07] pointer-events-none" />
         <p className="font-quran text-arabic-md text-gold-dark dark:text-gold-light mb-4 relative z-10" dir="rtl" lang="ar">
-          بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+          {basmala.text}
         </p>
         <OrnamentalDivider className="max-w-xs mx-auto mb-4 relative z-10" />
         <h1 className="font-heading text-3xl sm:text-4xl font-bold relative z-10">

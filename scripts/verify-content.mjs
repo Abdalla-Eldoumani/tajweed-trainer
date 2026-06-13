@@ -142,6 +142,16 @@ function normalizeArabic(text) {
 async function main() {
   const snapshots = JSON.parse(readFileSync(join(root, "src", "data", "verse-snapshots.json"), "utf8"));
 
+  // The basmala rendered by the surah divider and the home hero lives in
+  // src/data/basmala.json; assert it still equals the authenticated Al-Fatihah
+  // 1:1 snapshot so the sourced copy can never drift from the verified text.
+  const basmala = JSON.parse(readFileSync(join(root, "src", "data", "basmala.json"), "utf8"));
+  record(
+    "basmala.json matches the authenticated Al-Fatihah 1:1 snapshot",
+    snapshots["1:1"] != null && basmala.text === snapshots["1:1"].arabic,
+    snapshots["1:1"] ? "" : "1:1 missing from snapshots",
+  );
+
   // --- Discover the question files and confirm full coverage of the nine ---
   const onDisk = readdirSync(questionsDir)
     .filter((f) => f.endsWith(".ts"))
