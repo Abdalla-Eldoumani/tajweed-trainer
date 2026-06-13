@@ -563,7 +563,9 @@ export function MiniPlayer() {
               min={0}
               max={Number.isFinite(duration) && duration > 0 ? duration : 0}
               step={0.1}
-              value={Math.min(currentTime, duration || currentTime)}
+              // Keep the thumb value within max: before metadata loads, duration
+              // is 0, so the value pins to 0 instead of jumping past a 0 max.
+              value={Number.isFinite(duration) && duration > 0 ? Math.min(currentTime, duration) : 0}
               onChange={(e) => usePlayer.getState().seek(Number(e.target.value))}
               aria-label={t("player.seek")}
               className="w-full accent-primary"
