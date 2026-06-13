@@ -17,6 +17,12 @@ const translations: Record<string, { en: string; ar: string }> = {
   "nav.allModules": { en: "All Modules", ar: "جميع الوحدات" },
   "nav.closeMenu": { en: "Close menu", ar: "إغلاق القائمة" },
   "nav.toggleMenu": { en: "Toggle menu", ar: "فتح القائمة" },
+  "nav.sidebar": { en: "Main navigation", ar: "التنقل الرئيسي" },
+  "nav.bottomTabs": { en: "Quick navigation", ar: "التنقل السريع" },
+  "nav.drawer": { en: "Menu navigation", ar: "تنقل القائمة" },
+
+  // Connectivity
+  "offline.notice": { en: "Offline — opened pages still work", ar: "غير متصل — الصفحات المفتوحة تعمل" },
 
   // Home page
   "home.title": { en: "Tajweed Trainer", ar: "معلّم التجويد" },

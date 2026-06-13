@@ -36,6 +36,10 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const pathname = usePathname();
   const [learnExpanded, setLearnExpanded] = useState(pathname.startsWith("/learn"));
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // The control that had focus when the drawer opened, so focus returns there
+  // on close instead of being lost to the top of the page.
+  const openerRef = useRef<HTMLElement | null>(null);
   const { t, isAr } = useTranslation();
   // Lock indicators are a hint, not enforcement (the route gates itself).
   // Render only after mount to avoid hydration mismatch from localStorage.
@@ -49,15 +53,40 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
 
   useEffect(() => {
     if (open) {
+      openerRef.current = (document.activeElement as HTMLElement) ?? null;
       closeRef.current?.focus();
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
+      // Return focus to the opener (the hamburger button) when closing.
+      openerRef.current?.focus?.();
+      openerRef.current = null;
     }
     return () => {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  // Keep Tab focus inside the open drawer (it is an aria-modal dialog). Wrap
+  // from the last focusable element back to the first and vice versa.
+  const trapTab = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab") return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const focusables = panel.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -82,6 +111,11 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
 
       {/* Drawer panel */}
       <div
+        ref={panelRef}
+        onKeyDown={trapTab}
+        // While closed the panel is translated off-screen but still in the DOM;
+        // `inert` keeps its links out of the tab order and a11y tree until open.
+        inert={!open}
         className={cn(
           "fixed top-0 bottom-0 w-[280px] z-50 bg-[var(--margin-bg)] text-[var(--margin-text)] flex flex-col transition-transform duration-300 ease-in-out",
           isAr ? "right-0" : "left-0",
@@ -118,7 +152,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         </div>
 
         {/* Scrollable nav */}
-        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1" aria-label={t("nav.drawer")}>
           {NAV_ITEMS.map((item) => {
             const isActive = item.href === "/"
               ? pathname === "/"

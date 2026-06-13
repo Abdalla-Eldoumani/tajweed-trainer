@@ -9,9 +9,11 @@ interface ProgressBarProps {
   className?: string;
   color?: string;
   showLabel?: boolean;
+  // Accessible name for the progressbar; defaults to the generic "Progress".
+  label?: string;
 }
 
-export function ProgressBar({ value, max = 100, className, color, showLabel = false }: ProgressBarProps) {
+export function ProgressBar({ value, max = 100, className, color, showLabel = false, label }: ProgressBarProps) {
   const percentage = Math.min(Math.round((value / max) * 100), 100);
   const { t } = useTranslation();
 
@@ -24,18 +26,21 @@ export function ProgressBar({ value, max = 100, className, color, showLabel = fa
         </div>
       )}
       <div
-        className="h-2 w-full rounded-full bg-bg-subtle dark:bg-bg-subtle-dark overflow-hidden"
+        className="h-2 w-full rounded-full bg-bg-subtle dark:bg-bg-subtle-dark overflow-hidden motion-reduce:transition-none"
         role="progressbar"
+        aria-label={label ?? t("common.progress")}
         aria-valuenow={percentage}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuetext={`${percentage}% complete`}
       >
         <div
-          className="h-full rounded-full transition-all duration-500 ease-out"
+          className="h-full rounded-full transition-all duration-500 ease-out motion-reduce:transition-none"
           style={{
             width: `${percentage}%`,
-            backgroundColor: color ?? "#1B5E20",
+            // Lapis (light) / gold (dark) via the CSS var; the old green
+            // default was a repalette miss.
+            backgroundColor: color ?? "var(--primary)",
           }}
         />
       </div>

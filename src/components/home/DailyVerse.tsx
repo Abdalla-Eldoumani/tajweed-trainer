@@ -40,7 +40,13 @@ export function DailyVerse() {
   return (
     <Card>
       <h2 className="font-heading font-semibold text-sm mb-3">{t("home.dailyVerse")}</h2>
-      <div className="text-center overflow-x-auto">
+      {/* Focusable so keyboard users can scroll the verse when it overflows. */}
+      <div
+        className="text-center overflow-x-auto rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+        tabIndex={0}
+        role="group"
+        aria-label={t("home.dailyVerse")}
+      >
         <TajweedText tajweedHtml={snap.tajweedHtml} size="lg" />
       </div>
       <div className="mt-3 flex items-center justify-between gap-2">

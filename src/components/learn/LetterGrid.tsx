@@ -33,7 +33,7 @@ export function LetterGrid({ groups }: LetterGridProps) {
     <div className="space-y-6">
       {groups.map((group) => (
         <div key={group.title}>
-          <h4 className="text-xs font-semibold text-text-muted mb-2">{group.title}</h4>
+          <h3 className="text-xs font-semibold text-text-muted mb-2">{group.title}</h3>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
             {group.letters.map((letter) => (
               <LetterCard
