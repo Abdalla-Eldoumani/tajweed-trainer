@@ -214,9 +214,24 @@ export function MiniPlayer() {
   // Resolve and clamp a candidate position to the live viewport, persist it, and
   // apply it. Every path (mount restore, drag, resize, keyboard) funnels through
   // here so nothing can land off-screen or skip persistence.
+  // Visual follow during a drag: clamp and render only. Persisting here would
+  // serialize the whole progress object and notify every useProgress consumer
+  // at pointer-move frequency, usually while audio is playing. posRef is
+  // written synchronously so endDrag can persist the final point even before
+  // the mirroring effect has run.
+  const move = useCallback(
+    (next: PlayerPosition) => {
+      const clamped = clampPlayerPosition(next, viewport(), measure());
+      posRef.current = clamped;
+      setPos(clamped);
+    },
+    [measure, viewport],
+  );
+
   const commit = useCallback(
     (next: PlayerPosition) => {
       const clamped = clampPlayerPosition(next, viewport(), measure());
+      posRef.current = clamped;
       setPos(clamped);
       setPlayerPosition(clamped);
     },
@@ -280,7 +295,7 @@ export function MiniPlayer() {
   const onPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!dragging) return;
     // Follow the pointer 1:1; clamp keeps it on-screen every frame.
-    commit({ x: e.clientX - grabOffset.current.dx, y: e.clientY - grabOffset.current.dy });
+    move({ x: e.clientX - grabOffset.current.dx, y: e.clientY - grabOffset.current.dy });
   };
 
   const endDrag = (e: React.PointerEvent<HTMLButtonElement>) => {
@@ -289,7 +304,9 @@ export function MiniPlayer() {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId);
     }
-    // Position is already committed (and persisted) on the last move.
+    // Persist once at release; moves only render. The stored value is the
+    // final clamped corner of the drag.
+    if (posRef.current) setPlayerPosition(posRef.current);
   };
 
   const onHandleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
