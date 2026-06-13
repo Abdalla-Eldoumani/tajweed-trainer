@@ -36,7 +36,9 @@ export const ModuleCard = memo(function ModuleCard({ module, completedLessons, l
   const desc = isAr && module.description_ar ? module.description_ar : module.description;
 
   const content = (
-    <Card hover={!locked} className={cn("relative", locked && "opacity-60")}>
+    // Locked cards keep full text contrast (opacity dimming pushed the muted
+    // text below 4.5:1); the lock icon and the grayed icon tile carry the state.
+    <Card hover={!locked} className={cn("relative", locked && "grayscale")}>
       {locked && (
         <div className="absolute top-3 end-3">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-muted" aria-hidden="true">
@@ -58,9 +60,9 @@ export const ModuleCard = memo(function ModuleCard({ module, completedLessons, l
             </span>
           </div>
 
-          <h3 className="font-heading font-semibold text-sm mb-0.5">
+          <h2 className="font-heading font-semibold text-sm mb-0.5">
             {title}
-          </h3>
+          </h2>
           {isAr ? (
             <p className="text-xs text-text-muted">{subtitle}</p>
           ) : (
