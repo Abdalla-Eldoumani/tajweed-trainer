@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { MasterySection } from "@/components/progress/MasterySection";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -162,6 +163,8 @@ export default function ProgressPage() {
           })}
         </div>
       </div>
+
+      <MasterySection />
 
       {/* Quiz History */}
       {Object.values(progress.modules).some((m) => m.quizScores.length > 0) && (

@@ -213,6 +213,17 @@ export function getAllQuestions(): Question[] {
   return Object.values(AUTHORED_BY_MODULE).flat();
 }
 
+// Maps every authored question id to its module id. The progress page uses it
+// to attribute Leitner review entries (keyed by question id) to modules for the
+// mastery view, without the mastery aggregation needing the question content.
+export function getQuestionModuleMap(): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const [moduleId, questions] of Object.entries(AUTHORED_BY_MODULE)) {
+    for (const q of questions) map[q.id] = moduleId;
+  }
+  return map;
+}
+
 export function hasQuestionsForModule(moduleFilter?: string): boolean {
   if (!moduleFilter) {
     if (getAllQuestions().length > 0) return true;
