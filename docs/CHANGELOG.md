@@ -2,17 +2,23 @@
 
 ## 0.5.0 — 2026-06-12
 
-A guided learning path, a calmer quiz flow, a minimizable player, and a new visual identity. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
+A guided learning path, a calmer quiz flow, a minimizable player, and a new visual identity, followed by five feature additions: word-synced highlighting, in-browser recitation self-compare, a per-module rule mastery view, a leaner build, and keyboard, screen-reader, and offline hardening. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
 
 ### Added
 
 - **Quiz-gated learning path.** Modules now unlock by finishing the previous module's practice quiz instead of by merely opening a lesson. The rule lives in one place (`src/lib/module-unlock.ts`) and every surface reads it: the learn grid, the practice hub, lesson and quiz routes, the sidebar, and the mobile drawer. Locked screens point at the prerequisite quiz first, with its lessons as the secondary path, and finishing a quiz unlocks the next module live without a reload. There is no pass mark: sitting the quiz is the gate, the score is feedback.
 - **Minimizable player pill.** The movable mini-player can collapse to a compact pill that keeps playback running, with the drag handle, a play and pause control, and the current verse label. Minimized state and position persist across navigation and reload, and the pill re-clamps to the viewport when its size changes.
+- **Word-synced highlighting.** In the reading panel's word-by-word view, the current word highlights as the reciter speaks, driven only by the per-reciter segment timestamps published alongside the verified audio. Reciters without segment data simply show no highlight; nothing about the text is generated.
+- **Recitation self-compare.** The verse reading panel can record your own recitation in the browser's memory so you can replay it next to the reciter and judge by ear. Nothing is uploaded, stored, or scored, the recording lives only in memory, and browsers without recording support hide the control.
+- **Rule mastery view.** The progress page shows per-module mastery — quizzes taken, best and latest score, items reviewed and mastered, and what is due — aggregated purely from your own saved progress, with an empty state for new users.
+- **Offline notice.** A slim connectivity pill appears while you are offline and clears on reconnect. Lessons and the last Mushaf page you opened stay readable from cache after one visit.
 
 ### Changed
 
 - **Quiz feedback waits for you.** Answers no longer auto-advance on a timer. The explanation stays up until Continue, which takes focus so Enter advances; the last question reads "Finish quiz"; and after a wrong answer the lesson link becomes a filled call-to-action for reviewing the rule.
 - **Vellum and lapis repalette.** The interface moved from green-on-cream to the manuscript triad of classical Quranic illumination: vellum ivory ground, lapis ink for interaction, gold leaf for ornament, and red ochre as a rare accent. Dark mode is the same manuscript at night, a navy ground with gold-forward controls. The navigation chrome (sidebar, mobile header, drawer, and tab bar) is now a constant illuminated margin in both themes, and headings moved to Spectral. Tajweed letter colors are a separate system and are unchanged.
+- **Leaner build.** The home, search, and practice routes defer work that the first paint does not need (the daily verse, the search corpus, and the question-pool computation), the self-hosted fonts are subset with `display: swap` and the Arabic faces carry only the Arabic glyphs, and the offline cache was verified against the built assets. No behavior changed; largest-contentful-paint stays under a second on the measured routes.
+- **Accessibility and offline hardening.** Keyboard users get a focus trap and focus return in the mobile drawer, Escape to close the player and verse panels, and visible focus rings throughout; screen-reader users get named controls, distinct navigation landmarks, and corrected heading order; reduced-motion preferences are honored across animations.
 
 ### Fixed
 
