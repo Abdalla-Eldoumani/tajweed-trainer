@@ -29,6 +29,9 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // Isolate the browsing context from cross-origin windows. The app opens no
+  // popups and uses no window.opener, so same-origin is free defense.
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   // Deny every powerful feature the app never uses, shrinking the surface a
   // post-XSS attacker could reach. The app only plays audio, which needs none
   // of these.
