@@ -73,7 +73,7 @@ export function Sidebar() {
           </div>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1" aria-label={t("nav.sidebar")}>
           {NAV_ITEMS.map((item) => {
             const isActive = item.href === "/"
               ? pathname === "/"
@@ -150,6 +150,7 @@ export function Sidebar() {
       <nav
         className="md:hidden fixed bottom-0 inset-x-0 bg-[var(--margin-bg)] border-t border-[var(--margin-line)] z-50"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        aria-label={t("nav.bottomTabs")}
       >
         <div className="flex items-center justify-around h-16">
           {NAV_ITEMS.filter((i) => !i.expandable || i.href === "/learn").map((item) => {
