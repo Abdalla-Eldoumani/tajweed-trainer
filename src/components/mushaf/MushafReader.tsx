@@ -163,6 +163,16 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     if (selectedVerse) panelRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
   }, [selectedVerse]);
 
+  // Escape closes the open reading-depth panel, like any dismissible overlay.
+  useEffect(() => {
+    if (!selectedVerse) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedVerse(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [selectedVerse]);
+
   const bookmarks = useMemo(() => settings.mushafBookmarks ?? [], [settings.mushafBookmarks]);
   // Hydration safety: server can't know which pages are bookmarked, so the
   // filled state stays false until after mount.
