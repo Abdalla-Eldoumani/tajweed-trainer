@@ -21,6 +21,9 @@ const translations: Record<string, { en: string; ar: string }> = {
   "nav.bottomTabs": { en: "Quick navigation", ar: "التنقل السريع" },
   "nav.drawer": { en: "Menu navigation", ar: "تنقل القائمة" },
 
+  // Connectivity
+  "offline.notice": { en: "Offline — opened pages still work", ar: "غير متصل — الصفحات المفتوحة تعمل" },
+
   // Home page
   "home.title": { en: "Tajweed Trainer", ar: "معلّم التجويد" },
   "home.subtitle": {

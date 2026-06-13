@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { SettingsProvider, useSettings } from "@/hooks/useSettings";
 import { PWARegister } from "./PWARegister";
 import { RouteAnalytics } from "./RouteAnalytics";
+import { OfflineNotice } from "./OfflineNotice";
 import { PlayerHost } from "@/components/ui/PlayerHost";
 import { MiniPlayer } from "@/components/ui/MiniPlayer";
 
@@ -32,6 +33,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <SettingsProvider>
       <PWARegister />
       <RouteAnalytics />
+      <OfflineNotice />
       <SettingsSync>{children}</SettingsSync>
       <PlayerHost />
       <MiniPlayer />
