@@ -15,6 +15,15 @@ const EVERYAYAH_BASE = "https://everyayah.com/data/";
 const audioCache = new Map<string, { url: string; timestamp: number }>();
 const AUDIO_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
+// Word-level timing for one verse, from the Quran.com v4 audio API. Each entry
+// is [wordStartIndex, wordEndIndexExclusive, startMs, endMs] — timing metadata
+// about the verified recitation audio, not generated content. Most Quran.com
+// reciters expose it; the EveryAyah reciters and a few Quran.com ones do not,
+// in which case there is simply no highlight.
+export type WordSegment = [number, number, number, number];
+
+const segmentCache = new Map<string, { segments: WordSegment[] | null; timestamp: number }>();
+
 // Zero-pad a 1-3 digit number to three digits for the EveryAyah file name.
 function pad3(n: number): string {
   return String(n).padStart(3, "0");
@@ -71,4 +80,55 @@ export async function fetchAudioUrl(
 
   audioCache.set(cacheKey, { url: audioUrl, timestamp: Date.now() });
   return audioUrl;
+}
+
+// Fetch the word-by-word timing for a verse and reciter, or null when none is
+// available (EveryAyah reciters, reciters without segments, or any failure).
+// Cached per verse and reciter alongside the audio URL. Never throws — a
+// missing or malformed payload degrades silently to no highlight.
+export async function fetchSegments(
+  surah: number,
+  ayah: number,
+  reciter: ReciterId = DEFAULT_RECITER_ID,
+): Promise<WordSegment[] | null> {
+  const id = normalizeReciterId(reciter);
+  // EveryAyah files are plain mp3s with no Quran.com timing data.
+  if (isEveryAyahReciter(id)) return null;
+
+  const cacheKey = `${surah}:${ayah}:${id}`;
+  const cached = segmentCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < AUDIO_CACHE_TTL) {
+    return cached.segments;
+  }
+
+  let segments: WordSegment[] | null = null;
+  try {
+    const url = `${QURAN_API}/verses/by_key/${clampSurah(surah)}:${clampAyah(ayah)}?audio=${encodeURIComponent(id)}`;
+    const response = await fetch(url);
+    if (response.ok) {
+      const data = await response.json();
+      const raw = data?.verse?.audio?.segments;
+      if (Array.isArray(raw)) {
+        const parsed = raw
+          .filter((s: unknown) => Array.isArray(s) && s.length >= 4 && s.every((n) => typeof n === "number"))
+          .map((s: number[]) => [s[0], s[1], s[2], s[3]] as WordSegment);
+        if (parsed.length) segments = parsed;
+      }
+    }
+  } catch {
+    segments = null;
+  }
+
+  segmentCache.set(cacheKey, { segments, timestamp: Date.now() });
+  return segments;
+}
+
+// The 0-based index of the word active at time `ms`, or -1 if none. Segments
+// are ordered; a small lead-in tolerance keeps the highlight from lagging the
+// reciter on the very first word.
+export function activeWordIndex(segments: WordSegment[], ms: number): number {
+  for (const [startWord, , startMs, endMs] of segments) {
+    if (ms >= startMs && ms < endMs) return startWord;
+  }
+  return -1;
 }
