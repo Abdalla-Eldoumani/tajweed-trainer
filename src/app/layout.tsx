@@ -30,7 +30,10 @@ const jetbrainsMono = JetBrains_Mono({
 // Arabic fonts, self-hosted via next/font (build-time download) so there is no
 // render-blocking <link> to Google Fonts and no runtime font origin in the CSP.
 const amiri = Amiri({
-  subsets: ["arabic", "latin"],
+  // Arabic-only: every font-arabic consumer renders pure Arabic (rule and
+  // letter names, the bilingual title's Arabic line), so the Latin subset was
+  // dead weight.
+  subsets: ["arabic"],
   weight: ["400", "700"],
   variable: "--font-amiri",
   display: "swap",

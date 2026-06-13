@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { useTranslation } from "@/lib/i18n";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { search, type SearchResult } from "@/lib/search";
+import type { SearchResult } from "@/lib/search";
 import { searchVerses, type VerseSearchResult } from "@/lib/quran-api";
 import { pageForSurah } from "@/lib/navigation";
 
@@ -23,7 +23,22 @@ const stripTags = (s: string) => s.replace(/<[^>]*>/g, "");
 export default function SearchPage() {
   const { t, isAr } = useTranslation();
   const [query, setQuery] = useState("");
-  const results = useMemo(() => search(query, 30), [query]);
+
+  // The local search corpus imports every content file (~100 KB). Load it
+  // dynamically after mount so it stays off the route's initial JS; it resolves
+  // in a few ms, long before anyone types the two-character minimum, so local
+  // results behave exactly as before.
+  const [searchFn, setSearchFn] = useState<((q: string, n: number) => SearchResult[]) | null>(null);
+  useEffect(() => {
+    let alive = true;
+    import("@/lib/search").then((m) => {
+      if (alive) setSearchFn(() => m.search);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const results = useMemo(() => (searchFn ? searchFn(query, 30) : []), [searchFn, query]);
 
   // Quran verse-text search runs against the API, debounced. The local index
   // above is the offline fallback; verse search just adds verses when reachable.

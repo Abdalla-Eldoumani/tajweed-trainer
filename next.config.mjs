@@ -55,6 +55,8 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ];
 
+import bundleAnalyzer from "@next/bundle-analyzer";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Pin the workspace root to this project so a stray parent-directory lockfile
@@ -77,4 +79,9 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// Bundle analyzer, enabled only when ANALYZE=true so it never touches normal
+// builds. It hooks the webpack builder, so an analysis pass must run the
+// webpack build (ANALYZE=true npm run build) — Turbopack ignores the plugin.
+const withBundleAnalyzer = bundleAnalyzer({ enabled: process.env.ANALYZE === "true" });
+
+export default withBundleAnalyzer(nextConfig);

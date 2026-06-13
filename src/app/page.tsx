@@ -1,12 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ColorLegend } from "@/components/learn/ColorLegend";
-import { DailyVerse } from "@/components/home/DailyVerse";
 import { ResumeReading } from "@/components/home/ResumeReading";
+
+// The daily verse pulls in the 53 KB verse-snapshot set and the 23 KB surah
+// index, yet it renders nothing until after mount (the day pick is client-only
+// to avoid a hydration mismatch). Loading it dynamically keeps that ~76 KB off
+// the home route's initial JS without any behavior change — SSR rendered null
+// here already.
+const DailyVerse = dynamic(
+  () => import("@/components/home/DailyVerse").then((m) => ({ default: m.DailyVerse })),
+  { ssr: false, loading: () => null },
+);
 import { MedallionOrnament, OrnamentalDivider } from "@/components/ui/Ornament";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
