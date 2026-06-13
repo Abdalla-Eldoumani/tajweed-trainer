@@ -71,15 +71,22 @@ export function WordByWord({ surah, ayah }: WordByWordProps) {
     };
   }, [isPlayingThisVerse, surah, ayah, reciter]);
 
+  // Own one clip element for this panel and release it on unmount, so a tapped
+  // word can't keep playing after the reading panel closes.
+  useEffect(() => {
+    const audio = new Audio();
+    audioRef.current = audio;
+    return () => {
+      audio.pause();
+      audio.removeAttribute("src");
+    };
+  }, []);
+
   const activeIdx = isPlayingThisVerse && segments ? activeWordIndex(segments, currentTime * 1000) : -1;
 
   const playWord = (url: string | null) => {
-    if (!url) return;
-    let audio = audioRef.current;
-    if (!audio) {
-      audio = new Audio();
-      audioRef.current = audio;
-    }
+    const audio = audioRef.current;
+    if (!url || !audio) return;
     audio.src = url;
     audio.play().catch(() => {});
   };
