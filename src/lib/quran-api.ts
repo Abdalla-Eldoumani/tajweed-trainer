@@ -19,6 +19,10 @@ const BASE_URL = "https://api.quran.com/api/v4";
 // paths; absolute/protocol-relative forms are accepted only on allowlisted hosts.
 const WORD_AUDIO_CDN = "https://audio.qurancdn.com/";
 const cache = new Map<string, { data: unknown; timestamp: number }>();
+// In-flight requests keyed by url, so concurrent callers for the same resource
+// (e.g. the player warming the next ayah while the current one loads) share one
+// request instead of issuing duplicates.
+const inflight = new Map<string, Promise<unknown>>();
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 const LONG_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days for chapter metadata
 
@@ -57,10 +61,24 @@ async function fetchWithCache<T>(url: string, ttl = CACHE_TTL): Promise<T> {
     return cached.data as T;
   }
 
-  const response = await fetchWithRetry(url);
-  const data = await response.json();
-  cache.set(url, { data, timestamp: Date.now() });
-  return data as T;
+  const pending = inflight.get(url);
+  if (pending) return pending as Promise<T>;
+
+  const request = (async () => {
+    try {
+      const response = await fetchWithRetry(url);
+      const data = await response.json();
+      cache.set(url, { data, timestamp: Date.now() });
+      return data;
+    } finally {
+      // Clear the in-flight entry whether it resolved or threw, so a failed
+      // fetch doesn't poison later retries.
+      inflight.delete(url);
+    }
+  })();
+
+  inflight.set(url, request);
+  return request as Promise<T>;
 }
 
 export async function getTajweedSurah(surah: number): Promise<{ verseKey: string; tajweedHtml: string }[]> {
