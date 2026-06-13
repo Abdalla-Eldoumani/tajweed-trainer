@@ -330,6 +330,7 @@ export default function SettingsPage() {
             onChange={handleImport}
             className="sr-only"
             aria-hidden="true"
+            tabIndex={-1}
           />
         </div>
         {backupStatus && (
