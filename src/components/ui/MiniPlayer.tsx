@@ -183,6 +183,9 @@ export function MiniPlayer() {
   // touches playback. null means "use the computed default dock"; we resolve it
   // to a concrete point on mount once the box can be measured.
   const cardRef = useRef<HTMLDivElement | null>(null);
+  // The study-options toggle, so Escape inside the expanded panel can collapse
+  // it and hand focus back to the control that opened it.
+  const studyToggleRef = useRef<HTMLButtonElement>(null);
   const [pos, setPos] = useState<PlayerPosition | null>(null);
   // Mirror of pos for the resize listener and the re-clamp effect, so they can
   // read the latest position without re-subscribing on every move and without
@@ -370,7 +373,15 @@ export function MiniPlayer() {
         )}
 
         {!minimized && showStudy && (
-          <div className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
+          <div
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setShowStudy(false);
+                studyToggleRef.current?.focus();
+              }
+            }}
+            className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs"
+          >
             <label className="flex items-center gap-1.5">
               <span className="text-text-muted">{t("player.repeatVerse")}</span>
               <select
@@ -564,6 +575,7 @@ export function MiniPlayer() {
           </div>
 
           <button
+            ref={studyToggleRef}
             type="button"
             onClick={() => setShowStudy((v) => !v)}
             aria-label={t("player.studyOptions")}
