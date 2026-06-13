@@ -135,6 +135,17 @@ Output:
 
 A failing assertion lists the file path and the actual vs. expected value. Screenshots are written to `mushaf-screenshots/` (created if missing) covering Al-Fatihah, Al-Baqarah's start, At-Tawbah's start, page 604, and the Arabic and dark variants. Skim them after a structural change.
 
+## Recitation self-compare (privacy)
+
+The reading-depth panel includes a record-and-compare control: you can record
+your own recitation of the verse and replay it next to the reciter's audio to
+compare by ear. **The recording never leaves your device.** It is held only in
+memory as a local object URL, revoked as soon as you re-record or close the
+panel, and is never uploaded, saved to disk, or transmitted anywhere. The app
+does not evaluate, score, or judge the recitation — it only lets you listen to
+both and decide for yourself. If the browser cannot record, or microphone
+access is blocked, the control explains the situation or hides itself.
+
 ## What's intentionally not here
 
 - **Always-on per-word translation overlay.** Word-level meaning and tafsir live in the on-demand reading-depth panel (tap a verse), not as a persistent overlay on the page. The page itself stays a clean color-coded Mushaf.
