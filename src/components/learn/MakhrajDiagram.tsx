@@ -21,7 +21,9 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
 
   return (
     <div className="relative w-full max-w-md mx-auto">
-      <svg viewBox="0 0 100 100" className="w-full h-auto" role="img" aria-label="Makhraj articulation points diagram">
+      {/* Decorative visual layer; the labelled button grid below is the
+          accessible control, so the svg circles are mouse affordances only. */}
+      <svg viewBox="0 0 100 100" className="w-full h-auto" aria-hidden="true">
         {/* Head outline - simplified cross-section */}
         <path
           d="M 15,10 C 10,10 5,20 5,35 C 5,50 8,60 12,70 C 16,80 18,85 20,90 L 80,90 C 82,85 84,80 85,75 C 88,65 90,55 90,45 C 90,30 85,15 70,10 C 60,7 40,7 15,10 Z"
@@ -63,15 +65,6 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
                 onClick={() => onRegionSelect?.(region.id)}
                 onMouseEnter={() => setHoveredRegion(region.id)}
                 onMouseLeave={() => setHoveredRegion(null)}
-                role="button"
-                tabIndex={0}
-                aria-label={`${region.label} - ${region.description}`}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onRegionSelect?.(region.id);
-                  }
-                }}
               />
               <text
                 x={region.x}
