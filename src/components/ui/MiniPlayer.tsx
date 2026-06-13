@@ -327,7 +327,10 @@ export function MiniPlayer() {
   return (
     // Full-viewport positioning layer that never blocks clicks; the card inside
     // re-enables pointer events and is placed by a transform from the top-left.
-    <div aria-hidden={!visible} className="pointer-events-none fixed inset-0 z-40">
+    // `inert` while hidden removes the still-mounted transport controls from the
+    // tab order and the accessibility tree (aria-hidden alone left them
+    // focusable — the aria-hidden-focus violation).
+    <div inert={!visible} aria-hidden={!visible} className="pointer-events-none fixed inset-0 z-40">
       <div
         ref={cardRef}
         // Anchor to the physical left edge (not logical `start`): the drag math
