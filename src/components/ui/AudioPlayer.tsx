@@ -68,7 +68,7 @@ export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, 
   }
 
   return (
-    <div className={cn("flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800", className)}>
+    <div className={cn("flex items-center gap-3 p-3 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark", className)}>
       <button
         onClick={handlePlayPause}
         disabled={isLoading}
@@ -79,7 +79,7 @@ export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, 
       </button>
 
       <div className="flex-1 min-w-0">
-        <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+        <div className="h-1.5 w-full rounded-full bg-bg-subtle dark:bg-bg-subtle-dark overflow-hidden">
           <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} />
         </div>
       </div>
@@ -87,7 +87,7 @@ export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, 
       <select
         value={settings.playbackSpeed}
         onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
-        className="text-xs bg-transparent border border-gray-300 dark:border-gray-600 rounded px-1.5 py-1"
+        className="text-xs bg-transparent border border-border rounded px-1.5 py-1"
         aria-label={t("player.speed")}
       >
         <option value="0.5">0.5x</option>

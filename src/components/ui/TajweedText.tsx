@@ -40,7 +40,7 @@ export function TajweedText({ tajweedHtml, size, className, loading = false }: T
   if (loading) {
     return (
       <span className={cn(sizeClasses, "inline-block")}>
-        <span className="inline-block h-6 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        <span className="inline-block h-6 w-48 bg-bg-subtle dark:bg-bg-subtle-dark rounded animate-pulse" />
       </span>
     );
   }

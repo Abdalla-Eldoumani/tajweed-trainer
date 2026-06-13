@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono, Amiri, Amiri_Quran } from "next/font/google";
+import { Inter, Spectral, JetBrains_Mono, Amiri, Amiri_Quran } from "next/font/google";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { AppProvider } from "@/components/layout/AppProvider";
@@ -11,8 +11,12 @@ const inter = Inter({
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+// Display serif for headings. Spectral's moderate stroke contrast sits well
+// beside Amiri's Naskh and stays legible at card-heading sizes, which is what
+// retired the previous geometric sans here.
+const spectral = Spectral({
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
   variable: "--font-heading",
   display: "swap",
 });
@@ -44,8 +48,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1B5E20" },
-    { media: "(prefers-color-scheme: dark)", color: "#0E3712" },
+    { media: "(prefers-color-scheme: light)", color: "#F5F1E8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A0F1C" },
   ],
 };
 
@@ -76,7 +80,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} ${amiri.variable} ${amiriQuran.variable} font-body bg-bg text-text dark:bg-bg-dark dark:text-text-dark antialiased`}
+        className={`${inter.variable} ${spectral.variable} ${jetbrainsMono.variable} ${amiri.variable} ${amiriQuran.variable} font-body bg-bg text-text dark:bg-bg-dark dark:text-text-dark antialiased`}
       >
         <AppProvider>
           <div className="flex min-h-screen">

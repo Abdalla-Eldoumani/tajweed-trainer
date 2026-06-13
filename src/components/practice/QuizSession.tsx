@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { PracticeQuestion } from "./PracticeQuestion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -26,7 +26,10 @@ export function QuizSession({ moduleFilter, mode = "random" }: QuizSessionProps)
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [started, setStarted] = useState(false);
-  const [transitioning, setTransitioning] = useState(false);
+  // null while the learner is answering; set on answer and held until they
+  // press Continue, so the explanation is read at their pace, never a timer's.
+  const [answeredCorrect, setAnsweredCorrect] = useState<boolean | null>(null);
+  const continueRef = useRef<HTMLButtonElement | null>(null);
   const { saveQuizScore, updateStreak } = useProgress();
   const { dueIds, recordReview } = useReviews();
   const { record: recordAnalytics } = useAnalytics();
@@ -42,39 +45,45 @@ export function QuizSession({ moduleFilter, mode = "random" }: QuizSessionProps)
     setScore(0);
     setFinished(false);
     setStarted(true);
-    setTransitioning(false);
+    setAnsweredCorrect(null);
     recordAnalytics(mode === "review" ? "review.start" : "quiz.start", moduleFilter);
   }, [mode, dueIds, moduleFilter, recordAnalytics]);
 
+  // Record the answer and stop. The feedback panel stays up until the learner
+  // presses Continue, giving time to read the explanation or open the linked
+  // lesson section before moving on.
   const handleAnswer = useCallback(
     (correct: boolean) => {
       if (correct) setScore((s) => s + 1);
-      setTransitioning(true);
+      setAnsweredCorrect(correct);
 
       const currentQuestion = questions[currentIndex];
       if (currentQuestion?.questionId) {
         recordReview(currentQuestion.questionId, correct);
       }
-
-      // 3000ms gives users a beat to read the post-answer feedback before
-      // auto-advancing.
-      setTimeout(() => {
-        if (currentIndex + 1 >= questions.length) {
-          setFinished(true);
-          const finalScore = correct ? score + 1 : score;
-          const percentage = Math.round((finalScore / questions.length) * 100);
-          const moduleKey = mode === "review" ? "review" : moduleFilter ?? "mixed";
-          saveQuizScore(moduleKey, mode === "review" ? "review" : "quiz", percentage);
-          updateStreak();
-          recordAnalytics("quiz.finish", `${moduleKey}:${percentage}`);
-        } else {
-          setCurrentIndex((i) => i + 1);
-        }
-        setTransitioning(false);
-      }, 3000);
     },
-    [currentIndex, questions, score, mode, moduleFilter, saveQuizScore, updateStreak, recordReview, recordAnalytics]
+    [currentIndex, questions, recordReview]
   );
+
+  const handleContinue = useCallback(() => {
+    if (currentIndex + 1 >= questions.length) {
+      setFinished(true);
+      const percentage = Math.round((score / questions.length) * 100);
+      const moduleKey = mode === "review" ? "review" : moduleFilter ?? "mixed";
+      saveQuizScore(moduleKey, mode === "review" ? "review" : "quiz", percentage);
+      updateStreak();
+      recordAnalytics("quiz.finish", `${moduleKey}:${percentage}`);
+    } else {
+      setCurrentIndex((i) => i + 1);
+      setAnsweredCorrect(null);
+    }
+  }, [currentIndex, questions.length, score, mode, moduleFilter, saveQuizScore, updateStreak, recordAnalytics]);
+
+  // Move focus onto Continue once it appears so Enter advances and screen
+  // readers land after the aria-live feedback, not back on the options.
+  useEffect(() => {
+    if (answeredCorrect !== null) continueRef.current?.focus();
+  }, [answeredCorrect]);
 
   if (!started) {
     if (mode === "review") {
@@ -138,19 +147,22 @@ export function QuizSession({ moduleFilter, mode = "random" }: QuizSessionProps)
   return (
     <div className="space-y-4">
       <ProgressBar value={currentIndex + 1} max={questions.length} showLabel />
-      <div className={transitioning ? "opacity-60 pointer-events-none transition-opacity" : "transition-opacity"}>
-        <PracticeQuestion
-          key={currentIndex}
-          question={questions[currentIndex]}
-          questionNumber={currentIndex + 1}
-          totalQuestions={questions.length}
-          onAnswer={handleAnswer}
-        />
-      </div>
-      {transitioning && (
-        <p className="text-center text-xs text-text-muted animate-pulse">
-          {t("practice.loadingQuestion")}
-        </p>
+      <PracticeQuestion
+        key={currentIndex}
+        question={questions[currentIndex]}
+        questionNumber={currentIndex + 1}
+        totalQuestions={questions.length}
+        onAnswer={handleAnswer}
+      />
+      {answeredCorrect !== null && (
+        <Button
+          ref={continueRef}
+          onClick={handleContinue}
+          size="lg"
+          className="w-full"
+        >
+          {currentIndex + 1 >= questions.length ? t("practice.finishQuiz") : t("practice.continue")}
+        </Button>
       )}
     </div>
   );

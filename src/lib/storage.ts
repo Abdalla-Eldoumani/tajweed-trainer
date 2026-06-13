@@ -12,8 +12,9 @@ import type {
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
+import { emitProgressChanged } from "./progress-events";
 
-const STORAGE_KEY = "tajweed-trainer-progress";
+export const STORAGE_KEY = "tajweed-trainer-progress";
 
 const DEFAULT_SETTINGS: UserSettings = {
   reciter: DEFAULT_RECITER_ID,
@@ -28,6 +29,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   translationId: 20,
   tafsirId: 169,
   showWordByWord: false,
+  playerMinimized: false,
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
@@ -45,6 +47,28 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   bookmarks: [],
   lastRead: null,
 };
+
+// Callers mutate what getProgress() returns before writing it back, so every
+// handout of the default state must be a fresh clone. Sharing (or freezing)
+// the literal breaks a first visit: the very first analytics write mutates
+// the object it was handed.
+function cloneDefaultProgress(): TajweedProgress {
+  return structuredClone(DEFAULT_PROGRESS);
+}
+
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === "object") {
+    for (const nested of Object.values(value)) deepFreeze(nested);
+    Object.freeze(value);
+  }
+  return value;
+}
+
+// Stable reference handed to useSyncExternalStore as the server snapshot. It
+// must be the same object on every call or React re-renders forever during
+// hydration. Deep-frozen on its own clone so nothing can pollute the shared
+// empty state; live reads go through cloneDefaultProgress() instead.
+export const EMPTY_PROGRESS: TajweedProgress = deepFreeze(structuredClone(DEFAULT_PROGRESS));
 
 // Caps protect against pathological inputs from a tampered localStorage —
 // e.g. a 100,000-entry bookmarks array that bloats every render.
@@ -133,6 +157,8 @@ function sanitizeSettings(input: unknown): UserSettings {
     // Validated for shape only; the live viewport clamp runs at mount, since
     // storage cannot know the viewport a value was saved on.
     playerPosition: sanitizePlayerPosition(input.playerPosition),
+    playerMinimized:
+      typeof input.playerMinimized === "boolean" ? input.playerMinimized : false,
   };
 }
 
@@ -262,7 +288,7 @@ function sanitizeLastRead(input: unknown): VerseLocation | null {
 }
 
 function sanitizeProgress(input: unknown): TajweedProgress {
-  if (!isObject(input)) return DEFAULT_PROGRESS;
+  if (!isObject(input)) return cloneDefaultProgress();
   const modules: Record<string, ModuleProgress> = {};
   if (isObject(input.modules)) {
     const entries = Object.entries(input.modules).slice(0, MAX_MODULES);
@@ -278,7 +304,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
         longestStreak: pickNumber(input.streaks.longestStreak, 0, 0, 100000),
         lastPracticeDate: typeof input.streaks.lastPracticeDate === "string" ? input.streaks.lastPracticeDate : "",
       }
-    : DEFAULT_PROGRESS.streaks;
+    : { ...DEFAULT_PROGRESS.streaks };
   return {
     modules,
     settings: sanitizeSettings(input.settings),
@@ -294,13 +320,13 @@ function sanitizeProgress(input: unknown): TajweedProgress {
 }
 
 export function getProgress(): TajweedProgress {
-  if (!isBrowser()) return DEFAULT_PROGRESS;
+  if (!isBrowser()) return cloneDefaultProgress();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_PROGRESS;
+    if (!raw) return cloneDefaultProgress();
     return sanitizeProgress(JSON.parse(raw));
   } catch {
-    return DEFAULT_PROGRESS;
+    return cloneDefaultProgress();
   }
 }
 
@@ -330,9 +356,22 @@ export function setProgress(progress: TajweedProgress): void {
   if (!isBrowser()) return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    // Same-tab subscribers (useProgress and friends) re-read on this signal;
+    // the browser's own "storage" event covers other tabs.
+    emitProgressChanged();
   } catch {
     // Storage full or unavailable
   }
+}
+
+export function getPlayerMinimized(): boolean {
+  return getProgress().settings.playerMinimized ?? false;
+}
+
+export function setPlayerMinimized(minimized: boolean): void {
+  const progress = getProgress();
+  progress.settings = { ...progress.settings, playerMinimized: minimized };
+  setProgress(progress);
 }
 
 export function getSettings(): UserSettings {
@@ -516,7 +555,7 @@ export function resetProgress(): void {
   const progress = getProgress();
   // Keep settings, reset everything else
   setProgress({
-    ...DEFAULT_PROGRESS,
+    ...cloneDefaultProgress(),
     settings: progress.settings,
   });
 }

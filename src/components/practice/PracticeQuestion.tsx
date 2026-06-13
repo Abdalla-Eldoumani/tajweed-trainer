@@ -111,10 +111,10 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
               className={cn(
                 "w-full text-left p-3 rounded-lg border-2 text-sm transition-colors min-h-[48px]",
                 !answered && "hover:border-primary/50 hover:bg-primary/5",
-                !answered && "border-gray-200 dark:border-gray-700",
-                answered && isCorrect && "border-green-500 bg-green-50 dark:bg-green-900/20",
-                answered && isSelected && !isCorrect && "border-red-500 bg-red-50 dark:bg-red-900/20",
-                answered && !isSelected && !isCorrect && "border-gray-200 dark:border-gray-700 opacity-50"
+                !answered && "border-border",
+                answered && isCorrect && "border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20",
+                answered && isSelected && !isCorrect && "border-red-600 bg-red-50 dark:border-red-500 dark:bg-red-900/20",
+                answered && !isSelected && !isCorrect && "border-border opacity-50"
               )}
               role="radio"
               aria-checked={isSelected}
@@ -122,9 +122,9 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
               <span className="flex items-center gap-2">
                 <span className={cn(
                   "w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs shrink-0",
-                  answered && isCorrect && "border-green-500 text-green-500",
-                  answered && isSelected && !isCorrect && "border-red-500 text-red-500",
-                  !answered && "border-gray-300 dark:border-gray-600"
+                  answered && isCorrect && "border-green-600 text-green-600 dark:border-green-500 dark:text-green-500",
+                  answered && isSelected && !isCorrect && "border-red-600 text-red-600 dark:border-red-500 dark:text-red-500",
+                  !answered && "border-border"
                 )}>
                   {answered && isCorrect && "\u2713"}
                   {answered && isSelected && !isCorrect && "\u2717"}
@@ -164,7 +164,12 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
           {question.explanation && (
             <Link
               href={lessonHref}
-              className="inline-flex items-center text-sm font-medium text-primary dark:text-primary-light hover:underline min-h-[44px]"
+              className={cn(
+                "inline-flex items-center text-sm font-medium min-h-[44px]",
+                wasCorrect
+                  ? "text-primary dark:text-primary-light hover:underline"
+                  : "px-3 rounded-lg bg-primary text-on-primary hover:bg-primary-weak transition-colors",
+              )}
             >
               {t("practice.feedback.openLesson")}
               <span aria-hidden className="ms-1">{isAr ? "←" : "→"}</span>

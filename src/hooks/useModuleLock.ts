@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useProgress } from "@/hooks/useProgress";
-import learningPath from "@/data/content/learning-path.json";
-import type { LearningModule } from "@/lib/types";
-
-const modules = learningPath.modules as LearningModule[];
+import { getPrerequisite, isModuleUnlocked, isQuizFinished } from "@/lib/module-unlock";
 
 export interface ModuleLockState {
   locked: boolean;
@@ -13,33 +10,32 @@ export interface ModuleLockState {
   prereqId: string | null;
   prereqTitleEn: string | null;
   prereqTitleAr: string | null;
+  // True when the prerequisite's practice quiz has been finished. The locked
+  // screen uses this to point the learner at the right next step.
+  prereqQuizFinished: boolean;
 }
 
 // Lock state is deliberately false until after client mount. Server renders the
 // unlocked path; the gating route uses the existing loading skeleton during the
 // hydration window so a locked URL never flashes module content before the gate.
+// The unlock rule itself lives in src/lib/module-unlock.ts and is shared with
+// /learn, the sidebar, the mobile drawer, and the practice hub: a module opens
+// once its prerequisite's practice quiz has been finished.
 export function useModuleLock(moduleId: string): ModuleLockState {
   const { progress } = useProgress();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
-  const mod = modules.find((m) => m.id === moduleId);
-  const prereqId = mod?.prerequisite ?? null;
-  const prereq = prereqId ? modules.find((m) => m.id === prereqId) ?? null : null;
-
-  const prereqLessonsCompleted = prereqId
-    ? progress.modules[prereqId]?.lessonsCompleted.length ?? 0
-    : 0;
-
-  // Unlock rule mirrors /learn/page.tsx: any lesson complete in the prereq.
-  const locked = mounted && prereqId !== null && prereqLessonsCompleted === 0;
+  const prereq = getPrerequisite(moduleId);
+  const locked = mounted && !isModuleUnlocked(progress, moduleId);
 
   return {
     locked,
     mounted,
-    prereqId,
+    prereqId: prereq?.id ?? null,
     prereqTitleEn: prereq?.title_en ?? null,
     prereqTitleAr: prereq?.title_ar ?? null,
+    prereqQuizFinished: prereq ? isQuizFinished(progress, prereq.id) : true,
   };
 }

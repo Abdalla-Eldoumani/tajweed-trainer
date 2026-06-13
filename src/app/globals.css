@@ -2,48 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Palette decision: the app keeps the green-on-cream identity below. A
-   deep-navy/gold/ivory alternative was considered and is recorded here as a
-   documented option, not applied. To adopt it, swap the :root and .dark token
-   values; the tajweed-* variables and the verify script are unaffected.
-
-   Light:  --bg #F4EFE3  --bg-card #FBF8F1  --bg-subtle #E8E0CF
-           --text #11203A (deep navy ink)   --text-muted #5A6478
-           --primary #11203A  --primary-weak #1C355C
-           --gold #B68A2E      --gold-hairline rgba(182,138,46,0.35)
-   Dark:   --bg #0A1224  --bg-card #111A30  --bg-subtle #18223C
-           --text #EEF1F8     --text-muted #99A2B6
-           --primary #C9A24A (gold-forward on navy)  --primary-weak #1C355C
-           --gold #D8B25A      --gold-hairline rgba(216,178,90,0.32)
-
-   The green identity is intentional (it reads as a Quranic study app and keeps
-   the printed-mushaf warmth); the navy option is filed for the maintainer. */
+/* Palette decision: the app uses the manuscript triad of classical Quranic
+   illumination. Vellum ivory for the ground, lapis (ultramarine) for ink and
+   interaction, gold leaf for ornament, with a restrained red-ochre accent.
+   This applies the deep-navy/gold/ivory direction previously recorded here as
+   a documented option, replacing the earlier green-on-cream identity. The
+   tajweed-* variables mirror src/lib/tajweed-colors.ts and are unaffected by
+   palette changes; the verify script enforces that lockstep. */
 
 :root {
-  --primary: #165E2A;
-  --primary-light: #4CAF50;
-  --primary-weak: #2E7D44;
-  --accent: #D4A574;
-  --bg: #F7F3EA;
-  --bg-card: #FFFFFF;
-  --bg-card-dark: #141A2C;
-  --bg-subtle: #EFE8D8;
-  --text: #1A1F2E;
-  --text-muted: #5B6472;
+  --primary: #1E4279;
+  --primary-light: #D9B45C;
+  --primary-weak: #2A5694;
+  --accent: #B0552F;
+  --bg: #F5F1E8;
+  --bg-card: #FCFAF3;
+  --bg-card-dark: #121A2E;
+  --bg-subtle: #ECE5D3;
+  --text: #131B2E;
+  --text-muted: #555F77;
 
-  --gold: #B68A2E;
-  --gold-light: #D8BE86;
-  --gold-dark: #8B7332;
-  --gold-soft: #D8BE86;
-  --gold-hairline: rgba(182, 138, 46, 0.35);
-  --cream: #F7F3EA;
-  --cream-dark: #EFE8D8;
-  --border: #E3DAC7;
-  --border-ornate: #B68A2E;
-  --border-ornate-subtle: rgba(182, 138, 46, 0.3);
+  --gold: #D4A843;
+  --gold-light: #E3C77F;
+  --gold-dark: #8F6F1E;
+  --gold-soft: #E3C77F;
+  --gold-hairline: rgba(196, 154, 51, 0.42);
+  --cream: #F5F1E8;
+  --cream-dark: #ECE5D3;
+  --border: #DDD3BC;
+  --border-ornate: #C49A33;
+  --border-ornate-subtle: rgba(196, 154, 51, 0.32);
   --ornament-1: var(--gold);
-  --ornament-2: #14506B;
+  --ornament-2: #1E4279;
   --ornament-3: #B9A876;
+
+  /* Illuminated margin (the sidebar and mobile chrome). Constant across light
+     and dark so the navigation reads as the manuscript's decorated border in
+     both themes. */
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
   /* Tajweed letter colors, light scheme. One variable per API class; values
      mirror the active SCHEME in src/lib/tajweed-colors.ts. */
@@ -70,29 +73,39 @@
 }
 
 .dark {
-  --primary: #3FB05E;
-  --primary-light: #4CAF50;
-  --primary-weak: #2E7D44;
-  --bg: #0B1020;
-  --bg-card: #141A2C;
-  --bg-card-dark: #141A2C;
-  --bg-subtle: #1B2236;
-  --text: #ECEFF6;
-  --text-muted: #9AA3B2;
+  --primary: #D4A843;
+  --primary-light: #E0BE63;
+  --primary-weak: #B8902F;
+  --accent: #C9714A;
+  --bg: #0A0F1C;
+  --bg-card: #121A2E;
+  --bg-card-dark: #121A2E;
+  --bg-subtle: #1A2336;
+  --text: #EDEAE0;
+  --text-muted: #99A2B6;
 
-  --gold: #D8B25A;
-  --gold-light: #A08940;
-  --gold-dark: #F0E0B0;
-  --gold-soft: #8A6E32;
-  --gold-hairline: rgba(216, 178, 90, 0.32);
-  --cream: #141A2C;
-  --cream-dark: #1B2236;
-  --border: #283049;
-  --border-ornate: #A08940;
-  --border-ornate-subtle: rgba(160, 137, 64, 0.3);
+  --gold: #D4A843;
+  --gold-light: #E3C77F;
+  --gold-dark: #8A7136;
+  --gold-soft: #8A7136;
+  --gold-hairline: rgba(212, 168, 67, 0.30);
+  --cream: #121A2E;
+  --cream-dark: #1A2336;
+  --border: #232E47;
+  --border-ornate: #A98B3C;
+  --border-ornate-subtle: rgba(169, 139, 60, 0.32);
   --ornament-1: var(--gold);
-  --ornament-2: #2A6F92;
+  --ornament-2: #4C6FA8;
   --ornament-3: #9A8A5A;
+
+  --margin-bg: #0C1322;
+  --margin-card: #131D33;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.30);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
   /* Tajweed letter colors, dark scheme (lifts for the navy background). */
   --tajweed-ham_wasl: #B7BCC6;
@@ -228,7 +241,8 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-heading), 'Spectral', serif;
+    letter-spacing: -0.01em;
   }
 }
 

@@ -16,10 +16,9 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
       onClick={() => updateSettings({ language: isAr ? "en" : "ar" })}
       className={cn(
         "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors min-h-[36px]",
-        // Mirror the bookmark button's at-rest card-on-page tokens. The old
-        // bg-cream pair was near-white in both modes (#FDF8F0 / #F5EDE0), so
-        // the toggle read as a glaringly bright pill against the dark page.
-        "border-gold-light/40 dark:border-gold-dark/30 hover:border-gold bg-bg-card dark:bg-bg-card-dark hover:bg-gold-light/15",
+        // Both call sites (sidebar, mobile header) sit on the illuminated
+        // margin, so the pill is styled for that navy ground in both themes.
+        "border-[var(--margin-line)] bg-[var(--margin-card)] text-[var(--margin-text)] hover:border-gold",
         className
       )}
       aria-label={isAr ? "Switch to English" : "التبديل إلى العربية"}

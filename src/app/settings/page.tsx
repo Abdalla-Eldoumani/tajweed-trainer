@@ -121,7 +121,7 @@ export default function SettingsPage() {
                 "flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors",
                 settings.language === lang.value
                   ? "bg-primary/10 dark:bg-primary-light/20"
-                  : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                  : "hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
               )}
             >
               <input
@@ -186,7 +186,7 @@ export default function SettingsPage() {
                 "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
                 settings.playbackSpeed === speed
                   ? "bg-primary text-white"
-                  : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-bg-subtle dark:bg-bg-subtle-dark hover:bg-cream-dark dark:hover:bg-[#222D49]"
               )}
               role="radio"
               aria-checked={settings.playbackSpeed === speed}
@@ -214,7 +214,7 @@ export default function SettingsPage() {
                 "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
                 settings.fontSize === size.value
                   ? "bg-primary text-white"
-                  : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-bg-subtle dark:bg-bg-subtle-dark hover:bg-cream-dark dark:hover:bg-[#222D49]"
               )}
               role="radio"
               aria-checked={settings.fontSize === size.value}

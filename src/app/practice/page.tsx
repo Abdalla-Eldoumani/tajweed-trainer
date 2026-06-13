@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { StreakCounter } from "@/components/practice/StreakCounter";
 import { PracticeModuleCard } from "@/components/practice/PracticeModuleCard";
 import { useTranslation } from "@/lib/i18n";
@@ -7,6 +8,7 @@ import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { MODULES } from "@/components/layout/nav-data";
 import { getAvailableModules, getModuleLastScore } from "@/lib/question-pool";
+import { getLockedModuleIds } from "@/lib/module-unlock";
 
 export default function PracticePage() {
   const { t } = useTranslation();
@@ -16,6 +18,15 @@ export default function PracticePage() {
   const availableModules = getAvailableModules();
   const moduleCountById = new Map(availableModules.map((m) => [m.id, m.count]));
   const totalQuestions = availableModules.reduce((acc, m) => acc + m.count, 0);
+
+  // Locks render only after mount so the server HTML and the first client
+  // paint agree; the route itself gates regardless.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const lockedModuleIds = useMemo(() => {
+    if (!mounted) return new Set<string>();
+    return getLockedModuleIds(progress);
+  }, [mounted, progress]);
 
   const mixedSummary = getModuleLastScore(progress, "mixed");
   const reviewSummary = getModuleLastScore(progress, "review");
@@ -67,6 +78,7 @@ export default function PracticePage() {
               titleAr={mod.labelAr}
               questionCount={count}
               summary={summary}
+              locked={lockedModuleIds.has(mod.id)}
             />
           );
         })}

@@ -76,7 +76,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
           className="flex-1 min-h-[44px] px-3 py-2 rounded-lg bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 text-sm"
           aria-label={t("mushaf.searchSurah")}
         />
-        <div className="flex gap-1 rounded-lg bg-cream-dark dark:bg-gray-800 p-1">
+        <div className="flex gap-1 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark p-1">
           {(["all", "makkah", "madinah"] as const).map((k) => (
             <button
               key={k}

@@ -66,7 +66,10 @@ async function main() {
     .locator('text=/This module is locked/i')
     .count();
   record("Direct /learn/madd renders locked screen", lockedBodyVisible >= 1, `bodyMatches: ${lockedBodyVisible}`);
-  // The CTA points at the prerequisite (qalqalah) per learning-path.json.
+  // The CTAs point at the prerequisite (qalqalah) per learning-path.json: the
+  // primary at its practice quiz, the secondary at its lessons.
+  const prereqQuizLink = await page.locator('a[href="/practice/qalqalah"]').count();
+  record("Locked /learn/madd primary CTA points at /practice/qalqalah", prereqQuizLink >= 1, `linkCount: ${prereqQuizLink}`);
   const prereqLink = await page.locator('a[href="/learn/qalqalah"]').count();
   record("Locked /learn/madd CTA points at /learn/qalqalah", prereqLink >= 1, `linkCount: ${prereqLink}`);
 
@@ -86,32 +89,46 @@ async function main() {
   });
   record("Sidebar marks 8 modules with locked aria-label", lockedAriaCount === 8, `count: ${lockedAriaCount}`);
 
-  // 5. Mark Makharij main lesson complete; reload /learn/noon-sakinah; content visible,
-  // not the locked screen.
+  // 5. Regression guard for the lesson-only unlock bug: completing a Makharij
+  // lesson without finishing its quiz must NOT unlock /learn/noon-sakinah.
   await setProgress(page, { makharij: { lessonsCompleted: ["makharij-main"], quizScores: [], lastAccessed: "" } });
   await page.goto(`${BASE}/learn/noon-sakinah`, { waitUntil: "networkidle" });
-  const noonHasLockedBody = await page.locator('text=/This module is locked/i').count();
-  record("After Makharij done, /learn/noon-sakinah unlocks", noonHasLockedBody === 0, `lockedMatches: ${noonHasLockedBody}`);
+  const noonLockedLessonsOnly = await page.locator('text=/This module is locked/i').count();
+  record("Lessons alone do not unlock /learn/noon-sakinah", noonLockedLessonsOnly >= 1, `lockedMatches: ${noonLockedLessonsOnly}`);
 
-  // 6. /learn/madd still locked because qalqalah's prerequisite chain is not done.
+  // 5b. Finishing the Makharij practice quiz unlocks /learn/noon-sakinah.
+  const quizDone = (score) => [{ lessonId: "quiz", score, date: "2026-01-01T00:00:00.000Z" }];
+  await setProgress(page, { makharij: { lessonsCompleted: ["makharij-main"], quizScores: quizDone(80), lastAccessed: "" } });
+  await page.goto(`${BASE}/learn/noon-sakinah`, { waitUntil: "networkidle" });
+  const noonHasLockedBody = await page.locator('text=/This module is locked/i').count();
+  record("Makharij quiz finished unlocks /learn/noon-sakinah", noonHasLockedBody === 0, `lockedMatches: ${noonHasLockedBody}`);
+
+  // 5c. The same gate covers the practice route: /practice/noon-sakinah is
+  // reachable now, while /practice/meem-sakinah (still locked) is not.
+  await page.goto(`${BASE}/practice/meem-sakinah`, { waitUntil: "networkidle" });
+  const meemQuizLocked = await page.locator('text=/This module is locked/i').count();
+  record("/practice/meem-sakinah locked until noon-sakinah quiz done", meemQuizLocked >= 1, `lockedMatches: ${meemQuizLocked}`);
+
+  // 6. /learn/madd still locked because qalqalah's quiz is not done.
   await page.goto(`${BASE}/learn/madd`, { waitUntil: "networkidle" });
   const maddStillLocked = await page.locator('text=/This module is locked/i').count();
-  record("/learn/madd still locked (qalqalah not done)", maddStillLocked >= 1, `lockedMatches: ${maddStillLocked}`);
+  record("/learn/madd still locked (qalqalah quiz not done)", maddStillLocked >= 1, `lockedMatches: ${maddStillLocked}`);
 
-  // 7. Walk the full chain to fully unlocked, confirm /learn/waqf renders content.
+  // 7. Walk the full chain (each prerequisite quiz finished), confirm
+  // /learn/waqf renders content.
   await setProgress(page, {
-    makharij: { lessonsCompleted: ["makharij-main"], quizScores: [], lastAccessed: "" },
-    "noon-sakinah": { lessonsCompleted: ["noon-sakinah-main"], quizScores: [], lastAccessed: "" },
-    "meem-sakinah": { lessonsCompleted: ["meem-sakinah-main"], quizScores: [], lastAccessed: "" },
-    ghunnah: { lessonsCompleted: ["ghunnah-main"], quizScores: [], lastAccessed: "" },
-    qalqalah: { lessonsCompleted: ["qalqalah-main"], quizScores: [], lastAccessed: "" },
-    madd: { lessonsCompleted: ["madd-main"], quizScores: [], lastAccessed: "" },
-    "laam-raa": { lessonsCompleted: ["laam-raa-main"], quizScores: [], lastAccessed: "" },
-    "tafkheem-tarqeeq": { lessonsCompleted: ["tafkheem-main"], quizScores: [], lastAccessed: "" },
+    makharij: { lessonsCompleted: ["makharij-main"], quizScores: quizDone(80), lastAccessed: "" },
+    "noon-sakinah": { lessonsCompleted: ["noon-sakinah-main"], quizScores: quizDone(80), lastAccessed: "" },
+    "meem-sakinah": { lessonsCompleted: ["meem-sakinah-main"], quizScores: quizDone(80), lastAccessed: "" },
+    ghunnah: { lessonsCompleted: ["ghunnah-main"], quizScores: quizDone(80), lastAccessed: "" },
+    qalqalah: { lessonsCompleted: ["qalqalah-main"], quizScores: quizDone(80), lastAccessed: "" },
+    madd: { lessonsCompleted: ["madd-main"], quizScores: quizDone(80), lastAccessed: "" },
+    "laam-raa": { lessonsCompleted: ["laam-raa-main"], quizScores: quizDone(80), lastAccessed: "" },
+    "tafkheem-tarqeeq": { lessonsCompleted: ["tafkheem-main"], quizScores: quizDone(80), lastAccessed: "" },
   });
   await page.goto(`${BASE}/learn/waqf`, { waitUntil: "networkidle" });
   const waqfLockedAfterChain = await page.locator('text=/This module is locked/i').count();
-  record("Walking the full chain unlocks /learn/waqf", waqfLockedAfterChain === 0, `lockedMatches: ${waqfLockedAfterChain}`);
+  record("Walking the full quiz chain unlocks /learn/waqf", waqfLockedAfterChain === 0, `lockedMatches: ${waqfLockedAfterChain}`);
 
   // 8. Reset progress, switch to Arabic, confirm Arabic locked screen renders with the
   // CTA still pointing at the prereq URL.

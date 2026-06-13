@@ -24,7 +24,7 @@ export function ProgressBar({ value, max = 100, className, color, showLabel = fa
         </div>
       )}
       <div
-        className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden"
+        className="h-2 w-full rounded-full bg-bg-subtle dark:bg-bg-subtle-dark overflow-hidden"
         role="progressbar"
         aria-valuenow={percentage}
         aria-valuemin={0}

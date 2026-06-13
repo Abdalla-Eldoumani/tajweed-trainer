@@ -95,7 +95,7 @@ export default function TafkheemTarqeeqPage() {
 
         <div className="mt-4 space-y-3">
           {tafkheemData.variable_letters.letters.map((letter) => (
-            <div key={letter.arabic} className="p-3 rounded-lg bg-cream-dark dark:bg-gray-800">
+            <div key={letter.arabic} className="p-3 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark">
               <div className="flex items-center gap-3 mb-2">
                 <ArabicText text={letter.arabic} size="lg" />
                 <span className="text-sm font-medium">{isAr && letter.name_ar ? letter.name_ar : letter.name_en}</span>

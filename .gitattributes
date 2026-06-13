@@ -1,0 +1,2 @@
+# keep line endings lf in the repository regardless of platform
+* text=auto eol=lf

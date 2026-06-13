@@ -409,6 +409,9 @@ export interface UserSettings {
   // load, so a value saved on a larger screen can never strand the player
   // off-screen. Lives here so export / import / reset cover it.
   playerPosition?: PlayerPosition | null;
+  // Collapsed state of the mini-player. Minimizing keeps playback running and
+  // the pill draggable; only the explicit stop control dismisses the player.
+  playerMinimized?: boolean;
 }
 
 export interface ModuleProgress {

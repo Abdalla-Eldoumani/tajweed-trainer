@@ -52,8 +52,8 @@ export function StreakCounter() {
               day.isPracticed
                 ? "bg-primary/20 text-primary dark:bg-primary-light/20 dark:text-primary-light"
                 : day.isToday
-                ? "bg-cream-dark dark:bg-gray-800 text-text"
-                : "bg-cream dark:bg-gray-900 text-text-muted"
+                ? "bg-bg-subtle dark:bg-bg-subtle-dark text-text"
+                : "bg-cream dark:bg-bg-dark text-text-muted"
             )}
           >
             {day.dayLabel}

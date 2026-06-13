@@ -28,7 +28,7 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
           fill="none"
           stroke="currentColor"
           strokeWidth="0.5"
-          className="text-gray-300 dark:text-gray-600"
+          className="text-border"
         />
 
         {/* Mouth opening */}
@@ -37,7 +37,7 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
           fill="none"
           stroke="currentColor"
           strokeWidth="0.3"
-          className="text-gray-400"
+          className="text-text-muted/70"
         />
 
         {/* Interactive regions */}
@@ -57,7 +57,7 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
                     ? "fill-primary/30 stroke-primary dark:fill-primary-light/30 dark:stroke-primary-light"
                     : isHovered
                     ? "fill-primary/10 stroke-primary/60"
-                    : "fill-gray-100/50 stroke-gray-400 dark:fill-gray-700/50 dark:stroke-gray-500"
+                    : "fill-bg-subtle/50 stroke-border dark:fill-bg-subtle-dark/50"
                 )}
                 strokeWidth={isSelected ? "1" : "0.5"}
                 onClick={() => onRegionSelect?.(region.id)}
@@ -96,7 +96,7 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
               "text-left px-3 py-3 rounded-lg text-xs transition-colors min-h-[44px]",
               selectedRegion === region.id
                 ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
-                : "hover:bg-gray-100 dark:hover:bg-gray-800 text-text-muted"
+                : "hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark text-text-muted"
             )}
           >
             <p className="font-medium">{region.label}</p>
