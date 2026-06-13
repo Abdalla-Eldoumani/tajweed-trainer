@@ -1,9 +1,11 @@
-# Advanced features and why they are deferred
+# Advanced features: feasibility notes
 
 These are larger, optional features that each carry a real cost or a stack
-decision, so each gets a written feasibility note before any code. None of them
-is built yet. Where a claim needs confirmation from an external party (font
-licensing, for instance), that is called out explicitly rather than asserted.
+decision, so each gets a written feasibility note before any code. The
+record-and-self-compare step under feature 2 has since been built; QCF V4 page
+fonts and account sync remain deferred. Where a claim needs confirmation from an
+external party (font licensing, for instance), that is called out explicitly
+rather than asserted.
 
 ---
 
@@ -55,15 +57,18 @@ conversational language, not Quranic articulation, and will not reliably judge
 tajweed. Treating its output as correctness feedback would risk telling a user
 their correct recitation is wrong, which is unacceptable for this domain.
 
-**Lighter step that could be scoped first.** A *record-and-self-compare* feature:
-let the user record themselves, then play their recording back against the
-reference reciter (Husary) for the same ayah, side by side, with no automated
-judgement. This is honest (no model claims), fits the static app (MediaRecorder +
-the existing player), and is genuinely useful for self-correction.
+**Lighter step, now shipped.** A *record-and-self-compare* feature: the user
+records themselves, then plays the recording back against the reference reciter
+for the same ayah, side by side, with no automated judgement. This is honest (no
+model claims), fits the static app (MediaRecorder + the existing player), and is
+genuinely useful for self-correction. It lives in
+`src/components/mushaf/RecitationCompare.tsx` (backed by `useRecorder`), mounted
+in the Mushaf reading-depth panel; the recording stays in memory and is never
+uploaded, stored, or scored.
 
 **Decision.** Automated feedback is its own project, with its own research and its
-own codebase; do not bolt it onto this app. The record-and-self-compare step is a
-reasonable future addition here if wanted. Scope it explicitly before building.
+own codebase; do not bolt it onto this app. The record-and-self-compare step is
+built and shipped, as scoped above.
 
 ---
 
@@ -86,5 +91,6 @@ need without a server.
 
 ---
 
-*None of these features is implemented. Each note records the decision so the
-trade-off is clear before anyone picks the work up.*
+*Of these, only the record-and-self-compare step (feature 2) is implemented; QCF
+V4 page fonts and account sync remain deferred. Each note records the decision so
+the trade-off is clear before anyone picks the work up.*

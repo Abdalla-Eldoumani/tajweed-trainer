@@ -14,7 +14,6 @@ How the app is wired together, top-down.
 |  |                + RouteAnalytics + SettingsSync)             |  |
 |  |   +-- useSettings()       <-- localStorage (SSR-safe)       |  |
 |  |   +-- useProgress()       <-- localStorage                  |  |
-|  |   +-- useReciters()       <-- localStorage (24h cache)      |  |
 |  |   +-- useReviews()        <-- localStorage (Leitner)        |  |
 |  |   +-- useMemorization()   <-- localStorage (verse keys)     |  |
 |  |   +-- useReadSections()   <-- localStorage + Observer       |  |
@@ -70,9 +69,9 @@ How the app is wired together, top-down.
 - **TypeScript** strict mode, `@types/react` ^19. **Tailwind** is kept at 3.4.19 on purpose (Tailwind v4 is deferred; Next 16 doesn't require it and the migration would risk the tuned design). Node 24.
 - **ESLint 9, flat config:** `eslint.config.mjs` spreads `eslint-config-next/core-web-vitals` directly (the old `.eslintrc.json` was removed). The lint script is `eslint .` — not `next lint`, which Next 16 deprecates. `package.json` scripts: `dev` / `build` / `start` / `lint` / `verify` / `verify:scripts` / `verify:ui`.
 - **Next 15+ async APIs:** dynamic route `params` is a Promise — `await`ed in server routes, unwrapped with React `use()` in the client `practice/[module]` route. Segment `export const revalidate` uses a literal seconds value (e.g. `86400`, `604800`).
-- **Fonts:** all fonts are self-hosted via `next/font` (Inter, Plus Jakarta Sans, JetBrains Mono, Amiri, Amiri Quran). There is no render-blocking Google Fonts `<link>` in `layout.tsx`; Tailwind `fontFamily` tokens reference the `next/font` CSS variables (`var(--font-quran)`, `var(--font-amiri)`, `var(--font-inter)`, etc.).
+- **Fonts:** all fonts are self-hosted via `next/font` (Inter, Spectral, JetBrains Mono, Amiri, Amiri Quran). There is no render-blocking Google Fonts `<link>` in `layout.tsx`; Tailwind `fontFamily` tokens reference the `next/font` CSS variables (`var(--font-quran)`, `var(--font-amiri)`, `var(--font-inter)`, etc.).
 - **Headers / CSP, single source:** all response headers and the Content-Security-Policy are assembled once in `next.config.mjs` (`headers()` applies them to every path); `vercel.json` is trimmed to `framework` + `buildCommand` (its competing headers removed). CSP highlights: `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR); `style-src` / `font-src` no longer list `fonts.googleapis.com` / `fonts.gstatic.com` (fonts are self-hosted); `connect-src 'self' https://api.quran.com`; `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com`.
-- Project version is **0.3.0**.
+- Project version is **0.5.0**.
 
 ## Layers
 
@@ -80,7 +79,7 @@ How the app is wired together, top-down.
 
 - **types.ts** — every TypeScript type used by the app. Optional `_ar` fields on the content types are additive so existing JSON keeps validating during translation work. Includes `ReviewBox`, `ReviewState`, `AnalyticsEvent`, and `AnalyticsEventType` for the local-only persistence fields.
 - **quran-api.ts** — wraps Quran.com v4. Exposes `getTajweedSurah(n)`, `getTajweedPage(n)`, `getChaptersIndex()` (with bundled fallback), and `getStartPageForSurah(n)`. Memory cache (15 minutes by default, 7 days for chapters), exponential backoff. 4xx fails fast; 5xx and network errors retry.
-- **audio-api.ts** — wraps Quran.com per-ayah audio (`/recitations/{id}/by_ayah/{surah}:{ayah}`). `fetchAudioUrl(surah, ayah, reciter)` with a 1-hour cache; `toAudioFileUrl` normalizes the API's relative or protocol-relative path to an absolute https URL on the audio CDN (`verses.quran.com` / the `quranicaudio.com` mirrors). The reciter catalogue is static in `reciters.ts` (`RECITATIONS`, 12 reciters; `DEFAULT_RECITER_ID` is Al-Husary muallim). `normalizeReciterId()` migrates legacy alquran.cloud ids (`husary`, `ar.husary`, `alafasy`, `ar.alafasy`) to the Quran.com recitation ids so persisted settings keep working.
+- **audio-api.ts** — wraps Quran.com per-ayah audio (`/recitations/{id}/by_ayah/{surah}:{ayah}`) and builds deterministic EveryAyah URLs for the `ea-*` reciters. `fetchAudioUrl(surah, ayah, reciter)` with a 1-hour cache; `toSafeAudioUrl` normalizes the API's relative or protocol-relative path to an absolute https URL on an allowlisted audio host (`verses.quran.com` / the `quranicaudio.com` mirrors / `everyayah.com`). The reciter catalogue is static in `reciters.ts` (`RECITATIONS`, 19 reciters: 12 Quran.com + 7 EveryAyah; `DEFAULT_RECITER_ID` is Al-Husary muallim). `normalizeReciterId()` migrates legacy alquran.cloud ids (`husary`, `ar.husary`, `alafasy`, `ar.alafasy`) to the Quran.com recitation ids so persisted settings keep working.
 - **tajweed-colors.ts** — CSS-class to hex map for every tajweed rule the API emits, including dark-mode variants. Used by `TajweedText` and `ColorLegend`.
 - **storage.ts** — SSR-safe localStorage wrapper. `getSettings`, `setSettings`, `getProgress`, `setProgress`. Default settings include `lastMushafPage: 1` and `mushafBookmarks: []`. Adds `reviews`, `memorizedVerses`, `readSections`, and `analytics` fields to `TajweedProgress`, each with its own sanitizer and cap. Helpers: `getReviews/setReview`, `toggleMemorizedVerse`, `getReadSections/markSectionRead`, `getAnalytics/recordAnalyticsEvent`, `exportProgress/importProgress`.
 - **i18n.ts** — flat `key -> { en, ar }` dictionary, a `t(key, lang)` lookup, and the `useTranslation()` hook that pulls `lang` from settings and returns `{ t, lang, isAr, dir }`.
