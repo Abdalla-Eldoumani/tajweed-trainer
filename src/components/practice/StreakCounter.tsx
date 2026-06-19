@@ -10,25 +10,25 @@ export function StreakCounter() {
   const { t } = useTranslation();
   const { currentStreak, longestStreak, lastPracticeDate } = progress.streaks;
 
-  // Streak dates are stored as UTC day strings (toISOString), so the calendar
-  // computes and compares in UTC end to end — otherwise a user near local
-  // midnight could see "today" highlighted on the wrong pill.
-  const todayStr = new Date().toISOString().split("T")[0];
+  // Streak dates are stored as local day strings (toLocaleDateString("en-CA")),
+  // so the calendar computes and compares in local days end to end — otherwise a
+  // user near local midnight could see "today" highlighted on the wrong pill.
+  const todayStr = new Date().toLocaleDateString("en-CA");
   const days = Array.from({ length: 7 }).map((_, i) => {
     const date = new Date();
-    date.setUTCDate(date.getUTCDate() - (6 - i));
-    const dateStr = date.toISOString().split("T")[0];
+    date.setDate(date.getDate() - (6 - i));
+    const dateStr = date.toLocaleDateString("en-CA");
     const isToday = dateStr === todayStr;
 
     let isPracticed = false;
     if (lastPracticeDate && currentStreak > 0) {
-      const streakStart = new Date(lastPracticeDate + "T00:00:00Z");
-      streakStart.setUTCDate(streakStart.getUTCDate() - (currentStreak - 1));
-      const streakStartStr = streakStart.toISOString().split("T")[0];
+      const streakStart = new Date(lastPracticeDate + "T00:00:00");
+      streakStart.setDate(streakStart.getDate() - (currentStreak - 1));
+      const streakStartStr = streakStart.toLocaleDateString("en-CA");
       isPracticed = dateStr >= streakStartStr && dateStr <= lastPracticeDate;
     }
 
-    return { dateStr, isToday, isPracticed, dayLabel: t(`weekday.short.${date.getUTCDay()}`) };
+    return { dateStr, isToday, isPracticed, dayLabel: t(`weekday.short.${date.getDay()}`) };
   });
 
   return (
