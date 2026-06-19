@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
-import { exportProgress, importProgress } from "@/lib/storage";
+import { exportProgress, importProgress, getProgress, shouldRemindBackup } from "@/lib/storage";
 import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
@@ -17,9 +17,21 @@ export default function SettingsPage() {
   const { t, isAr } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [backupStatus, setBackupStatus] = useState<{ kind: "success" | "error"; key: string } | null>(null);
+  // Gentle backup reminder. Computed after mount (localStorage is client-only)
+  // and only when there is meaningful progress and no recent backup. Dismiss is
+  // session-scoped in-memory state, and an export clears it immediately because
+  // exportProgress() stamps a fresh lastBackupAt.
+  const [showBackupReminder, setShowBackupReminder] = useState(false);
   const [reciterQuery, setReciterQuery] = useState("");
   const [translations, setTranslations] = useState<TranslationResource[]>(CURATED_TRANSLATIONS);
   const [tafsirs, setTafsirs] = useState<TranslationResource[]>(CURATED_TAFSIRS);
+
+  // Decide once after mount whether to nudge the user to back up. The clock is
+  // read here (app code, so new Date() is fine); shouldRemindBackup gates on
+  // meaningful progress and the 30-day window.
+  useEffect(() => {
+    setShowBackupReminder(shouldRemindBackup(getProgress(), new Date()));
+  }, []);
 
   // Resource catalogues load from the API when online; offline the curated
   // fallback keeps the selectors usable. English resources only, to keep the
@@ -51,6 +63,8 @@ export default function SettingsPage() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     setBackupStatus({ kind: "success", key: "settings.backup.exported" });
+    // The backup is fresh now, so the reminder no longer applies.
+    setShowBackupReminder(false);
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -317,6 +331,19 @@ export default function SettingsPage() {
       <Card>
         <h2 className="font-heading font-semibold text-sm mb-2">{t("settings.backup.title")}</h2>
         <p className="text-xs text-text-muted mb-3">{t("settings.backup.description")}</p>
+        {showBackupReminder && (
+          <div className="flex items-start justify-between gap-3 mb-3 rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-gold/10 dark:bg-gold/5 px-3 py-2">
+            <p className="text-xs text-text">{t("settings.backup.reminder")}</p>
+            <button
+              type="button"
+              onClick={() => setShowBackupReminder(false)}
+              className="text-xs font-medium text-text-muted hover:text-text shrink-0 transition-colors"
+              aria-label={t("settings.backup.reminderDismiss")}
+            >
+              {t("settings.backup.reminderDismiss")}
+            </button>
+          </div>
+        )}
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={handleExport}>
             {t("settings.backup.export")}

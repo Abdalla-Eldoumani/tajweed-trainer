@@ -559,6 +559,11 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "That file isn't a valid Tajweed Trainer backup.",
     ar: "هذا الملف ليس نسخة احتياطية صالحة.",
   },
+  "settings.backup.reminder": {
+    en: "Your progress is only on this device. Export a backup to keep it safe.",
+    ar: "تقدّمك محفوظ على هذا الجهاز فقط. صدّر نسخة احتياطية للحفاظ عليه.",
+  },
+  "settings.backup.reminderDismiss": { en: "Dismiss", ar: "إخفاء" },
 
   // Speech (TTS for prompts only — NOT for Quranic text)
   "speech.read": { en: "Read prompt aloud", ar: "اقرأ السؤال بصوت" },
