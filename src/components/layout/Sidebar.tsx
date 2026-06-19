@@ -152,7 +152,7 @@ export function Sidebar() {
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
         aria-label={t("nav.bottomTabs")}
       >
-        <div className="flex items-center justify-around h-16">
+        <div className="flex items-stretch justify-around h-16">
           {NAV_ITEMS.filter((i) => !i.expandable || i.href === "/learn").map((item) => {
             const href = item.expandable ? "/learn" : item.href;
             const isActive = href === "/"
@@ -165,7 +165,7 @@ export function Sidebar() {
                 key={href}
                 href={href}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium transition-colors",
+                  "flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] px-2 py-1 text-[10px] font-medium transition-colors",
                   isActive
                     ? "text-[var(--margin-active)]"
                     : "text-[var(--margin-muted)]"
