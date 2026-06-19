@@ -116,7 +116,7 @@ function PauseIcon() {
 
 function LoadingIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" className="animate-spin" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg width="16" height="16" viewBox="0 0 24 24" className="animate-spin motion-reduce:animate-none" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
       <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
     </svg>
