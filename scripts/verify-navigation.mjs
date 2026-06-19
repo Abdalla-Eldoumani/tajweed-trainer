@@ -53,7 +53,7 @@ record("Reader wires the juz jump", /pageForJuz\(/.test(reader));
 // readouts of the open page, not empty jump-pickers. They read from server
 // props so a deep-linked reload paints correct values on first paint.
 record("Surah selector is controlled by the current page", /value=\{currentSurahValue/.test(reader));
-record("Juz selector is controlled by the page juz", /value=\{data\.juzNumber\}/.test(reader));
+record("Juz selector is controlled by the page juz", /value=\{currentJuzValue\}/.test(reader) && /currentJuzValue\s*=\s*clampJuz\(data\.juzNumber\)/.test(reader));
 record("Surah jump routes through pageForSurah", /pageForSurah\(/.test(reader));
 // The two converted selectors must not carry the old empty placeholder option
 // (the index labels). The drill select keeps its own `drillOff` empty option,

@@ -10,6 +10,7 @@ import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
 import { pageForJuz, pageForSurah, surahForPage, TOTAL_JUZ } from "@/lib/navigation";
+import { clampJuz } from "@/lib/validate";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
@@ -289,6 +290,9 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // invented one (UI-SPEC A1). This is the single place the fallback lives.
   const currentSurahValue =
     data.surahsOnPage[0]?.number ?? surahForPage(page)?.number ?? data.verses[0]?.surah ?? 1;
+  // Clamp the juz to 1..30 so the controlled select never holds a value with no
+  // matching option (the API juz_number can fall back to 0 in quran-api.ts).
+  const currentJuzValue = clampJuz(data.juzNumber);
 
   return (
     <div className="space-y-4">
@@ -344,10 +348,10 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           </select>
 
           <select
-            value={data.juzNumber}
+            value={currentJuzValue}
             onChange={(e) => {
               const j = Number(e.target.value);
-              if (j === data.juzNumber) return;
+              if (j === currentJuzValue) return;
               router.push(`/mushaf/page/${pageForJuz(j)}`);
             }}
             className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
