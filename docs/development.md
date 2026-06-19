@@ -26,14 +26,17 @@ Open `http://localhost:3000`. Hot reload is on; edits to TS, TSX, CSS, and JSON 
 | `npm start` | Serve the production build. |
 | `npm run lint` | Run ESLint over the project (`eslint .`). `next lint` is deprecated in Next 16; the flat config in `eslint.config.mjs` drives it. |
 | `npm run verify` | Full non-browser gate: `tsc --noEmit`, then `eslint .`, then `npm run verify:scripts`. |
-| `npm run verify:scripts` | The headless verification scripts (tajweed colors, lesson coloring, navigation, reading, reading depth, reciters data, sanitizer, security, study tools). No browser required. |
-| `npm run verify:ui` | The Playwright browser suites: module lock, Mushaf, new features, questions, reciters. |
+| `npm run verify:scripts` | The headless verification scripts (tajweed colors, lesson coloring, navigation, reading, reading depth, reciters data, sanitizer, security, study tools, content accuracy, player position, word segments, mastery, the player engine, memorization, khatmah pace, accessibility). No browser required. |
+| `npm run verify:ui` | The Playwright browser suites: module lock, Mushaf, new features, questions, reciters, and the audio player. |
 | `node scripts/fetch-surah-names.mjs` | One-shot: pulls `/chapters` and patches `surah_name_ar` into rule examples. |
+| `node scripts/prefetch-tajweed-snapshots.mjs` | One-shot: snapshots the color-coded tajweed HTML for the lesson example verses into `src/data/verse-snapshots.json`. |
 | `node scripts/verify-mushaf.mjs` | End-to-end browser test of the Mushaf reader. |
 | `node scripts/verify-module-lock.mjs` | Browser test of module gating. |
 | `node scripts/verify-questions.mjs` | Browser test of the practice hub and authored questions. |
 | `node scripts/verify-reciters.mjs` | Browser test of the reciter selector. |
 | `node scripts/verify-sanitizer.mjs` | Tajweed HTML sanitizer assertions (no browser). |
+| `node scripts/verify-khatmah.mjs` | Khatmah pace-math assertions (no browser). |
+| `node scripts/verify-accessibility.mjs` | Source-level accessibility guards: focus rings, reduced motion, scroll lock, aria-current, contrast (no browser). |
 | `node scripts/verify-newfeatures.mjs` | Browser test of spaced repetition, memorization, search, TTS, and PWA endpoints. |
 
 ## Project conventions
@@ -147,7 +150,7 @@ See [content-schema.md](content-schema.md). In short: edit the relevant JSON, se
 
 ## Performance notes
 
-- The Mushaf reader pre-renders 50 SSG pages and ISRs the rest at 24 hours. To extend SSG coverage, expand the array in `generateStaticParams` of `src/app/mushaf/page/[page]/page.tsx`.
+- The Mushaf reader pre-renders 36 SSG pages (page 1, a spread of early surah starts, and one per juz) and ISRs the rest at 24 hours. To extend SSG coverage, expand the array in `generateStaticParams` of `src/app/mushaf/page/[page]/page.tsx`.
 - The chapters list cache is 7 days. Audio URLs cache 1 hour. Tajweed pages cache 15 minutes. Tweak in the respective wrapper.
 - Bundle sizes (gzipped, page bundles, not including shared chunks): home is around 5 kB, the largest module page is around 7 kB, and the Mushaf reader is around 5 kB. All comfortably below 200 kB First-Load JS.
 
