@@ -444,6 +444,11 @@ export interface TajweedProgress {
   memorizationReviews: Record<string, ReviewState>;
   // moduleId -> set of section anchor slugs the user has scrolled past.
   readSections: Record<string, string[]>;
+  // verseKey ("surah:ayah") -> the user's own private study note. Local-only,
+  // never transmitted, and never religious content (the learner's own words).
+  // An empty note deletes the entry; capped in count and per-note length by the
+  // storage sanitizer.
+  verseNotes: Record<string, string>;
   analytics: AnalyticsEvent[];
   // Last playback position, so the mini-player can resume after a reload.
   playerResume?: PlayerResume | null;

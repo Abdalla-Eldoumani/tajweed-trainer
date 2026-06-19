@@ -195,12 +195,12 @@ record(
 // Object.prototype unpolluted. ---
 
 // (a) Source wiring: every keyed-map loop (modules, reviews, memorizationReviews,
-// readSections, lastReadBySurah) carries the skip before it copies a key.
+// readSections, verseNotes, lastReadBySurah) carries the skip before it copies a key.
 const guardMatches =
   storage.match(/=== "__proto__" \|\| \w+ === "constructor" \|\| \w+ === "prototype"\) continue;/g) || [];
 record(
-  "storage: keyed-map loops skip __proto__/constructor/prototype keys (5 guards)",
-  guardMatches.length === 5,
+  "storage: keyed-map loops skip __proto__/constructor/prototype keys (6 guards)",
+  guardMatches.length === 6,
   String(guardMatches.length),
 );
 
@@ -239,6 +239,101 @@ record(
   // eslint-disable-next-line no-proto
   ({}).polluted === undefined && Object.prototype.polluted === undefined,
   String(({}).polluted),
+);
+
+// --- Verse notes (verseNotes): the learner's own private per-verse note. It is a
+// keyed map over attacker-influenceable verseKeys, so the sanitizer validates the
+// key, trims and caps the text, drops empties, guards the prototype keys, and caps
+// the entry count. Two halves like the groups above: (a) regex storage.ts to prove
+// the wiring is in the real source, and (b) re-derive the sanitizer in plain JS and
+// assert each contract point. ---
+
+// (a) Source wiring: the field is sanitized in sanitizeProgress, defaulted in
+// DEFAULT_PROGRESS, and has a get/set helper pair that writes through the funnel.
+record(
+  "storage: sanitizeProgress sanitizes verseNotes",
+  /verseNotes: sanitizeVerseNotes\(input\.verseNotes\)/.test(storage),
+);
+record(
+  "storage: DEFAULT_PROGRESS defaults verseNotes to {}",
+  /DEFAULT_PROGRESS[\s\S]*?verseNotes:\s*\{\}/.test(storage),
+);
+record(
+  "storage: setVerseNote writes through the funnel (setProgress, no raw localStorage)",
+  /export function setVerseNote\([\s\S]*?setProgress\(progress\)/.test(storage) &&
+    !/export function setVerseNote\([\s\S]*?localStorage\./.test(storage),
+);
+record(
+  "storage: setVerseNote validates the verseKey",
+  /export function setVerseNote\([\s\S]*?VERSE_KEY_PATTERN\.test\(verseKey\)/.test(storage),
+);
+
+// (b) Re-derive the verse-note sanitizer (no import of the TS source) and assert
+// the contract: valid key + text survives trimmed; an over-long note is capped;
+// an empty/whitespace note is dropped; a non-verseKey is rejected; a non-string
+// value is rejected; the prototype keys create no own-keys; and the entry count
+// caps. Mirrors sanitizeVerseNotes in storage.ts.
+const NOTE_LEN = 1000;
+const NOTE_MAX = 2000;
+const VKEY = /^\d{1,3}:\d{1,3}$/;
+const sanitizeVerseNotesJS = (input) => {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) return {};
+  const out = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VKEY.test(verseKey)) continue;
+    if (typeof value !== "string") continue;
+    const text = value.trim().slice(0, NOTE_LEN);
+    if (text.length === 0) continue;
+    out[verseKey] = text;
+    count += 1;
+    if (count >= NOTE_MAX) break;
+  }
+  return out;
+};
+record(
+  "VerseNotes: a valid key and trimmed text survives",
+  sanitizeVerseNotesJS({ "2:255": "  ponder this  " })["2:255"] === "ponder this",
+  JSON.stringify(sanitizeVerseNotesJS({ "2:255": "  ponder this  " })),
+);
+record(
+  "VerseNotes: an over-long note is capped to 1000 chars",
+  sanitizeVerseNotesJS({ "1:1": "x".repeat(5000) })["1:1"].length === NOTE_LEN,
+  String(sanitizeVerseNotesJS({ "1:1": "x".repeat(5000) })["1:1"].length),
+);
+record(
+  "VerseNotes: an empty/whitespace note is dropped",
+  !("1:1" in sanitizeVerseNotesJS({ "1:1": "   " })),
+  JSON.stringify(sanitizeVerseNotesJS({ "1:1": "   " })),
+);
+record(
+  "VerseNotes: a non-verseKey is rejected",
+  !("not-a-key" in sanitizeVerseNotesJS({ "not-a-key": "hi" })),
+  JSON.stringify(sanitizeVerseNotesJS({ "not-a-key": "hi" })),
+);
+record(
+  "VerseNotes: a non-string value is rejected",
+  Object.keys(sanitizeVerseNotesJS({ "1:1": 42 })).length === 0,
+  JSON.stringify(sanitizeVerseNotesJS({ "1:1": 42 })),
+);
+record(
+  "VerseNotes: prototype keys create no own-keys and leave Object.prototype clean",
+  DANGEROUS_KEYS.every((k) => !Object.prototype.hasOwnProperty.call(sanitizeVerseNotesJS({ [k]: "x" }), k)) &&
+    ({}).polluted === undefined,
+  Object.keys(sanitizeVerseNotesJS({ __proto__: { polluted: true } })).join(","),
+);
+record(
+  "VerseNotes: the entry count caps at 2000",
+  Object.keys(
+    // 2100 unique, valid (<=3-digit) verseKeys spread across surahs so none are
+    // dropped by the key pattern; the cap is what limits the result to 2000.
+    sanitizeVerseNotesJS(
+      Object.fromEntries(
+        Array.from({ length: 2100 }, (_, i) => [`${Math.floor(i / 900) + 1}:${(i % 900) + 1}`, "n"]),
+      ),
+    ),
+  ).length === NOTE_MAX,
 );
 
 const failed = results.filter((r) => !r.ok);

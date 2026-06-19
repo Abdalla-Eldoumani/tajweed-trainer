@@ -44,6 +44,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   memorizedVerses: [],
   memorizationReviews: {},
   readSections: {},
+  verseNotes: {},
   analytics: [],
   bookmarks: [],
   lastRead: null,
@@ -85,6 +86,12 @@ const MAX_MEMORIZED = 6236;
 const MAX_VERSE_BOOKMARKS = 500;
 const MAX_LAST_READ_BY_SURAH = 114;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
+// Per-verse private notes: a realistic ceiling on how many verses one learner
+// annotates (well under the 6,236-verse maximum) and a per-note length so a
+// tampered store cannot bloat every read. Notes are trimmed and empty ones are
+// dropped, so the count only grows with real annotations.
+const MAX_VERSE_NOTES = 2000;
+const MAX_VERSE_NOTE_LENGTH = 1000;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
 const MAX_ANALYTICS = 1000;
@@ -267,6 +274,29 @@ function sanitizeReadSections(input: unknown): Record<string, string[]> {
   return out;
 }
 
+// Per-verse private study notes. Keys are verseKeys (validated against
+// VERSE_KEY_PATTERN); values are the learner's own text, trimmed and capped at
+// MAX_VERSE_NOTE_LENGTH. Empty notes are dropped (an empty note is "no note"),
+// the dangerous prototype keys are skipped like every other keyed-map loop, and
+// the whole map caps at MAX_VERSE_NOTES. A stored object without this field
+// reads back as {} (lossless migration).
+function sanitizeVerseNotes(input: unknown): Record<string, string> {
+  if (!isObject(input)) return {};
+  const out: Record<string, string> = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    if (typeof value !== "string") continue;
+    const text = value.trim().slice(0, MAX_VERSE_NOTE_LENGTH);
+    if (text.length === 0) continue;
+    out[verseKey] = text;
+    count += 1;
+    if (count >= MAX_VERSE_NOTES) break;
+  }
+  return out;
+}
+
 function sanitizeMemorized(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const out = new Set<string>();
@@ -365,6 +395,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
     memorizationReviews: sanitizeMemorizationReviews(input.memorizationReviews),
     readSections: sanitizeReadSections(input.readSections),
+    verseNotes: sanitizeVerseNotes(input.verseNotes),
     analytics: sanitizeAnalytics(input.analytics),
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
@@ -587,6 +618,31 @@ export function markSectionRead(moduleId: string, sectionId: string): void {
   if (current.includes(sectionId)) return;
   if (current.length >= MAX_READ_SECTIONS_PER_MODULE) return;
   progress.readSections[moduleId] = [...current, sectionId];
+  setProgress(progress);
+}
+
+export function getVerseNote(verseKey: string): string {
+  return getProgress().verseNotes[verseKey] ?? "";
+}
+
+// Write (or clear) a learner's private note for one verse, through the change
+// bus. The text is trimmed and capped; an empty result deletes the entry (an
+// empty note is "no note"). A tampered verseKey is rejected. Adding a brand-new
+// note past the cap is a no-op (editing or clearing an existing note always
+// works, so the user is never stuck unable to fix a note).
+export function setVerseNote(verseKey: string, text: string): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  const trimmed = text.trim().slice(0, MAX_VERSE_NOTE_LENGTH);
+  if (trimmed.length === 0) {
+    if (!(verseKey in progress.verseNotes)) return;
+    delete progress.verseNotes[verseKey];
+  } else {
+    const isNew = !(verseKey in progress.verseNotes);
+    if (isNew && Object.keys(progress.verseNotes).length >= MAX_VERSE_NOTES) return;
+    progress.verseNotes[verseKey] = trimmed;
+  }
   setProgress(progress);
 }
 
