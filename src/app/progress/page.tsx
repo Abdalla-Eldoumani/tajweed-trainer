@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { MasterySection } from "@/components/progress/MasterySection";
+import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
+import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -21,7 +23,7 @@ export default function ProgressPage() {
   const { progress, moduleProgress, getOverallCompletion, resetProgress } = useProgress();
   const { stats: reviewStatsFn } = useReviews();
   const reviewStats = reviewStatsFn();
-  const { count: memorizedCount } = useMemorization();
+  const { memorized, count: memorizedCount, mounted: memorizedMounted } = useMemorization();
   const { events: analyticsEvents } = useAnalytics();
   const insights = (() => {
     const routeViews: Record<string, number> = {};
@@ -99,16 +101,18 @@ export default function ProgressPage() {
         </Card>
       )}
 
-      {memorizedCount > 0 && (
-        <Card>
-          <h2 className="font-heading font-semibold mb-3">{t("memorize.statsTitle")}</h2>
-          <div className="text-2xl font-bold text-primary dark:text-primary-light mb-1">
-            {memorizedCount}
-          </div>
-          <p className="text-xs text-text-muted mb-1">{t("memorize.statsCount")}</p>
-          <p className="text-xs text-text-muted">{t("memorize.statsHelp")}</p>
-        </Card>
-      )}
+      {/* Memorization tracker: the headline (or the empty state) plus the
+          breakdown when populated. The tracker owns the empty-vs-populated
+          branch; the breakdown gates on mount + count so it never flashes
+          before hydration. onOpenBulk is wired by the bulk-entry plan. */}
+      <div className="space-y-6">
+        <MemorizationTracker />
+        {memorizedMounted && memorizedCount > 0 && (
+          <Card>
+            <MemorizationBreakdown memorized={memorized} />
+          </Card>
+        )}
+      </div>
 
       <Card>
         <h2 className="font-heading font-semibold mb-3">{t("progress.streak")}</h2>
