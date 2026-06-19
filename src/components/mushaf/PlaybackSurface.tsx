@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
@@ -67,6 +67,13 @@ const CollapseIcon = () => (
 const ExpandIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="15 18 9 12 15 6" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
@@ -283,6 +290,191 @@ function SidePanel({ model }: { model: SurfaceModel }) {
   );
 }
 
+// --- Mobile / tablet bottom sheet (< 1024px) ---------------------------------
+
+// Past this many pixels of downward drag on the grab handle, a release closes
+// the sheet (otherwise a small movement is treated as a tap that toggles the
+// height). An upward drag from peek expands.
+const SWIPE_CLOSE_THRESHOLD = 64;
+
+function BottomSheet({ model }: { model: SurfaceModel }) {
+  const { t, isAr } = useTranslation();
+  // The sheet height: peek shows one transport row (within 100ms of the tap),
+  // expanded adds the verse text and the multi-verse controls. It opens in peek.
+  const [sheetState, setSheetState] = useState<"peek" | "expanded">("peek");
+  const expanded = sheetState === "expanded";
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  // The control focused when the sheet first opened, so focus returns there on
+  // close instead of being lost to the top of the page.
+  const openerRef = useRef<HTMLElement | null>(null);
+  // Pointer-drag bookkeeping for the grab handle (start Y + whether moved).
+  const dragRef = useRef<{ startY: number; delta: number } | null>(null);
+
+  const close = useCallback(() => {
+    // Dismiss folds the surface away. Stop idles the player (status "idle"), so
+    // the store-driven `visible` gate in the parent unmounts the sheet, exactly
+    // like the panel. Closing is the one explicit end of playback on the sheet.
+    usePlayer.getState().stop();
+  }, []);
+
+  // Capture the opener once when the sheet mounts (it mounts the instant a verse
+  // plays); restore focus to it when the sheet unmounts on close.
+  useEffect(() => {
+    openerRef.current = (document.activeElement as HTMLElement) ?? null;
+    return () => {
+      openerRef.current?.focus?.();
+    };
+  }, []);
+
+  // Escape dismisses the sheet at any height (peek or expanded).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [close]);
+
+  // Focus-trap ONLY while expanded: focus cannot leave to the page behind. In
+  // peek the page stays usable (no trap), so the tab bar and verses stay
+  // reachable. Mirrors the MobileDrawer trap.
+  const trapTab = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!expanded || e.key !== "Tab") return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const focusables = panel.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
+  // When the sheet expands, move focus into it (to the dismiss control) so the
+  // trap has somewhere to keep focus and a screen-reader user lands inside.
+  const dismissRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (expanded) dismissRef.current?.focus();
+  }, [expanded]);
+
+  // Grab-handle drag: down past the threshold closes; up from peek expands; a
+  // small movement is a tap that toggles peek<->expanded.
+  const onHandlePointerDown = (e: React.PointerEvent) => {
+    dragRef.current = { startY: e.clientY, delta: 0 };
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  const onHandlePointerMove = (e: React.PointerEvent) => {
+    if (dragRef.current) dragRef.current.delta = e.clientY - dragRef.current.startY;
+  };
+  const onHandlePointerUp = () => {
+    const drag = dragRef.current;
+    dragRef.current = null;
+    if (!drag) return;
+    if (drag.delta > SWIPE_CLOSE_THRESHOLD) {
+      close();
+    } else if (drag.delta < -SWIPE_CLOSE_THRESHOLD) {
+      setSheetState("expanded");
+    } else {
+      // A tap toggles the height.
+      setSheetState((s) => (s === "peek" ? "expanded" : "peek"));
+    }
+  };
+
+  return (
+    <div
+      ref={panelRef}
+      onKeyDown={trapTab}
+      role={expanded ? "dialog" : "region"}
+      aria-modal={expanded ? true : undefined}
+      aria-label={t("player.play")}
+      className={cn(
+        // Fixed to the bottom, full width, top corners rounded. --bg-card ground
+        // with the section-7 gold hairline above it; the safe-area inset is
+        // reserved by .safe-bottom. The exact reserved-bottom / keyboard math is
+        // layered on in Task 3.
+        "fixed inset-x-0 bottom-0 z-40 flex flex-col rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark safe-bottom",
+        // A 200ms transform-and-fade rise, dropped under reduced motion.
+        "transition-transform duration-200 motion-reduce:transition-none",
+      )}
+      style={{ boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }}
+    >
+      {/* Grab handle: a centered 36x4px bar inside a >= 44px-tall hit target.
+          Tap toggles peek/expanded; swipe down closes; swipe up expands. */}
+      <button
+        type="button"
+        aria-label={t("player.grabHandle")}
+        aria-expanded={expanded}
+        onPointerDown={onHandlePointerDown}
+        onPointerMove={onHandlePointerMove}
+        onPointerUp={onHandlePointerUp}
+        className="flex items-center justify-center w-full h-11 touch-none"
+      >
+        {/* 36x4px bar in --text-muted at low opacity (the CSS var flips
+            light/dark; opacity is applied inline since Tailwind alpha modifiers
+            do not compose over an arbitrary CSS-var color). */}
+        <span
+          className="block w-9 h-1 rounded-full"
+          style={{ backgroundColor: "var(--text-muted)", opacity: 0.4 }}
+          aria-hidden="true"
+        />
+      </button>
+
+      {/* Peek row: reference + surah name, a play state, transport (prev / play
+          / next). Always present, so a first-time small-screen user sees their
+          tap worked within 100ms. */}
+      <div className="flex items-center gap-3 px-4 pb-2">
+        <div className="min-w-0 flex-1">
+          <p className="text-small font-heading font-semibold text-text dark:text-text-dark truncate">
+            {model.surahName ?? `${t("mushaf.juz")} ${isAr ? toArabicIndic(model.cur.surah) : model.cur.surah}`}
+          </p>
+          <p className="text-micro tabular-nums text-text-muted">{model.refLabel}</p>
+        </div>
+        <TransportRow model={model} />
+        <button
+          ref={dismissRef}
+          type="button"
+          onClick={close}
+          aria-label={t("player.closePlayer")}
+          title={t("player.closePlayer")}
+          className="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
+        >
+          <CloseIcon />
+        </button>
+      </div>
+
+      {/* Expanded extras: the verse text in Amiri Quran, the reciter line, the
+          multi-verse slot, and the error line. Rendered only when expanded; the
+          peek state stays a single compact row above the tab bar. */}
+      {expanded && (
+        <div className="px-4 pb-4 space-y-3 border-t border-border pt-3">
+          {model.tajweedHtml && (
+            <TajweedText
+              tajweedHtml={model.tajweedHtml}
+              className="!text-[1.25rem] !leading-[2.0]"
+            />
+          )}
+          <ReciterLine name={model.reciterName} />
+
+          {/* (5) Multi-verse controls slot, shared with the panel. Plan 05 fills
+              it with the selection summary, repeat stepper, loop toggle, and
+              inter-verse pause presets, plus the clear-selection action. */}
+          {/* PLAYBACK_SURFACE_MULTIVERSE_SLOT (plan 05) */}
+
+          {model.error && <ErrorLine error={model.error} />}
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface PlaybackSurfaceProps {
   // The page's verses, so the surface can find the tajweed markup for the
   // active verse and render it (read-only; never edits the verse text).
@@ -356,5 +548,5 @@ export function PlaybackSurface({ data }: PlaybackSurfaceProps) {
 
   // Exactly one presentation is in the DOM: the side panel at >= 1024px, the
   // bottom sheet below it. Never both (no double surface at 1024).
-  return isDesktop ? <SidePanel model={model} /> : null;
+  return isDesktop ? <SidePanel model={model} /> : <BottomSheet model={model} />;
 }
