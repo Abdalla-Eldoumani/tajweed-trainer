@@ -6,6 +6,7 @@ import { useMemorization } from "@/hooks/useMemorization";
 import { useVerseSelection } from "./useVerseSelection";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
+import { prefersReducedMotion } from "@/lib/reduced-motion";
 import { TajweedText } from "@/components/ui/TajweedText";
 import { MushafFrame } from "./MushafFrame";
 import { SurahCartouche } from "./SurahCartouche";
@@ -63,7 +64,7 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
   useEffect(() => {
     if (!targetVerseKey) return;
     const el = document.querySelector(`[data-verse-key="${CSS.escape(targetVerseKey)}"]`);
-    if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (el) el.scrollIntoView({ block: "center", behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }, [targetVerseKey, data.pageNumber]);
 
   // The recall Reveal pill temporarily un-blurs one memorized verse; it stops

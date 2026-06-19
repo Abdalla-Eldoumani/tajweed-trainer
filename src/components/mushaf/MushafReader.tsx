@@ -13,6 +13,7 @@ import { pageForJuz, pageForSurah, surahForPage, TOTAL_JUZ } from "@/lib/navigat
 import { clampJuz } from "@/lib/validate";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
+import { prefersReducedMotion } from "@/lib/reduced-motion";
 import { MushafPage } from "./MushafPage";
 import { PlaybackSurface } from "./PlaybackSurface";
 import { ReaderPalette } from "./ReaderPalette";
@@ -209,7 +210,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // Bring the reading-depth panel into view when a verse is selected (it renders
   // below the page, so a tap near the top of a long page would otherwise be silent).
   useEffect(() => {
-    if (selectedVerse) panelRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (selectedVerse) panelRef.current?.scrollIntoView({ block: "center", behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }, [selectedVerse]);
 
   // Escape closes the open reading-depth panel, like any dismissible overlay.
