@@ -461,6 +461,9 @@ export interface TajweedProgress {
   // this surah" so reopening a surah lands at the saved position. Same
   // VerseLocation shape; capped at 114 entries.
   lastReadBySurah?: Record<number, VerseLocation>;
+  // The learner's opt-in Quran-completion (khatmah) plan, or null when none is
+  // set. A single plan at a time; tracked from lastRead.page. Cleared by reset.
+  khatmah?: KhatmahPlan | null;
   // Whether the first-launch onboarding has been shown and dismissed. Cleared by
   // reset so onboarding re-shows.
   seenOnboarding: boolean;
@@ -475,6 +478,18 @@ export interface VerseLocation {
   verseKey: string; // "surah:ayah"
   page: number;     // mushaf page 1..604
   ts: string;       // ISO timestamp
+}
+
+// An opt-in plan to finish reading the whole Quran by a target date. Progress is
+// read from the reader position the app already records (lastRead.page), so
+// reading the mushaf advances the plan with no manual logging. The pace model is
+// linear by mushaf page: page N of 604 is N/604 complete (see src/lib/khatmah.ts
+// for the full derivation). startPage is where the reader was when the plan
+// began, so a learner who is already partway in is not counted as starting over.
+export interface KhatmahPlan {
+  startDate: string;  // ISO date (YYYY-MM-DD) the plan began
+  targetDate: string; // ISO date (YYYY-MM-DD) to finish by; >= startDate
+  startPage: number;  // mushaf page 1..604 the reader was on at the start
 }
 
 // Local-only insights ring buffer. Never sent over the network. The fixed set
