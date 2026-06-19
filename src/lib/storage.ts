@@ -178,7 +178,7 @@ function sanitizeModule(input: unknown): ModuleProgress {
           Number.isFinite(q.score) &&
           typeof q.date === "string",
         )
-        .slice(0, MAX_QUIZ_SCORES_PER_MODULE)
+        .slice(-MAX_QUIZ_SCORES_PER_MODULE)
     : [];
   const lastAccessed = typeof input.lastAccessed === "string" ? input.lastAccessed : "";
   return { lessonsCompleted, quizScores, lastAccessed };
