@@ -465,7 +465,7 @@ export function MiniPlayer() {
               onKeyDown={onHandleKeyDown}
               aria-label={t("player.dragHandle")}
               title={t("player.dragHandle")}
-              className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
+              className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             >
               <GripIcon />
             </button>
@@ -507,7 +507,7 @@ export function MiniPlayer() {
             onKeyDown={onHandleKeyDown}
             aria-label={t("player.dragHandle")}
             title={t("player.dragHandle")}
-            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
+            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
           >
             <GripIcon />
           </button>
