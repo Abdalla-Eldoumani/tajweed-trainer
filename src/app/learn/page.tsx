@@ -1,7 +1,6 @@
 "use client";
 
 import { ModuleCard } from "@/components/learn/ModuleCard";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
 import { isModuleUnlocked } from "@/lib/module-unlock";
@@ -17,7 +16,7 @@ export default function LearnPage() {
   return (
     <div>
       <div className="mb-8">
-        <SectionHeading as="h2">{t("learn.title")}</SectionHeading>
+        <h1 className="font-heading text-h2 font-semibold">{t("learn.title")}</h1>
         <p className="text-small text-text-muted mt-2">
           {t("learn.description")}
         </p>
