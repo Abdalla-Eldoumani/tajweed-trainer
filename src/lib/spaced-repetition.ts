@@ -15,7 +15,7 @@ export const LEITNER_INTERVALS: Record<ReviewBox, number> = {
 export const MASTERY_BOX: ReviewBox = 5;
 
 function toIsoDate(d: Date): string {
-  return d.toISOString().split("T")[0];
+  return d.toLocaleDateString("en-CA");
 }
 
 function addDays(date: Date, days: number): Date {
