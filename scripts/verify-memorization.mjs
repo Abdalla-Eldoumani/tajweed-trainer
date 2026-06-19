@@ -9,7 +9,8 @@
 // start in-bounds), the full juz enumeration totalling exactly 6236 unique keys
 // with no dupes/gaps (juz 30 ending 114:6), the independent versesCount sum,
 // versesForRange normalization/bounding, setMemorizedVerses union/difference/cap,
-// memorizedPercent rounding guards, and countInScope intersection.
+// memorizedPercent rounding guards, countInScope intersection, and
+// getDueFromUniverse treating a memorized verse with no review entry as due.
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -239,6 +240,42 @@ function countInScope(memorized, scopeVerses) {
 function versesForSurahLocal(surah) {
   const n = ayahCountForSurah(surah);
   return Array.from({ length: n }, (_, i) => `${surah}:${i + 1}`);
+}
+
+// --- (h) Re-implement getDueFromUniverse; assert no-entry verses are due ------
+// The memorized-verse review draws its queue from the memorized SET (the
+// universe), not the review map: a memorized verse with no review entry has
+// never been self-tested, so it must surface as due. Walking only the review map
+// (getDueQuestionIds) would leave the queue permanently empty, since memorizing
+// a verse writes no review entry.
+function getDueFromUniverse(universe, reviews, today) {
+  const due = [];
+  for (const id of universe) {
+    const state = reviews[id];
+    if (!state || !state.nextDueDate || state.nextDueDate <= today) due.push(id);
+  }
+  return due;
+}
+{
+  const today = "2026-06-19";
+  const memorized = ["1:1", "1:2", "1:3"];
+  // 1:1 due in the future (not due); 1:2 due today; 1:3 has no entry at all.
+  const reviews = {
+    "1:1": { nextDueDate: "2026-07-01" },
+    "1:2": { nextDueDate: "2026-06-19" },
+  };
+  const due = getDueFromUniverse(memorized, reviews, today);
+  record(
+    "getDueFromUniverse surfaces a memorized verse with no review entry",
+    due.includes("1:3"),
+    JSON.stringify(due),
+  );
+  record("getDueFromUniverse includes a verse due today", due.includes("1:2"), JSON.stringify(due));
+  record(
+    "getDueFromUniverse excludes a verse due in the future",
+    !due.includes("1:1"),
+    JSON.stringify(due),
+  );
 }
 
 const failed = results.filter((r) => !r.ok);

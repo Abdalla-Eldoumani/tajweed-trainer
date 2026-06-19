@@ -66,6 +66,26 @@ export function getDueQuestionIds(
   return due;
 }
 
+// Due ids drawn from an explicit universe of candidate ids (e.g. memorized
+// verseKeys), not only those already in the review map. An id with no review
+// state has never been reviewed, so it is due immediately. This is the entry
+// point for review over a set that grows outside the Leitner map: memorizing a
+// verse adds it to the memorized set but writes no review entry, so
+// getDueQuestionIds (which walks the map) would never surface it.
+export function getDueFromUniverse(
+  universe: Iterable<string>,
+  reviews: Record<string, ReviewState>,
+  now: Date = new Date(),
+): string[] {
+  const today = toIsoDate(now);
+  const due: string[] = [];
+  for (const id of universe) {
+    const state = reviews[id];
+    if (!state || !state.nextDueDate || state.nextDueDate <= today) due.push(id);
+  }
+  return due;
+}
+
 export interface ReviewStats {
   total: number;
   mastered: number;

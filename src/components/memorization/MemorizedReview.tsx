@@ -90,7 +90,7 @@ function VerseUnderReview({ verseKey, blurred }: { verseKey: string; blurred: bo
 export function MemorizedReview() {
   const { t, isAr } = useTranslation();
   const { memorized } = useMemorization();
-  const { dueIds, recordReview } = useMemorizationReviews();
+  const { dueMemorized, recordReview } = useMemorizationReviews();
   const { settings } = useSettings();
 
   // The snapshot: due verseKeys captured ONCE at start. Mid-session memorization
@@ -105,17 +105,18 @@ export function MemorizedReview() {
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
   const start = useCallback(() => {
-    // Intersect the due ids with the live memorized Set at the instant of start,
-    // then freeze it. dueIds() treats a memorized verse with no entry as due, so
-    // newly memorized verses appear immediately.
-    const due = dueIds().filter((key) => memorized.has(key));
+    // Snapshot the due memorized verses at the instant of start, then freeze it.
+    // dueMemorized draws from the memorized Set as the universe and treats a
+    // verse with no review entry as due, so newly memorized verses appear
+    // immediately.
+    const due = dueMemorized(memorized);
     if (due.length === 0) return;
     setQueue(due);
     setIndex(0);
     setReviewed(0);
     setRevealed(false);
     setStarted(true);
-  }, [dueIds, memorized]);
+  }, [dueMemorized, memorized]);
 
   // Reconciliation (T-07-13 / AC-16): derive the active step by skipping, in
   // render, any queued verse no longer in the memorized Set (e.g. a bulk-unmark
@@ -182,8 +183,8 @@ export function MemorizedReview() {
   }, [queue, activeIndex, memorized, settings.reciter, settings.playbackSpeed]);
 
   const dueNow = useMemo(
-    () => dueIds().filter((key) => memorized.has(key)).length,
-    [dueIds, memorized],
+    () => dueMemorized(memorized).length,
+    [dueMemorized, memorized],
   );
 
   if (!started) {

@@ -2,12 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { getMemorizationReviews, setMemorizationReview } from "@/lib/storage";
-import {
-  nextStateForAnswer,
-  getReviewStats,
-  getDueQuestionIds,
-  type ReviewStats,
-} from "@/lib/spaced-repetition";
+import { nextStateForAnswer, getDueFromUniverse } from "@/lib/spaced-repetition";
 import type { ReviewState } from "@/lib/types";
 
 // Leitner review over memorized verses, mirroring useReviews but reading and
@@ -35,17 +30,21 @@ export function useMemorizationReviews() {
     [refresh],
   );
 
-  // A memorized verse with no review entry has no nextDueDate, so
-  // getDueQuestionIds treats it as due — newly memorized verses appear in
-  // review immediately, which is the intended behavior.
-  const dueIds = useCallback((now?: Date): string[] => getDueQuestionIds(reviews, now), [reviews]);
-  const stats = useCallback((now?: Date): ReviewStats => getReviewStats(reviews, now), [reviews]);
+  // Due memorized verses, drawn from the memorized set as the universe (the
+  // caller passes the live Set), not the review map. A memorized verse with no
+  // review entry has never been self-tested, so it is due immediately;
+  // getDueQuestionIds alone would never surface it because it only walks ids
+  // already present in the map.
+  const dueMemorized = useCallback(
+    (memorized: Iterable<string>, now?: Date): string[] =>
+      getDueFromUniverse(memorized, reviews, now),
+    [reviews],
+  );
 
   return {
     reviews,
     recordReview,
-    dueIds,
-    stats,
+    dueMemorized,
     refresh,
   };
 }
