@@ -119,10 +119,27 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const [selectedVerse, setSelectedVerse] = useState<string | null>(null);
   // Multi-verse selection (a hand-picked set or a contiguous range), lifted here
   // so the page's per-verse add controls + markers and the playback surface's
-  // chips + transport share one source. In-memory only: it survives in-reader
-  // page navigation (this reader stays mounted) but not a full reload.
+  // chips + transport share one source. In-memory only, reader-scoped: it lives
+  // as long as the user stays within one rendered reader view and is not
+  // persisted to storage (UI-SPEC B8; reload persistence, if ever wanted, would
+  // go through the consolidated storage.ts sanitizer, never an ad-hoc key). This
+  // matches the established reader-local-state precedent (the collapsed-rail
+  // flag from plan 03): the zustand player store carries playback across pages,
+  // while reader-local React state resets on a route change.
   const selection = useVerseSelectionState();
   useEffect(() => setMounted(true), []);
+
+  // B4 (loop on, navigate away): the whole-selection loop is a store flag that
+  // outlives this reader. When the reader unmounts (the user leaves the page),
+  // turn the loop off so a selection does not keep looping forever in the
+  // background once the user has moved on. This does not stop in-progress
+  // playback (the global player design keeps audio alive across routes); it only
+  // ends the perpetual loop so the current pass finishes naturally.
+  useEffect(() => {
+    return () => {
+      if (usePlayer.getState().loopSelection) usePlayer.getState().setLoopSelection(false);
+    };
+  }, []);
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get("v");
