@@ -30,6 +30,7 @@ How the app is wired together, top-down.
 |  |   /mushaf                 114-surah index                   |  |
 |  |   /mushaf/page/[page]     Page reader (memorization mode)    |  |
 |  |   /mushaf/surah/[surah]   Redirect to start page            |  |
+|  |   /mushaf/bookmarks       Saved-verse list                  |  |
 |  |   /practice               Hub: module tiles + Mixed +       |  |
 |  |                            Review Due (when due > 0)         |  |
 |  |   /practice/[module]      Per-module quiz                   |  |
@@ -65,13 +66,13 @@ How the app is wired together, top-down.
 
 ## Platform and build
 
-- **Framework:** Next.js 16.2.7 on React 19.2.7 (`react-dom` 19.2.7). Builds use Turbopack; the workspace root is pinned via `turbopack.root` in `next.config.mjs` so a stray parent-directory lockfile isn't inferred as the root.
+- **Framework:** Next.js 16.2.9 on React 19.2.7 (`react-dom` 19.2.7). Builds use Turbopack; the workspace root is pinned via `turbopack.root` in `next.config.mjs` so a stray parent-directory lockfile isn't inferred as the root.
 - **TypeScript** strict mode, `@types/react` ^19. **Tailwind** is kept at 3.4.19 on purpose (Tailwind v4 is deferred; Next 16 doesn't require it and the migration would risk the tuned design). Node 24.
 - **ESLint 9, flat config:** `eslint.config.mjs` spreads `eslint-config-next/core-web-vitals` directly (the old `.eslintrc.json` was removed). The lint script is `eslint .` — not `next lint`, which Next 16 deprecates. `package.json` scripts: `dev` / `build` / `start` / `lint` / `verify` / `verify:scripts` / `verify:ui`.
 - **Next 15+ async APIs:** dynamic route `params` is a Promise — `await`ed in server routes, unwrapped with React `use()` in the client `practice/[module]` route. Segment `export const revalidate` uses a literal seconds value (e.g. `86400`, `604800`).
 - **Fonts:** all fonts are self-hosted via `next/font` (Inter, Spectral, JetBrains Mono, Amiri, Amiri Quran). There is no render-blocking Google Fonts `<link>` in `layout.tsx`; Tailwind `fontFamily` tokens reference the `next/font` CSS variables (`var(--font-quran)`, `var(--font-amiri)`, `var(--font-inter)`, etc.).
 - **Headers / CSP, single source:** all response headers and the Content-Security-Policy are assembled once in `next.config.mjs` (`headers()` applies them to every path); `vercel.json` is trimmed to `framework` + `buildCommand` (its competing headers removed). CSP highlights: `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR); `style-src` / `font-src` no longer list `fonts.googleapis.com` / `fonts.gstatic.com` (fonts are self-hosted); `connect-src 'self' https://api.quran.com`; `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com`.
-- Project version is **0.5.0**.
+- Project version is **0.6.0**.
 
 ## Layers
 
@@ -81,12 +82,16 @@ How the app is wired together, top-down.
 - **quran-api.ts** — wraps Quran.com v4. Exposes `getTajweedSurah(n)`, `getTajweedPage(n)`, `getChaptersIndex()` (with bundled fallback), and `getStartPageForSurah(n)`. Memory cache (15 minutes by default, 7 days for chapters), exponential backoff. 4xx fails fast; 5xx and network errors retry.
 - **audio-api.ts** — wraps Quran.com per-ayah audio (`/recitations/{id}/by_ayah/{surah}:{ayah}`) and builds deterministic EveryAyah URLs for the `ea-*` reciters. `fetchAudioUrl(surah, ayah, reciter)` with a 1-hour cache; `toSafeAudioUrl` normalizes the API's relative or protocol-relative path to an absolute https URL on an allowlisted audio host (`verses.quran.com` / the `quranicaudio.com` mirrors / `everyayah.com`). The reciter catalogue is static in `reciters.ts` (`RECITATIONS`, 19 reciters: 12 Quran.com + 7 EveryAyah; `DEFAULT_RECITER_ID` is Al-Husary muallim). `normalizeReciterId()` migrates legacy alquran.cloud ids (`husary`, `ar.husary`, `alafasy`, `ar.alafasy`) to the Quran.com recitation ids so persisted settings keep working.
 - **tajweed-colors.ts** — CSS-class to hex map for every tajweed rule the API emits, including dark-mode variants. Used by `TajweedText` and `ColorLegend`.
-- **storage.ts** — SSR-safe localStorage wrapper. `getSettings`, `setSettings`, `getProgress`, `setProgress`. Default settings include `lastMushafPage: 1` and `mushafBookmarks: []`. Adds `reviews`, `memorizedVerses`, `readSections`, and `analytics` fields to `TajweedProgress`, each with its own sanitizer and cap. Helpers: `getReviews/setReview`, `toggleMemorizedVerse`, `getReadSections/markSectionRead`, `getAnalytics/recordAnalyticsEvent`, `exportProgress/importProgress`.
+- **storage.ts**: SSR-safe localStorage wrapper and the only write funnel; every read runs through `sanitizeProgress`, and every successful write emits a change through `progress-events.ts`. `getSettings`, `setSettings`, `getProgress`, `setProgress`. The consolidated `TajweedProgress` carries `reviews`, `memorizedVerses`, `memorizationReviews`, `readSections`, `verseNotes`, `analytics`, `bookmarks`, `lastRead`, `lastReadBySurah`, `khatmah`, `playerResume`, `seenOnboarding`, and `lastBackupAt`, each with its own sanitizer and cap. Keyed maps reject the prototype-pollution keys (`__proto__`, `constructor`, `prototype`). Helpers: `getReviews/setReview`, `toggleMemorizedVerse/setMemorizedVerses`, `getReadSections/markSectionRead`, `getVerseNote/setVerseNote`, `getLastRead/getLastReadForSurah/setLastRead`, `getKhatmah/setKhatmah/clearKhatmah`, `getOnboardingSeen/setOnboardingSeen`, `getAnalytics/recordAnalyticsEvent`, `exportProgress/importProgress`, and `getLastBackupAt/shouldRemindBackup` for the backup reminder.
 - **i18n.ts** — flat `key -> { en, ar }` dictionary, a `t(key, lang)` lookup, and the `useTranslation()` hook that pulls `lang` from settings and returns `{ t, lang, isAr, dir }`.
 - **utils.ts** — `cn()` for class merging, `formatSurahReference(name | { en, ar }, surah, ayah, locale)`, and `toArabicIndic(n)` for Arabic-Indic numerals.
 - **question-pool.ts** — collects every example across the rule files into a flat pool, builds a `RULE_AR_MAP` (English `rule_applied` to Arabic `rule_applied_ar`), and exposes `getRandomQuestions` with parallel `options` / `optionsAr` arrays. Authored questions in `src/data/questions/<module>.ts` take precedence over the legacy random-from-examples pool. `getModuleLastScore(progress, moduleId)` returns the most recent quiz score and total quizzes-taken count for the practice hub. `getDueQuestions(dueIds, count)` filters the authored pool by stable id for the spaced-repetition route.
 - **spaced-repetition.ts** — pure Leitner-box logic. `LEITNER_INTERVALS` (1/3/7/14/30 days), `nextStateForAnswer(prev, correct)` promotes one box on correct (clamped at `MASTERY_BOX = 5`) or resets to box 1 on incorrect. `recordReview(questionId, correct)` writes through to storage; `getDueQuestionIds(reviews)` and `getReviewStats(reviews)` are read-only queries used by the UI. Pure-functional; no React imports.
 - **search.ts** — builds and caches the global search index across surahs, modules, rules (with subtypes), tafkheem subsections, makharij regions, and waqf symbols. `search(query, limit)` does tokenized substring matching against title and a denormalized haystack with score-based ranking. Minimum query length 2.
+- **khatmah.ts**: pure pace math for the opt-in Quran-completion planner. `computeKhatmahPace(plan, currentPage, today)` returns a clamped snapshot (days elapsed/remaining, pages read/remaining, daily pace, the page to reach today, ahead/behind, percent complete); `targetDateForDuration(startDate, days)` resolves the 30/60/90-day presets. No React, storage, or next imports, so `scripts/verify-khatmah.mjs` exercises it directly. The model is linear by mushaf page (page N of 604 is N/604 complete) and is documented as such in the file.
+- **tajweed-rule-links.ts**: structural navigation only. It maps each tajweed API CSS class to the lesson route that teaches it, for the tap-a-letter popover's "Learn more" link. It holds no rule descriptions or classifications; classes with no single owning module are deliberately absent (the popover then shows the rule name and color without a link). `scripts/verify-study-tools.mjs` asserts every key exists in the tajweed color map.
+- **reduced-motion.ts**: `prefersReducedMotion()`, an SSR-safe read of the `prefers-reduced-motion` media query. CSS handles motion globally, but JS-driven `scrollIntoView({ behavior })` is not covered by that CSS, so callers gate smooth vs. auto scrolling through this.
+- **scroll-lock.ts**: ref-counted body-scroll lock (`lockBodyScroll` / `unlockBodyScroll`) so stacked overlays (drawer, palette, playback sheet, onboarding) coordinate; the body stays locked until the last overlay releases.
 
 ### `src/data/content/` — the source of truth
 
@@ -103,12 +108,18 @@ JSON files. Each entry that ships to the UI carries `verified: true`. The schema
   - `SurahCartouche` is the banner shown when a surah starts on the current page.
   - `BismillahLine` is the standalone Bismillah; suppressed for surah 9 (At-Tawbah, no Bismillah at all) and surah 1 (Al-Fatihah, where Bismillah is verse 1).
   - `MushafPage` composes the above with flowing tajweed-colored verse buttons. Tapping a verse opens the reading-depth panel (no inline per-verse controls); when `memorizationMode` is on it blurs every memorized verse with a Reveal pill.
-  - `MushafReader` is the toolbar (prev / next, surah dropdown, eye toggle for memorization mode, bookmark), keyboard navigation, and the reading-depth panel — the per-verse action hub (play this verse, play from here, memorize, bookmark) plus translation/tafsir/word-by-word. RTL-aware.
-  - `MushafIndex` is the 114-surah grid with search, Makkah / Madinah filter, and the "continue from page X" callout.
+  - `MushafReader` is the toolbar (prev / next, surah and juz dropdowns, eye toggle for memorization mode, bookmark, Cmd/Ctrl+K palette button), keyboard navigation, and the reading-depth panel. The panel is the per-verse action hub (play this verse, play from here, memorize, bookmark) plus translation/tafsir/word-by-word. RTL-aware.
+  - `PlaybackSurface` is the always-visible playback area: a docked side panel at 1024px and up, a bottom sheet below; the expanded sheet locks body scroll.
+  - `ReaderPalette` is the Cmd/Ctrl+K quick-jump palette (surah, page, juz).
+  - `VerseNotes` is the private per-verse note in the reading-depth panel; `ReciterCompare` plays the verse by two reciters in turn; `RecitationCompare` records the user and replays it next to the reciter (in-memory only).
+  - `MushafBookmarks` is the saved-verse list behind `/mushaf/bookmarks`.
+  - `MushafIndex` is the 114-surah grid with search, Makkah / Madinah filter, the "continue from page X" callout, a bookmarks preview, and per-surah resume pills.
+- **ui/** also holds `TajweedRulePopover`, opened by `TajweedText` when `explainRules` is on, naming a tapped letter's rule and color with a "Learn more" lesson link.
+- **khatmah/**: `KhatmahCard`, the Quran-completion planner on `/progress`.
 
 ### `src/app/` — routes
 
-Next.js App Router (Next 16). Most pages are server components that hydrate into client components for interaction. The Mushaf page route uses `generateStaticParams` for the common entry pages and ISR (`export const revalidate = 86400`, a literal seconds value) for the rest. Dynamic route `params` is now a Promise: server routes `await params`; the client `practice/[module]` route unwraps it with React `use()`.
+Next.js App Router (Next 16). Most pages are server components that hydrate into client components for interaction. The Mushaf page route uses `generateStaticParams` for the common entry pages and ISR (`export const revalidate = 86400`, a literal seconds value) for the rest. Dynamic route `params` is now a Promise: server routes `await params`; the client `practice/[module]` route unwraps it with React `use()`. `error.tsx` and `global-error.tsx` are the error boundaries (a single failed render never blanks the app), and `loading.tsx` files give the learn, practice, progress, settings, and Mushaf routes skeletons while data resolves.
 
 ### `scripts/`
 
@@ -132,6 +143,32 @@ Next.js App Router (Next 16). Most pages are server components that hydrate into
 2. Both functions go through `fetchWithCache` and `fetchWithRetry`. Cache hits skip the network entirely. `getChaptersIndex()` falls back to the bundled `surah-index.json` if the network fails.
 3. The server component `await`s its Promise `params`, then passes the resolved data to the client `MushafReader`, which renders `MushafPage` plus the toolbar (including the prominent "Play surah" control).
 4. Tap a verse: it opens the reading-depth panel. Playback is triggered from the panel (play this verse / play from here) or the toolbar "Play surah" button, routing through the global `usePlayer` (zustand) store -> `fetchAudioUrl` -> the Quran.com audio CDN, auto-advancing ayah to ayah in continuous mode. `MiniPlayer` exposes a single <-> full-surah mode toggle.
+5. The playback surface (`PlaybackSurface`) presents exactly one way per width: a docked, collapsible side panel at 1024px and up, a bottom sheet below that. The expanded sheet locks body scroll through `scroll-lock.ts`.
+6. Multi-verse selection lets the reader pick a contiguous range or a hand-picked set; the selection plays as one auto-advancing queue on the same engine, with a per-verse repeat count, whole-selection loop, and an inter-verse pause.
+7. The surah and juz pickers read out the surah(s) and juz on the open page (derived from the page data, correct even after a deep-linked reload) and update as pages turn. Cmd/Ctrl+K opens `ReaderPalette` to jump to any surah, page, or juz.
+
+### Tap-a-letter rule popover
+
+1. `TajweedText` takes an opt-in `explainRules` prop (on in the reader and the lesson examples). When set, each colored letter becomes a button.
+2. Tapping one opens `TajweedRulePopover`, which names the rule and shows its color from `tajweed-colors.ts` (the verified map) and resolves a "Learn more" lesson link through `getLessonLinkForClass` in `tajweed-rule-links.ts`. Classes with no single owning module show the name and color without a link. No rule text is generated.
+
+### Per-verse notes and bookmarks view
+
+1. The reading-depth panel renders `VerseNotes`, a private note in the learner's own words. It reads and writes through `getVerseNote` / `setVerseNote`; the note is local-only, capped, never transmitted, and never religious content.
+2. `/mushaf/bookmarks` resolves the surah headers server-side and renders `MushafBookmarks`, listing every bookmarked verse with its text and open / remove actions. The index links to it and previews a few bookmarks inline; per-surah resume pills read `lastReadBySurah`.
+
+### Reciter A/B compare
+
+1. `ReciterCompare` in the reading-depth panel plays the same verse by two reciters in turn on the one `usePlayer` engine, so styles can be compared by ear. It adds no second audio element.
+
+### Khatmah planner
+
+1. `KhatmahCard` on `/progress` reads the opt-in plan via `getKhatmah` and the reader position from `lastRead.page`.
+2. It calls `computeKhatmahPace(plan, currentPage, today)` in `khatmah.ts` for the pace snapshot (daily pace, the page to reach today, ahead/behind, percent complete) and writes a new plan through `setKhatmah`, which re-sanitizes before persisting. `today` is computed in the component with `new Date()` so the library stays deterministic.
+
+### First-launch onboarding
+
+1. A short, skippable welcome shows once on first open. The seen-once flag lives on `TajweedProgress` as `seenOnboarding` (via `getOnboardingSeen` / `setOnboardingSeen`), so export / import / reset cover it and a reset re-shows it.
 
 ### Spaced repetition (Leitner)
 
