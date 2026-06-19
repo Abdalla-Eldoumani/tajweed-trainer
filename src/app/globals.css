@@ -12,27 +12,16 @@
 
 :root {
   --primary: #1E4279;
-  --primary-light: #D9B45C;
-  --primary-weak: #2A5694;
   --accent: #B0552F;
   --bg: #F5F1E8;
   --bg-card: #FCFAF3;
-  --bg-card-dark: #121A2E;
   --bg-subtle: #ECE5D3;
   --text: #131B2E;
   --text-muted: #555F77;
 
   --gold: #D4A843;
-  --gold-light: #E3C77F;
-  --gold-dark: #8F6F1E;
-  --gold-soft: #E3C77F;
   --gold-hairline: rgba(196, 154, 51, 0.42);
-  --cream: #F5F1E8;
-  --cream-dark: #ECE5D3;
   --border: #DDD3BC;
-  --ornament-1: var(--gold);
-  --ornament-2: #1E4279;
-  --ornament-3: #B9A876;
 
   /* Illuminated margin (the sidebar and mobile chrome). Constant across light
      and dark so the navigation reads as the manuscript's decorated border in
@@ -72,27 +61,16 @@
 
 .dark {
   --primary: #D4A843;
-  --primary-light: #E0BE63;
-  --primary-weak: #B8902F;
   --accent: #C9714A;
   --bg: #0A0F1C;
   --bg-card: #121A2E;
-  --bg-card-dark: #121A2E;
   --bg-subtle: #1A2336;
   --text: #EDEAE0;
   --text-muted: #99A2B6;
 
   --gold: #D4A843;
-  --gold-light: #E3C77F;
-  --gold-dark: #8A7136;
-  --gold-soft: #8A7136;
   --gold-hairline: rgba(212, 168, 67, 0.30);
-  --cream: #121A2E;
-  --cream-dark: #1A2336;
   --border: #232E47;
-  --ornament-1: var(--gold);
-  --ornament-2: #4C6FA8;
-  --ornament-3: #9A8A5A;
 
   --margin-bg: #0C1322;
   --margin-card: #131D33;
@@ -381,9 +359,9 @@ html, body {
 }
 
 .mushaf-frame::after {
-  /* A single 8-point star at the head corner, low opacity. Drawn from the
-     ornament gold (--ornament-1), never a tajweed token, so the frame stays
-     decoupled from the verse palette. */
+  /* A single 8-point star at the head corner, low opacity. Drawn in a gold
+     ornament hex, never a tajweed token, so the frame stays decoupled from the
+     verse palette. */
   content: "";
   position: absolute;
   top: 10px;
@@ -505,8 +483,7 @@ html, body {
   border-radius: 9999px;
   background: var(--bg-subtle);
   border: 1px solid var(--gold-hairline);
-  /* Contrast-scoped gold for the small ayah numeral, not the shared --gold-dark.
-     --gold-dark on --bg-subtle is 3.75:1 (AA-large only); this deeper gold reads
+  /* Contrast-scoped gold for the small ayah numeral. This deeper gold reads
      4.86:1 on the ivory --bg-subtle so the numeral clears AA-normal. Theme-aware:
      the pill ground flips per theme, so the dark rule below uses a brighter gold. */
   color: #7A5E15;
@@ -521,8 +498,8 @@ html, body {
 .dark .tajweed-text .end {
   background: var(--bg-subtle);
   border-color: var(--gold-hairline);
-  /* Brighter gold on the navy --bg-subtle: --gold-dark was 3.36:1 (sub-AA);
-     this reads 6.50:1 so the numeral clears AA-normal. See the light rule above. */
+  /* Brighter gold on the navy --bg-subtle: this reads 6.50:1 so the numeral
+     clears AA-normal. See the light rule above. */
   color: #C7A24A;
 }
 
