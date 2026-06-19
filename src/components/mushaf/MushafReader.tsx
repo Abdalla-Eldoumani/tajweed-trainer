@@ -108,7 +108,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { t, isAr } = useTranslation();
   const router = useRouter();
   const { isBookmarked: isVerseBookmarked, toggle: toggleVerseBm, mounted: bmMounted } = useBookmarks();
-  const { isMemorized, toggle: toggleMemorized, mounted: memMounted } = useMemorization();
+  const { isMemorized, toggle: toggleMemorized, count: memorizedCount, mounted: memMounted } = useMemorization();
   // The reading-depth panel renders below the page; scroll it into view when a
   // verse is tapped so the translation/tafsir is never opened off-screen.
   const panelRef = useRef<HTMLDivElement>(null);
@@ -382,20 +382,41 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             })}
           </select>
 
-          <button
-            onClick={() => setMemorizationMode((v) => !v)}
-            className={cn(
-              "inline-flex items-center justify-center w-11 h-11 rounded-lg border transition-colors",
-              memorizationMode
-                ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
-                : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
-            )}
-            aria-label={memorizationMode ? t("mushaf.memorizeOff") : t("mushaf.memorizeOn")}
-            aria-pressed={memorizationMode}
-            title={memorizationMode ? t("mushaf.memorizeOff") : t("mushaf.memorizeOn")}
-          >
-            <EyeIcon closed={memorizationMode} />
-          </button>
+          {/* Recall control: the visible "Recall" label (>=sm) plus the eye icon
+              mirror the "Play surah" / "Jump to…" label-beside-icon pattern, so a
+              first-time user sees what the eye does. The title carries the purpose
+              ("hides memorized verses to test recall") while the aria-label keeps
+              flipping on/off for the pressed state. With nothing memorized (gated
+              on memMounted so it never flashes on hydration) the control disables
+              with an explanatory tooltip rather than blurring nothing. */}
+          {(() => {
+            const recallDisabled = memMounted && memorizedCount === 0;
+            const recallTitle = recallDisabled ? t("mushaf.recallEmpty") : t("mushaf.recallHint");
+            const recallAriaLabel = recallDisabled
+              ? t("mushaf.recallEmpty")
+              : memorizationMode
+                ? t("mushaf.memorizeOff")
+                : t("mushaf.memorizeOn");
+            return (
+              <button
+                type="button"
+                onClick={() => setMemorizationMode((v) => !v)}
+                disabled={recallDisabled}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors disabled:opacity-50 disabled:pointer-events-none",
+                  memorizationMode
+                    ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                    : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
+                )}
+                aria-label={recallAriaLabel}
+                aria-pressed={memorizationMode}
+                title={recallTitle}
+              >
+                <EyeIcon closed={memorizationMode} />
+                <span className="hidden sm:inline">{t("mushaf.recall")}</span>
+              </button>
+            );
+          })()}
 
           <button
             onClick={toggleBookmark}
