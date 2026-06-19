@@ -11,6 +11,12 @@
 const isDev = process.env.NODE_ENV !== "production";
 const csp = [
   "default-src 'self'",
+  // 'unsafe-inline' is required: the theme/dir bootstrap in src/app/layout.tsx
+  // is an inline <script> that sets dark mode and lang/dir from localStorage
+  // before paint (to avoid a flash), and Next.js emits inline hydration scripts
+  // of its own. Dropping it would need a nonce-based CSP, which requires a
+  // server or middleware to mint a per-request nonce. That is out of scope for
+  // this static, server-less model, so do not remove it without that work.
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   // Fonts are self-hosted via next/font; no Google Fonts origins needed.
   "style-src 'self' 'unsafe-inline'",
