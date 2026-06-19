@@ -11,6 +11,7 @@ import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
+import { getColorForClass } from "@/lib/tajweed-colors";
 import noonData from "@/data/content/noon-sakinah-tanween.json";
 
 const SECTIONS = [
@@ -18,11 +19,16 @@ const SECTIONS = [
   ...noonData.rules.flatMap((r) => [r.id, ...((r.subtypes ?? []).map((st) => st.id))]),
 ];
 
+// Rule-indicator colors from the single tajweed source (tajweed-colors.ts),
+// keyed by the API class each rule maps to. Izhar is not emitted by the API
+// (default ink in the mushaf), so it keeps its teaching green rather than a class.
+const IZHAR_COLOR = "#169200";
+const tajHex = (cssClass: string) => getColorForClass(cssClass)?.hex ?? IZHAR_COLOR;
 const RULE_COLORS: Record<string, string> = {
-  "izhar-halqi": "#169200",
-  "idgham": "#9400A8",
-  "iqlab": "#26A69A",
-  "ikhfaa": "#D98000",
+  "izhar-halqi": IZHAR_COLOR,
+  "idgham": tajHex("idgham_ghunnah"),
+  "iqlab": tajHex("iqlab"),
+  "ikhfaa": tajHex("ikhafa"),
 };
 
 export default function NoonSakinahPage() {
@@ -127,7 +133,7 @@ export default function NoonSakinahPage() {
                   <td className="py-2 text-end">4</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pe-4 font-medium" style={{ color: "#0057D9" }}>{isAr ? "الإدغام بلا غنّة" : "Idgham (no ghunnah)"}</td>
+                  <td className="py-2 pe-4 font-medium" style={{ color: tajHex("idgham_wo_ghunnah") }}>{isAr ? "الإدغام بلا غنّة" : "Idgham (no ghunnah)"}</td>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.idgham_without_ghunnah_letters} size="sm" /></td>
                   <td className="py-2 text-end">2</td>
                 </tr>

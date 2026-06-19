@@ -9,14 +9,20 @@ import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
+import { getColorForClass } from "@/lib/tajweed-colors";
 import meemData from "@/data/content/meem-sakinah.json";
 
 const SECTIONS = ["meem-sakinah-overview", ...meemData.rules.map((r) => r.id)];
 
+// Rule-indicator colors from the single tajweed source (tajweed-colors.ts).
+// Izhar Shafawi is not emitted by the API (default ink in the mushaf), so it
+// keeps its teaching green rather than a class.
+const IZHAR_COLOR = "#169200";
+const tajHex = (cssClass: string) => getColorForClass(cssClass)?.hex ?? IZHAR_COLOR;
 const RULE_COLORS: Record<string, string> = {
-  "ikhfaa-shafawi": "#D98000",
-  "idgham-shafawi": "#9400A8",
-  "izhar-shafawi": "#169200",
+  "ikhfaa-shafawi": tajHex("ikhafa_shafawi"),
+  "idgham-shafawi": tajHex("idgham_shafawi"),
+  "izhar-shafawi": IZHAR_COLOR,
 };
 
 export default function MeemSakinahPage() {

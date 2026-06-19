@@ -11,7 +11,11 @@ import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
+import { getColorForClass } from "@/lib/tajweed-colors";
 import qalqalahData from "@/data/content/qalqalah.json";
+
+// The rule-indicator color comes from the single tajweed source (tajweed-colors.ts).
+const QALQALAH_COLOR = getColorForClass("qalaqah")?.hex ?? "#009EE6";
 
 const SECTIONS = [
   "qalqalah-letters",
@@ -79,7 +83,7 @@ export default function QalqalahPage() {
               description={level.description}
               descriptionAr={level.description_ar}
               examples={level.examples}
-              color="#A30000"
+              color={QALQALAH_COLOR}
               defaultExpanded
             />
           </div>

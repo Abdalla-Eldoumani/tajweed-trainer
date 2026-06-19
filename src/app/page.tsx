@@ -22,11 +22,16 @@ const DailyVerse = dynamic(
 import { MedallionOrnament, OrnamentalDivider } from "@/components/ui/Ornament";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
+import { getColorForClass } from "@/lib/tajweed-colors";
 import learningPath from "@/data/content/learning-path.json";
 import basmala from "@/data/basmala.json";
 import type { LearningModule } from "@/lib/types";
 
 const modules = learningPath.modules as LearningModule[];
+
+// The color-coded-text feature card shows a single colored noon; its color comes
+// from the single tajweed source (the idgham green) rather than a hardcoded hex.
+const COLOR_CODED_DEMO = getColorForClass("idgham_ghunnah")?.hex ?? "#169200";
 
 export default function HomePage() {
   const { getOverallCompletion } = useProgress();
@@ -93,7 +98,7 @@ export default function HomePage() {
         </Card>
 
         <Card>
-          <div className="text-h2 mb-2 font-quran" style={{ color: "#169200" }} dir="rtl" lang="ar">ن</div>
+          <div className="text-h2 mb-2 font-quran" style={{ color: COLOR_CODED_DEMO }} dir="rtl" lang="ar">ن</div>
           <h3 className="font-heading font-semibold text-small">{t("home.colorCodedText")}</h3>
           <p className="text-micro text-text-muted mt-1">{t("home.colorCodedTextDesc")}</p>
         </Card>

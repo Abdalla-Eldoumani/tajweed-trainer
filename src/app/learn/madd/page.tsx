@@ -11,19 +11,33 @@ import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
+import { getColorForClass } from "@/lib/tajweed-colors";
 import maddData from "@/data/content/madd-rules.json";
 
 const SECTIONS = ["madd-letters", ...maddData.types.map((t) => t.id)];
 
-const MADD_COLORS: Record<string, string> = {
-  "madd-tabeeee": "#E06050",
-  "madd-muttasil": "#D50000",
-  "madd-munfasil": "#E8567F",
-  "madd-arid": "#E06050",
-  "madd-lazim": "#D50000",
+// Rule-indicator colors come from the single tajweed source (tajweed-colors.ts)
+// keyed by the API class each madd type maps to. Badal (a 2-beat substitute) and
+// Leen (a soft-letter madd) have no dedicated API class, so they are left out of
+// the mapping and keep their prior bespoke hue rather than a guessed class.
+const MADD_CLASS: Record<string, string> = {
+  "madd-tabeeee": "madda_normal",
+  "madd-muttasil": "madda_obligatory_mottasel",
+  "madd-munfasil": "madda_obligatory_monfasel",
+  "madd-arid": "madda_permissible",
+  "madd-lazim": "madda_necessary",
+};
+
+const MADD_UNMAPPED: Record<string, string> = {
   "madd-badal": "#E06050",
   "madd-leen": "#E8567F",
 };
+
+function maddColor(typeId: string): string {
+  const cssClass = MADD_CLASS[typeId];
+  if (cssClass) return getColorForClass(cssClass)?.hex ?? "#537FFF";
+  return MADD_UNMAPPED[typeId] ?? "#E06050";
+}
 
 export default function MaddPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("madd");
@@ -78,7 +92,7 @@ export default function MaddPage() {
               description={type.description}
               descriptionAr={type.description_ar}
               examples={type.examples}
-              color={MADD_COLORS[type.id] ?? "#E06050"}
+              color={maddColor(type.id)}
             />
           </div>
         ))}
