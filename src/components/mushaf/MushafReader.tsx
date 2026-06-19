@@ -232,7 +232,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             onClick={playFullSurah}
             aria-label={t("mushaf.playSurah")}
             title={t("mushaf.playSurah")}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3 py-2 min-h-[44px] text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3 py-2 min-h-[44px] text-small font-medium hover:bg-primary/90 transition-colors"
           >
             <PlaySolid />
             <span className="hidden sm:inline">{t("mushaf.playSurah")}</span>
@@ -260,7 +260,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           <select
             value=""
             onChange={(e) => router.push(`/mushaf/surah/${e.target.value}`)}
-            className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
             aria-label={t("mushaf.surahIndex")}
           >
             <option value="">{t("mushaf.surahIndex")}</option>
@@ -274,7 +274,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           <select
             value=""
             onChange={(e) => e.target.value && router.push(`/mushaf/page/${pageForJuz(Number(e.target.value))}`)}
-            className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
             aria-label={t("mushaf.juzIndex")}
           >
             <option value="">{t("mushaf.juzIndex")}</option>
@@ -288,7 +288,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           <select
             value={drill}
             onChange={(e) => setDrill(e.target.value)}
-            className="text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
             aria-label={t("mushaf.drill")}
             title={t("mushaf.drill")}
           >
@@ -334,7 +334,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         </div>
       </div>
 
-      <p className="text-center text-xs text-text-muted px-2">{t("mushaf.openDetailsHint")}</p>
+      <p className="text-center text-micro text-text-muted px-2">{t("mushaf.openDetailsHint")}</p>
 
       <div data-tajweed-drill={drill || undefined}>
         <MushafPage
@@ -431,7 +431,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       })()}
 
       {/* Footer page indicator */}
-      <p className="text-center text-xs text-text-muted">
+      <p className="text-center text-micro text-text-muted">
         {t("mushaf.pageNumber")} {isAr ? toArabicIndic(page) : page} / {isAr ? toArabicIndic(TOTAL_PAGES) : TOTAL_PAGES}
       </p>
     </div>
