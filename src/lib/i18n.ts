@@ -425,6 +425,11 @@ const translations: Record<string, { en: string; ar: string }> = {
   "audio.changeReciter": { en: "Change reciter", ar: "تغيير القارئ" },
   "lesson.openInReader": { en: "Open in reader", ar: "افتح في المصحف" },
 
+  // Tajweed rule popover (tap a colored letter to see which rule colors it)
+  "ruleInfo.label": { en: "Tajweed rule", ar: "حكم التجويد" },
+  "ruleInfo.learnMore": { en: "Learn about {rule}", ar: "تعلّم {rule}" },
+  "ruleInfo.close": { en: "Close", ar: "إغلاق" },
+
   // Not found
   "notFound.title": { en: "Page Not Found", ar: "الصفحة غير موجودة" },
   "notFound.description": { en: "The page you are looking for does not exist.", ar: "الصفحة التي تبحث عنها غير موجودة." },
