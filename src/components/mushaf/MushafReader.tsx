@@ -13,6 +13,7 @@ import { pageForJuz, TOTAL_JUZ } from "@/lib/navigation";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
+import { PlaybackSurface } from "./PlaybackSurface";
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
 import { WordByWord } from "@/components/learn/WordByWord";
 import { RecitationCompare } from "@/components/mushaf/RecitationCompare";
@@ -348,14 +349,24 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
 
       <p className="text-center text-micro text-text-muted px-2">{t("mushaf.tapToPlayHint")}</p>
 
-      <div data-tajweed-drill={drill || undefined}>
-        <MushafPage
-          data={data}
-          memorizationMode={memorizationMode}
-          targetVerseKey={targetVerseKey}
-          onPlayVerse={handlePlayVerse}
-          onSelectVerse={setSelectedVerse}
-        />
+      {/* At >= 1024px the reader is two columns: the reading column reflows to
+          make room for the docked side panel beside it, so the panel never
+          covers the active verse. Below 1024px the panel renders nothing (it is
+          `hidden lg:flex`), leaving the single-column reading layout untouched;
+          plan 04 adds the bottom-sheet branch for that band. The panel is the
+          single reader-scoped playback surface (the global MiniPlayer is
+          suppressed on /mushaf). */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8 lg:items-start">
+        <div data-tajweed-drill={drill || undefined} className="min-w-0">
+          <MushafPage
+            data={data}
+            memorizationMode={memorizationMode}
+            targetVerseKey={targetVerseKey}
+            onPlayVerse={handlePlayVerse}
+            onSelectVerse={setSelectedVerse}
+          />
+        </div>
+        <PlaybackSurface data={data} />
       </div>
 
       {selectedVerse && /^\d{1,3}:\d{1,3}$/.test(selectedVerse) && (() => {

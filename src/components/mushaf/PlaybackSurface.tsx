@@ -69,15 +69,12 @@ const ExpandIcon = () => (
 );
 
 interface PlaybackSurfaceProps {
-  // The page's surah headers, so the surface can find the tajweed markup for the
+  // The page's verses, so the surface can find the tajweed markup for the
   // active verse and render it (read-only; never edits the verse text).
   data: MushafPageData;
-  // Whether a verse has been tapped this session. Before the first tap the
-  // surface stays out of the DOM so an idle reader is not crowded.
-  active: boolean;
 }
 
-export function PlaybackSurface({ data, active }: PlaybackSurfaceProps) {
+export function PlaybackSurface({ data }: PlaybackSurfaceProps) {
   const { t, isAr } = useTranslation();
   // Collapsed-to-rail state is component session state only (not persisted to
   // storage in this plan). UI-SPEC allows in-session persistence; persisting
@@ -96,9 +93,10 @@ export function PlaybackSurface({ data, active }: PlaybackSurfaceProps) {
   const error = usePlayer((s) => s.error);
   const loadToken = usePlayer((s) => s.loadToken);
 
-  // The surface only mounts after the first tap and while the player is live; a
-  // stop empties the queue intent and idles, so it folds away.
-  const visible = active && cur !== null && status !== "idle";
+  // The surface appears the instant a verse plays and folds away when the
+  // player idles (stop). It is driven purely by store state, so audio started
+  // on a prior page shows the surface immediately on mount too.
+  const visible = cur !== null && status !== "idle";
   if (!visible || !cur) return null;
 
   const playing = status === "playing";
