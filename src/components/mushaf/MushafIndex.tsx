@@ -19,6 +19,10 @@ interface MushafIndexProps {
 
 type FilterPlace = "all" | "makkah" | "madinah";
 
+// How many verse bookmarks the index previews inline before deferring to the
+// full /mushaf/bookmarks view. Keeps the index strip short.
+const VERSE_BOOKMARK_PREVIEW = 8;
+
 export function MushafIndex({ surahs }: MushafIndexProps) {
   const { settings } = useSettings();
   const { t, isAr } = useTranslation();
@@ -28,6 +32,18 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
   const lastPage = settings.lastMushafPage ?? 0;
   const bookmarks = settings.mushafBookmarks ?? [];
   const { list: verseBookmarks, mounted: bmMounted } = useBookmarks();
+
+  // Preview the bookmarks in mushaf order (surah, then ayah) so the strip and
+  // the full view agree on which verses come first.
+  const orderedVerseBookmarks = useMemo(
+    () =>
+      [...verseBookmarks].sort((a, b) => {
+        const [sa, aa] = a.split(":").map(Number);
+        const [sb, ab] = b.split(":").map(Number);
+        return sa - sb || aa - ab;
+      }),
+    [verseBookmarks],
+  );
 
   // Per-surah saved positions, read once after mount (localStorage is
   // client-only, so this stays empty on the server and never mismatches
@@ -119,12 +135,22 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
         </div>
       )}
 
-      {/* Verse bookmarks */}
+      {/* Verse bookmarks: a compact quick-access strip (capped) with a link to
+          the full bookmarked-verses view, which shows each verse's text and a
+          remove control. Keeps the index calm; the list lives on its own page. */}
       {bmMounted && verseBookmarks.length > 0 && (
         <div>
-          <h2 className="font-heading text-sm font-semibold mb-2">{t("mushaf.verseBookmarks")}</h2>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <h2 className="font-heading text-sm font-semibold">{t("mushaf.verseBookmarks")}</h2>
+            <Link
+              href="/mushaf/bookmarks"
+              className="text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+            >
+              {t("mushaf.bookmarksViewAll")}
+            </Link>
+          </div>
           <div className="flex flex-wrap gap-2">
-            {verseBookmarks.map((vk) => {
+            {orderedVerseBookmarks.slice(0, VERSE_BOOKMARK_PREVIEW).map((vk) => {
               const [sv, av] = vk.split(":").map(Number);
               const meta = surahs.find((s) => s.number === sv);
               const label = meta
@@ -140,6 +166,14 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                 </Link>
               );
             })}
+            {verseBookmarks.length > VERSE_BOOKMARK_PREVIEW && (
+              <Link
+                href="/mushaf/bookmarks"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark text-text-muted text-xs font-medium hover:text-text"
+              >
+                +{isAr ? toArabicIndic(verseBookmarks.length - VERSE_BOOKMARK_PREVIEW) : verseBookmarks.length - VERSE_BOOKMARK_PREVIEW}
+              </Link>
+            )}
           </div>
         </div>
       )}
