@@ -53,6 +53,35 @@ export function reservedBottomFor(viewport: Viewport): number {
   return viewport.width < MOBILE_BREAKPOINT ? BOTTOM_NAV_HEIGHT : 0;
 }
 
+// The bottom-sheet (v0.6.0 playback surface) lives at the bottom of the layout
+// viewport. Its resting bottom offset reserves the tab-bar strip ONLY in the
+// peek state below 768px, so the tab bar stays reachable while peeking; the
+// expanded sheet may cover the tab bar (it carries a dismiss) and so reserves
+// nothing. The safe-area inset is handled separately by the `.safe-bottom`
+// padding utility at every width. The 1024 (lg) panel/sheet switch is distinct
+// from this 768 (md) tab-bar boundary; the sheet only exists below 1024, so a
+// width in [768,1024) reserves nothing here (sidebar, no tab bar).
+export function sheetBottomOffset(viewport: Viewport, expanded: boolean): number {
+  if (expanded) return 0;
+  return reservedBottomFor(viewport);
+}
+
+// When a text input is focused the on-screen keyboard shrinks the VISUAL
+// viewport while the layout viewport (which a `position: fixed; bottom: 0`
+// element pins to) is unchanged, so the sheet would hide behind the keyboard.
+// This returns the bottom offset that lifts the sheet to the visual viewport's
+// bottom edge: the gap between the layout-viewport bottom and the visual
+// viewport bottom (its height plus how far its top is offset). Clamped at 0 so
+// a larger visual viewport (no keyboard) never pushes the sheet down off-screen.
+export function keyboardBottomOffset(
+  layoutHeight: number,
+  visualHeight: number,
+  visualOffsetTop: number,
+): number {
+  const offset = layoutHeight - visualHeight - visualOffsetTop;
+  return offset > 0 ? offset : 0;
+}
+
 // Clamp a top-left position so the whole player box stays inside the viewport
 // and above the reserved bottom strip. This is the function the live drag,
 // resize, orientationchange, and keyboard nudge all route through, and the one
