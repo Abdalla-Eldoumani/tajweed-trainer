@@ -12,7 +12,10 @@ export function Header() {
 
   return (
     <>
-      <header className="md:hidden sticky top-0 z-40 bg-[var(--margin-bg)] text-[var(--margin-text)] border-b border-[var(--margin-line)]">
+      <header
+        className="md:hidden sticky top-0 z-40 bg-[var(--margin-bg)] text-[var(--margin-text)] border-b border-[var(--margin-line)]"
+        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+      >
         <div className="flex items-center justify-between px-4 h-14">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-base font-heading font-bold text-[var(--margin-active)]">
@@ -24,7 +27,7 @@ export function Header() {
             <LanguageToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-3 rounded-lg text-[var(--margin-text)] hover:bg-[var(--margin-hover-bg)]"
+              className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-lg text-[var(--margin-text)] hover:bg-[var(--margin-hover-bg)]"
               aria-label={t("nav.toggleMenu")}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
