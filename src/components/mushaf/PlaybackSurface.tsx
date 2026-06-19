@@ -9,6 +9,7 @@ import { useTranslation } from "@/lib/i18n";
 import { getRecitation } from "@/lib/reciters";
 import { sheetBottomOffset, keyboardBottomOffset } from "@/lib/player-position";
 import { toArabicIndic, cn } from "@/lib/utils";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { TajweedText } from "@/components/ui/TajweedText";
 import type { MushafPageData } from "@/lib/types";
@@ -734,17 +735,17 @@ function BottomSheet({ model, data }: { model: SurfaceModel; data: MushafPageDat
     if (expanded) dismissRef.current?.focus();
   }, [expanded]);
 
-  // Lock body scroll ONLY while expanded, mirroring MobileDrawer: an expanded
-  // sheet is a modal dialog and the page behind it must not scroll. Peek leaves
-  // the page scrollable so the verses and tab bar stay reachable. The cleanup
-  // restores scrolling on collapse and on unmount, since the sheet unmounts
-  // straight from the expanded state on close (stop() idles the player).
+  // Lock body scroll ONLY while expanded, via the shared ref-counted source: an
+  // expanded sheet is a modal dialog and the page behind it must not scroll.
+  // Peek leaves the page scrollable so the verses and tab bar stay reachable.
+  // Guarding on `expanded` keeps the lock/unlock balanced: peek (the mount
+  // state) never locks, so it never unlocks; expanding locks exactly once and
+  // the cleanup releases on collapse and on unmount (the sheet unmounts straight
+  // from the expanded state on close, since stop() idles the player).
   useEffect(() => {
-    if (expanded) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (!expanded) return;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
   }, [expanded]);
 
   // Grab-handle drag: down past the threshold closes; up from peek expands; a

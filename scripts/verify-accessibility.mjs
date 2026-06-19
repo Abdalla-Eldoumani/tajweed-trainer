@@ -91,17 +91,19 @@ record(
   "loading skeleton honors reduced motion",
 );
 
-// --- 5. scroll-lock on the expanded playback sheet (set and restore). ---
+// --- 5. scroll-lock on the expanded playback sheet (lock and release), now via
+//        the shared ref-counted source in lib/scroll-lock so stacked overlays
+//        coordinate (the body stays locked until the last one releases). ---
 const surfaceSrc = read("src/components/mushaf/PlaybackSurface.tsx");
 record(
   "PlaybackSurface.tsx locks body scroll while expanded",
-  /body\.style\.overflow\s*=\s*"hidden"/.test(surfaceSrc),
-  'body.style.overflow = "hidden"',
+  /lockBodyScroll\(\)/.test(surfaceSrc),
+  "lockBodyScroll() while expanded",
 );
 record(
   "PlaybackSurface.tsx restores body scroll on close",
-  /body\.style\.overflow\s*=\s*""/.test(surfaceSrc),
-  'body.style.overflow = ""',
+  /unlockBodyScroll\(\)/.test(surfaceSrc),
+  "unlockBodyScroll() on collapse/unmount",
 );
 
 // --- 6. aria-current wiring on both nav surfaces. ---

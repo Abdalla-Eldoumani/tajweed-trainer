@@ -7,6 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 import { pageForJuz, pageForSurah, TOTAL_JUZ } from "@/lib/navigation";
 import { clampPage } from "@/lib/validate";
 import { toArabicIndic, cn } from "@/lib/utils";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { usePaletteOpen } from "./palette-open";
 import type { SurahHeader } from "@/lib/types";
@@ -142,15 +143,14 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
     setActiveIndex(0);
   };
 
-  // Open effect (mirrors MobileDrawer): capture the opener, lock body scroll,
-  // clear any stale query, focus the input, and flip the shared palette-open
-  // signal so the playback sheet yields its focus trap. This single effect owns
-  // the signal so there is one source of truth; closing restores focus, unlocks
-  // scroll, and clears the signal.
+  // Open effect (mirrors MobileDrawer): capture the opener, clear any stale
+  // query, focus the input, and flip the shared palette-open signal so the
+  // playback sheet yields its focus trap. This single effect owns the signal so
+  // there is one source of truth; closing restores focus and clears the signal.
+  // Body-scroll is locked by the dedicated effect below.
   useEffect(() => {
     if (open) {
       openerRef.current = (document.activeElement as HTMLElement) ?? null;
-      document.body.style.overflow = "hidden";
       usePaletteOpen.getState().setOpen(true);
       // Clear any stale query and focus the input after paint (deferred so the
       // input is mounted and so the reset is not a synchronous effect-body
@@ -162,17 +162,24 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
       });
       return () => cancelAnimationFrame(id);
     }
-    document.body.style.overflow = "";
     usePaletteOpen.getState().setOpen(false);
     openerRef.current?.focus?.();
     openerRef.current = null;
     return undefined;
   }, [open]);
 
-  // Cleanup on unmount: never leave the body locked or the signal stuck on.
+  // Body-scroll lock via the shared ref-counted source: locked while open,
+  // released on close/unmount. Exactly one lock per open, so stacking with the
+  // playback sheet keeps the body locked until the last overlay closes.
+  useEffect(() => {
+    if (!open) return;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  }, [open]);
+
+  // Cleanup on unmount: never leave the palette signal stuck on.
   useEffect(() => {
     return () => {
-      document.body.style.overflow = "";
       usePaletteOpen.getState().setOpen(false);
     };
   }, []);

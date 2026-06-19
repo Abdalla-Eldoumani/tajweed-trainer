@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useTranslation } from "@/lib/i18n";
 import { getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
 import { cn } from "@/lib/utils";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { Button } from "@/components/ui/Button";
 import { MedallionOrnament } from "@/components/ui/Ornament";
 
@@ -85,31 +86,31 @@ export function OnboardingTour() {
     }
   };
 
-  // Open effect mirrors ReaderPalette: capture the opener, lock body scroll,
-  // reset to the first step, and move initial focus to the primary control after
-  // paint. Closing restores focus and unlocks scroll.
+  // Open effect mirrors ReaderPalette: capture the opener, reset to the first
+  // step, and move initial focus to the primary control after paint. Closing
+  // restores focus. Body-scroll is locked by the dedicated effect below.
   useEffect(() => {
     if (open) {
       openerRef.current = (document.activeElement as HTMLElement) ?? null;
-      document.body.style.overflow = "hidden";
       const id = requestAnimationFrame(() => {
         setStep(0);
         primaryRef.current?.focus();
       });
       return () => cancelAnimationFrame(id);
     }
-    document.body.style.overflow = "";
     openerRef.current?.focus?.();
     openerRef.current = null;
     return undefined;
   }, [open]);
 
-  // Cleanup on unmount: never leave the body scroll-locked.
+  // Body-scroll lock via the shared ref-counted source: locked while open,
+  // released on close/unmount. Exactly one lock per open, so it coordinates with
+  // any other overlay through the single counter.
   useEffect(() => {
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
+    if (!open) return;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  }, [open]);
 
   // Trap Tab within the dialog (wrap first<->last), identical to ReaderPalette /
   // MobileDrawer.
