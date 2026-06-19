@@ -16,7 +16,7 @@ import { emitProgressChanged } from "./progress-events";
 
 export const STORAGE_KEY = "tajweed-trainer-progress";
 
-const DEFAULT_SETTINGS: UserSettings = {
+export const DEFAULT_SETTINGS: UserSettings = {
   reciter: DEFAULT_RECITER_ID,
   playbackSpeed: 1.0,
   fontSize: "normal",
