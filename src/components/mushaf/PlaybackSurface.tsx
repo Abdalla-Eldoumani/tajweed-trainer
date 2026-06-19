@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
+import { usePaletteOpen } from "./palette-open";
 import { useVerseSelection } from "./useVerseSelection";
 import { useTranslation } from "@/lib/i18n";
 import { getRecitation } from "@/lib/reciters";
@@ -635,6 +636,9 @@ function BottomSheet({ model, data }: { model: SurfaceModel; data: MushafPageDat
   // expanded adds the verse text and the multi-verse controls. It opens in peek.
   const [sheetState, setSheetState] = useState<"peek" | "expanded">("peek");
   const expanded = sheetState === "expanded";
+  // When the quick-jump palette is open it becomes the single trapped surface;
+  // the sheet yields its Tab trap so the two never fight (UI-SPEC B8).
+  const paletteOpen = usePaletteOpen((s) => s.open);
 
   const panelRef = useRef<HTMLDivElement>(null);
   // The control focused when the sheet first opened, so focus returns there on
@@ -703,7 +707,9 @@ function BottomSheet({ model, data }: { model: SurfaceModel; data: MushafPageDat
   // peek the page stays usable (no trap), so the tab bar and verses stay
   // reachable. Mirrors the MobileDrawer trap.
   const trapTab = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!expanded || e.key !== "Tab") return;
+    // Yield Tab control entirely while the palette is open so only one surface
+    // traps focus at a time (UI-SPEC B8).
+    if (paletteOpen || !expanded || e.key !== "Tab") return;
     const panel = panelRef.current;
     if (!panel) return;
     const focusables = panel.querySelectorAll<HTMLElement>(

@@ -14,6 +14,7 @@ import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
 import { PlaybackSurface } from "./PlaybackSurface";
+import { ReaderPalette } from "./ReaderPalette";
 import { VerseSelectionProvider, useVerseSelectionState } from "./useVerseSelection";
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
 import { WordByWord } from "@/components/learn/WordByWord";
@@ -94,6 +95,13 @@ const HeartIcon = ({ filled }: { filled: boolean }) => (
   </svg>
 );
 
+const SearchIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
+
 export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { settings, updateSettings } = useSettings();
   const { t, isAr } = useTranslation();
@@ -109,6 +117,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // Memorization mode hides verse text the user has marked memorized so they
   // can recall it. Off by default; in-session state, not persisted.
   const [memorizationMode, setMemorizationMode] = useState(false);
+  // The Cmd/Ctrl+K quick-jump palette. In-session, not persisted.
+  const [paletteOpen, setPaletteOpen] = useState(false);
   // Single-rule highlight drill: greys every tajweed rule except the chosen one.
   const [drill, setDrill] = useState("");
   // A lesson "open in reader" link arrives as ?v=surah:ayah; we scroll that verse
@@ -180,6 +190,20 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [page, isAr, router]);
+
+  // Cmd/Ctrl+K opens the quick-jump palette from anywhere in the reader. The
+  // browser's own shortcut is prevented; modifier-gated so it never fires while
+  // the user is simply typing. Guarded against re-firing while already open.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((isOpen) => (isOpen ? isOpen : true));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   // Bring the reading-depth panel into view when a verse is selected (it renders
   // below the page, so a tap near the top of a long page would otherwise be silent).
@@ -382,6 +406,18 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           >
             <BookmarkIcon filled={isBookmarked} />
           </button>
+
+          <button
+            type="button"
+            onClick={() => setPaletteOpen(true)}
+            aria-label={t("mushaf.quickJump")}
+            title={t("mushaf.quickJump")}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark text-text-muted hover:bg-gold-light/15 px-2 py-2 min-h-[44px] text-micro transition-colors"
+          >
+            <SearchIcon />
+            <span className="hidden sm:inline">{t("mushaf.quickJump")}</span>
+            <kbd className="hidden md:inline text-micro text-text-muted/70 font-mono">⌘K</kbd>
+          </button>
         </div>
       </div>
 
@@ -493,6 +529,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           </div>
         );
       })()}
+
+      <ReaderPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} surahs={surahs} />
 
       {/* Footer page indicator */}
       <p className="text-center text-micro text-text-muted">

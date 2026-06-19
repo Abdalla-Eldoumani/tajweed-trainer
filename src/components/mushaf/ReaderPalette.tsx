@@ -212,11 +212,14 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Escape") {
-      // Close ONLY the palette. stopPropagation so this never reaches the sheet's
-      // document-level Escape -> stop(); closing the palette must not stop playback
-      // (UI-SPEC B8).
+      // Close ONLY the palette. The sheet's Escape is a document-level native
+      // listener; React's synthetic stopPropagation alone would NOT stop the
+      // native event from bubbling to it, so stop the native event immediately.
+      // Closing the palette must not reach the sheet's Escape -> stop() and kill
+      // playback (UI-SPEC B8).
       e.preventDefault();
       e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
       onClose();
       return;
     }
