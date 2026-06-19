@@ -47,6 +47,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   analytics: [],
   bookmarks: [],
   lastRead: null,
+  lastReadBySurah: {},
   seenOnboarding: false,
 };
 
@@ -81,6 +82,7 @@ const MAX_MODULES = 100;
 const MAX_REVIEWS = 2000;
 const MAX_MEMORIZED = 6236;
 const MAX_VERSE_BOOKMARKS = 500;
+const MAX_LAST_READ_BY_SURAH = 114;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
@@ -301,12 +303,38 @@ function sanitizeBookmarks(input: unknown): string[] {
   return Array.from(out);
 }
 
-function sanitizeLastRead(input: unknown): VerseLocation | null {
+function sanitizeVerseLocation(input: unknown): VerseLocation | null {
   if (!isObject(input)) return null;
   if (typeof input.verseKey !== "string" || !VERSE_KEY_PATTERN.test(input.verseKey)) return null;
   const page = pickNumber(input.page, 1, 1, 604);
   const ts = typeof input.ts === "string" && input.ts.length <= 32 ? input.ts : "";
   return { verseKey: input.verseKey, page, ts };
+}
+
+function sanitizeLastRead(input: unknown): VerseLocation | null {
+  return sanitizeVerseLocation(input);
+}
+
+// Per-surah last-read map. Keys are surah numbers 1..114 (validated as integers
+// in range); values are VerseLocation records validated like lastRead. Guards
+// the prototype-pollution keys and caps at 114 entries, mirroring the other map
+// sanitizers. A stored object without this field reads back as {} (lossless
+// migration).
+function sanitizeLastReadBySurah(input: unknown): Record<number, VerseLocation> {
+  if (!isObject(input)) return {};
+  const out: Record<number, VerseLocation> = {};
+  let count = 0;
+  for (const [key, value] of Object.entries(input)) {
+    if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+    const surah = Number(key);
+    if (!Number.isInteger(surah) || surah < 1 || surah > 114) continue;
+    const location = sanitizeVerseLocation(value);
+    if (!location) continue;
+    out[surah] = location;
+    count += 1;
+    if (count >= MAX_LAST_READ_BY_SURAH) break;
+  }
+  return out;
 }
 
 export function sanitizeProgress(input: unknown): TajweedProgress {
@@ -340,6 +368,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
     lastRead: sanitizeLastRead(input.lastRead),
+    lastReadBySurah: sanitizeLastReadBySurah(input.lastReadBySurah),
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
   };
 }
@@ -596,11 +625,29 @@ export function getLastRead(): VerseLocation | null {
   return getProgress().lastRead ?? null;
 }
 
+// The saved position within one surah, or null if the surah was never opened
+// past its first page. Reading code clamps the surah; callers pass a real surah
+// number from the bundled index.
+export function getLastReadForSurah(surah: number): VerseLocation | null {
+  return getProgress().lastReadBySurah?.[surah] ?? null;
+}
+
 export function setLastRead(verseKey: string, page: number): void {
   if (!isBrowser()) return;
   if (!VERSE_KEY_PATTERN.test(verseKey)) return;
   const progress = getProgress();
-  progress.lastRead = { verseKey, page, ts: new Date().toISOString() };
+  const location: VerseLocation = { verseKey, page, ts: new Date().toISOString() };
+  progress.lastRead = location;
+  // Record the same location under its surah so reopening that surah resumes
+  // here. The surah is the first verseKey segment, already in 1..114 because the
+  // pattern above bounds it to three digits and the map sanitizer re-checks the
+  // range on every read.
+  const surah = Number(verseKey.split(":")[0]);
+  if (Number.isInteger(surah) && surah >= 1 && surah <= 114) {
+    const bySurah = progress.lastReadBySurah ?? {};
+    bySurah[surah] = location;
+    progress.lastReadBySurah = bySurah;
+  }
   setProgress(progress);
 }
 

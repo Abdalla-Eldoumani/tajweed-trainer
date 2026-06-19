@@ -451,6 +451,11 @@ export interface TajweedProgress {
   // Kept inside this consolidated model so export / import / reset cover them.
   bookmarks: string[];
   lastRead?: VerseLocation | null;
+  // Per-surah last-read location, keyed by surah number (1..114). The global
+  // lastRead above answers "where was I anywhere"; this answers "where was I in
+  // this surah" so reopening a surah lands at the saved position. Same
+  // VerseLocation shape; capped at 114 entries.
+  lastReadBySurah?: Record<number, VerseLocation>;
   // Whether the first-launch onboarding has been shown and dismissed. Cleared by
   // reset so onboarding re-shows.
   seenOnboarding: boolean;

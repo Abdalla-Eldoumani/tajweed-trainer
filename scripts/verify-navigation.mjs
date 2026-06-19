@@ -32,11 +32,18 @@ function record(name, ok, details = "") {
 
 record("Progress model carries bookmarks", /bookmarks:\s*string\[\]/.test(types));
 record("VerseLocation type defined and lastRead present", /export interface VerseLocation/.test(types) && /lastRead\?:/.test(types));
+record("Progress model carries per-surah last-read", /lastReadBySurah\?:\s*Record<number,\s*VerseLocation>/.test(types));
 record("Default progress seeds bookmarks", /bookmarks:\s*\[\]/.test(storage));
+record("Default progress seeds lastReadBySurah", /lastReadBySurah:\s*\{\}/.test(storage));
 record("sanitizeProgress includes bookmarks", /bookmarks:\s*sanitizeBookmarks\(/.test(storage));
 record("sanitizeProgress includes lastRead", /lastRead:\s*sanitizeLastRead\(/.test(storage));
+record("sanitizeProgress includes lastReadBySurah", /lastReadBySurah:\s*sanitizeLastReadBySurah\(/.test(storage));
 record("toggleVerseBookmark validates the verse key", /toggleVerseBookmark[\s\S]*?VERSE_KEY_PATTERN\.test/.test(storage));
-record("setLastRead clamps the page to 1..604", /sanitizeLastRead[\s\S]*?pickNumber\(input\.page,\s*1,\s*1,\s*604\)/.test(storage));
+record("setLastRead clamps the page to 1..604", /sanitizeVerseLocation[\s\S]*?pickNumber\(input\.page,\s*1,\s*1,\s*604\)/.test(storage));
+record("setLastRead records the per-surah entry", /setLastRead[\s\S]*?lastReadBySurah\s*=\s*bySurah/.test(storage));
+record("Per-surah sanitizer guards prototype-pollution keys", /sanitizeLastReadBySurah[\s\S]*?__proto__[\s\S]*?constructor[\s\S]*?prototype/.test(storage));
+record("Per-surah sanitizer bounds the surah key to 1..114", /sanitizeLastReadBySurah[\s\S]*?surah < 1 \|\| surah > 114/.test(storage));
+record("Per-surah map caps at 114 entries", /MAX_LAST_READ_BY_SURAH = 114/.test(storage));
 record("Export/import cover the model (single store)", /export function exportProgress/.test(storage) && /export function importProgress/.test(storage));
 record("Durable storage requested via navigator.storage.persist", /navigator\.storage[\s\S]*?\.persist\(\)/.test(pwa));
 
@@ -75,6 +82,7 @@ record("Reader wires verse bookmarks", /useBookmarks/.test(reader));
 record("Mushaf index lists verse bookmarks", /useBookmarks/.test(mIndex));
 record("Home surfaces daily verse and resume", /DailyVerse/.test(home) && /ResumeReading/.test(home));
 record("Reader persists lastRead", /setLastRead\(/.test(reader));
+record("Mushaf index reads per-surah resume", /lastReadBySurah/.test(mIndex) && /mushaf\.resumeSurah/.test(mIndex));
 
 // Round-trip: bookmark sanitization re-implementation kept in sync with storage.ts.
 const VERSE_KEY = /^\d{1,3}:\d{1,3}$/;
@@ -94,6 +102,58 @@ record(
   "Round-trip keeps valid keys, drops junk and duplicates",
   JSON.stringify(sanitizeBookmarks(sample)) === JSON.stringify(["2:255", "114:6"]),
   JSON.stringify(sanitizeBookmarks(sample)),
+);
+
+// Round-trip: per-surah last-read sanitization re-implementation kept in sync
+// with storage.ts (sanitizeLastReadBySurah). Asserts the surah-key bounds, the
+// VerseLocation shape, page clamping, and the prototype-pollution guard.
+function sanitizeVerseLocation(input) {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) return null;
+  if (typeof input.verseKey !== "string" || !VERSE_KEY.test(input.verseKey)) return null;
+  let page = typeof input.page === "number" && Number.isFinite(input.page) ? input.page : 1;
+  if (page < 1 || page > 604) page = 1;
+  const ts = typeof input.ts === "string" && input.ts.length <= 32 ? input.ts : "";
+  return { verseKey: input.verseKey, page, ts };
+}
+function sanitizeLastReadBySurah(input) {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) return {};
+  const out = {};
+  let count = 0;
+  for (const [key, value] of Object.entries(input)) {
+    if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+    const surah = Number(key);
+    if (!Number.isInteger(surah) || surah < 1 || surah > 114) continue;
+    const location = sanitizeVerseLocation(value);
+    if (!location) continue;
+    out[surah] = location;
+    count += 1;
+    if (count >= 114) break;
+  }
+  return out;
+}
+const bySurahSample = {
+  2: { verseKey: "2:255", page: 42, ts: "2026-06-19T00:00:00.000Z" },
+  114: { verseKey: "114:6", page: 604, ts: "" },
+  0: { verseKey: "0:1", page: 1, ts: "" }, // surah out of range, dropped
+  115: { verseKey: "115:1", page: 1, ts: "" }, // surah out of range, dropped
+  9: { verseKey: "junk", page: 5, ts: "" }, // bad verseKey, dropped
+  18: { verseKey: "18:1", page: 9999, ts: "" }, // page clamped to 1
+  __proto__: { verseKey: "1:1", page: 1, ts: "" }, // dangerous key, ignored
+};
+const bySurahOut = sanitizeLastReadBySurah(bySurahSample);
+record(
+  "Per-surah round-trip keeps valid surahs, drops out-of-range and junk",
+  JSON.stringify(Object.keys(bySurahOut).sort((a, b) => Number(a) - Number(b))) === JSON.stringify(["2", "18", "114"]),
+  JSON.stringify(Object.keys(bySurahOut)),
+);
+record(
+  "Per-surah round-trip clamps a wild page to 1",
+  bySurahOut[18]?.page === 1,
+  String(bySurahOut[18]?.page),
+);
+record(
+  "Per-surah round-trip never pollutes the prototype",
+  ({}).verseKey === undefined && Object.getPrototypeOf(bySurahOut) === Object.prototype,
 );
 
 const failed = results.filter((r) => !r.ok);
