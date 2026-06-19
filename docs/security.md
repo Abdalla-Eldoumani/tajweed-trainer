@@ -5,7 +5,7 @@ This is a client-side app with no user accounts, no server data, no payments, an
 ## What we defend against
 
 - **Injection through API responses.** The Quran.com Foundation API's `text_uthmani_tajweed` field is structural HTML. We trust the API, but we still pass every value through a whitelist sanitizer (`src/lib/sanitize.ts`) that allows only `<tajweed class="...">` and `<span class="end">N</span>` before it's rendered. Anything else is removed.
-- **Tampered localStorage.** A user can edit `localStorage` directly. `getProgress()` parses with strict shape validation: every field is type-checked, enums are constrained to known values, arrays are capped to reasonable sizes, and unrecognized data is silently replaced with defaults. Pathological input (e.g. a 100,000-entry bookmarks array) can't bloat renders.
+- **Tampered localStorage.** A user can edit `localStorage` directly. `getProgress()` parses with strict shape validation: every field is type-checked, enums are constrained to known values, arrays are capped to reasonable sizes, and unrecognized data is silently replaced with defaults. Pathological input (e.g. a 100,000-entry bookmarks array) can't bloat renders. Every keyed map (per-module progress, verse notes, per-surah last-read, and the rest) skips the prototype-pollution keys `__proto__`, `constructor`, and `prototype` on read, so a crafted backup can't reach an object prototype.
 - **Bad URL parameters.** The Mushaf page route validates `[page]` against `^[1-9]\d*$` and the range 1–604; the surah redirect validates `[surah]` against `^[1-9]\d*$` and the range 1–114. Anything else returns a 404.
 - **Clickjacking and framing.** `X-Frame-Options: DENY` and `frame-ancestors 'none'` prevent the app from being embedded.
 - **MIME sniffing.** `X-Content-Type-Options: nosniff`.
@@ -35,8 +35,8 @@ The CSP and all response headers are assembled once in `next.config.mjs` and app
 
 ## Dependency hygiene
 
-- `npm audit` is part of the contributing checklist.
-- Next.js is on 16.2.7 (React 19.2.7); we track patch releases so security fixes land promptly.
+- CI runs a production dependency audit on every push and pull request: `npm audit --omit=dev --audit-level=high` fails the build on a high or critical advisory in the shipped dependency tree. Run the same command locally before opening a pull request.
+- Next.js is on 16.2.9 (React 19.2.7); we track patch releases so security fixes land promptly.
 
 ## Local-only analytics
 
@@ -65,7 +65,7 @@ Cross-origin Quran audio (mp3) and the Quran.com API are intentionally **not** i
 
 - **No third-party telemetry.** No analytics scripts, no third-party trackers. The local `analytics` field documented above is read-only, on-device, and never transmitted.
 - **No user accounts.** No authentication, no session cookies, no password storage.
-- **No server-side persistence.** All progress lives in the browser. Backup / Restore is a user-initiated file download / upload — never an automatic sync.
+- **No server-side persistence.** All progress lives in the browser, including the learner's private per-verse notes, which are never transmitted and never hold religious content. Backup / Restore is a user-initiated file download / upload, never an automatic sync.
 - **No third-party iframes or embedded widgets.** Everything is first-party.
 - **No remote-code or remote-config behavior.** All branching is determined by code shipped in the build.
 - **No TTS of Quranic text.** The Web Speech API is used only to read the practice question prompt (UI text); verse audio always comes from the verified Quran.com API reciters.
