@@ -91,7 +91,17 @@ export function WordByWord({ surah, ayah }: WordByWordProps) {
     audio.play().catch(() => {});
   };
 
-  if (state === "loading") return <p className="text-text-muted text-sm">{t("common.loading")}</p>;
+  if (state === "loading")
+    return (
+      <div aria-hidden="true">
+        <div className="h-3 w-24 bg-bg-subtle dark:bg-bg-subtle-dark rounded mb-2 animate-pulse motion-reduce:animate-none" />
+        <div dir="rtl" className="flex flex-wrap gap-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-14 w-16 bg-bg-subtle dark:bg-bg-subtle-dark rounded-lg animate-pulse motion-reduce:animate-none" />
+          ))}
+        </div>
+      </div>
+    );
   if (state === "error") return <p className="text-text-muted text-sm">{t("reading.unavailable")}</p>;
   if (words.length === 0) return <p className="text-text-muted text-sm">{t("reading.noWords")}</p>;
 
