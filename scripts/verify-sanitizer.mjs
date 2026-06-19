@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Sanitizer verification: exercises the REAL sanitizer exported from
-// src/lib/sanitize.ts (imported directly — Node strips the TypeScript types),
+// src/lib/sanitize.ts (imported directly, Node strips the TypeScript types),
 // so a correctness change to the source is always covered here. The Quran.com
 // Foundation API is trusted, but its HTML still flows through inline rendering
 // in TajweedText and ReadingDepth, so the sanitizer is a defense-in-depth gate.
@@ -22,7 +22,7 @@ const storage = readFileSync(join(__dirname, "..", "src", "lib", "storage.ts"), 
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 // Source presence: the two exported sanitizers and the class allowlist exist.

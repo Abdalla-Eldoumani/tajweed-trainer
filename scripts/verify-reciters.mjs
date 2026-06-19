@@ -43,13 +43,13 @@ const BASE = process.env.BASE_URL || "http://localhost:3000";
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 // For best-effort checks that need network or a running server: never counts
 // against the pass/fail tally; just logs so the gap is visible.
 function recordPartial(name, details = "") {
-  console.log(`PARTIAL: ${name}${details ? " — " + details : ""}`);
+  console.log(`PARTIAL: ${name}${details ? ": " + details : ""}`);
 }
 
 // Sample verses that span the Mushaf: first ayah, a mid-range ayah, and the
@@ -90,7 +90,7 @@ function checkEveryAyahUrls() {
 }
 
 // Best-effort: a malformed-host URL must always be rejected (this is a pure,
-// authoritative invariant — not network-dependent).
+// authoritative invariant, not network-dependent).
 function checkAllowlistRejectsOthers() {
   const rejected = toSafeAudioUrl("https://evil.example.com/data/x/001001.mp3", "") === null;
   record("A non-allowlisted audio host is rejected", rejected);
@@ -159,7 +159,7 @@ async function runSettingsUiChecks() {
   });
   record("Choosing Alafasy persists id 7", persisted === "7", `persisted: ${persisted}`);
 
-  // 5. Reload — the selection comes back.
+  // 5. Reload, the selection comes back.
   await page.reload({ waitUntil: "networkidle" });
   await page.waitForTimeout(300);
   const afterReload = await page.evaluate(() => document.querySelector('select[aria-label="Reciter"]')?.value ?? null);

@@ -15,7 +15,7 @@ const CONTENT_DIR = join(root, "src", "data", "content");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 const SKIP = new Set(["surah-index.json", "learning-path.json", "glossary.json"]);

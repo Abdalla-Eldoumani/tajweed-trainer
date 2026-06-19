@@ -31,11 +31,11 @@ const results = [];
 const warnings = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 function warn(name, details = "") {
   warnings.push({ name, details });
-  console.log(`WARN: ${name}${details ? " — " + details : ""}`);
+  console.log(`WARN: ${name}${details ? ": " + details : ""}`);
 }
 
 // Distinct classes the live API emitted for surahs 38, 2, 114 (enumerated

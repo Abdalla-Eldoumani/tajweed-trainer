@@ -30,7 +30,7 @@ const settings = read("src", "app", "settings", "page.tsx");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 record("Progress model carries bookmarks", /bookmarks:\s*string\[\]/.test(types));

@@ -17,7 +17,7 @@ const validate = read("src", "lib", "validate.ts");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 record("CSP allows the Quran.com API in connect-src", /connect-src[^;]*api\.quran\.com/.test(csp));

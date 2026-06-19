@@ -15,7 +15,7 @@ const src = readFileSync(join(__dirname, "..", "src", "lib", "reciters.ts"), "ut
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 // Quran.com ids are 1-3 digit numbers; EveryAyah ids are the ea-<slug> form.

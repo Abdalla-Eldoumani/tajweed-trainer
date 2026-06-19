@@ -2,8 +2,8 @@
 // Pure, offline check of the movable-player clamp math. Imports the real
 // arithmetic from src/lib/player-position.ts (Node strips the TS types; the
 // module has no runtime imports) so this verifies the same code the component
-// runs, not a re-implementation. Asserts that any stored corner — including
-// wildly out-of-bounds and negative — is corrected fully on-screen and clear of
+// runs, not a re-implementation. Asserts that any stored corner, including
+// wildly out-of-bounds and negative, is corrected fully on-screen and clear of
 // the reserved bottom strip on mobile, and that the storage shape check rejects
 // malformed input.
 
@@ -20,7 +20,7 @@ import {
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 // A representative player box. Narrower than the smallest viewport so the

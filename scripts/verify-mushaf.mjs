@@ -21,7 +21,7 @@ const SCREENSHOT_DIR = "mushaf-screenshots";
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 async function main() {
@@ -96,7 +96,7 @@ async function main() {
   });
   record("Page 2 (Al-Baqarah) HAS standalone BismillahLine", standaloneBismillahP2 >= 1, `count: ${standaloneBismillahP2}`);
 
-  // 9. At-Tawbah page (187) — cartouche but NO BismillahLine
+  // 9. At-Tawbah page (187): cartouche but NO BismillahLine
   await page.goto(`${BASE}/mushaf/page/187`, { waitUntil: "networkidle" });
   await page.screenshot({ path: `${SCREENSHOT_DIR}/04-page187-tawbah.png`, fullPage: true });
   const tawbahCartouche = await page.locator(".surah-cartouche").count();
@@ -134,7 +134,7 @@ async function main() {
   });
   record("Bookmark persists to localStorage", Array.isArray(stored) && stored.includes(1), `bookmarks: ${JSON.stringify(stored)}`);
 
-  // 12. Navigate to page 604 (last page) — next button disabled
+  // 12. Navigate to page 604 (last page): next button disabled
   await page.goto(`${BASE}/mushaf/page/604`, { waitUntil: "networkidle" });
   await page.screenshot({ path: `${SCREENSHOT_DIR}/05-page604.png`, fullPage: true });
   const nextDisabled = await page.locator('a[aria-disabled="true"]:has(button[aria-label*="ext"])').count();
@@ -182,7 +182,7 @@ async function main() {
   // 17. No console errors beyond the known dev-time hydration warning
   const seriousErrors = consoleErrors.filter((e) => {
     if (e.includes("hydration") || e.includes("Hydration") || e.includes("Text content")) return false;
-    // Filter favicon 404s — the project doesn't ship a favicon yet.
+    // Filter favicon 404s, the project doesn't ship a favicon yet.
     if (e.includes("favicon")) return false;
     if (e.includes("404") && failed404s.every((u) => /favicon|\.ico/.test(u))) return false;
     return true;

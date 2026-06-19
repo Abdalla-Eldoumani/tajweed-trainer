@@ -16,7 +16,7 @@ import { computeKhatmahPace, targetDateForDuration } from "../src/lib/khatmah.ts
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 // Float compare with a small tolerance for the pace/days fields.
 const near = (a, b, eps = 0.01) => Math.abs(a - b) <= eps;

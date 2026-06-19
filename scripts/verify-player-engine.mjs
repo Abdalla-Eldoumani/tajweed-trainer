@@ -21,7 +21,7 @@ const host = read("src", "components", "ui", "PlayerHost.tsx");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);

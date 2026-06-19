@@ -25,7 +25,7 @@ const exampleCard = read("src", "components", "learn", "ExampleCard.tsx");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 for (const a of ["setRepeatOne", "setRepeatRange", "clearRepeat", "setSleepEndOfSurah", "setSleepTimer"]) {
