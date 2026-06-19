@@ -152,8 +152,8 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                       e.stopPropagation();
                       onSelectVerse?.(v.verseKey);
                     }}
-                    aria-label={`${noted ? `${t("mushaf.verseActions")} — ${t("notes.hasNote")}` : t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
-                    title={noted ? `${t("mushaf.verseActions")} — ${t("notes.hasNote")}` : t("mushaf.verseActions")}
+                    aria-label={`${noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
+                    title={noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")}
                     className="mushaf-verse-details relative ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

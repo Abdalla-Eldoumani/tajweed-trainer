@@ -18,7 +18,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "nav.drawer": { en: "Menu navigation", ar: "تنقل القائمة" },
 
   // Connectivity
-  "offline.notice": { en: "Offline — opened pages still work", ar: "غير متصل — الصفحات المفتوحة تعمل" },
+  "offline.notice": { en: "Offline, opened pages still work", ar: "غير متصل، الصفحات المفتوحة تعمل" },
 
   // Home page
   "home.title": { en: "Tajweed Trainer", ar: "معلّم التجويد" },
@@ -300,8 +300,8 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "ابدأ اختبار التدريب لأي وحدة لبناء الإتقان. سيظهر تقدّمك هنا.",
   },
   "mastery.help": {
-    en: "Mastery is drawn from your quiz scores and spaced-review progress — nothing is sent anywhere.",
-    ar: "يُحتسب الإتقان من درجات اختباراتك وتقدّم المراجعة المتباعدة — لا يُرسل أي شيء لأي جهة.",
+    en: "Mastery is drawn from your quiz scores and spaced-review progress, nothing is sent anywhere.",
+    ar: "يُحتسب الإتقان من درجات اختباراتك وتقدّم المراجعة المتباعدة، لا يُرسل أي شيء لأي جهة.",
   },
   "mastery.level.untouched": { en: "Not started", ar: "لم يبدأ" },
   "mastery.level.started": { en: "Started", ar: "بدأت" },
@@ -588,7 +588,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "settings.backup.reminderDismiss": { en: "Dismiss", ar: "إخفاء" },
 
-  // Speech (TTS for prompts only — NOT for Quranic text)
+  // Speech (TTS for prompts only, NOT for Quranic text)
   "speech.read": { en: "Read prompt aloud", ar: "اقرأ السؤال بصوت" },
   "speech.stop": { en: "Stop reading", ar: "إيقاف القراءة" },
 
@@ -626,19 +626,19 @@ const translations: Record<string, { en: string; ar: string }> = {
   // Reading depth (translation and tafsir, fetched from the verified API)
   "reading.showTafsir": { en: "Show tafsir", ar: "إظهار التفسير" },
   "reading.hideTafsir": { en: "Hide tafsir", ar: "إخفاء التفسير" },
-  "reading.unavailable": { en: "Could not load — try again from the reader.", ar: "تعذّر التحميل — حاول من القارئ." },
+  "reading.unavailable": { en: "Could not load, try again from the reader.", ar: "تعذّر التحميل، حاول من القارئ." },
   "reading.noTafsir": { en: "No tafsir available for this verse.", ar: "لا يوجد تفسير لهذه الآية." },
   "reading.wordByWord": { en: "Word by word", ar: "كلمة بكلمة" },
   "reading.noWords": { en: "Word-by-word is unavailable for this verse.", ar: "التحليل كلمة بكلمة غير متاح لهذه الآية." },
   "compare.title": { en: "Compare your recitation", ar: "قارن تلاوتك" },
   "compare.privacy": {
-    en: "For your own ears only. Your voice stays on this device — it is never uploaded, saved, or scored.",
-    ar: "لسمعك وحدك. صوتك يبقى على هذا الجهاز — لا يُرفع ولا يُحفظ ولا يُقيَّم.",
+    en: "For your own ears only. Your voice stays on this device, it is never uploaded, saved, or scored.",
+    ar: "لسمعك وحدك. صوتك يبقى على هذا الجهاز، لا يُرفع ولا يُحفظ ولا يُقيَّم.",
   },
   "compare.reciter": { en: "The reciter", ar: "القارئ" },
   "compare.yourTake": { en: "Your take", ar: "تلاوتك" },
   "compare.record": { en: "Record", ar: "تسجيل" },
-  "compare.recording": { en: "Recording — tap to stop", ar: "جارٍ التسجيل — اضغط للإيقاف" },
+  "compare.recording": { en: "Recording, tap to stop", ar: "جارٍ التسجيل، اضغط للإيقاف" },
   "compare.stop": { en: "Stop", ar: "إيقاف" },
   "compare.playYours": { en: "Play your take", ar: "تشغيل تلاوتك" },
   "compare.playReciter": { en: "Play the reciter", ar: "تشغيل القارئ" },
@@ -655,8 +655,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "notes.edit": { en: "Edit your note", ar: "تعديل ملاحظتك" },
   "notes.placeholder": { en: "A private note for this verse…", ar: "ملاحظة خاصة لهذه الآية…" },
   "notes.privacy": {
-    en: "Private to this device — your own words, never uploaded.",
-    ar: "خاصة بهذا الجهاز — كلماتك أنت، لا تُرفع أبدًا.",
+    en: "Private to this device, your own words, never uploaded.",
+    ar: "خاصة بهذا الجهاز، كلماتك أنت، لا تُرفع أبدًا.",
   },
   "notes.save": { en: "Save note", ar: "حفظ الملاحظة" },
   "notes.saved": { en: "Saved", ar: "تم الحفظ" },
@@ -719,7 +719,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "khatmah.onTrack": { en: "On track", ar: "على المسار" },
   "khatmah.aheadDays": { en: "{n} days ahead", ar: "متقدّم بـ {n} يومًا" },
   "khatmah.behindDays": { en: "{n} days behind", ar: "متأخّر بـ {n} يومًا" },
-  "khatmah.complete": { en: "Khatmah complete — may Allah accept it", ar: "تمّت الختمة — تقبّل الله" },
+  "khatmah.complete": { en: "Khatmah complete, may Allah accept it", ar: "تمّت الختمة، تقبّل الله" },
 
   // Onboarding
   "onboarding.title": { en: "Welcome to Tajweed Trainer", ar: "مرحباً بك في مدرّب التجويد" },

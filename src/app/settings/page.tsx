@@ -106,7 +106,7 @@ export default function SettingsPage() {
 
   const reciterLabel = (r: Recitation): string => {
     const base = isAr ? r.nameAr : r.nameEn;
-    const styled = r.style ? `${base} — ${r.style}` : base;
+    const styled = r.style ? `${base}, ${r.style}` : base;
     return r.id === DEFAULT_RECITER_ID ? `${styled} (${t("settings.recitersDefault")})` : styled;
   };
 

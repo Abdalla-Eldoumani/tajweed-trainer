@@ -74,15 +74,15 @@ export function KhatmahCard() {
 
   // The reader's clamped position out of 604, so the headline percent, the gold
   // bar, and the "X of 604" line all agree on whole-Quran position (pace.pagesRead
-  // is plan-relative — counted from startPage — and is used for the pace math only,
+  // is plan-relative, counted from startPage, and is used for the pace math only,
   // not the headline display).
   const pageOf604 = 604 - pace.pagesRemaining;
 
   // The accessible name for the gold bar restates both figures so the bar is not
   // a color-only signal.
   const barLabel = isAr
-    ? `${toArabicIndic(pace.percentComplete)}% — ${toArabicIndic(pageOf604)} / ${toArabicIndic(604)}`
-    : `${pace.percentComplete}% — ${pageOf604} / 604`;
+    ? `${toArabicIndic(pace.percentComplete)}%، ${toArabicIndic(pageOf604)} / ${toArabicIndic(604)}`
+    : `${pace.percentComplete}%, ${pageOf604} / 604`;
 
   // The single quiet status line. Completion is celebrated calmly; otherwise a
   // due-today / ahead / behind / on-track read, derived (never nagged).

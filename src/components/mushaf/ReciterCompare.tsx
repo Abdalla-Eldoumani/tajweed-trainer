@@ -15,7 +15,7 @@ interface ReciterCompareProps {
 
 // The reciter catalogue grouped into the two display styles (Mujawwad, then
 // Murattal), mirroring the settings selector so both controls read the same way.
-// Derived once at module load from the static catalogue — never per render.
+// Derived once at module load from the static catalogue, never per render.
 const RECITER_GROUPS: Array<{ key: ReciterStyleGroup; labelKey: string; list: Recitation[] }> = (() => {
   const out: Array<{ key: ReciterStyleGroup; labelKey: string; list: Recitation[] }> = [
     { key: "mujawwad", labelKey: "settings.reciterStyleMujawwad", list: [] },
@@ -65,7 +65,7 @@ function ReciterSelect({
   const known = getRecitation(value);
   const reciterLabel = (r: Recitation): string => {
     const base = isAr ? r.nameAr : r.nameEn;
-    return r.style ? `${base} — ${r.style}` : base;
+    return r.style ? `${base}, ${r.style}` : base;
   };
   return (
     <select
@@ -101,7 +101,7 @@ function otherReciter(a: ReciterId): ReciterId {
 // reciters back to back to compare their recitation. A power feature for
 // learners, tucked behind a collapsible disclosure so it never clutters the main
 // reading experience. Playback goes through the ONE global engine
-// (usePlayer.playVerse) — no second <audio> element, no new audio path — so a
+// (usePlayer.playVerse), no second <audio> element, no new audio path, so a
 // failed load surfaces through the existing playback-surface error line exactly
 // like any other tap.
 export function ReciterCompare({ surah, ayah, surahName }: ReciterCompareProps) {

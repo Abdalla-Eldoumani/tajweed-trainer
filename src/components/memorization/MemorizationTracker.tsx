@@ -66,8 +66,8 @@ export function MemorizationTracker({ onOpenBulk }: MemorizationTrackerProps) {
   // The accessible name for the gold bar restates both figures so the bar is not
   // a color-only signal.
   const barLabel = isAr
-    ? `${toArabicIndic(percent)}% — ${toArabicIndic(count)} / ${toArabicIndic(TOTAL_VERSES)}`
-    : `${percent}% — ${count} / ${TOTAL_VERSES}`;
+    ? `${toArabicIndic(percent)}%، ${toArabicIndic(count)} / ${toArabicIndic(TOTAL_VERSES)}`
+    : `${percent}%, ${count} / ${TOTAL_VERSES}`;
 
   return (
     <section aria-labelledby="memorization-heading">
