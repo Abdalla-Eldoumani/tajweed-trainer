@@ -45,6 +45,8 @@ export default function SearchPage() {
   const debounced = useDebouncedValue(query, 350);
   const [verses, setVerses] = useState<VerseSearchResult[]>([]);
   const [verseState, setVerseState] = useState<"idle" | "loading" | "error" | "ready">("idle");
+  // Bumped by the retry button to re-run the verse fetch for the same query.
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     const q = debounced.trim();
@@ -67,7 +69,7 @@ export default function SearchPage() {
     return () => {
       alive = false;
     };
-  }, [debounced]);
+  }, [debounced, retryTick]);
 
   const short = query.trim().length < 2;
 
@@ -93,10 +95,21 @@ export default function SearchPage() {
       ) : (
         <div className="space-y-6">
           {/* Quran verses (API) */}
-          {(verseState === "loading" || verses.length > 0) && (
+          {(verseState === "loading" || verseState === "error" || verses.length > 0) && (
             <div>
               <h2 className="text-sm font-semibold mb-2">{t("search.verses")}</h2>
-              {verseState === "loading" && verses.length === 0 ? (
+              {verseState === "error" ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-text-muted">{t("search.verseError")}</p>
+                  <button
+                    type="button"
+                    onClick={() => setRetryTick((n) => n + 1)}
+                    className="text-sm text-primary dark:text-primary-light hover:underline underline-offset-2"
+                  >
+                    {t("search.retry")}
+                  </button>
+                </div>
+              ) : verseState === "loading" && verses.length === 0 ? (
                 <p className="text-sm text-text-muted">{t("common.loading")}</p>
               ) : (
                 <ul className="space-y-2" aria-live="polite">
@@ -151,7 +164,7 @@ export default function SearchPage() {
             </div>
           )}
 
-          {results.length === 0 && verses.length === 0 && verseState !== "loading" && (
+          {results.length === 0 && verses.length === 0 && verseState !== "loading" && verseState !== "error" && (
             <p className="text-sm text-text-muted">{t("search.noResults")}</p>
           )}
         </div>

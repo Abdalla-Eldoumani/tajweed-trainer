@@ -617,6 +617,11 @@ const translations: Record<string, { en: string; ar: string }> = {
   "search.noResults": { en: "No matches.", ar: "لا توجد نتائج." },
   "search.verses": { en: "Quran verses", ar: "آيات القرآن" },
   "search.inApp": { en: "In the app", ar: "في التطبيق" },
+  "search.verseError": {
+    en: "Couldn't search Quran verses right now. App results still work.",
+    ar: "تعذّر البحث في آيات القرآن الآن. نتائج التطبيق لا تزال تعمل.",
+  },
+  "search.retry": { en: "Try again", ar: "إعادة المحاولة" },
 
   // Reading depth (translation and tafsir, fetched from the verified API)
   "reading.showTafsir": { en: "Show tafsir", ar: "إظهار التفسير" },
