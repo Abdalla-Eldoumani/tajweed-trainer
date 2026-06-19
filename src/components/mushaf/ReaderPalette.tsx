@@ -298,7 +298,7 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
               onChange={(e) => onQueryChange(e.target.value)}
               placeholder={t("mushaf.quickJumpPlaceholder")}
               aria-label={t("mushaf.quickJumpPlaceholder")}
-              className="w-full min-h-[44px] bg-bg-card dark:bg-bg-card-dark text-body text-text placeholder:text-text-muted outline-none"
+              className="w-full min-h-[44px] bg-bg-card dark:bg-bg-card-dark text-body text-text placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
               dir={isAr ? "rtl" : "ltr"}
             />
           </div>
