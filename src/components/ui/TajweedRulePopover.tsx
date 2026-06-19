@@ -76,12 +76,13 @@ export function TajweedRulePopover({ target, onClose }: TajweedRulePopoverProps)
   // Move focus to the link when the popover opens with one, so a keyboard user
   // who triggered it can act on it and Escape returns control predictably.
   useEffect(() => {
-    if (target && link) linkRef.current?.focus();
+    if (target && link) linkRef.current?.focus({ preventScroll: true });
   }, [target, link]);
 
-  // Escape closes; a pointer/tap outside the card closes. Both are document
-  // listeners (the trigger is injected markup, not a React child), guarded so
-  // they only run while open.
+  // Escape closes; a pointer/tap outside the card closes; scrolling or resizing
+  // closes too, since the card is viewport-fixed at the letter and would
+  // otherwise float away from it. All are document/window listeners (the trigger
+  // is injected markup, not a React child), guarded so they only run while open.
   useEffect(() => {
     if (!target) return;
     const onKey = (e: KeyboardEvent) => {
@@ -94,15 +95,19 @@ export function TajweedRulePopover({ target, onClose }: TajweedRulePopoverProps)
       if (cardRef.current && !cardRef.current.contains(e.target as Node)) onClose();
     };
     document.addEventListener("keydown", onKey, true);
-    // Defer attaching the outside-pointer listener so the opening tap that
-    // spawned the popover does not immediately close it.
-    const id = requestAnimationFrame(() =>
-      document.addEventListener("pointerdown", onPointer, true),
-    );
+    // Defer attaching the outside-pointer and scroll/resize listeners so the
+    // opening tap, and the link focus, do not immediately close the popover.
+    const id = requestAnimationFrame(() => {
+      document.addEventListener("pointerdown", onPointer, true);
+      window.addEventListener("scroll", onClose, true);
+      window.addEventListener("resize", onClose);
+    });
     return () => {
       cancelAnimationFrame(id);
       document.removeEventListener("keydown", onKey, true);
       document.removeEventListener("pointerdown", onPointer, true);
+      window.removeEventListener("scroll", onClose, true);
+      window.removeEventListener("resize", onClose);
     };
   }, [target, onClose]);
 
