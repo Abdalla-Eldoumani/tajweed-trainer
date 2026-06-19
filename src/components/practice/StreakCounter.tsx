@@ -11,7 +11,7 @@ export function StreakCounter() {
   const { currentStreak, longestStreak, lastPracticeDate } = progress.streaks;
 
   // Streak dates are stored as local day strings (toLocaleDateString("en-CA")),
-  // so the calendar computes and compares in local days end to end — otherwise a
+  // so the calendar computes and compares in local days end to end, otherwise a
   // user near local midnight could see "today" highlighted on the wrong pill.
   const todayStr = new Date().toLocaleDateString("en-CA");
   const days = Array.from({ length: 7 }).map((_, i) => {

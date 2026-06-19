@@ -115,7 +115,7 @@ export default function ProgressPage() {
           mount + count so they never flash before hydration. The bulk surface
           lives inside this section so the headline and breakdown stay visible
           and the count visibly moves the instant a bulk op confirms (the change
-          bus re-renders all three together — no manual refresh). In the empty
+          bus re-renders all three together, no manual refresh). In the empty
           state the tracker's own CTA opens the same disclosure, so the surface
           hides its duplicate trigger there. */}
       <div className="space-y-6">

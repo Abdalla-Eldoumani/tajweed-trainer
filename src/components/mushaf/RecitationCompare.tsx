@@ -71,7 +71,7 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
       }
       playClip(audioUrl);
     } catch {
-      // No audio for this reciter/verse — surface a short message, never a
+      // No audio for this reciter/verse, surface a short message, never a
       // silent dead tap.
       setReciterError(true);
     }

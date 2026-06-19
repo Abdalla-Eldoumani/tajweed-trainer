@@ -298,7 +298,7 @@ html, body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23D4B96A' stroke-width='0.8'%3E%3Cpath d='M40 0L50 15L65 10L55 25L70 30L55 35L65 50L50 45L40 60L30 45L15 50L25 35L10 30L25 25L15 10L30 15Z'/%3E%3Cpath d='M0 40L10 25L0 10L15 20L20 5L25 20L40 15L35 30L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 25L80 10L65 20L60 5L55 20L40 15L45 30L40 40' opacity='0.5'/%3E%3Cpath d='M0 40L10 55L0 70L15 60L20 75L25 60L40 65L35 50L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 55L80 70L65 60L60 75L55 60L40 65L45 50L40 40' opacity='0.5'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Quran frame — a quiet double gold rule around Quranic text. Outer 1px gold on
+/* Quran frame: a quiet double gold rule around Quranic text. Outer 1px gold on
    the element, a second hairline rule inset 6px. No heavy border, no inset
    band; the script is the focus. */
 .quran-frame {
@@ -318,7 +318,7 @@ html, body {
   pointer-events: none;
 }
 
-/* Section banner (surah header style) — flat surface with a single gold
+/* Section banner (surah header style): flat surface with a single gold
    hairline rule and a centered title. No gradient, no busy overlay. */
 .section-banner {
   position: relative;
@@ -331,7 +331,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Gold divider — a flat 1px gold hairline. Gold is a hairline, never a fill
+/* Gold divider: a flat 1px gold hairline. Gold is a hairline, never a fill
    (DESIGN_SYSTEM section 3), so the old multi-stop gradient is dropped. A flat
    hairline has no direction, so no RTL variant is needed. */
 .gold-divider {
@@ -358,7 +358,7 @@ html, body {
    Mushaf Reader styling
    ============================================ */
 
-/* Outer frame for a Mushaf page — a quiet double gold rule with one small
+/* Outer frame for a Mushaf page: a quiet double gold rule with one small
    8-point star at the head corner. No multi-color band. */
 .mushaf-frame {
   position: relative;
@@ -401,7 +401,7 @@ html, body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23D8B25A' stroke-width='1'/%3E%3C/svg%3E");
 }
 
-/* Surah cartouche — banner shown when a surah starts. Flat card surface with a
+/* Surah cartouche: banner shown when a surah starts. Flat card surface with a
    single gold hairline and a small 8-point star at each end. No gradient; the
    star sits at low opacity so the surah name stays the focus. */
 .surah-cartouche {
@@ -526,7 +526,7 @@ html, body {
   color: #C7A24A;
 }
 
-/* Card elevated variant — a quiet 1px gold hairline and a small neutral
+/* Card elevated variant: a quiet 1px gold hairline and a small neutral
    shadow. No gold glow. */
 .card-elevated {
   position: relative;

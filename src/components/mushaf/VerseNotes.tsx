@@ -25,7 +25,7 @@ const NoteIcon = () => (
 );
 
 // A learner's own private note for one verse, inside the reading-depth panel.
-// Local-only (never transmitted, never religious content — the user's own
+// Local-only (never transmitted, never religious content, the user's own
 // words). Collapsed by default to keep the panel calm; expands to a textarea
 // that saves on blur and via an explicit Save control. Gated on `mounted` so the
 // stored note never flashes in during hydration.

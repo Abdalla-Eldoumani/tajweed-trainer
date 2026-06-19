@@ -9,7 +9,7 @@ import { subscribeProgressChanged } from "@/lib/progress-events";
 // initial state for SSR/CSR parity; the effect seeds from storage on mount.
 //
 // Unlike the single-writer hooks (bookmarks, memorization), notes are written in
-// the reading-depth panel but READ in two places at once — that panel's editor
+// the reading-depth panel but READ in two places at once, that panel's editor
 // and the per-verse details control's "has a note" dot live in different
 // component trees. So this hook subscribes to the progress change bus and
 // re-reads the map on every write, keeping the dot and the editor in lockstep

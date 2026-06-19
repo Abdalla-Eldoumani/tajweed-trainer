@@ -13,7 +13,7 @@ import { StreakCounter } from "@/components/practice/StreakCounter";
 // The daily verse pulls in the 53 KB verse-snapshot set and the 23 KB surah
 // index, yet it renders nothing until after mount (the day pick is client-only
 // to avoid a hydration mismatch). Loading it dynamically keeps that ~76 KB off
-// the home route's initial JS without any behavior change — SSR rendered null
+// the home route's initial JS without any behavior change; SSR rendered null
 // here already.
 const DailyVerse = dynamic(
   () => import("@/components/home/DailyVerse").then((m) => ({ default: m.DailyVerse })),

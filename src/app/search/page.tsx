@@ -138,7 +138,7 @@ export default function SearchPage() {
         : "bg-bg-card text-text-muted border-border hover:text-text dark:bg-bg-card-dark",
     );
 
-  // Any chip beyond the always-present "All" — only render the filter row when
+  // Any chip beyond the always-present "All", only render the filter row when
   // there is something to filter.
   const hasFilters = !short && (presentKinds.length > 0 || verses.length > 0);
 

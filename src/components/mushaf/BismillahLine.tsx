@@ -10,7 +10,7 @@ interface BismillahLineProps {
 
 // Sourced from src/data/basmala.json (the verified Al-Fatihah 1:1 text, kept in
 // lockstep with the snapshot by a verify check), never hardcoded in the
-// component — the app renders Quran text, it does not author it. The tiny file
+// component; the app renders Quran text, it does not author it. The tiny file
 // avoids pulling the whole snapshot set into this route's bundle.
 const BASMALA = basmala.text;
 

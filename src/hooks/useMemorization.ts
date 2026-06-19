@@ -33,7 +33,7 @@ export function useMemorization() {
   // Bulk mark or unmark a list of verseKeys through the single batched store
   // write (one localStorage write, one change-bus emit), then re-seed the local
   // Set from the store in one update so it reflects exactly what was persisted
-  // (the store applies key validation and the 6236 cap) — never a per-verse loop.
+  // (the store applies key validation and the 6236 cap), never a per-verse loop.
   const setMany = useCallback((verseKeys: string[], memorize: boolean) => {
     const count = setMemorizedVerses(verseKeys, memorize);
     setMemorized(new Set(getProgress().memorizedVerses));

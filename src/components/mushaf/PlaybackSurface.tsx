@@ -214,7 +214,7 @@ function ErrorLine({ error }: { error: string }) {
 
 // Contiguous range entry: pick a surah present on the page, a start ayah and an
 // end ayah, then build the range via setRange (which normalizes a reversed
-// start/end, B1). The range stays WITHIN ONE SURAH — the documented default that
+// start/end, B1). The range stays WITHIN ONE SURAH, the documented default that
 // matches buildRangeQueue and the engine's index===ayah-1 range assumption; a
 // cross-surah range would have to build an explicit multi-surah QueueItem[] and
 // loop only via loopSelection, which this picker deliberately does not do. A
@@ -308,7 +308,7 @@ function RangePicker({ data }: { data: MushafPageData }) {
   );
 }
 
-// (5) Multi-verse controls — the shared slot rendered identically in the desktop
+// (5) Multi-verse controls: the shared slot rendered identically in the desktop
 // panel and the expanded sheet. It owns the selection summary, the capped
 // removable chips, the per-verse repeat stepper, the whole-selection loop
 // toggle, the inter-verse gap presets, the play-selection action, and the
@@ -500,7 +500,7 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
 
       {/* Play the selection (set via playSet, range via playRange) and the
           one-action clear. Play carries the filled accent; clear is a quiet
-          outline (NOT red ochre — that stays the error line only). */}
+          outline (NOT red ochre, that stays the error line only). */}
       <div className="flex items-center gap-2 pt-1">
         <button
           type="button"

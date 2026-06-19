@@ -11,7 +11,7 @@ export function PWARegister() {
 
     const onLoad = () => {
       navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {
-        // Registration failure is silent — the app still works without
+        // Registration failure is silent, the app still works without
         // offline support.
       });
     };

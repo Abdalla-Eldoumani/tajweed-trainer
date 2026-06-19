@@ -90,7 +90,7 @@ const nextConfig = {
 
 // Bundle analyzer, enabled only when ANALYZE=true so it never touches normal
 // builds. It hooks the webpack builder, so an analysis pass must run the
-// webpack build (ANALYZE=true npm run build) — Turbopack ignores the plugin.
+// webpack build (ANALYZE=true npm run build); Turbopack ignores the plugin.
 const withBundleAnalyzer = bundleAnalyzer({ enabled: process.env.ANALYZE === "true" });
 
 export default withBundleAnalyzer(nextConfig);
