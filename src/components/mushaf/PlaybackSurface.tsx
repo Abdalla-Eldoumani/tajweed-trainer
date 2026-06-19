@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
 import { getRecitation } from "@/lib/reciters";
+import { sheetBottomOffset, keyboardBottomOffset } from "@/lib/player-position";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { TajweedText } from "@/components/ui/TajweedText";
@@ -318,6 +319,37 @@ function BottomSheet({ model }: { model: SurfaceModel }) {
     usePlayer.getState().stop();
   }, []);
 
+  // The sheet's bottom offset in CSS pixels. It reserves the tab-bar strip only
+  // in peek below 768px (reservedBottomFor via sheetBottomOffset); when the
+  // keyboard is open it instead rides the visual viewport so it stays above the
+  // keyboard inset. Re-clamped on resize/orientationchange so rotation never
+  // leaves it off-screen or half-covered. The safe-area inset is handled by the
+  // `.safe-bottom` padding at every width, independent of this offset.
+  const [bottomOffset, setBottomOffset] = useState(0);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const recompute = () => {
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      // When the visual viewport is shorter than the layout viewport a keyboard
+      // (or URL bar) is eating space; lift the sheet to its bottom edge.
+      const keyboard = vv
+        ? keyboardBottomOffset(window.innerHeight, vv.height, vv.offsetTop)
+        : 0;
+      setBottomOffset(keyboard > 0 ? keyboard : sheetBottomOffset(viewport, expanded));
+    };
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.addEventListener("orientationchange", recompute);
+    vv?.addEventListener("resize", recompute);
+    vv?.addEventListener("scroll", recompute);
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.removeEventListener("orientationchange", recompute);
+      vv?.removeEventListener("resize", recompute);
+      vv?.removeEventListener("scroll", recompute);
+    };
+  }, [expanded]);
+
   // Capture the opener once when the sheet mounts (it mounts the instant a verse
   // plays); restore focus to it when the sheet unmounts on close.
   useEffect(() => {
@@ -398,13 +430,13 @@ function BottomSheet({ model }: { model: SurfaceModel }) {
       className={cn(
         // Fixed to the bottom, full width, top corners rounded. --bg-card ground
         // with the section-7 gold hairline above it; the safe-area inset is
-        // reserved by .safe-bottom. The exact reserved-bottom / keyboard math is
-        // layered on in Task 3.
-        "fixed inset-x-0 bottom-0 z-40 flex flex-col rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark safe-bottom",
+        // reserved by .safe-bottom at every width. The `bottom` offset (tab-bar
+        // reserve in peek below 768px, or the keyboard lift) is applied inline.
+        "fixed inset-x-0 z-40 flex flex-col rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark safe-bottom",
         // A 200ms transform-and-fade rise, dropped under reduced motion.
         "transition-transform duration-200 motion-reduce:transition-none",
       )}
-      style={{ boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }}
+      style={{ bottom: bottomOffset, boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }}
     >
       {/* Grab handle: a centered 36x4px bar inside a >= 44px-tall hit target.
           Tap toggles peek/expanded; swipe down closes; swipe up expands. */}
