@@ -461,14 +461,19 @@ html, body {
 }
 
 /* The verse currently playing through the global player: a quiet --bg-subtle
-   ground with an inset gold left rule (not a glow). This only removes the
-   off-palette green and the glow ring at the source; Phase 5 owns the final
-   active-verse polish. Both themes share the token-driven declarations, so no
-   .dark override is needed (--bg-subtle and --gold flip via the dark block). */
+   ground with a thin gold rule on the reading-start edge (not a glow, not a
+   loud fill). The rule is a logical inline-start border so it sits on the
+   correct side in both LTR and RTL (in Arabic mode the reading start is the
+   right edge). Token-driven, so both themes flip with no .dark override
+   (--bg-subtle and --gold come from the dark block). The state change is a
+   single calm transition (inherited from .mushaf-verse), with no extra motion,
+   and stays distinct from the soon-to-exist selected-verse marker, which will
+   carry its own ground/marker so "sounding now" and "in my selection" never
+   read the same. */
 .mushaf-verse-playing,
 .mushaf-verse-playing:hover {
   background-color: var(--bg-subtle);
-  box-shadow: inset 3px 0 0 0 var(--gold);
+  border-inline-start: 3px solid var(--gold);
 }
 
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
