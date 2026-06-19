@@ -21,9 +21,11 @@ const SECTIONS = [
 
 // Rule-indicator colors from the single tajweed source (tajweed-colors.ts),
 // keyed by the API class each rule maps to. Izhar is not emitted by the API
-// (default ink in the mushaf), so it keeps its teaching green rather than a class.
-const IZHAR_COLOR = "#169200";
-const tajHex = (cssClass: string) => getColorForClass(cssClass)?.hex ?? IZHAR_COLOR;
+// (default ink in the mushaf), so like laam-qamariyyah it keeps a distinct
+// teaching color, kept different from idgham's sourced green so the two rules
+// never read alike.
+const IZHAR_COLOR = "#1B5E20";
+const tajHex = (cssClass: string) => getColorForClass(cssClass)?.hex ?? "#1B5E20";
 const RULE_COLORS: Record<string, string> = {
   "izhar-halqi": IZHAR_COLOR,
   "idgham": tajHex("idgham_ghunnah"),
