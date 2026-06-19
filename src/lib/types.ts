@@ -469,6 +469,9 @@ export interface TajweedProgress {
   // Kept inside this consolidated model so export / import / reset cover them.
   bookmarks: string[];
   lastRead?: VerseLocation | null;
+  // Whether the first-launch onboarding has been shown and dismissed. Cleared by
+  // reset so onboarding re-shows.
+  seenOnboarding: boolean;
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".

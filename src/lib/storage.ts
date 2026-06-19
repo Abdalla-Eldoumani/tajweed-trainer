@@ -47,6 +47,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   analytics: [],
   bookmarks: [],
   lastRead: null,
+  seenOnboarding: false,
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -305,7 +306,7 @@ function sanitizeLastRead(input: unknown): VerseLocation | null {
   return { verseKey: input.verseKey, page, ts };
 }
 
-function sanitizeProgress(input: unknown): TajweedProgress {
+export function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return cloneDefaultProgress();
   const modules: Record<string, ModuleProgress> = {};
   if (isObject(input.modules)) {
@@ -335,6 +336,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
     lastRead: sanitizeLastRead(input.lastRead),
+    seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
   };
 }
 
@@ -390,6 +392,20 @@ export function getPlayerMinimized(): boolean {
 export function setPlayerMinimized(minimized: boolean): void {
   const progress = getProgress();
   progress.settings = { ...progress.settings, playerMinimized: minimized };
+  setProgress(progress);
+}
+
+// First-launch onboarding seen flag. Lives on the consolidated progress object
+// (not an ad-hoc key) so export / import / reset cover it; the default-false in
+// DEFAULT_PROGRESS makes resetProgress re-show onboarding. The setter writes
+// through setProgress, which fires the change bus.
+export function getOnboardingSeen(): boolean {
+  return getProgress().seenOnboarding ?? false;
+}
+
+export function setOnboardingSeen(value: boolean): void {
+  const progress = getProgress();
+  progress.seenOnboarding = value;
   setProgress(progress);
 }
 
