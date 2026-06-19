@@ -40,16 +40,17 @@ src/data/
     laam-raa.ts
     tafkheem-tarqeeq.ts
     waqf.ts
-  verse-snapshots.json         Cache of verses pulled from the Quran.com API
-                               for authoring. Currently {} because every 0.2.0
-                               question reused existing content.
+  verse-snapshots.json         Color-coded tajweed HTML snapshots of the verses
+                               used in the lessons, pulled from the Quran.com API
+                               by scripts/prefetch-tajweed-snapshots.mjs. Backs
+                               lesson coloring and the daily verse offline.
 ```
 
 ## Adding a new practice question
 
 1. **Pick the module.** Open `src/data/questions/<module>.ts`. Each file exports a `questions: Question[]` array.
 
-2. **Pick a verified example.** The verse fragment, gloss, and surah:ayah reference must come from `src/data/content/<module>.json`. If you need a verse that isn't in the existing examples, use `scripts/fetch-verse.mjs` (see "Pulling new verses" below) — never hand-author Arabic text.
+2. **Pick a verified example.** The verse fragment, gloss, and surah:ayah reference must come from `src/data/content/<module>.json`. If you need a verse that isn't in the existing examples, add the example to the rule JSON and snapshot its coloring with `scripts/prefetch-tajweed-snapshots.mjs` (see "Pulling new verses" below). Never hand-author Arabic text.
 
 3. **Construct the `Question` record.** The full type is in `src/lib/types.ts:Question`. Required fields:
 
@@ -83,7 +84,7 @@ src/data/
 
 4. **Pick the lesson anchor.** The `explanation.lessonAnchor` is a slug like `"izhar-halqi"` (no `/learn/` prefix, no `#`). The runtime composes `/learn/<moduleId>#<lessonAnchor>` and the Practice flow's "Open the lesson section" link uses it. The slug must match an `id` attribute on `src/app/learn/<module>/page.tsx`. Look at qalqalah's page for the canonical pattern: each anchor is on a `<Card id="qalqalah-letters" className="scroll-mt-20">` (or a wrapping `<div>` for `RuleCard` instances).
 
-5. **Difficulty distribution per module: 10 easy / 12 medium / 8 hard.** This is the ratio used in the 0.2.0 release. Easy = definition-level recall. Medium = identify-the-rule with a verse fragment. Hard = trickier judgment calls, edge cases, or multi-step reasoning.
+5. **Difficulty mix per module: roughly 10 easy / 12 medium / 8 hard.** This was the 0.2.0 ratio of 30 per module; the pool has since grown to 280 questions across the nine modules, so a few modules carry a handful extra. Easy = definition-level recall. Medium = identify-the-rule with a verse fragment. Hard = trickier judgment calls, edge cases, or multi-step reasoning. Keep the spread weighted toward easy and medium.
 
 6. **Verify.** Start the dev server and run:
 
@@ -117,29 +118,22 @@ The `scroll-mt-20` (a Tailwind utility for `scroll-margin-top`) leaves space for
 
 ## Pulling new verses
 
-If a question genuinely needs a verse that isn't in the in-repo content, fetch it from the Quran.com Foundation API and snapshot it in `src/data/verse-snapshots.json`. The snapshot acts as a record of provenance and protects the build from network instability at runtime.
+The lessons render color-coded tajweed from `src/data/verse-snapshots.json`, the snapshot of every verse a lesson example cites. The snapshots are pulled once from the Quran.com Foundation API by `scripts/prefetch-tajweed-snapshots.mjs`, so the build does not depend on a live request and lesson coloring works offline. The script reads the example verse keys from `src/data/content/*.json`, fetches each referenced surah's `text_uthmani_tajweed` once (batched per chapter), and writes the file keyed by `"<surah>:<ayah>"`. It is idempotent: an unchanged set of examples re-writes the same bytes and preserves the existing `fetchedAt`.
 
-The 0.2.0 question pool reused existing verified examples for all 270 questions, so `verse-snapshots.json` is currently `{}`. When this changes, the snapshot file shape should be:
+The snapshot file shape is:
 
 ```jsonc
 {
   "<surah>:<ayah>": {
     "arabic": "<verse text from API>",
-    "gloss": "<English from a numbered translation edition>",
-    "glossEditionId": 20,                         // 20 = Saheeh International, etc.
-    "fetchedAt": "2026-05-02T12:00:00Z",
-    "source": "https://api.quran.com/api/v4/verses/by_key/<surah>:<ayah>"
+    "tajweedHtml": "<color-coded text_uthmani_tajweed markup>",
+    "fetchedAt": "2026-06-07T00:00:00.000Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
   }
 }
 ```
 
-Pulls should be restricted to the prompt-defined narrow range:
-
-- Al-Fatihah (1:1–7)
-- Juz 30 (78:1 – 114:6)
-- Al-Baqarah 1–5 and 255 (Ayat al-Kursi)
-
-About 577 verses in total. Pulls outside this range need maintainer approval.
+So to add a verse that isn't in the in-repo content yet: add the example to the rule JSON with its exact `surah:ayah`, then run `node scripts/prefetch-tajweed-snapshots.mjs` to snapshot its coloring. The script is not part of the build; the stored HTML is sanitized again at render time. Religious text comes only from the authenticated API and is never generated.
 
 ## Adding a new tajweed rule (rare)
 
