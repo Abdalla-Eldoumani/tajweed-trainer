@@ -30,25 +30,27 @@ function dedupeByColor(colors: TajweedColor[]): TajweedColor[] {
   });
 }
 
-// One legend cell: a small card whose specimen is the rule's own Arabic name,
-// set in the rule's actual color (read from the map via the CSS variable, never
-// hard-coded), with the English name as the label. The specimen chip carries a
-// gold hairline so the light grays stay visible on a white card, and holds the
-// name on one line so multi-word names never spill outside the chip.
+// One legend cell: a small card holding a colored Arabic specimen plus the
+// rule's English and Arabic names. The specimen is the rule set in its own
+// color, read from the map through the --tajweed-${cssClass} CSS variable
+// (theme-aware, never a hard-coded hex), so the legend can never disagree with
+// the same rule rendered in a verse. The specimen chip carries a gold hairline
+// so the pale grays and light blues stay visible on the vellum card; without it
+// they wash out. The English name truncates so multi-word names never overflow.
 function LegendCell({ color }: { color: TajweedColor }) {
   const swatch = `var(--tajweed-${color.cssClass})`;
   return (
     <li
-      className="flex items-center gap-3 rounded-lg border bg-bg-card px-3 py-2 min-w-0 dark:bg-bg-card-dark"
+      className="flex flex-col gap-2 rounded-lg border bg-bg-card px-3 py-2 min-w-0 dark:bg-bg-card-dark"
       style={{ borderColor: "var(--gold-hairline)" }}
       role="listitem"
     >
       <span
-        className="inline-flex h-9 shrink-0 items-center rounded-md border px-2"
+        className="inline-flex h-9 w-fit max-w-full items-center self-start rounded-md border px-2"
         style={{ borderColor: "var(--gold-hairline)" }}
       >
         <span
-          className="font-arabic text-base leading-none whitespace-nowrap"
+          className="font-arabic text-base leading-none whitespace-nowrap overflow-hidden text-ellipsis"
           dir="rtl"
           lang="ar"
           style={{ color: swatch }}
@@ -56,8 +58,17 @@ function LegendCell({ color }: { color: TajweedColor }) {
           {color.nameAr}
         </span>
       </span>
-      <span className="font-heading text-sm font-medium min-w-0 flex-1 truncate">
-        {color.nameEn}
+      <span className="min-w-0">
+        <span className="block font-heading text-small font-medium truncate">
+          {color.nameEn}
+        </span>
+        <span
+          className="block font-arabic text-micro text-text-muted truncate"
+          dir="rtl"
+          lang="ar"
+        >
+          {color.nameAr}
+        </span>
       </span>
     </li>
   );
@@ -70,11 +81,11 @@ export function ColorLegend() {
 
   return (
     <Card variant="ornate">
-      <h3 className="font-heading font-semibold text-sm mb-4">{t("common.colorLegend")}</h3>
-      <div className="space-y-5">
+      <h3 className="font-heading text-small font-semibold mb-4">{t("common.colorLegend")}</h3>
+      <div className="space-y-6">
         {groups.map((group) => (
           <section key={group} aria-label={t(GROUP_LABEL[group]!)}>
-            <h4 className="text-xs font-medium text-text-muted uppercase tracking-wide mb-2">
+            <h4 className="text-micro font-medium uppercase tracking-[0.08em] text-text-muted mb-2">
               {t(GROUP_LABEL[group]!)}
             </h4>
             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2" role="list">
