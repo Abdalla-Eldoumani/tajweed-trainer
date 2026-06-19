@@ -8,6 +8,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ColorLegend } from "@/components/learn/ColorLegend";
 import { ResumeReading } from "@/components/home/ResumeReading";
+import { StreakCounter } from "@/components/practice/StreakCounter";
 
 // The daily verse pulls in the 53 KB verse-snapshot set and the 23 KB surah
 // index, yet it renders nothing until after mount (the day pick is client-only
@@ -28,7 +29,7 @@ import type { LearningModule } from "@/lib/types";
 const modules = learningPath.modules as LearningModule[];
 
 export default function HomePage() {
-  const { progress, getOverallCompletion } = useProgress();
+  const { getOverallCompletion } = useProgress();
   const { t, isAr } = useTranslation();
 
   const totalLessons: Record<string, number> = {};
@@ -69,18 +70,16 @@ export default function HomePage() {
       {overall > 0 && (
         <Card variant="ornate">
           <h2 className="font-heading font-semibold text-body mb-3">{t("home.yourProgress")}</h2>
-          <div className="flex items-center gap-4 mb-3">
-            <div className="text-h2 font-bold text-primary dark:text-primary-light">{overall}%</div>
+          <div className="flex items-center gap-4">
+            <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">{overall}%</div>
             <div className="flex-1">
               <ProgressBar value={overall} />
             </div>
           </div>
-          <div className="flex gap-4 text-micro text-text-muted">
-            <span>{t("home.streak")}: {progress.streaks.currentStreak} {t("home.streakDays")}</span>
-            <span>{t("home.best")}: {progress.streaks.longestStreak} {t("home.streakDays")}</span>
-          </div>
         </Card>
       )}
+
+      <StreakCounter />
 
       <ResumeReading />
       <DailyVerse />
