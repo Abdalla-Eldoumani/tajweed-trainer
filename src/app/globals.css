@@ -480,8 +480,8 @@ html, body {
    playing rule is a solid 3px), it is --primary lapis/gold (the playing rule is
    --gold leaf), and it carries NO ground fill (the playing marker tints the
    ground --bg-subtle). Logical inline-end so it lands on the correct side in
-   both LTR and RTL; token-driven so both themes flip with no .dark override
-   (--primary and --bg-card-subtle resolve from the dark block). A verse that is
+   both LTR and RTL; token-driven so the rule flips with no .dark override
+   (--primary resolves from the dark block). A verse that is
    both selected and playing therefore shows a solid gold start rule AND a dashed
    primary end rule on opposite edges, which never collide. */
 .mushaf-verse-selected,
