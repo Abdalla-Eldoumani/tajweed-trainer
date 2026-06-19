@@ -74,7 +74,7 @@ export default function SearchPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{t("search.title")}</h1>
+        <h1 className="font-heading text-h2 font-bold">{t("search.title")}</h1>
         <p className="text-sm text-text-muted mt-2">{t("search.subtitle")}</p>
       </div>
 
@@ -85,7 +85,7 @@ export default function SearchPage() {
         placeholder={t("search.placeholder")}
         aria-label={t("search.title")}
         autoFocus
-        className="w-full px-4 py-3 min-h-[48px] rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark text-base focus:outline-none focus:border-primary"
+        className="w-full px-4 py-3 min-h-[48px] rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
       />
 
       {short ? (

@@ -30,8 +30,6 @@
   --cream: #F5F1E8;
   --cream-dark: #ECE5D3;
   --border: #DDD3BC;
-  --border-ornate: #C49A33;
-  --border-ornate-subtle: rgba(196, 154, 51, 0.32);
   --ornament-1: var(--gold);
   --ornament-2: #1E4279;
   --ornament-3: #B9A876;
@@ -92,8 +90,6 @@
   --cream: #121A2E;
   --cream-dark: #1A2336;
   --border: #232E47;
-  --border-ornate: #A98B3C;
-  --border-ornate-subtle: rgba(169, 139, 60, 0.32);
   --ornament-1: var(--gold);
   --ornament-2: #4C6FA8;
   --ornament-3: #9A8A5A;
@@ -141,9 +137,11 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Focus ring for keyboard navigation */
+/* Focus ring for keyboard navigation. Gold at 2px offset 2px is the single
+   global keyboard focus default (DESIGN_SYSTEM section 6); the mushaf verse
+   sets its own affordance and is intentionally exempt below. */
 *:focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--gold);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -250,6 +248,12 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Tabular figures for live counts (DESIGN_SYSTEM section 4 Numerals) so digits
+     keep a fixed width and do not jitter as a count updates. */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* Prevent horizontal scroll on mobile */
@@ -327,25 +331,13 @@ html, body {
   overflow: hidden;
 }
 
-/* Gold divider */
+/* Gold divider — a flat 1px gold hairline. Gold is a hairline, never a fill
+   (DESIGN_SYSTEM section 3), so the old multi-stop gradient is dropped. A flat
+   hairline has no direction, so no RTL variant is needed. */
 .gold-divider {
   height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--border-ornate),
-    transparent
-  );
+  background: var(--gold-hairline);
   margin: 1rem 0;
-}
-
-[dir="rtl"] .gold-divider {
-  background: linear-gradient(
-    to left,
-    transparent,
-    var(--border-ornate),
-    transparent
-  );
 }
 
 /* RTL layout support */
@@ -464,18 +456,37 @@ html, body {
   background-color: rgba(212, 185, 106, 0.18);
 }
 
-/* The verse currently playing through the global player. Green so it reads
-   distinctly from the gold tap/hover affordance. */
+/* The verse currently playing through the global player: a quiet --bg-subtle
+   ground with a thin gold rule on the reading-start edge (not a glow, not a
+   loud fill). The rule is a logical inline-start border so it sits on the
+   correct side in both LTR and RTL (in Arabic mode the reading start is the
+   right edge). Token-driven, so both themes flip with no .dark override
+   (--bg-subtle and --gold come from the dark block). The state change is a
+   single calm transition (inherited from .mushaf-verse), with no extra motion,
+   and stays distinct from the soon-to-exist selected-verse marker, which will
+   carry its own ground/marker so "sounding now" and "in my selection" never
+   read the same. */
 .mushaf-verse-playing,
 .mushaf-verse-playing:hover {
-  background-color: rgba(22, 94, 42, 0.12);
-  box-shadow: 0 0 0 1px rgba(22, 94, 42, 0.28);
+  background-color: var(--bg-subtle);
+  border-inline-start: 3px solid var(--gold);
 }
 
-.dark .mushaf-verse-playing,
-.dark .mushaf-verse-playing:hover {
-  background-color: rgba(63, 176, 94, 0.18);
-  box-shadow: 0 0 0 1px rgba(63, 176, 94, 0.32);
+/* A verse the user has added to a multi-verse selection (a hand-picked set or a
+   range), shown while building a revision queue. Deliberately distinct from the
+   playing marker on every axis so "in my selection" and "sounding right now"
+   never read the same at a glance: the rule sits on the reading-END edge (the
+   playing rule is on the reading-start edge), it is a 2px DASHED line (the
+   playing rule is a solid 3px), it is --primary lapis/gold (the playing rule is
+   --gold leaf), and it carries NO ground fill (the playing marker tints the
+   ground --bg-subtle). Logical inline-end so it lands on the correct side in
+   both LTR and RTL; token-driven so the rule flips with no .dark override
+   (--primary resolves from the dark block). A verse that is
+   both selected and playing therefore shows a solid gold start rule AND a dashed
+   primary end rule on opposite edges, which never collide. */
+.mushaf-verse-selected,
+.mushaf-verse-selected:hover {
+  border-inline-end: 2px dashed var(--primary);
 }
 
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
@@ -494,7 +505,11 @@ html, body {
   border-radius: 9999px;
   background: var(--bg-subtle);
   border: 1px solid var(--gold-hairline);
-  color: var(--gold-dark);
+  /* Contrast-scoped gold for the small ayah numeral, not the shared --gold-dark.
+     --gold-dark on --bg-subtle is 3.75:1 (AA-large only); this deeper gold reads
+     4.86:1 on the ivory --bg-subtle so the numeral clears AA-normal. Theme-aware:
+     the pill ground flips per theme, so the dark rule below uses a brighter gold. */
+  color: #7A5E15;
   font-size: 0.55em;
   font-weight: 600;
   vertical-align: middle;
@@ -506,7 +521,9 @@ html, body {
 .dark .tajweed-text .end {
   background: var(--bg-subtle);
   border-color: var(--gold-hairline);
-  color: var(--gold-dark);
+  /* Brighter gold on the navy --bg-subtle: --gold-dark was 3.36:1 (sub-AA);
+     this reads 6.50:1 so the numeral clears AA-normal. See the light rule above. */
+  color: #C7A24A;
 }
 
 /* Card elevated variant — a quiet 1px gold hairline and a small neutral

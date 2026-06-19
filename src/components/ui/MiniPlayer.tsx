@@ -78,7 +78,7 @@ const PauseIcon = () => (
 );
 
 const LoadingIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="animate-pulse">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="animate-pulse motion-reduce:animate-none">
     <circle cx="5" cy="12" r="2" />
     <circle cx="12" cy="12" r="2" />
     <circle cx="19" cy="12" r="2" />
@@ -427,7 +427,7 @@ export function MiniPlayer() {
                 <button
                   type="button"
                   onClick={() => usePlayer.getState().setRepeatRange(from, to, count)}
-                  className={`rounded-lg px-2 py-1 min-h-[32px] ${repeatRange ? "bg-primary text-white" : "bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light hover:bg-primary/20"}`}
+                  className={`rounded-lg px-2 py-1 min-h-[32px] ${repeatRange ? "bg-primary text-on-primary dark:bg-gold dark:text-ink" : "bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light hover:bg-primary/20"}`}
                 >
                   {t("player.loopStart")}
                 </button>
@@ -465,7 +465,7 @@ export function MiniPlayer() {
               onKeyDown={onHandleKeyDown}
               aria-label={t("player.dragHandle")}
               title={t("player.dragHandle")}
-              className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
+              className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             >
               <GripIcon />
             </button>
@@ -507,7 +507,7 @@ export function MiniPlayer() {
             onKeyDown={onHandleKeyDown}
             aria-label={t("player.dragHandle")}
             title={t("player.dragHandle")}
-            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:focus-visible:ring-primary-light"
+            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
           >
             <GripIcon />
           </button>
@@ -568,7 +568,7 @@ export function MiniPlayer() {
               value={Number.isFinite(duration) && duration > 0 ? Math.min(currentTime, duration) : 0}
               onChange={(e) => usePlayer.getState().seek(Number(e.target.value))}
               aria-label={t("player.seek")}
-              className="w-full accent-primary"
+              className="w-full accent-primary dark:accent-gold"
             />
             <div className="flex items-center justify-between text-[10px] text-text-muted tabular-nums">
               <span>{fmt(currentTime)}</span>

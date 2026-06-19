@@ -39,10 +39,10 @@ export function DailyVerse() {
 
   return (
     <Card>
-      <h2 className="font-heading font-semibold text-sm mb-3">{t("home.dailyVerse")}</h2>
+      <h2 className="font-heading font-semibold text-small mb-3">{t("home.dailyVerse")}</h2>
       {/* Focusable so keyboard users can scroll the verse when it overflows. */}
       <div
-        className="text-center overflow-x-auto rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+        className="text-center overflow-x-auto rounded"
         tabIndex={0}
         role="group"
         aria-label={t("home.dailyVerse")}
@@ -50,14 +50,14 @@ export function DailyVerse() {
         <TajweedText tajweedHtml={snap.tajweedHtml} size="lg" />
       </div>
       <div className="mt-3 flex items-center justify-between gap-2">
-        <span className="text-xs text-text-muted">
+        <span className="text-micro text-text-muted">
           {meta
             ? formatSurahReference({ en: meta.nameSimple, ar: meta.nameArabic }, surah, ayah, lang)
             : verseKey}
         </span>
         <Link
           href={`/mushaf/page/${pageForSurah(surah)}?v=${surah}:${ayah}`}
-          className="text-xs text-primary dark:text-primary-light hover:underline shrink-0"
+          className="text-micro text-primary dark:text-primary-light hover:underline shrink-0"
         >
           {t("lesson.openInReader")}
         </Link>

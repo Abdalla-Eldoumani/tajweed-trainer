@@ -51,7 +51,7 @@ export default function NoonSakinahPage() {
           title={isAr ? noonData.title_ar : noonData.title_en}
           subtitle={isAr ? noonData.title_en : noonData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (noonData.introduction_ar ?? noonData.introduction) : noonData.introduction}
         </p>
       </div>
@@ -104,10 +104,10 @@ export default function NoonSakinahPage() {
 
       {noonData.summary_table && (
         <Card variant="ornate">
-          <h2 className="font-heading font-semibold mb-3">{t("module.quickReference")}</h2>
-          <p className="text-xs text-text-muted mb-3">{isAr && noonData.summary_table.description_ar ? noonData.summary_table.description_ar : noonData.summary_table.description}</p>
+          <h2 className="font-heading font-semibold text-h2 mb-3">{t("module.quickReference")}</h2>
+          <p className="text-micro text-text-muted mb-3">{isAr && noonData.summary_table.description_ar ? noonData.summary_table.description_ar : noonData.summary_table.description}</p>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-micro">
               <thead>
                 <tr className="border-b border-gold-light/30 dark:border-gold-dark/20">
                   <th className="text-start py-2 pe-4 font-semibold">{t("module.rule")}</th>

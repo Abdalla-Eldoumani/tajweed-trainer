@@ -44,7 +44,7 @@ export function LessonProgress({ moduleId, sections }: LessonProgressProps) {
       className={cn(
         "fixed bottom-20 md:bottom-6 inset-inline-end-4 z-30",
         "inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium shadow-md",
-        "bg-primary text-white hover:bg-primary/90 transition-colors min-h-[44px]",
+        "bg-primary text-on-primary hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep transition-colors min-h-[44px]",
       )}
       aria-label={t("learn.nextUnread")}
     >

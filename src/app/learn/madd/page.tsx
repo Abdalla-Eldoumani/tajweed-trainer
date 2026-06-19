@@ -51,19 +51,19 @@ export default function MaddPage() {
           title={isAr ? maddData.title_ar : maddData.title_en}
           subtitle={isAr ? maddData.title_en : maddData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (maddData.introduction_ar ?? maddData.introduction) : maddData.introduction}
         </p>
       </div>
 
       <Card id="madd-letters" className="scroll-mt-20">
-        <h2 className="font-heading font-semibold mb-3">{t("madd.letters")}</h2>
+        <h2 className="font-heading font-semibold text-h2 mb-3">{t("madd.letters")}</h2>
         <div className="flex flex-wrap justify-center gap-6">
           {maddData.madd_letters.map((letter) => (
             <div key={letter.arabic} className="text-center">
               <ArabicText text={letter.arabic} size="xl" className="block" />
-              <p className="text-xs font-medium mt-1">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</p>
-              <p className="text-[10px] text-text-muted">{isAr ? (letter.condition_ar ?? letter.condition) : letter.condition}</p>
+              <p className="text-micro font-medium mt-1">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</p>
+              <p className="text-micro text-text-muted">{isAr ? (letter.condition_ar ?? letter.condition) : letter.condition}</p>
             </div>
           ))}
         </div>
@@ -85,9 +85,9 @@ export default function MaddPage() {
       </div>
 
       <Card variant="ornate">
-        <h2 className="font-heading font-semibold mb-3">{t("madd.summaryTable")}</h2>
+        <h2 className="font-heading font-semibold text-h2 mb-3">{t("madd.summaryTable")}</h2>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-micro">
             <thead>
               <tr className="border-b border-gold-light/30 dark:border-gold-dark/20">
                 <th className="text-start py-2 pe-4 font-semibold">{t("madd.type")}</th>

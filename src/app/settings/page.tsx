@@ -100,10 +100,21 @@ export default function SettingsPage() {
   const ensurePresent = (list: TranslationResource[], id: number): TranslationResource[] =>
     list.some((r) => r.id === id) ? list : [{ id, name: `#${id}`, authorName: "", languageName: "" }, ...list];
 
+  // One source for both segmented controls (playback speed, font size) so their
+  // state classes stay identical. The active branch mirrors the primary Button:
+  // lapis fill on vellum, gold leaf with navy ink at night.
+  const segChip = (active: boolean) =>
+    cn(
+      "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
+      active
+        ? "bg-primary text-on-primary hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep"
+        : "bg-bg-subtle text-text dark:bg-bg-subtle-dark dark:text-text-dark hover:bg-cream-dark dark:hover:bg-bg-card-dark"
+    );
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{t("settings.title")}</h1>
+        <h1 className="font-heading text-h2 font-bold">{t("settings.title")}</h1>
         <p className="text-sm text-text-muted mt-2">{t("settings.description")}</p>
       </div>
 
@@ -130,7 +141,7 @@ export default function SettingsPage() {
                 value={lang.value}
                 checked={settings.language === lang.value}
                 onChange={() => updateSettings({ language: lang.value })}
-                className="accent-primary"
+                className="accent-primary dark:accent-gold"
                 aria-label={lang.label}
               />
               <span className={cn("text-sm font-medium", lang.value === "ar" && "font-arabic")}>{lang.label}</span>
@@ -182,12 +193,7 @@ export default function SettingsPage() {
             <button
               key={speed}
               onClick={() => updateSettings({ playbackSpeed: speed })}
-              className={cn(
-                "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
-                settings.playbackSpeed === speed
-                  ? "bg-primary text-white"
-                  : "bg-bg-subtle dark:bg-bg-subtle-dark hover:bg-cream-dark dark:hover:bg-[#222D49]"
-              )}
+              className={segChip(settings.playbackSpeed === speed)}
               role="radio"
               aria-checked={settings.playbackSpeed === speed}
               aria-label={`${speed}x speed`}
@@ -210,12 +216,7 @@ export default function SettingsPage() {
             <button
               key={size.value}
               onClick={() => updateSettings({ fontSize: size.value })}
-              className={cn(
-                "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
-                settings.fontSize === size.value
-                  ? "bg-primary text-white"
-                  : "bg-bg-subtle dark:bg-bg-subtle-dark hover:bg-cream-dark dark:hover:bg-[#222D49]"
-              )}
+              className={segChip(settings.fontSize === size.value)}
               role="radio"
               aria-checked={settings.fontSize === size.value}
               aria-label={t(size.labelKey)}
@@ -236,7 +237,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={settings.showTransliteration}
               onChange={(e) => updateSettings({ showTransliteration: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.showTransliteration")}
             />
           </label>
@@ -247,7 +248,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={settings.showTranslation}
               onChange={(e) => updateSettings({ showTranslation: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.showTranslation")}
             />
           </label>
@@ -258,7 +259,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={settings.darkMode}
               onChange={(e) => updateSettings({ darkMode: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.darkMode")}
             />
           </label>
@@ -303,7 +304,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={!!settings.showWordByWord}
               onChange={(e) => updateSettings({ showWordByWord: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.showWordByWord")}
             />
           </label>

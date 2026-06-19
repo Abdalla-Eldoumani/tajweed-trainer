@@ -4,7 +4,12 @@ import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MasterySection } from "@/components/progress/MasterySection";
+import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
+import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
+import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
+import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -21,7 +26,7 @@ export default function ProgressPage() {
   const { progress, moduleProgress, getOverallCompletion, resetProgress } = useProgress();
   const { stats: reviewStatsFn } = useReviews();
   const reviewStats = reviewStatsFn();
-  const { count: memorizedCount } = useMemorization();
+  const { memorized, count: memorizedCount, mounted: memorizedMounted } = useMemorization();
   const { events: analyticsEvents } = useAnalytics();
   const insights = (() => {
     const routeViews: Record<string, number> = {};
@@ -40,6 +45,10 @@ export default function ProgressPage() {
     return { quizStarts, quizFinishes, topRoutes, total: analyticsEvents.length };
   })();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  // Shared so the empty-state CTA in the tracker and the populated surface's own
+  // trigger open the one bulk disclosure; the surface lives inside this section so
+  // the headline and breakdown stay visible and the count visibly moves on confirm.
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   const totalLessons: Record<string, number> = {};
   for (const m of modules) {
@@ -61,14 +70,14 @@ export default function ProgressPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{t("progress.title")}</h1>
+        <SectionHeading as="h2" rule>{t("progress.title")}</SectionHeading>
         <p className="text-sm text-text-muted mt-2">{t("progress.description")}</p>
         <p className="text-xs text-text-muted mt-2">{t("progress.localData")}</p>
       </div>
 
       <Card>
-        <h2 className="font-heading font-semibold mb-3">{t("progress.overall")}</h2>
-        <div className="text-3xl font-bold text-primary dark:text-primary-light mb-2">
+        <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.overall")}</h2>
+        <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums mb-2">
           {overall}%
         </div>
         <ProgressBar value={overall} />
@@ -76,20 +85,20 @@ export default function ProgressPage() {
 
       {reviewStats.total > 0 && (
         <Card>
-          <h2 className="font-heading font-semibold mb-3">{t("review.statsTitle")}</h2>
+          <h2 className="font-heading font-semibold text-h3 mb-3">{t("review.statsTitle")}</h2>
           <div className="flex flex-wrap gap-6 mb-2">
             <div>
-              <div className="text-2xl font-bold text-primary dark:text-primary-light">
+              <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">
                 {reviewStats.total}
               </div>
               <p className="text-xs text-text-muted">{t("review.statsTotal")}</p>
             </div>
             <div>
-              <div className="text-2xl font-bold text-accent">{reviewStats.mastered}</div>
+              <div className="text-h2 font-bold text-accent tabular-nums">{reviewStats.mastered}</div>
               <p className="text-xs text-text-muted">{t("review.statsMastered")}</p>
             </div>
             <div>
-              <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+              <div className="text-h2 font-bold text-red-600 dark:text-red-400 tabular-nums">
                 {reviewStats.due}
               </div>
               <p className="text-xs text-text-muted">{t("review.statsDue")}</p>
@@ -99,35 +108,55 @@ export default function ProgressPage() {
         </Card>
       )}
 
-      {memorizedCount > 0 && (
-        <Card>
-          <h2 className="font-heading font-semibold mb-3">{t("memorize.statsTitle")}</h2>
-          <div className="text-2xl font-bold text-primary dark:text-primary-light mb-1">
-            {memorizedCount}
-          </div>
-          <p className="text-xs text-text-muted mb-1">{t("memorize.statsCount")}</p>
-          <p className="text-xs text-text-muted">{t("memorize.statsHelp")}</p>
-        </Card>
-      )}
+      {/* Memorization tracker: the headline (or the empty state) plus the
+          breakdown and bulk-entry surface when populated. The tracker owns the
+          empty-vs-populated branch; the breakdown and bulk trigger gate on
+          mount + count so they never flash before hydration. The bulk surface
+          lives inside this section so the headline and breakdown stay visible
+          and the count visibly moves the instant a bulk op confirms (the change
+          bus re-renders all three together — no manual refresh). In the empty
+          state the tracker's own CTA opens the same disclosure, so the surface
+          hides its duplicate trigger there. */}
+      <div className="space-y-6">
+        <MemorizationTracker onOpenBulk={() => setBulkOpen(true)} />
+        {memorizedMounted && memorizedCount > 0 && (
+          <Card>
+            <MemorizationBreakdown memorized={memorized} />
+          </Card>
+        )}
+        {memorizedMounted && (
+          <BulkMemorizationEntry
+            open={bulkOpen}
+            onOpenChange={setBulkOpen}
+            showTrigger={memorizedCount > 0}
+          />
+        )}
+        {/* Review entry lives inside the tracker section so the user goes from
+            "here's what I've memorized" straight into "test me on it" (F1). Shown
+            only when something is memorized; the session reuses the Leitner
+            machinery over the separate memorizationReviews keyspace and opens in
+            place. The component owns its own due-vs-empty branch. */}
+        {memorizedMounted && memorizedCount > 0 && <MemorizedReview />}
+      </div>
 
       <Card>
-        <h2 className="font-heading font-semibold mb-3">{t("progress.streak")}</h2>
+        <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.streak")}</h2>
         <div className="flex gap-6">
           <div>
-            <div className="text-2xl font-bold text-primary dark:text-primary-light">
+            <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">
               {progress.streaks.currentStreak}
             </div>
             <p className="text-xs text-text-muted">{t("progress.current")}</p>
           </div>
           <div>
-            <div className="text-2xl font-bold text-accent">{progress.streaks.longestStreak}</div>
+            <div className="text-h2 font-bold text-accent tabular-nums">{progress.streaks.longestStreak}</div>
             <p className="text-xs text-text-muted">{t("progress.longest")}</p>
           </div>
         </div>
       </Card>
 
       <div>
-        <h2 className="font-heading font-semibold mb-3">{t("progress.moduleProgress")}</h2>
+        <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.moduleProgress")}</h2>
         <div className="space-y-3">
           {modules.map((module) => {
             const mp = moduleProgress(module.id);
@@ -138,7 +167,7 @@ export default function ProgressPage() {
               <Card key={module.id}>
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <h3 className="text-sm font-medium">
+                    <h3 className="font-heading font-semibold text-h3">
                       {isAr ? module.title_ar : module.title_en}
                     </h3>
                     {!isAr && (
@@ -169,7 +198,7 @@ export default function ProgressPage() {
       {/* Quiz History */}
       {Object.values(progress.modules).some((m) => m.quizScores.length > 0) && (
         <div>
-          <h2 className="font-heading font-semibold mb-3">{t("progress.quizHistory")}</h2>
+          <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.quizHistory")}</h2>
           <Card>
             <div className="space-y-2">
               {Object.entries(progress.modules)
@@ -192,16 +221,16 @@ export default function ProgressPage() {
 
       {insights.total > 0 && (
         <Card>
-          <h2 className="font-heading font-semibold mb-3">{t("insights.title")}</h2>
+          <h2 className="font-heading font-semibold text-h3 mb-3">{t("insights.title")}</h2>
           <div className="flex flex-wrap gap-6 mb-3">
             <div>
-              <div className="text-2xl font-bold text-primary dark:text-primary-light">
+              <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">
                 {insights.quizStarts}
               </div>
               <p className="text-xs text-text-muted">{t("insights.quizStarts")}</p>
             </div>
             <div>
-              <div className="text-2xl font-bold text-accent">{insights.quizFinishes}</div>
+              <div className="text-h2 font-bold text-accent tabular-nums">{insights.quizFinishes}</div>
               <p className="text-xs text-text-muted">{t("insights.quizFinishes")}</p>
             </div>
           </div>
@@ -224,7 +253,7 @@ export default function ProgressPage() {
 
       {/* Reset Progress */}
       <Card>
-        <h2 className="font-heading font-semibold mb-2">{t("progress.resetProgress")}</h2>
+        <h2 className="font-heading font-semibold text-h3 mb-2">{t("progress.resetProgress")}</h2>
         <p className="text-xs text-text-muted mb-3">
           {t("progress.resetDescription")}
         </p>

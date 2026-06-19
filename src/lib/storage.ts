@@ -16,7 +16,7 @@ import { emitProgressChanged } from "./progress-events";
 
 export const STORAGE_KEY = "tajweed-trainer-progress";
 
-const DEFAULT_SETTINGS: UserSettings = {
+export const DEFAULT_SETTINGS: UserSettings = {
   reciter: DEFAULT_RECITER_ID,
   playbackSpeed: 1.0,
   fontSize: "normal",
@@ -42,10 +42,12 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   },
   reviews: {},
   memorizedVerses: [],
+  memorizationReviews: {},
   readSections: {},
   analytics: [],
   bookmarks: [],
   lastRead: null,
+  seenOnboarding: false,
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -178,7 +180,7 @@ function sanitizeModule(input: unknown): ModuleProgress {
           Number.isFinite(q.score) &&
           typeof q.date === "string",
         )
-        .slice(0, MAX_QUIZ_SCORES_PER_MODULE)
+        .slice(-MAX_QUIZ_SCORES_PER_MODULE)
     : [];
   const lastAccessed = typeof input.lastAccessed === "string" ? input.lastAccessed : "";
   return { lessonsCompleted, quizScores, lastAccessed };
@@ -202,6 +204,23 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
     if (typeof id !== "string" || id.length === 0 || id.length >= 200) continue;
     const review = sanitizeReview(value);
     if (review) out[id] = review;
+  }
+  return out;
+}
+
+// Memorized-verse review state. Mirrors sanitizeReviews but the key is a
+// verseKey (not a rule-quiz questionId), so it validates against
+// VERSE_KEY_PATTERN and caps at MAX_MEMORIZED — a separate keyspace that can
+// never collide with `reviews`. A stored object without this field reads back
+// as {} (lossless migration).
+function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState> {
+  if (!isObject(input)) return {};
+  const out: Record<string, ReviewState> = {};
+  const entries = Object.entries(input).slice(0, MAX_MEMORIZED);
+  for (const [verseKey, value] of entries) {
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    const review = sanitizeReview(value);
+    if (review) out[verseKey] = review;
   }
   return out;
 }
@@ -287,7 +306,7 @@ function sanitizeLastRead(input: unknown): VerseLocation | null {
   return { verseKey: input.verseKey, page, ts };
 }
 
-function sanitizeProgress(input: unknown): TajweedProgress {
+export function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return cloneDefaultProgress();
   const modules: Record<string, ModuleProgress> = {};
   if (isObject(input.modules)) {
@@ -311,11 +330,13 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     streaks,
     reviews: sanitizeReviews(input.reviews),
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
+    memorizationReviews: sanitizeMemorizationReviews(input.memorizationReviews),
     readSections: sanitizeReadSections(input.readSections),
     analytics: sanitizeAnalytics(input.analytics),
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
     lastRead: sanitizeLastRead(input.lastRead),
+    seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
   };
 }
 
@@ -374,6 +395,20 @@ export function setPlayerMinimized(minimized: boolean): void {
   setProgress(progress);
 }
 
+// First-launch onboarding seen flag. Lives on the consolidated progress object
+// (not an ad-hoc key) so export / import / reset cover it; the default-false in
+// DEFAULT_PROGRESS makes resetProgress re-show onboarding. The setter writes
+// through setProgress, which fires the change bus.
+export function getOnboardingSeen(): boolean {
+  return getProgress().seenOnboarding ?? false;
+}
+
+export function setOnboardingSeen(value: boolean): void {
+  const progress = getProgress();
+  progress.seenOnboarding = value;
+  setProgress(progress);
+}
+
 export function getSettings(): UserSettings {
   return getProgress().settings;
 }
@@ -417,6 +452,22 @@ export function setReview(questionId: string, state: ReviewState): void {
   if (!isBrowser()) return;
   const progress = getProgress();
   progress.reviews[questionId] = state;
+  setProgress(progress);
+}
+
+// Memorized-verse review funnel: mirrors getReviews/setReview but over the
+// separate memorizationReviews map (keyed by verseKey, never colliding with the
+// rule-quiz reviews keyspace). The key is validated so a tampered call can't
+// write a non-verseKey entry.
+export function getMemorizationReviews(): Record<string, ReviewState> {
+  return getProgress().memorizationReviews;
+}
+
+export function setMemorizationReview(verseKey: string, state: ReviewState): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  progress.memorizationReviews[verseKey] = state;
   setProgress(progress);
 }
 
@@ -496,6 +547,32 @@ export function toggleMemorizedVerse(verseKey: string): boolean {
   return nowMemorized;
 }
 
+// Batched mark/unmark over a list of verseKeys: one read, one Set mutation
+// across the whole list, one write (so the change bus fires exactly once
+// regardless of list length — a whole surah is one write, not 286). Set
+// semantics give union for mark (overlapping marks never double count) and
+// difference for unmark. The 6236 cap is checked inside the loop and invalid
+// keys are skipped. Returns the new memorized count so the caller can update
+// without re-reading. Mirrors toggleMemorizedVerse; the single-verse helper
+// stays for per-verse toggles.
+export function setMemorizedVerses(verseKeys: string[], memorize: boolean): number {
+  if (!isBrowser()) return 0;
+  const progress = getProgress();
+  const set = new Set(progress.memorizedVerses);
+  for (const key of verseKeys) {
+    if (!VERSE_KEY_PATTERN.test(key)) continue;
+    if (memorize) {
+      if (set.size >= MAX_MEMORIZED && !set.has(key)) continue;
+      set.add(key);
+    } else {
+      set.delete(key);
+    }
+  }
+  progress.memorizedVerses = Array.from(set);
+  setProgress(progress);
+  return progress.memorizedVerses.length;
+}
+
 export function getBookmarks(): string[] {
   return getProgress().bookmarks;
 }
@@ -562,14 +639,14 @@ export function resetProgress(): void {
 
 export function updateStreak(): void {
   const progress = getProgress();
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString("en-CA");
   const lastDate = progress.streaks.lastPracticeDate;
 
   if (lastDate === today) return;
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().split("T")[0];
+  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
   if (lastDate === yesterdayStr) {
     progress.streaks.currentStreak += 1;

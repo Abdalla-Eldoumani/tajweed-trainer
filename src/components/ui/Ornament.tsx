@@ -94,7 +94,7 @@ export function MedallionOrnament({ className }: OrnamentProps) {
 export function OrnamentalDivider({ className }: OrnamentProps) {
   return (
     <div className={cn("flex items-center gap-3 text-gold dark:text-gold-light", className)} aria-hidden="true">
-      <span className="flex-1 h-px bg-gradient-to-r from-transparent via-current to-current opacity-60" />
+      <span className="flex-1 h-px bg-current opacity-40" />
       <svg viewBox="0 0 28 12" width="28" height="12" fill="none">
         <path
           d="M14 1 L17 5 L23 6 L17 7 L14 11 L11 7 L5 6 L11 5 Z"
@@ -104,7 +104,7 @@ export function OrnamentalDivider({ className }: OrnamentProps) {
           strokeWidth="0.6"
         />
       </svg>
-      <span className="flex-1 h-px bg-gradient-to-l from-transparent via-current to-current opacity-60" />
+      <span className="flex-1 h-px bg-current opacity-40" />
     </div>
   );
 }

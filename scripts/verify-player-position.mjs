@@ -11,6 +11,8 @@ import {
   clampPlayerPosition,
   reservedBottomFor,
   sanitizePlayerPosition,
+  sheetBottomOffset,
+  keyboardBottomOffset,
   BOTTOM_NAV_HEIGHT,
   MOBILE_BREAKPOINT,
 } from "../src/lib/player-position.ts";
@@ -112,6 +114,48 @@ record("sanitize rejects malformed input", allRejected, `${bad.length} cases`);
     s ? `-> (${s.x},${s.y})` : "null",
   );
 }
+
+// sheetBottomOffset: the v0.6.0 bottom-sheet reserves the tab-bar strip only in
+// the peek state below 768px; the expanded sheet (with a dismiss) reserves
+// nothing, and any width >= 768 reserves nothing (no tab bar there).
+record(
+  "sheet peek below 768 reserves the tab bar",
+  sheetBottomOffset({ width: 375, height: 667 }, false) === BOTTOM_NAV_HEIGHT,
+  `got ${sheetBottomOffset({ width: 375, height: 667 }, false)}`,
+);
+record(
+  "sheet expanded below 768 reserves nothing (may cover the bar)",
+  sheetBottomOffset({ width: 375, height: 667 }, true) === 0,
+);
+record(
+  "sheet peek in the 768-1023 band reserves nothing (sidebar, no tab bar)",
+  sheetBottomOffset({ width: 900, height: 700 }, false) === 0,
+);
+record(
+  "sheet peek exactly at 768 reserves nothing (md boundary is exclusive)",
+  sheetBottomOffset({ width: MOBILE_BREAKPOINT, height: 1024 }, false) === 0,
+);
+
+// keyboardBottomOffset: lift the sheet to the visual viewport's bottom when a
+// keyboard shrinks it; clamp at 0 when the visual viewport is full (no keyboard).
+record(
+  "keyboard offset lifts the sheet by the hidden strip",
+  keyboardBottomOffset(800, 500, 0) === 300,
+  `got ${keyboardBottomOffset(800, 500, 0)}`,
+);
+record(
+  "keyboard offset accounts for a visual-viewport top offset",
+  keyboardBottomOffset(800, 500, 40) === 260,
+  `got ${keyboardBottomOffset(800, 500, 40)}`,
+);
+record(
+  "keyboard offset is 0 when the visual viewport fills the layout viewport",
+  keyboardBottomOffset(800, 800, 0) === 0,
+);
+record(
+  "keyboard offset never goes negative (larger visual viewport clamps to 0)",
+  keyboardBottomOffset(800, 900, 0) === 0,
+);
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);

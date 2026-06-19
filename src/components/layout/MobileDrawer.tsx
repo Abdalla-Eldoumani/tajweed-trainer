@@ -8,6 +8,7 @@ import { MODULES, NAV_ITEMS, ChevronIcon } from "./nav-data";
 import { useTranslation } from "@/lib/i18n";
 import { useProgress } from "@/hooks/useProgress";
 import { getLockedModuleIds } from "@/lib/module-unlock";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 
 const LockIndicator = ({ className }: { className?: string }) => (
   <svg
@@ -55,16 +56,20 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
     if (open) {
       openerRef.current = (document.activeElement as HTMLElement) ?? null;
       closeRef.current?.focus();
-      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "";
       // Return focus to the opener (the hamburger button) when closing.
       openerRef.current?.focus?.();
       openerRef.current = null;
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+  }, [open]);
+
+  // Body-scroll lock via the shared ref-counted source, so a stacked overlay
+  // (e.g. the quick-jump palette over the drawer) keeps the body locked until
+  // the last one closes. Exactly one lock per open, released on close/unmount.
+  useEffect(() => {
+    if (!open) return;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
   }, [open]);
 
   // Keep Tab focus inside the open drawer (it is an aria-modal dialog). Wrap
@@ -117,7 +122,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         // `inert` keeps its links out of the tab order and a11y tree until open.
         inert={!open}
         className={cn(
-          "fixed top-0 bottom-0 w-[280px] z-50 bg-[var(--margin-bg)] text-[var(--margin-text)] flex flex-col transition-transform duration-300 ease-in-out",
+          "fixed top-0 bottom-0 w-[280px] z-50 bg-[var(--margin-bg)] text-[var(--margin-text)] border-e border-[var(--margin-line)] flex flex-col transition-transform duration-300 ease-in-out",
           isAr ? "right-0" : "left-0",
           open
             ? "translate-x-0"
@@ -164,6 +169,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                 {item.expandable ? (
                   <button
                     onClick={() => setLearnExpanded(!learnExpanded)}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors w-full min-h-[44px]",
                       isActive
@@ -179,6 +185,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                   <Link
                     href={item.href}
                     onClick={onClose}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors min-h-[44px]",
                       isActive

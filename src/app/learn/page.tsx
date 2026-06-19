@@ -16,8 +16,8 @@ export default function LearnPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="font-heading text-2xl font-bold">{t("learn.title")}</h1>
-        <p className="text-sm text-text-muted mt-2">
+        <h1 className="font-heading text-h2 font-semibold">{t("learn.title")}</h1>
+        <p className="text-small text-text-muted mt-2">
           {t("learn.description")}
         </p>
       </div>

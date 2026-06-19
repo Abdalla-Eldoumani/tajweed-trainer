@@ -55,21 +55,21 @@ export const ModuleCard = memo(function ModuleCard({ module, completedLessons, l
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-gold-dark dark:text-gold-light font-medium">
+            <span className="text-micro text-gold-dark dark:text-gold-light font-medium">
               {module.order}
             </span>
           </div>
 
-          <h2 className="font-heading font-semibold text-sm mb-0.5">
+          <h2 className="font-heading font-semibold text-small mb-0.5">
             {title}
           </h2>
           {isAr ? (
-            <p className="text-xs text-text-muted">{subtitle}</p>
+            <p className="text-micro text-text-muted">{subtitle}</p>
           ) : (
             <ArabicText text={subtitle} size="sm" className="text-text-muted" />
           )}
 
-          <p className="text-xs text-text-muted mt-2 line-clamp-2">
+          <p className="text-micro text-text-muted mt-2 line-clamp-2">
             {desc}
           </p>
 
@@ -77,7 +77,7 @@ export const ModuleCard = memo(function ModuleCard({ module, completedLessons, l
             <ProgressBar value={completedLessons} max={module.lessons_count} showLabel />
           </div>
 
-          <div className="flex items-center gap-3 mt-2 text-xs text-text-muted">
+          <div className="flex items-center gap-3 mt-2 text-micro text-text-muted">
             <span>{module.lessons_count} {t("learn.lessons")}</span>
           </div>
         </div>

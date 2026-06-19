@@ -1,23 +1,13 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from "react";
-import { getSettings, setSettings as saveSettings } from "@/lib/storage";
+import { DEFAULT_SETTINGS, getSettings, setSettings as saveSettings } from "@/lib/storage";
 import type { UserSettings } from "@/lib/types";
 
 interface SettingsContextValue {
   settings: UserSettings;
   updateSettings: (updates: Partial<UserSettings>) => void;
 }
-
-const DEFAULT_SETTINGS: UserSettings = {
-  reciter: "husary",
-  playbackSpeed: 1.0,
-  fontSize: "normal",
-  darkMode: false,
-  showTransliteration: true,
-  showTranslation: true,
-  language: "en",
-};
 
 const SettingsContext = createContext<SettingsContextValue>({
   settings: DEFAULT_SETTINGS,

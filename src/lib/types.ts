@@ -456,6 +456,10 @@ export interface TajweedProgress {
   reviews: Record<string, ReviewState>;
   // Stable verseKeys ("surah:ayah") the user has marked memorized.
   memorizedVerses: string[];
+  // Per-verseKey Leitner state for memorized-verse review. A separate keyspace
+  // from `reviews` (keyed by rule-quiz questionId) so a verseKey never collides
+  // with a questionId and mixes two unrelated review timelines.
+  memorizationReviews: Record<string, ReviewState>;
   // moduleId -> set of section anchor slugs the user has scrolled past.
   readSections: Record<string, string[]>;
   analytics: AnalyticsEvent[];
@@ -465,6 +469,9 @@ export interface TajweedProgress {
   // Kept inside this consolidated model so export / import / reset cover them.
   bookmarks: string[];
   lastRead?: VerseLocation | null;
+  // Whether the first-launch onboarding has been shown and dismissed. Cleared by
+  // reset so onboarding re-shows.
+  seenOnboarding: boolean;
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".

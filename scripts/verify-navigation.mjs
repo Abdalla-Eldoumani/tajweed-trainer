@@ -49,6 +49,27 @@ record("Juz table has 30 start pages", juzPages.length === 30, String(juzPages.l
 record("Juz start pages match the standard mushaf", JSON.stringify(juzPages) === JSON.stringify(STANDARD_JUZ));
 record("Reader wires the juz jump", /pageForJuz\(/.test(reader));
 
+// Dynamic in-reader index (Phase 6): the surah and juz selectors are CONTROLLED
+// readouts of the open page, not empty jump-pickers. They read from server
+// props so a deep-linked reload paints correct values on first paint.
+record("Surah selector is controlled by the current page", /value=\{currentSurahValue/.test(reader));
+record("Juz selector is controlled by the page juz", /value=\{currentJuzValue\}/.test(reader) && /currentJuzValue\s*=\s*clampJuz\(data\.juzNumber\)/.test(reader));
+record("Surah jump routes through pageForSurah", /pageForSurah\(/.test(reader));
+// The two converted selectors must not carry the old empty placeholder option
+// (the index labels). The drill select keeps its own `drillOff` empty option,
+// so assert specifically against the surah/juz index placeholders.
+record(
+  "Surah selector dropped its empty placeholder",
+  !/<option value="">\{t\("mushaf\.surahIndex"\)\}<\/option>/.test(reader),
+);
+record(
+  "Juz selector dropped its empty placeholder",
+  !/<option value="">\{t\("mushaf\.juzIndex"\)\}<\/option>/.test(reader),
+);
+// The reader no longer navigates via the surah redirect route; the surah
+// selector targets the page funnel directly so all three jumps converge.
+record("Surah selector no longer targets the /mushaf/surah redirect", !/\/mushaf\/surah\//.test(reader));
+
 // The new model is actually reachable from the UI (not dead code).
 record("Reader wires verse bookmarks", /useBookmarks/.test(reader));
 record("Mushaf index lists verse bookmarks", /useBookmarks/.test(mIndex));

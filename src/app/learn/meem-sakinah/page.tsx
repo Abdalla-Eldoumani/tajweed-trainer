@@ -45,7 +45,7 @@ export default function MeemSakinahPage() {
           title={isAr ? meemData.title_ar : meemData.title_en}
           subtitle={isAr ? meemData.title_en : meemData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (meemData.introduction_ar ?? meemData.introduction) : meemData.introduction}
         </p>
       </div>

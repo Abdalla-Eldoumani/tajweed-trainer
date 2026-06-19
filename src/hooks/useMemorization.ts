@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getProgress, toggleMemorizedVerse } from "@/lib/storage";
+import { getProgress, toggleMemorizedVerse, setMemorizedVerses } from "@/lib/storage";
 
 // Tracks which verseKeys ("surah:ayah") the user has marked memorized.
 // Empty initial state for SSR/CSR parity; effect populates on mount.
@@ -30,10 +30,20 @@ export function useMemorization() {
     return nowMemorized;
   }, []);
 
+  // Bulk mark or unmark a list of verseKeys through the single batched store
+  // write (one localStorage write, one change-bus emit), then re-seed the local
+  // Set from the store in one update so it reflects exactly what was persisted
+  // (the store applies key validation and the 6236 cap) — never a per-verse loop.
+  const setMany = useCallback((verseKeys: string[], memorize: boolean) => {
+    const count = setMemorizedVerses(verseKeys, memorize);
+    setMemorized(new Set(getProgress().memorizedVerses));
+    return count;
+  }, []);
+
   const clear = useCallback(() => {
-    // Iterate a copy so we don't mutate while toggling.
-    const list = Array.from(memorized);
-    for (const verseKey of list) toggleMemorizedVerse(verseKey);
+    // Route the full clear through the one batched write instead of toggling
+    // each verse (which would be one write and one emit per verse).
+    setMemorizedVerses(Array.from(memorized), false);
     setMemorized(new Set());
   }, [memorized]);
 
@@ -41,6 +51,7 @@ export function useMemorization() {
     memorized,
     isMemorized,
     toggle,
+    setMany,
     clear,
     count: memorized.size,
     mounted,

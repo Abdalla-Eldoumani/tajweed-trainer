@@ -22,7 +22,7 @@ export const LetterCard = memo(function LetterCard({ arabic, nameEn, nameAr, des
     <Card
       hover={!!onClick}
       onClick={onClick}
-      className={cn("text-center p-4", selected && "ring-2 ring-primary dark:ring-primary-light")}
+      className={cn("text-center p-4", selected && "ring-2 ring-gold")}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       aria-label={`Letter ${nameEn}`}
@@ -34,8 +34,8 @@ export const LetterCard = memo(function LetterCard({ arabic, nameEn, nameAr, des
       } : undefined}
     >
       <ArabicText text={arabic} size="xl" className="block mb-1" />
-      <p className="text-xs font-medium">{displayName}</p>
-      {description && <p className="text-[10px] text-text-muted mt-1">{description}</p>}
+      <p className="text-micro font-medium">{displayName}</p>
+      {description && <p className="text-micro text-text-muted mt-1">{description}</p>}
     </Card>
   );
 });

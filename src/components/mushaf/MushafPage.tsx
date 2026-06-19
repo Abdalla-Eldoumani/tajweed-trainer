@@ -3,13 +3,31 @@
 import { Fragment, useEffect, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useMemorization } from "@/hooks/useMemorization";
+import { useVerseSelection } from "./useVerseSelection";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
+import { prefersReducedMotion } from "@/lib/reduced-motion";
 import { TajweedText } from "@/components/ui/TajweedText";
 import { MushafFrame } from "./MushafFrame";
 import { SurahCartouche } from "./SurahCartouche";
 import { BismillahLine } from "./BismillahLine";
 import type { MushafPageData } from "@/lib/types";
+
+// A plus glyph for "add to selection" and a check for "added"; the add control
+// is a third, distinct per-verse affordance (after the play tap and the details
+// control) so building a revision set is deliberate and never the plain tap.
+const PlusIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
 
 interface MushafPageProps {
   data: MushafPageData;
@@ -18,13 +36,20 @@ interface MushafPageProps {
   memorizationMode?: boolean;
   // "surah:ayah" to scroll into view on mount (a lesson "open in reader" link).
   targetVerseKey?: string | null;
-  // Opens the reading-depth panel (translation, tafsir, word-by-word) for a verse.
+  // A plain tap on a verse plays it (single mode) and surfaces the playback
+  // surface. This is the primary verse action now; the old tap-opens-panel
+  // behavior moved to the dedicated details control below.
+  onPlayVerse?: (verseKey: string) => void;
+  // Opens the reading-depth panel (translation, tafsir, word-by-word) for a
+  // verse. Reached from a distinct, touch-discoverable per-verse details
+  // control, never the plain tap, so a tap is never ambiguous.
   onSelectVerse?: (verseKey: string) => void;
 }
 
-export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onSelectVerse }: MushafPageProps) {
+export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
+  const { isSelected, toggle: toggleSelected } = useVerseSelection();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
   // Subscribe to the verse the global player is on so the page can mark it while
@@ -39,11 +64,11 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
   useEffect(() => {
     if (!targetVerseKey) return;
     const el = document.querySelector(`[data-verse-key="${CSS.escape(targetVerseKey)}"]`);
-    if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (el) el.scrollIntoView({ block: "center", behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }, [targetVerseKey, data.pageNumber]);
 
-  // Tapping a verse opens its reading-depth panel (translation, tafsir,
-  // word-by-word); the play / bookmark / memorize actions live in that panel.
+  // The recall Reveal pill temporarily un-blurs one memorized verse; it stops
+  // propagation so it never also fires the verse's play tap.
   const handleReveal = (e: React.MouseEvent, verseKey: string) => {
     e.stopPropagation();
     setRevealed((prev) => {
@@ -78,6 +103,7 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
             const memorized = mounted && isMemorized(v.verseKey);
             const hideText = memorizationMode && memorized && !revealed.has(v.verseKey);
             const isPlaying = v.verseKey === playingKey;
+            const selected = isSelected(v.verseKey);
 
             return (
               <Fragment key={v.verseKey}>
@@ -90,10 +116,15 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                 <span data-verse-key={v.verseKey} className="inline-flex items-baseline relative">
                   <button
                     type="button"
-                    onClick={() => onSelectVerse?.(v.verseKey)}
-                    aria-label={`${t("mushaf.verseDetails")} (${v.surah}:${v.ayah})`}
+                    onClick={() => onPlayVerse?.(v.verseKey)}
+                    aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
                     aria-current={isPlaying ? "true" : undefined}
-                    className={cn("mushaf-verse", hideText && "select-none", isPlaying && "mushaf-verse-playing")}
+                    className={cn(
+                      "mushaf-verse",
+                      hideText && "select-none",
+                      isPlaying && "mushaf-verse-playing",
+                      selected && "mushaf-verse-selected",
+                    )}
                   >
                     <TajweedText
                       tajweedHtml={v.tajweedHtml}
@@ -102,6 +133,52 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                         hideText && "blur-md opacity-60",
                       )}
                     />{" "}
+                  </button>
+                  {/* A distinct, always-present details control opens the
+                      reading-depth panel (translation, tafsir, verse actions).
+                      It is the touch-discoverable replacement for the old
+                      tap-opens-panel behavior; stopPropagation keeps it from
+                      also firing the verse's play tap. Quiet glyph inline with
+                      the ayah marker, padded to a 32px+ hit area. */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectVerse?.(v.verseKey);
+                    }}
+                    aria-label={`${t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
+                    title={t("mushaf.verseActions")}
+                    className="mushaf-verse-details ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <circle cx="5" cy="12" r="1.8" />
+                      <circle cx="12" cy="12" r="1.8" />
+                      <circle cx="19" cy="12" r="1.8" />
+                    </svg>
+                  </button>
+                  {/* Add-to-selection: a distinct, always-present control that
+                      toggles the verse in the multi-verse set. Separate from the
+                      plain play tap and the details control, so building a
+                      revision queue is deliberate and a tap is never ambiguous.
+                      stopPropagation keeps it from also firing the verse's play
+                      tap; the aria-label flips with state. */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSelected(v.verseKey);
+                    }}
+                    aria-label={`${selected ? t("player.removeFromSelection") : t("player.addToSelection")} (${v.surah}:${v.ayah})`}
+                    aria-pressed={selected}
+                    title={selected ? t("player.removeFromSelection") : t("player.addToSelection")}
+                    className={cn(
+                      "mushaf-verse-add ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
+                      selected
+                        ? "text-primary dark:text-primary-light bg-primary/10"
+                        : "text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
+                    )}
+                  >
+                    {selected ? <CheckIcon /> : <PlusIcon />}
                   </button>
                   {hideText && (
                     <button

@@ -58,7 +58,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
             </div>
             <Link
               href={`/mushaf/page/${lastPage}`}
-              className="px-4 py-2 min-h-[44px] inline-flex items-center rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90"
+              className="px-4 py-2 min-h-[44px] inline-flex items-center rounded-lg bg-primary text-on-primary text-sm font-medium hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep"
             >
               {t("mushaf.openReader")}
             </Link>

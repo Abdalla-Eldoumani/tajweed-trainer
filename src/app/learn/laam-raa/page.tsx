@@ -48,31 +48,31 @@ export default function LaamRaaPage() {
           title={isAr ? laamRaaData.title_ar : laamRaaData.title_en}
           subtitle={isAr ? laamRaaData.title_en : laamRaaData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (laamRaaData.introduction_ar ?? laamRaaData.introduction ?? t("module.laam-raa.intro")) : (laamRaaData.introduction ?? t("module.laam-raa.intro"))}
         </p>
       </div>
 
       {/* Laam Shamsiyyah/Qamariyyah */}
       <Card id="laam-shamsiyyah-qamariyyah" className="scroll-mt-20">
-        <h2 className="font-heading font-semibold">{isAr ? laamSection.title_ar : laamSection.title_en}</h2>
+        <h2 className="font-heading font-semibold text-h2">{isAr ? laamSection.title_ar : laamSection.title_en}</h2>
         {!isAr && <ArabicText text={laamSection.title_ar} size="sm" className="text-text-muted" />}
-        <p className="text-sm text-text-muted mt-2">{isAr && laamSection.description_ar ? laamSection.description_ar : laamSection.description}</p>
+        <p className="text-small text-text-muted mt-2">{isAr && laamSection.description_ar ? laamSection.description_ar : laamSection.description}</p>
 
         {laamSection.subtypes?.map((st) => (
           <div key={st.id} id={st.id} className="mt-4 p-4 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark scroll-mt-20">
-            <h3 className="font-heading font-semibold text-sm">{isAr ? st.title_ar : st.title_en}</h3>
+            <h3 className="font-heading font-semibold text-small">{isAr ? st.title_ar : st.title_en}</h3>
             {!isAr && <ArabicText text={st.title_ar} size="sm" className="text-text-muted" />}
-            <p className="text-xs text-text-muted mt-2">{isAr && st.description_ar ? st.description_ar : st.description}</p>
+            <p className="text-micro text-text-muted mt-2">{isAr && st.description_ar ? st.description_ar : st.description}</p>
 
             <div className="mt-3">
-              <p className="text-xs font-medium mb-1">{t("module.letters")} ({st.letter_count}):</p>
+              <p className="text-micro font-medium mb-1">{t("module.letters")} ({st.letter_count}):</p>
               <ArabicText text={st.letters} size="sm" />
             </div>
 
             {st.mnemonic_ar && (
               <div className="mt-2 p-2 rounded bg-accent/10">
-                <p className="text-[10px] font-semibold text-text-muted">{t("module.mnemonic")}:</p>
+                <p className="text-micro font-semibold text-text-muted">{t("module.mnemonic")}:</p>
                 <ArabicText text={st.mnemonic_ar} size="sm" />
               </div>
             )}
@@ -88,14 +88,14 @@ export default function LaamRaaPage() {
 
       {/* Laam of Allah */}
       <Card id="laam-lafzul-jalalah" className="scroll-mt-20">
-        <h2 className="font-heading font-semibold">{isAr ? laamAllahSection.title_ar : laamAllahSection.title_en}</h2>
+        <h2 className="font-heading font-semibold text-h2">{isAr ? laamAllahSection.title_ar : laamAllahSection.title_en}</h2>
         {!isAr && <ArabicText text={laamAllahSection.title_ar} size="sm" className="text-text-muted" />}
-        <p className="text-sm text-text-muted mt-2">{isAr && laamAllahSection.description_ar ? laamAllahSection.description_ar : laamAllahSection.description}</p>
+        <p className="text-small text-text-muted mt-2">{isAr && laamAllahSection.description_ar ? laamAllahSection.description_ar : laamAllahSection.description}</p>
 
         {laamAllahSection.rules?.map((rule, i) => (
           <div key={i} className="mt-3 p-3 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark">
-            <p className="text-xs font-medium">{isAr && rule.condition_ar ? rule.condition_ar : rule.condition}</p>
-            <p className="text-xs text-primary dark:text-primary-light mt-1">{isAr && rule.result_ar ? rule.result_ar : rule.result}</p>
+            <p className="text-micro font-medium">{isAr && rule.condition_ar ? rule.condition_ar : rule.condition}</p>
+            <p className="text-micro text-primary dark:text-primary-light mt-1">{isAr && rule.result_ar ? rule.result_ar : rule.result}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {rule.examples.map((ex, j) => (
                 <span key={j} className="px-2 py-1 rounded bg-bg dark:bg-bg-dark">
@@ -109,16 +109,16 @@ export default function LaamRaaPage() {
 
       {/* Raa Rules */}
       <Card id="raa-rules" className="scroll-mt-20">
-        <h2 className="font-heading font-semibold">{isAr ? raaSection.title_ar : raaSection.title_en}</h2>
+        <h2 className="font-heading font-semibold text-h2">{isAr ? raaSection.title_ar : raaSection.title_en}</h2>
         {!isAr && <ArabicText text={raaSection.title_ar} size="sm" className="text-text-muted" />}
-        <p className="text-sm text-text-muted mt-2">{isAr && raaSection.description_ar ? raaSection.description_ar : raaSection.description}</p>
+        <p className="text-small text-text-muted mt-2">{isAr && raaSection.description_ar ? raaSection.description_ar : raaSection.description}</p>
 
         {raaSection.tafkheem_cases && (
           <div className="mt-4">
-            <h3 className="text-xs font-semibold mb-2">{t("laamRaa.heavyRaa")}</h3>
+            <h3 className="text-micro font-semibold mb-2">{t("laamRaa.heavyRaa")}</h3>
             <div className="space-y-2">
               {raaSection.tafkheem_cases.map((c, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs p-2 rounded bg-bg-subtle dark:bg-bg-subtle-dark">
+                <div key={i} className="flex items-start gap-2 text-micro p-2 rounded bg-bg-subtle dark:bg-bg-subtle-dark">
                   <span className="text-primary dark:text-primary-light shrink-0 font-bold">&uarr;</span>
                   <div>
                     <p className="font-medium">{isAr && c.condition_ar ? c.condition_ar : c.condition}</p>
@@ -134,10 +134,10 @@ export default function LaamRaaPage() {
 
         {raaSection.tarqeeq_cases && (
           <div className="mt-4">
-            <h3 className="text-xs font-semibold mb-2">{t("laamRaa.lightRaa")}</h3>
+            <h3 className="text-micro font-semibold mb-2">{t("laamRaa.lightRaa")}</h3>
             <div className="space-y-2">
               {raaSection.tarqeeq_cases.map((c, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs p-2 rounded bg-bg-subtle dark:bg-bg-subtle-dark">
+                <div key={i} className="flex items-start gap-2 text-micro p-2 rounded bg-bg-subtle dark:bg-bg-subtle-dark">
                   <span className="text-blue-500 shrink-0 font-bold">&darr;</span>
                   <div>
                     <p className="font-medium">{isAr && c.condition_ar ? c.condition_ar : c.condition}</p>
