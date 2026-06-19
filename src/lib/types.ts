@@ -335,29 +335,11 @@ export interface WaqfData {
   verified: true;
 }
 
-export interface GlossaryTerm {
-  term_ar: string;
-  term_en: string;
-  definition: string;
-}
-
-export interface GlossaryData {
-  id: string;
-  title_en: string;
-  title_ar: string;
-  terms: GlossaryTerm[];
-  verified: true;
-}
-
 // Reciter id is the Quran.com recitation id as a string (for example "7" =
-// Alafasy, "12" = Al-Husary muallim). Validated against RECITER_ID_PATTERN and
-// the RECITATIONS list in src/lib/reciters.ts; legacy alquran.cloud identifiers
-// (husary, ar.alafasy, ...) are migrated by normalizeReciterId so persisted
-// settings still resolve.
+// Alafasy, "12" = Al-Husary muallim). Validated against the RECITATIONS list in
+// src/lib/reciters.ts; legacy alquran.cloud identifiers (husary, ar.alafasy,
+// ...) are migrated by normalizeReciterId so persisted settings still resolve.
 export type ReciterId = string;
-
-// A Quran.com recitation id is a small integer rendered as a string.
-export const RECITER_ID_PATTERN = /^[0-9]{1,3}$/;
 
 // A recitation from the Quran.com recitations resource.
 export interface Recitation {
@@ -540,22 +522,6 @@ export interface MushafPageData {
   juzNumber: number;
   verses: VerseTajweed[];
   surahsOnPage: SurahHeader[];
-}
-
-export interface AlQuranCloudResponse {
-  code: number;
-  status: string;
-  data: {
-    audio: string;
-    audioSecondary?: string[];
-    text: string;
-    edition: {
-      identifier: string;
-      name: string;
-    };
-    surah: { number: number; name: string };
-    numberInSurah: number;
-  };
 }
 
 export interface PracticeQuestion {
