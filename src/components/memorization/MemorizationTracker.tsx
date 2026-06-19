@@ -15,8 +15,9 @@ import { toArabicIndic } from "@/lib/utils";
 const TOTAL_VERSES = 6236;
 
 interface MemorizationTrackerProps {
-  // Plan 04 wires the bulk-entry surface here; until then the empty-state CTA is
-  // a no-op placeholder so the button is present and labeled from this plan.
+  // Opens the bulk-entry surface (the empty-state CTA and the add-verses
+  // control route to it). Optional so the tracker renders standalone without a
+  // handler; the progress page supplies it.
   onOpenBulk?: () => void;
 }
 
