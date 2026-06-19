@@ -12,6 +12,12 @@ import { sanitizeTajweedHtml as sanitize, sanitizeTafsirHtml as sanitizeTafsir }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const src = readFileSync(join(__dirname, "..", "src", "lib", "sanitize.ts"), "utf8");
+// storage.ts holds the progress funnel; the onboarding-flag group below regexes
+// this source (it does not import it) and re-derives the coercion in plain JS,
+// matching verify-navigation.mjs / verify-memorization.mjs. sanitizeProgress is
+// kept un-imported on purpose: there is one sanitizer in the source and no second
+// copy here to drift from it.
+const storage = readFileSync(join(__dirname, "..", "src", "lib", "storage.ts"), "utf8");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -109,6 +115,73 @@ record(
   "Tafsir: an allowed tag cannot smuggle a handler attribute",
   sanitizeTafsir("<p onclick=alert(1)>hi</p>") === "<p>hi</p>",
   sanitizeTafsir("<p onclick=alert(1)>hi</p>"),
+);
+
+// --- Onboarding flag (seenOnboarding): the first-launch seen-once flag rides on
+// the consolidated progress object, not an ad-hoc localStorage key, so a tampered
+// or legacy payload cannot suppress or force the onboarding modal. Two halves,
+// mirroring verify-navigation.mjs: (a) regex storage.ts to prove the wiring is in
+// the real source, and (b) re-derive the boolean coercion in plain JS. ---
+
+// (a) Source wiring: the field is defaulted false, coerced in sanitizeProgress,
+// has a get/set helper pair, and is not dropped by export / import / reset.
+record(
+  "storage: DEFAULT_PROGRESS defaults seenOnboarding false",
+  /DEFAULT_PROGRESS[\s\S]*?seenOnboarding:\s*false/.test(storage),
+);
+record(
+  "storage: sanitizeProgress coerces seenOnboarding to a boolean (else false)",
+  /seenOnboarding:\s*typeof input\.seenOnboarding === "boolean" \? input\.seenOnboarding : false/.test(storage),
+);
+record(
+  "storage: getOnboardingSeen reads the flag (?? false)",
+  /export function getOnboardingSeen\(\): boolean[\s\S]*?getProgress\(\)\.seenOnboarding \?\? false/.test(storage),
+);
+record(
+  "storage: setOnboardingSeen writes through the funnel (setProgress, no raw localStorage)",
+  /export function setOnboardingSeen\(value: boolean\): void[\s\S]*?progress\.seenOnboarding = value[\s\S]*?setProgress\(progress\)/.test(storage),
+);
+// Export/import/reset carry the flag by construction (single store), the same way
+// verify-navigation.mjs proves bookmarks ride along: export serializes the whole
+// post-sanitize object, import re-runs sanitizeProgress, and reset spreads
+// cloneDefaultProgress() (default false), so no per-field export/import/reset code
+// exists or should.
+record(
+  "storage: export serializes the whole progress object (flag rides along)",
+  /export function exportProgress[\s\S]*?JSON\.stringify\(getProgress\(\)/.test(storage),
+);
+record(
+  "storage: import re-runs sanitizeProgress (flag re-coerced on restore)",
+  /export function importProgress[\s\S]*?sanitizeProgress\(parsed\)/.test(storage),
+);
+record(
+  "storage: resetProgress spreads cloneDefaultProgress (default-false clears the flag)",
+  /export function resetProgress[\s\S]*?\.\.\.cloneDefaultProgress\(\)/.test(storage),
+);
+
+// (b) Re-derive the coercion in plain JS (no import of the TS source) and assert
+// the three contract points: absent -> false, non-boolean -> false, true -> true.
+const coerceSeenOnboarding = (input) =>
+  typeof input?.seenOnboarding === "boolean" ? input.seenOnboarding : false;
+record(
+  "Onboarding: absent flag coerces to false (lossless legacy migration)",
+  coerceSeenOnboarding({}) === false,
+  String(coerceSeenOnboarding({})),
+);
+record(
+  "Onboarding: a non-boolean string coerces to false (cannot force onboarding)",
+  coerceSeenOnboarding({ seenOnboarding: "yes" }) === false,
+  String(coerceSeenOnboarding({ seenOnboarding: "yes" })),
+);
+record(
+  "Onboarding: a non-boolean number coerces to false",
+  coerceSeenOnboarding({ seenOnboarding: 1 }) === false,
+  String(coerceSeenOnboarding({ seenOnboarding: 1 })),
+);
+record(
+  "Onboarding: a stored true round-trips to true",
+  coerceSeenOnboarding({ seenOnboarding: true }) === true,
+  String(coerceSeenOnboarding({ seenOnboarding: true })),
 );
 
 const failed = results.filter((r) => !r.ok);
