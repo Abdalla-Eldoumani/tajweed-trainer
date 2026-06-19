@@ -449,13 +449,11 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
 
       <p className="text-center text-micro text-text-muted px-2">{t("mushaf.tapToPlayHint")}</p>
 
-      {/* At >= 1024px the reader is two columns: the reading column reflows to
-          make room for the docked side panel beside it, so the panel never
-          covers the active verse. Below 1024px the panel renders nothing (it is
-          `hidden lg:flex`), leaving the single-column reading layout untouched;
-          plan 04 adds the bottom-sheet branch for that band. The panel is the
-          single reader-scoped playback surface (the global MiniPlayer is
-          suppressed on /mushaf). */}
+      {/* A reactive ~1024px matchMedia switch inside PlaybackSurface mounts
+          exactly one presentation: at >= 1024px the docked side panel, where the
+          reading column reflows beside it so the active verse stays visible;
+          below that width the bottom sheet. This is the single reader-scoped
+          playback surface, so the global MiniPlayer is suppressed on /mushaf. */}
       <VerseSelectionProvider value={selection}>
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8 lg:items-start">
           <div data-tajweed-drill={drill || undefined} className="min-w-0">
