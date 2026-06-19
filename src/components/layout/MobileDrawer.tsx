@@ -117,7 +117,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         // `inert` keeps its links out of the tab order and a11y tree until open.
         inert={!open}
         className={cn(
-          "fixed top-0 bottom-0 w-[280px] z-50 bg-[var(--margin-bg)] text-[var(--margin-text)] flex flex-col transition-transform duration-300 ease-in-out",
+          "fixed top-0 bottom-0 w-[280px] z-50 bg-[var(--margin-bg)] text-[var(--margin-text)] border-e border-[var(--margin-line)] flex flex-col transition-transform duration-300 ease-in-out",
           isAr ? "right-0" : "left-0",
           open
             ? "translate-x-0"
