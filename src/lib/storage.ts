@@ -562,14 +562,14 @@ export function resetProgress(): void {
 
 export function updateStreak(): void {
   const progress = getProgress();
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString("en-CA");
   const lastDate = progress.streaks.lastPracticeDate;
 
   if (lastDate === today) return;
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().split("T")[0];
+  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
   if (lastDate === yesterdayStr) {
     progress.streaks.currentStreak += 1;
