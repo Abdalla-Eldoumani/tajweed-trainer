@@ -210,16 +210,113 @@ function ErrorLine({ error }: { error: string }) {
   );
 }
 
+// Contiguous range entry: pick a surah present on the page, a start ayah and an
+// end ayah, then build the range via setRange (which normalizes a reversed
+// start/end, B1). The range stays WITHIN ONE SURAH — the documented default that
+// matches buildRangeQueue and the engine's index===ayah-1 range assumption; a
+// cross-surah range would have to build an explicit multi-surah QueueItem[] and
+// loop only via loopSelection, which this picker deliberately does not do. A
+// collapsible disclosure so it is reachable without cluttering every play.
+function RangePicker({ data }: { data: MushafPageData }) {
+  const { t, isAr } = useTranslation();
+  const { setRange } = useVerseSelection();
+  const [open, setOpen] = useState(false);
+
+  const surahs = data.surahsOnPage;
+  const [surah, setSurah] = useState<number>(surahs[0]?.number ?? data.verses[0]?.surah ?? 1);
+  const [from, setFrom] = useState(1);
+  const [to, setTo] = useState(1);
+
+  if (surahs.length === 0) return null;
+
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
+  const header = surahs.find((s) => s.number === surah) ?? surahs[0];
+  const versesCount = header?.versesCount ?? 1;
+  const ayahOptions = Array.from({ length: versesCount }, (_, i) => i + 1);
+
+  const apply = () => {
+    setRange(surah, from, to);
+    setOpen(false);
+  };
+
+  const selectClass =
+    "text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px] tabular-nums";
+
+  return (
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={cn("transition-transform", open && "rotate-90")}>
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        {t("player.selectRange")}
+      </button>
+      {open && (
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="flex flex-col gap-1 text-micro text-text-muted">
+            {t("player.rangeSurah")}
+            <select
+              value={surah}
+              onChange={(e) => {
+                const n = Number(e.target.value);
+                setSurah(n);
+                setFrom(1);
+                setTo(1);
+              }}
+              className={selectClass}
+              aria-label={t("player.rangeSurah")}
+            >
+              {surahs.map((s) => (
+                <option key={s.number} value={s.number}>
+                  {isAr ? s.nameArabic : s.nameSimple}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-micro text-text-muted">
+            {t("player.rangeStart")}
+            <select value={from} onChange={(e) => setFrom(Number(e.target.value))} className={selectClass} aria-label={t("player.rangeStart")}>
+              {ayahOptions.map((a) => (
+                <option key={a} value={a}>{num(a)}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-micro text-text-muted">
+            {t("player.rangeEnd")}
+            <select value={to} onChange={(e) => setTo(Number(e.target.value))} className={selectClass} aria-label={t("player.rangeEnd")}>
+              {ayahOptions.map((a) => (
+                <option key={a} value={a}>{num(a)}</option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            onClick={apply}
+            className="inline-flex items-center min-h-[44px] px-3 rounded-lg bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light text-small font-medium hover:bg-primary/20 transition-colors"
+          >
+            {t("player.setRange")}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // (5) Multi-verse controls — the shared slot rendered identically in the desktop
 // panel and the expanded sheet. It owns the selection summary, the capped
 // removable chips, the per-verse repeat stepper, the whole-selection loop
 // toggle, the inter-verse gap presets, the play-selection action, and the
 // one-action clear. It commands the engine (playSet/playRange/setRepeatOne/
 // setLoopSelection/setInterVersePause) and the selection hook (clear/remove);
-// it constructs no audio. When nothing is selected it renders null so the
-// surface shows no bare empty state (UI-SPEC). The single accent here is the
+// it constructs no audio. When nothing is selected only the range picker shows
+// (a discoverable range entry, not a bare empty state); the summary/chips/
+// transport appear once a selection exists. The single accent here is the
 // play/pause-family lapis/gold; red ochre stays reserved for the error line.
-function MultiVerseControls() {
+function MultiVerseControls({ data }: { data: MushafPageData }) {
   const { t, isAr } = useTranslation();
   const { set, range, hasSelection, count, resolvedItems, remove, clear } = useVerseSelection();
 
@@ -229,8 +326,10 @@ function MultiVerseControls() {
   const loopSelection = usePlayer((s) => s.loopSelection);
   const interVersePause = usePlayer((s) => s.interVersePause);
 
-  // Collapse the whole block when there is no selection (no bare empty state).
-  if (!hasSelection) return null;
+  // With no selection, show only the range picker (a discoverable range entry),
+  // not a bare empty state. The summary/chips/transport appear below once a set
+  // or range exists.
+  if (!hasSelection) return <RangePicker data={data} />;
 
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
   const summary =
@@ -423,7 +522,7 @@ function MultiVerseControls() {
 
 // --- Desktop side panel (>= 1024px) ------------------------------------------
 
-function SidePanel({ model }: { model: SurfaceModel }) {
+function SidePanel({ model, data }: { model: SurfaceModel; data: MushafPageData }) {
   const { t, isAr } = useTranslation();
   // Collapsed-to-rail state is component session state only (not persisted to
   // storage in this plan). The store is mounted once, so the surface itself
@@ -510,10 +609,11 @@ function SidePanel({ model }: { model: SurfaceModel }) {
           <ReciterLine name={model.reciterName} />
           <TransportRow model={model} />
 
-          {/* (5)+(6) Multi-verse controls: selection summary, capped chips,
-              repeat stepper, loop toggle, inter-verse gap presets, play, and
-              clear. Renders null when nothing is selected (no empty state). */}
-          <MultiVerseControls />
+          {/* (5)+(6) Multi-verse controls: range picker, selection summary,
+              capped chips, repeat stepper, loop toggle, inter-verse gap presets,
+              play, and clear. Shows only the range picker when nothing is
+              selected (no bare empty state). */}
+          <MultiVerseControls data={data} />
 
           {model.error && <ErrorLine error={model.error} />}
         </>
@@ -529,7 +629,7 @@ function SidePanel({ model }: { model: SurfaceModel }) {
 // height). An upward drag from peek expands.
 const SWIPE_CLOSE_THRESHOLD = 64;
 
-function BottomSheet({ model }: { model: SurfaceModel }) {
+function BottomSheet({ model, data }: { model: SurfaceModel; data: MushafPageData }) {
   const { t, isAr } = useTranslation();
   // The sheet height: peek shows one transport row (within 100ms of the tap),
   // expanded adds the verse text and the multi-verse controls. It opens in peek.
@@ -726,9 +826,9 @@ function BottomSheet({ model }: { model: SurfaceModel }) {
           )}
           <ReciterLine name={model.reciterName} />
 
-          {/* (5)+(6) Multi-verse controls, shared with the panel. Renders null
-              when nothing is selected. */}
-          <MultiVerseControls />
+          {/* (5)+(6) Multi-verse controls, shared with the panel. Shows only the
+              range picker when nothing is selected. */}
+          <MultiVerseControls data={data} />
 
           {model.error && <ErrorLine error={model.error} />}
         </div>
@@ -795,7 +895,7 @@ export function PlaybackSurface({ data }: PlaybackSurfaceProps) {
         className="flex flex-col self-start sticky top-4 rounded-2xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark w-[clamp(360px,28vw,400px)] p-6 transition-[transform,opacity] duration-200 motion-reduce:transition-none"
         style={{ boxShadow: "0 8px 24px -16px rgba(16,20,32,0.30)" }}
       >
-        <MultiVerseControls />
+        <MultiVerseControls data={data} />
       </aside>
     ) : (
       <div
@@ -804,7 +904,7 @@ export function PlaybackSurface({ data }: PlaybackSurfaceProps) {
         className="fixed inset-x-0 bottom-0 z-40 flex flex-col rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark safe-bottom px-4 pt-3 pb-4 transition-transform duration-200 motion-reduce:transition-none"
         style={{ boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }}
       >
-        <MultiVerseControls />
+        <MultiVerseControls data={data} />
       </div>
     );
   }
@@ -842,5 +942,5 @@ export function PlaybackSurface({ data }: PlaybackSurfaceProps) {
 
   // Exactly one presentation is in the DOM: the side panel at >= 1024px, the
   // bottom sheet below it. Never both (no double surface at 1024).
-  return isDesktop ? <SidePanel model={model} /> : <BottomSheet model={model} />;
+  return isDesktop ? <SidePanel model={model} data={data} /> : <BottomSheet model={model} data={data} />;
 }
