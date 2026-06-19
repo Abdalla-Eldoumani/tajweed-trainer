@@ -43,13 +43,13 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
         </div>
 
         {settings.showTransliteration && !isAr && (
-          <p className="text-center text-sm font-mono text-text-muted">
+          <p className="text-center text-small font-mono text-text-muted">
             {example.transliteration}
           </p>
         )}
 
         {settings.showTranslation && (
-          <p className="text-center text-sm text-text-muted italic">
+          <p className="text-center text-small text-text-muted italic">
             &ldquo;{translation}&rdquo;
           </p>
         )}
@@ -57,7 +57,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
         <div className="gold-divider" />
 
         <div className="flex items-center justify-between">
-          <span className="text-xs text-text-muted">
+          <span className="text-micro text-text-muted">
             {formatSurahReference(
               { en: example.surah_name_en, ar: example.surah_name_ar },
               example.surah,
@@ -72,7 +72,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
           <Badge color={color}>{ruleApplied}</Badge>
           <Link
             href={`/mushaf/page/${pageForSurah(example.surah)}?v=${example.surah}:${example.ayah}`}
-            className="inline-flex items-center gap-1 text-xs text-primary dark:text-primary-light hover:underline shrink-0"
+            className="inline-flex items-center gap-1 text-micro text-primary dark:text-primary-light hover:underline shrink-0"
           >
             {t("lesson.openInReader")}
             <span aria-hidden="true">{isAr ? "←" : "→"}</span>

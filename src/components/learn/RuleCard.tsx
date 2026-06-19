@@ -64,9 +64,9 @@ export function RuleCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <h3 className="font-heading font-semibold text-sm">{primaryTitle}</h3>
+              <h3 className="font-heading font-semibold text-small">{primaryTitle}</h3>
               {isAr ? (
-                <p className="text-xs text-text-muted mt-0.5">{secondaryTitle}</p>
+                <p className="text-micro text-text-muted mt-0.5">{secondaryTitle}</p>
               ) : (
                 <ArabicText text={secondaryTitle} size="sm" className="text-text-muted mt-0.5" />
               )}
@@ -83,7 +83,7 @@ export function RuleCard({
             </svg>
           </div>
 
-          <p className="text-xs text-text-muted mt-2">{desc}</p>
+          <p className="text-micro text-text-muted mt-2">{desc}</p>
         </div>
       </button>
 
@@ -93,7 +93,7 @@ export function RuleCard({
 
           {letters && letters.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold text-text-muted mb-2">{t("module.letters")}</h4>
+              <h4 className="text-micro font-semibold text-text-muted mb-2">{t("module.letters")}</h4>
               <div className="flex flex-wrap gap-2">
                 {letters.map((letter) => (
                   <div
@@ -101,7 +101,7 @@ export function RuleCard({
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bg-card dark:bg-bg-card-dark border border-gold-light/20 dark:border-gold-dark/20"
                   >
                     <ArabicText text={letter.arabic} size="sm" />
-                    <span className="text-xs text-text-muted">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</span>
+                    <span className="text-micro text-text-muted">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</span>
                   </div>
                 ))}
               </div>
@@ -110,15 +110,15 @@ export function RuleCard({
 
           {mnemonicAr && (
             <div className="p-3 rounded-lg bg-gold-light/10 dark:bg-gold-dark/10 border border-gold-light/20 dark:border-gold-dark/20">
-              <p className="text-xs font-semibold text-text-muted mb-1">{t("module.mnemonic")}</p>
+              <p className="text-micro font-semibold text-text-muted mb-1">{t("module.mnemonic")}</p>
               <ArabicText text={mnemonicAr} size="sm" />
-              {mnemonicEn && !isAr && <p className="text-xs text-text-muted mt-1">{mnemonicEn}</p>}
+              {mnemonicEn && !isAr && <p className="text-micro text-text-muted mt-1">{mnemonicEn}</p>}
             </div>
           )}
 
           {examples && examples.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold text-text-muted mb-2">{t("module.quranicExamples")}</h4>
+              <h4 className="text-micro font-semibold text-text-muted mb-2">{t("module.quranicExamples")}</h4>
               <div className="grid gap-3">
                 {examples.map((ex, i) => (
                   <ExampleCard key={i} example={ex} color={color} />
@@ -129,10 +129,10 @@ export function RuleCard({
 
           {mistakes && mistakes.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold text-red-600 dark:text-red-400 mb-2">{t("module.commonMistakes")}</h4>
+              <h4 className="text-micro font-semibold text-red-600 dark:text-red-400 mb-2">{t("module.commonMistakes")}</h4>
               <ul className="space-y-1">
                 {mistakes.map((mistake, i) => (
-                  <li key={i} className="text-xs text-text-muted flex gap-2">
+                  <li key={i} className="text-micro text-text-muted flex gap-2">
                     <svg className="w-3.5 h-3.5 text-red-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <circle cx="12" cy="12" r="10" />
                       <line x1="15" y1="9" x2="9" y2="15" />

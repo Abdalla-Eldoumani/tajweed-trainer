@@ -33,7 +33,7 @@ export function LetterGrid({ groups }: LetterGridProps) {
     <div className="space-y-6">
       {groups.map((group) => (
         <div key={group.title}>
-          <h3 className="text-xs font-semibold text-text-muted mb-2">{group.title}</h3>
+          <h3 className="text-micro font-semibold text-text-muted mb-2">{group.title}</h3>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
             {group.letters.map((letter) => (
               <LetterCard
@@ -51,12 +51,12 @@ export function LetterGrid({ groups }: LetterGridProps) {
 
       {selectedLetter && (
         <div className="p-4 rounded-lg bg-primary/5 dark:bg-primary-light/10 border border-primary/20">
-          <p className="text-sm font-medium">{isAr && selectedLetter.name_ar ? selectedLetter.name_ar : selectedLetter.name_en}</p>
+          <p className="text-small font-medium">{isAr && selectedLetter.name_ar ? selectedLetter.name_ar : selectedLetter.name_en}</p>
           {selectedLetter.condition && (
-            <p className="text-xs text-text-muted mt-1">{selectedLetter.condition}</p>
+            <p className="text-micro text-text-muted mt-1">{selectedLetter.condition}</p>
           )}
           {selectedLetter.note && (
-            <p className="text-xs text-text-muted mt-1">{selectedLetter.note}</p>
+            <p className="text-micro text-text-muted mt-1">{selectedLetter.note}</p>
           )}
         </div>
       )}
