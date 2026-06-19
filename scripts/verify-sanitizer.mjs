@@ -142,13 +142,14 @@ record(
   /export function setOnboardingSeen\(value: boolean\): void[\s\S]*?progress\.seenOnboarding = value[\s\S]*?setProgress\(progress\)/.test(storage),
 );
 // Export/import/reset carry the flag by construction (single store), the same way
-// verify-navigation.mjs proves bookmarks ride along: export serializes the whole
-// post-sanitize object, import re-runs sanitizeProgress, and reset spreads
-// cloneDefaultProgress() (default false), so no per-field export/import/reset code
-// exists or should.
+// verify-navigation.mjs proves bookmarks ride along: export reads the whole
+// post-sanitize object via getProgress() and serializes it (it also stamps
+// lastBackupAt into that object before serializing), import re-runs
+// sanitizeProgress, and reset spreads cloneDefaultProgress() (default false), so
+// no per-field export/import/reset code exists or should.
 record(
   "storage: export serializes the whole progress object (flag rides along)",
-  /export function exportProgress[\s\S]*?JSON\.stringify\(getProgress\(\)/.test(storage),
+  /export function exportProgress[\s\S]*?getProgress\(\)[\s\S]*?JSON\.stringify\(progress/.test(storage),
 );
 record(
   "storage: import re-runs sanitizeProgress (flag re-coerced on restore)",
@@ -194,12 +195,12 @@ record(
 // Object.prototype unpolluted. ---
 
 // (a) Source wiring: every keyed-map loop (modules, reviews, memorizationReviews,
-// readSections) carries the skip before it copies a key.
+// readSections, lastReadBySurah) carries the skip before it copies a key.
 const guardMatches =
   storage.match(/=== "__proto__" \|\| \w+ === "constructor" \|\| \w+ === "prototype"\) continue;/g) || [];
 record(
-  "storage: keyed-map loops skip __proto__/constructor/prototype keys (4 guards)",
-  guardMatches.length === 4,
+  "storage: keyed-map loops skip __proto__/constructor/prototype keys (5 guards)",
+  guardMatches.length === 5,
   String(guardMatches.length),
 );
 
