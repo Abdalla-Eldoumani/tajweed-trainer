@@ -35,7 +35,7 @@ npm run verify:ui         # browser tests against a running server
 
 ## Conventions
 
-Keep changes small and focused. One logical change per commit, with brief lowercase messages.
+Keep changes small and focused. One logical change per commit, with brief lowercase messages in the imperative mood ("fix the iqlab example", not "fixed" or "fixes"). No emoji and no marketing adjectives in code, comments, docs, or commit messages. Branch off `main` with a name describing the change (`fix/iqlab-typo`, `feat/per-page-audio`). The full PR template and review checklist are in [docs/contributing.md](docs/contributing.md).
 
 This codebase has one path for each shared concern. Reuse it; do not fork a second.
 
@@ -58,4 +58,4 @@ The app renders pre-verified, human-authored content. It never generates, edits,
 
 ## How CI gates a pull request
 
-Opening or updating a pull request against `main` runs the CI workflow. It installs on Node 24 and runs the type check, the lint, the offline verify scripts (`npm run verify:scripts`), and a production build. A pull request must be green before review. Running `npm run verify` and `npm run build` locally mirrors the gate.
+Opening or updating a pull request against `main` runs the CI workflow. It installs on Node 24 and runs a production dependency audit (`npm audit --omit=dev --audit-level=high`), the type check, the lint, the offline verify scripts (`npm run verify:scripts`), and a production build. A pull request must be green before review. Running `npm run verify` and `npm run build` locally mirrors most of the gate; run `npm audit --omit=dev --audit-level=high` to mirror the audit step.
