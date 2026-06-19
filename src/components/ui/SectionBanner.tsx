@@ -10,7 +10,7 @@ interface SectionBannerProps {
 export function SectionBanner({ title, subtitle, color, className }: SectionBannerProps) {
   return (
     <div className={cn("section-banner", className)}>
-      <h2 className="relative z-10 font-heading font-bold text-lg sm:text-xl flex items-center justify-center gap-2">
+      <h2 className="relative z-10 font-heading font-semibold text-lg sm:text-xl flex items-center justify-center gap-2">
         {color && (
           <span
             className="inline-block w-2 h-2 rounded-full"
