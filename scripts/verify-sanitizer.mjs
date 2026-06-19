@@ -184,6 +184,62 @@ record(
   String(coerceSeenOnboarding({ seenOnboarding: true })),
 );
 
+// --- Prototype-pollution key guard: the keyed-map sanitizers (modules, reviews,
+// memorizationReviews, readSections) rebuild plain objects from
+// attacker-influenceable keys in an imported/stored payload, so each loop skips
+// the dangerous keys. Two halves, mirroring the onboarding group: (a) regex
+// storage.ts to prove the guard is in the real source on every keyed-map loop,
+// and (b) re-derive the keyed-copy in plain JS and assert that a payload carrying
+// "__proto__"/"constructor"/"prototype" keys creates no such own-keys and leaves
+// Object.prototype unpolluted. ---
+
+// (a) Source wiring: every keyed-map loop (modules, reviews, memorizationReviews,
+// readSections) carries the skip before it copies a key.
+const guardMatches =
+  storage.match(/=== "__proto__" \|\| \w+ === "constructor" \|\| \w+ === "prototype"\) continue;/g) || [];
+record(
+  "storage: keyed-map loops skip __proto__/constructor/prototype keys (4 guards)",
+  guardMatches.length === 4,
+  String(guardMatches.length),
+);
+
+// (b) Re-derive the guarded keyed copy (no import of the TS source) and prove the
+// guard is structural: a polluting payload yields a clean object and never
+// touches the global prototype. Without the guard, assigning out["__proto__"]
+// would set the object's prototype instead of an own-key.
+const DANGEROUS_KEYS = ["__proto__", "constructor", "prototype"];
+const copyKeyedMapGuarded = (input) => {
+  const out = {};
+  for (const [key, value] of Object.entries(input)) {
+    if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+    out[key] = value;
+  }
+  return out;
+};
+const pollutingPayload = {
+  __proto__: { polluted: true },
+  constructor: "evil",
+  prototype: "evil",
+  "noon-sakinah": { lessonsCompleted: [] },
+};
+const guarded = copyKeyedMapGuarded(pollutingPayload);
+record(
+  "Pollution: dangerous keys create no own-keys on the rebuilt map",
+  DANGEROUS_KEYS.every((k) => !Object.prototype.hasOwnProperty.call(guarded, k)),
+  Object.keys(guarded).join(","),
+);
+record(
+  "Pollution: a legitimate key still survives the guarded copy",
+  Object.prototype.hasOwnProperty.call(guarded, "noon-sakinah"),
+  Object.keys(guarded).join(","),
+);
+record(
+  "Pollution: Object.prototype is not polluted after the guarded copy",
+  // eslint-disable-next-line no-proto
+  ({}).polluted === undefined && Object.prototype.polluted === undefined,
+  String(({}).polluted),
+);
+
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);
 if (failed.length > 0) {

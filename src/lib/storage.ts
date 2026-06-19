@@ -201,6 +201,7 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
   const out: Record<string, ReviewState> = {};
   const entries = Object.entries(input).slice(0, MAX_REVIEWS);
   for (const [id, value] of entries) {
+    if (id === "__proto__" || id === "constructor" || id === "prototype") continue;
     if (typeof id !== "string" || id.length === 0 || id.length >= 200) continue;
     const review = sanitizeReview(value);
     if (review) out[id] = review;
@@ -218,6 +219,7 @@ function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState
   const out: Record<string, ReviewState> = {};
   const entries = Object.entries(input).slice(0, MAX_MEMORIZED);
   for (const [verseKey, value] of entries) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
     if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
     const review = sanitizeReview(value);
     if (review) out[verseKey] = review;
@@ -247,6 +249,7 @@ function sanitizeReadSections(input: unknown): Record<string, string[]> {
   if (!isObject(input)) return {};
   const out: Record<string, string[]> = {};
   for (const [moduleId, value] of Object.entries(input)) {
+    if (moduleId === "__proto__" || moduleId === "constructor" || moduleId === "prototype") continue;
     if (typeof moduleId !== "string" || moduleId.length === 0 || moduleId.length >= 100) continue;
     if (!Array.isArray(value)) continue;
     const slugs = new Set<string>();
@@ -312,6 +315,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
   if (isObject(input.modules)) {
     const entries = Object.entries(input.modules).slice(0, MAX_MODULES);
     for (const [id, mod] of entries) {
+      if (id === "__proto__" || id === "constructor" || id === "prototype") continue;
       if (typeof id === "string" && id.length > 0 && id.length < 100) {
         modules[id] = sanitizeModule(mod);
       }
