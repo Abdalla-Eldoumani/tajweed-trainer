@@ -252,6 +252,12 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Tabular figures for live counts (DESIGN_SYSTEM section 4 Numerals) so digits
+     keep a fixed width and do not jitter as a count updates. */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* Prevent horizontal scroll on mobile */
