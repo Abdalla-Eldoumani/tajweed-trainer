@@ -568,7 +568,7 @@ export function MiniPlayer() {
               value={Number.isFinite(duration) && duration > 0 ? Math.min(currentTime, duration) : 0}
               onChange={(e) => usePlayer.getState().seek(Number(e.target.value))}
               aria-label={t("player.seek")}
-              className="w-full accent-primary"
+              className="w-full accent-primary dark:accent-gold"
             />
             <div className="flex items-center justify-between text-[10px] text-text-muted tabular-nums">
               <span>{fmt(currentTime)}</span>
