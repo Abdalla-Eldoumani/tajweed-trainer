@@ -21,6 +21,7 @@ import { VerseSelectionProvider, useVerseSelectionState } from "./useVerseSelect
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
 import { WordByWord } from "@/components/learn/WordByWord";
 import { RecitationCompare } from "@/components/mushaf/RecitationCompare";
+import { ReciterCompare } from "@/components/mushaf/ReciterCompare";
 import { VerseNotes } from "@/components/mushaf/VerseNotes";
 import type { MushafPageData, SurahHeader } from "@/lib/types";
 import { getColorForClass } from "@/lib/tajweed-colors";
@@ -562,6 +563,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             {settings.showWordByWord && <WordByWord surah={sv} ayah={av} />}
             <VerseNotes key={selectedVerse} verseKey={selectedVerse} />
             <RecitationCompare surah={sv} ayah={av} reciter={settings.reciter} />
+            <ReciterCompare surah={sv} ayah={av} surahName={surahLabel || null} />
           </div>
         );
       })()}
