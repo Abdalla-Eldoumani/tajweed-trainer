@@ -4,6 +4,11 @@ import { create } from "zustand";
 import type { PlayerMode, PlaybackStatus, ReciterId } from "@/lib/types";
 import { DEFAULT_RECITER_ID } from "@/lib/reciters";
 import { getPlayerResume, setPlayerResume } from "@/lib/storage";
+import { buildRangeQueue, dedupeQueue, nextAfterEnded } from "@/lib/player-engine";
+
+// The inter-verse gap presets (seconds). A free slider is intentionally avoided
+// (UI-SPEC section 7); setInterVersePause clamps to the nearest preset.
+const INTER_VERSE_PRESETS = [0, 1, 2, 4] as const;
 
 export interface QueueItem {
   surah: number;
@@ -46,6 +51,12 @@ interface PlayerState {
   sleepEndOfSurah: boolean;
   // Wall-clock ms after which playback stops; null when no minutes timer is set.
   sleepDeadline: number | null;
+  // Whole-queue loop: replay the current queue from index 0 when it ends. Distinct
+  // from the ayah-based repeatRange; works for any queue (a range or a hand-picked
+  // set). interVersePause is the gap (seconds, one of INTER_VERSE_PRESETS) the host
+  // waits between queue items; 0 advances immediately as before.
+  loopSelection: boolean;
+  interVersePause: number;
 
   current: () => QueueItem | null;
   hasNext: () => boolean;
@@ -53,6 +64,13 @@ interface PlayerState {
 
   playVerse: (surah: number, ayah: number, opts?: PlayOpts) => void;
   playSurah: (surah: number, fromAyah: number, ayahCount: number, opts?: PlayOpts) => void;
+  // Play a hand-picked, possibly non-contiguous set as one queue (deduped). Loops
+  // via loopSelection, never the ayah-based repeatRange.
+  playSet: (items: QueueItem[], opts?: PlayOpts) => void;
+  // Play a contiguous range within one surah as one queue (normalized).
+  playRange: (surah: number, from: number, to: number, opts?: PlayOpts) => void;
+  setLoopSelection: (on: boolean) => void;
+  setInterVersePause: (seconds: number) => void;
   toggle: () => void;
   pause: () => void;
   resume: () => void;
@@ -106,6 +124,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   rangeLoopsDone: 0,
   sleepEndOfSurah: false,
   sleepDeadline: null,
+  loopSelection: false,
+  interVersePause: 0,
 
   current: () => get().queue[get().index] ?? null,
   hasNext: () => get().index < get().queue.length - 1,
@@ -142,6 +162,57 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       error: null,
       loadToken: s.loadToken + 1,
     })),
+
+  playSet: (items, opts = {}) =>
+    set((s) => {
+      const queue = dedupeQueue(items);
+      if (queue.length === 0) return {};
+      return {
+        queue,
+        index: 0,
+        // A set is a queue, so it plays continuously; looping is handled by
+        // loopSelection, not repeatRange (which assumes a contiguous surah).
+        mode: "continuous",
+        status: "loading",
+        reciter: opts.reciter ?? s.reciter,
+        speed: opts.speed ?? s.speed,
+        surahName: opts.surahName ?? null,
+        currentTime: 0,
+        duration: 0,
+        pendingOffset: 0,
+        repeatOne: 0,
+        repeatsDone: 0,
+        repeatRange: null,
+        rangeLoopsDone: 0,
+        error: null,
+        loadToken: s.loadToken + 1,
+      };
+    }),
+
+  playRange: (surah, from, to, opts = {}) =>
+    set((s) => {
+      const queue = buildRangeQueue(surah, from, to);
+      if (queue.length === 0) return {};
+      return {
+        queue,
+        index: 0,
+        mode: "continuous",
+        status: "loading",
+        reciter: opts.reciter ?? s.reciter,
+        speed: opts.speed ?? s.speed,
+        surahName: opts.surahName ?? null,
+        currentTime: 0,
+        duration: 0,
+        pendingOffset: 0,
+        repeatOne: 0,
+        repeatsDone: 0,
+        // The whole-range loop is loopSelection's job; clear the ayah-based one.
+        repeatRange: null,
+        rangeLoopsDone: 0,
+        error: null,
+        loadToken: s.loadToken + 1,
+      };
+    }),
 
   toggle: () => {
     const s = get();
@@ -218,6 +289,17 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       };
     }),
   clearRepeat: () => set({ repeatOne: 0, repeatsDone: 0, repeatRange: null, rangeLoopsDone: 0 }),
+  // The whole-queue loop and the ayah-based range loop are mutually exclusive:
+  // turning loopSelection on clears repeatRange. It does not restart playback;
+  // onEnded picks it up at the next queue boundary.
+  setLoopSelection: (on) =>
+    set(on ? { loopSelection: true, repeatRange: null, rangeLoopsDone: 0 } : { loopSelection: false }),
+  setInterVersePause: (seconds) =>
+    set({
+      interVersePause: INTER_VERSE_PRESETS.includes(seconds as (typeof INTER_VERSE_PRESETS)[number])
+        ? seconds
+        : INTER_VERSE_PRESETS.reduce((best, p) => (Math.abs(p - seconds) < Math.abs(best - seconds) ? p : best), 0),
+    }),
   // Sleep modes are mutually exclusive: choosing one clears the other.
   setSleepEndOfSurah: (on) => set(on ? { sleepEndOfSurah: true, sleepDeadline: null } : { sleepEndOfSurah: false }),
   setSleepTimer: (minutes) =>
@@ -255,67 +337,80 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   onTime: (currentTime, duration) => set((s) => ({ currentTime, duration: duration || s.duration })),
   onEnded: () => {
     const s = get();
+    const cur = s.queue[s.index];
+    // The pure engine decides the next index/status; this only applies it, with
+    // the exact same field writes as before, so existing paths (repeat-one,
+    // range walk/loop, continuous advance, stop) are byte-for-byte equivalent.
+    // The inter-verse gap is scheduled by PlayerHost off this same advance; at
+    // interVersePause 0 the host advances immediately, unchanged from today.
+    const decision = nextAfterEnded({
+      repeatOne: s.repeatOne,
+      repeatsDone: s.repeatsDone,
+      repeatRange: s.repeatRange,
+      rangeLoopsDone: s.rangeLoopsDone,
+      loopSelection: s.loopSelection,
+      mode: s.mode,
+      index: s.index,
+      queueLength: s.queue.length,
+      currentAyah: cur ? cur.ayah : 0,
+      sleepEndOfSurah: s.sleepEndOfSurah,
+    });
 
-    // Loop the current ayah a set number of times before moving on.
-    if (s.repeatOne > 0 && s.repeatsDone + 1 < s.repeatOne) {
-      return set({
-        repeatsDone: s.repeatsDone + 1,
-        status: "loading",
-        currentTime: 0,
-        duration: 0,
-        pendingOffset: 0,
-        loadToken: s.loadToken + 1,
-      });
-    }
-
-    // Loop a verse range [from,to] `count` times, then stop.
-    if (s.repeatRange) {
-      const cur = s.queue[s.index];
-      const { from, to, count } = s.repeatRange;
-      if (cur && cur.ayah < to && s.index < s.queue.length - 1) {
+    switch (decision.kind) {
+      case "repeat-one":
+        // Loop the current ayah a set number of times before moving on.
         return set({
-          repeatsDone: 0,
-          index: s.index + 1,
+          repeatsDone: s.repeatsDone + 1,
           status: "loading",
           currentTime: 0,
           duration: 0,
           pendingOffset: 0,
           loadToken: s.loadToken + 1,
         });
-      }
-      if (s.rangeLoopsDone + 1 < count) {
+      case "advance":
+        // Range walk, loop-selection step, or continuous auto-advance: all three
+        // wrote this identical shape before, so a single handler is unchanged.
+        return set({
+          repeatsDone: 0,
+          index: decision.index,
+          status: "loading",
+          currentTime: 0,
+          duration: 0,
+          pendingOffset: 0,
+          loadToken: s.loadToken + 1,
+        });
+      case "loop-range":
         return set({
           repeatsDone: 0,
           rangeLoopsDone: s.rangeLoopsDone + 1,
-          index: Math.max(0, from - 1),
+          index: decision.index,
           status: "loading",
           currentTime: 0,
           duration: 0,
           pendingOffset: 0,
           loadToken: s.loadToken + 1,
         });
-      }
-      set({ repeatsDone: 0, rangeLoopsDone: 0, repeatRange: null, status: "idle", currentTime: 0 });
-      get().persist();
-      return;
+      case "loop-selection":
+        return set({
+          repeatsDone: 0,
+          index: decision.index,
+          status: "loading",
+          currentTime: 0,
+          duration: 0,
+          pendingOffset: 0,
+          loadToken: s.loadToken + 1,
+        });
+      case "stop":
+        // Range exhaustion clears the range exactly as before; the generic end
+        // just resets the repeat counter. Both persist the resume position.
+        if (s.repeatRange) {
+          set({ repeatsDone: 0, rangeLoopsDone: 0, repeatRange: null, status: decision.status, currentTime: 0 });
+        } else {
+          set({ repeatsDone: 0, status: decision.status, currentTime: 0 });
+        }
+        get().persist();
+        return;
     }
-
-    // Continuous mode auto-advances unless the sleep timer stops at the surah end.
-    if (s.mode === "continuous" && s.index < s.queue.length - 1 && !s.sleepEndOfSurah) {
-      return set({
-        repeatsDone: 0,
-        index: s.index + 1,
-        status: "loading",
-        currentTime: 0,
-        duration: 0,
-        pendingOffset: 0,
-        loadToken: s.loadToken + 1,
-      });
-    }
-
-    // End of surah (continuous) or the sleep boundary stops; single returns to paused.
-    set({ repeatsDone: 0, status: s.mode === "single" ? "paused" : "idle", currentTime: 0 });
-    get().persist();
   },
 
   persist: () => {

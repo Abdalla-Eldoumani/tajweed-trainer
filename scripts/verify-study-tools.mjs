@@ -12,6 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
 const store = read("src", "hooks", "usePlayer.ts");
+const engine = read("src", "lib", "player-engine.ts");
 const css = read("src", "app", "globals.css");
 const miniPlayer = read("src", "components", "ui", "MiniPlayer.tsx");
 const host = read("src", "components", "ui", "PlayerHost.tsx");
@@ -29,9 +30,13 @@ record(
   "State carries repeatOne / repeatRange / sleepEndOfSurah",
   /repeatOne:/.test(store) && /repeatRange:/.test(store) && /sleepEndOfSurah:/.test(store),
 );
-record("onEnded honors repeatOne", /onEnded[\s\S]*?repeatOne > 0[\s\S]*?repeatsDone \+ 1 < s\.repeatOne/.test(store));
-record("onEnded honors repeatRange", /onEnded[\s\S]*?repeatRange[\s\S]*?rangeLoopsDone \+ 1 < count/.test(store));
-record("Sleep flag halts auto-advance at surah end", /!s\.sleepEndOfSurah/.test(store));
+// The onEnded precedence moved into the pure engine (player-engine.ts); the
+// store delegates to it. Assert the guarantees in their new home plus the
+// delegation, so this still proves repeat-one / repeat-range / sleep are honored.
+record("onEnded delegates the decision to the engine", /onEnded[\s\S]*?nextAfterEnded\(/.test(store));
+record("Engine honors repeatOne", /repeatOne > 0[\s\S]*?repeatsDone \+ 1 < s\.repeatOne/.test(engine));
+record("Engine honors repeatRange", /repeatRange[\s\S]*?rangeLoopsDone \+ 1 < count/.test(engine));
+record("Sleep flag halts auto-advance at surah end", /!s\.sleepEndOfSurah/.test(engine));
 record("setRepeatRange repositions and restarts (not a no-op)", /setRepeatRange:[\s\S]*?index: startIndex[\s\S]*?loadToken: s\.loadToken \+ 1/.test(store));
 record("Store carries a minutes sleep deadline", /sleepDeadline:/.test(store));
 record("PlayerHost stops when the sleep deadline passes", /sleepDeadline[\s\S]*?Date\.now\(\)\s*>=\s*sleepDeadline[\s\S]*?\.stop\(\)/.test(host));
