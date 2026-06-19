@@ -9,6 +9,7 @@ import type {
   AnalyticsEventType,
   PlayerResume,
   VerseLocation,
+  KhatmahPlan,
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
@@ -49,6 +50,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   bookmarks: [],
   lastRead: null,
   lastReadBySurah: {},
+  khatmah: null,
   seenOnboarding: false,
   lastBackupAt: "",
 };
@@ -346,6 +348,40 @@ function sanitizeLastRead(input: unknown): VerseLocation | null {
   return sanitizeVerseLocation(input);
 }
 
+// Calendar-date shape (YYYY-MM-DD) plus a real-date round-trip, so "2026-02-31"
+// or "2026-13-01" is rejected, not silently kept. Parsing in UTC keeps the
+// check timezone-independent: only the date components are validated here.
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+function isValidIsoDate(value: unknown): value is string {
+  if (typeof value !== "string" || !ISO_DATE_PATTERN.test(value)) return false;
+  const ms = Date.parse(`${value}T00:00:00Z`);
+  if (Number.isNaN(ms)) return false;
+  // Reject inputs the Date parser normalizes (e.g. month 13 -> next year): the
+  // canonical YYYY-MM-DD of the parsed instant must equal the input.
+  return new Date(ms).toISOString().slice(0, 10) === value;
+}
+
+// The opt-in khatmah plan. Both dates must be real ISO calendar dates with the
+// target on or after the start (a same-day plan is allowed; the pace lib guards
+// the zero-day divide). startPage is bounded to the 604-page mushaf. Anything
+// malformed or absent reads back as null (no plan), so a tampered store can
+// never strand a broken plan in the UI. A stored object without this field reads
+// back as null (lossless migration).
+function sanitizeKhatmah(input: unknown): KhatmahPlan | null {
+  if (!isObject(input)) return null;
+  if (!isValidIsoDate(input.startDate) || !isValidIsoDate(input.targetDate)) return null;
+  if (input.targetDate < input.startDate) return null;
+  if (
+    typeof input.startPage !== "number" ||
+    !Number.isInteger(input.startPage) ||
+    input.startPage < 1 ||
+    input.startPage > 604
+  ) {
+    return null;
+  }
+  return { startDate: input.startDate, targetDate: input.targetDate, startPage: input.startPage };
+}
+
 // Per-surah last-read map. Keys are surah numbers 1..114 (validated as integers
 // in range); values are VerseLocation records validated like lastRead. Guards
 // the prototype-pollution keys and caps at 114 entries, mirroring the other map
@@ -401,6 +437,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     bookmarks: sanitizeBookmarks(input.bookmarks),
     lastRead: sanitizeLastRead(input.lastRead),
     lastReadBySurah: sanitizeLastReadBySurah(input.lastReadBySurah),
+    khatmah: sanitizeKhatmah(input.khatmah),
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
     lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
   };
@@ -472,6 +509,32 @@ export function getOnboardingSeen(): boolean {
 export function setOnboardingSeen(value: boolean): void {
   const progress = getProgress();
   progress.seenOnboarding = value;
+  setProgress(progress);
+}
+
+// The opt-in khatmah plan funnel. Lives on the consolidated progress model
+// (field `khatmah`, not an ad-hoc key) so export / import / reset cover it; the
+// default-null in DEFAULT_PROGRESS makes resetProgress clear any plan. Reads and
+// writes go through the same sanitizer the store applies, so a malformed plan is
+// stored as null (no plan) rather than a broken one. All three setters write
+// through setProgress, which fires the change bus.
+export function getKhatmah(): KhatmahPlan | null {
+  return getProgress().khatmah ?? null;
+}
+
+export function setKhatmah(plan: KhatmahPlan): void {
+  if (!isBrowser()) return;
+  const sanitized = sanitizeKhatmah(plan);
+  if (!sanitized) return;
+  const progress = getProgress();
+  progress.khatmah = sanitized;
+  setProgress(progress);
+}
+
+export function clearKhatmah(): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  progress.khatmah = null;
   setProgress(progress);
 }
 
