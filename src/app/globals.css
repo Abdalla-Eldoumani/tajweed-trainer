@@ -329,25 +329,13 @@ html, body {
   overflow: hidden;
 }
 
-/* Gold divider */
+/* Gold divider — a flat 1px gold hairline. Gold is a hairline, never a fill
+   (DESIGN_SYSTEM section 3), so the old multi-stop gradient is dropped. A flat
+   hairline has no direction, so no RTL variant is needed. */
 .gold-divider {
   height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--border-ornate),
-    transparent
-  );
+  background: var(--gold-hairline);
   margin: 1rem 0;
-}
-
-[dir="rtl"] .gold-divider {
-  background: linear-gradient(
-    to left,
-    transparent,
-    var(--border-ornate),
-    transparent
-  );
 }
 
 /* RTL layout support */
