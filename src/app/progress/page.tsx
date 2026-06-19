@@ -8,6 +8,7 @@ import { MasterySection } from "@/components/progress/MasterySection";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
+import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -129,6 +130,12 @@ export default function ProgressPage() {
             showTrigger={memorizedCount > 0}
           />
         )}
+        {/* Review entry lives inside the tracker section so the user goes from
+            "here's what I've memorized" straight into "test me on it" (F1). Shown
+            only when something is memorized; the session reuses the Leitner
+            machinery over the separate memorizationReviews keyspace and opens in
+            place. The component owns its own due-vs-empty branch. */}
+        {memorizedMounted && memorizedCount > 0 && <MemorizedReview />}
       </div>
 
       <Card>
