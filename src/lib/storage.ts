@@ -42,6 +42,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   },
   reviews: {},
   memorizedVerses: [],
+  memorizationReviews: {},
   readSections: {},
   analytics: [],
   bookmarks: [],
@@ -206,6 +207,23 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
   return out;
 }
 
+// Memorized-verse review state. Mirrors sanitizeReviews but the key is a
+// verseKey (not a rule-quiz questionId), so it validates against
+// VERSE_KEY_PATTERN and caps at MAX_MEMORIZED — a separate keyspace that can
+// never collide with `reviews`. A stored object without this field reads back
+// as {} (lossless migration).
+function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState> {
+  if (!isObject(input)) return {};
+  const out: Record<string, ReviewState> = {};
+  const entries = Object.entries(input).slice(0, MAX_MEMORIZED);
+  for (const [verseKey, value] of entries) {
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    const review = sanitizeReview(value);
+    if (review) out[verseKey] = review;
+  }
+  return out;
+}
+
 function sanitizeAnalytics(input: unknown): AnalyticsEvent[] {
   if (!Array.isArray(input)) return [];
   const out: AnalyticsEvent[] = [];
@@ -311,6 +329,7 @@ function sanitizeProgress(input: unknown): TajweedProgress {
     streaks,
     reviews: sanitizeReviews(input.reviews),
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
+    memorizationReviews: sanitizeMemorizationReviews(input.memorizationReviews),
     readSections: sanitizeReadSections(input.readSections),
     analytics: sanitizeAnalytics(input.analytics),
     playerResume: sanitizePlayerResume(input.playerResume),
