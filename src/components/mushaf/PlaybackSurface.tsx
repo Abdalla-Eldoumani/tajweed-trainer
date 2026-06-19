@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
+import { useVerseSelection } from "./useVerseSelection";
 import { useTranslation } from "@/lib/i18n";
 import { getRecitation } from "@/lib/reciters";
 import { sheetBottomOffset, keyboardBottomOffset } from "@/lib/player-position";
@@ -10,6 +11,26 @@ import { toArabicIndic, cn } from "@/lib/utils";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { TajweedText } from "@/components/ui/TajweedText";
 import type { MushafPageData } from "@/lib/types";
+
+// Per-verse repeat options for the stepper. "Off" (count 0/1) plays each verse
+// once; the rest mirror the existing study UI's 2/3/5/10 set (UI-SPEC section
+// "Repeat stepper"). Wired to usePlayer.setRepeatOne.
+const REPEAT_OPTIONS = [0, 2, 3, 5, 10] as const;
+
+// Inter-verse gap presets in seconds (NOT a free slider, UI-SPEC section 7).
+// Wired to usePlayer.setInterVersePause, which clamps to the nearest of these.
+const GAP_PRESETS: { seconds: number; key: string }[] = [
+  { seconds: 0, key: "player.gap0" },
+  { seconds: 1, key: "player.gap1" },
+  { seconds: 2, key: "player.gap2" },
+  { seconds: 4, key: "player.gap4" },
+];
+
+// Cap on the number of chips actually rendered so selecting a whole long surah
+// (up to 286 verses, Al-Baqarah) never freezes building chips (UI-SPEC B5,
+// threat T-05-11). The summary count stays exact regardless; the overflow shows
+// a "+K more" affordance. The underlying queue can be large.
+const MAX_VISIBLE_CHIPS = 30;
 
 // The reader-scoped playback surface. It subscribes to the one zustand player
 // store and commands it; it never owns audio (the single <audio> stays in
@@ -189,6 +210,217 @@ function ErrorLine({ error }: { error: string }) {
   );
 }
 
+// (5) Multi-verse controls — the shared slot rendered identically in the desktop
+// panel and the expanded sheet. It owns the selection summary, the capped
+// removable chips, the per-verse repeat stepper, the whole-selection loop
+// toggle, the inter-verse gap presets, the play-selection action, and the
+// one-action clear. It commands the engine (playSet/playRange/setRepeatOne/
+// setLoopSelection/setInterVersePause) and the selection hook (clear/remove);
+// it constructs no audio. When nothing is selected it renders null so the
+// surface shows no bare empty state (UI-SPEC). The single accent here is the
+// play/pause-family lapis/gold; red ochre stays reserved for the error line.
+function MultiVerseControls() {
+  const { t, isAr } = useTranslation();
+  const { set, range, hasSelection, count, resolvedItems, remove, clear } = useVerseSelection();
+
+  // Engine state for reflecting the control "on" states. Subscribed narrowly so
+  // a time tick does not re-render the whole control block.
+  const repeatOne = usePlayer((s) => s.repeatOne);
+  const loopSelection = usePlayer((s) => s.loopSelection);
+  const interVersePause = usePlayer((s) => s.interVersePause);
+
+  // Collapse the whole block when there is no selection (no bare empty state).
+  if (!hasSelection) return null;
+
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
+  const summary =
+    count === 1
+      ? t("player.selectionSummaryOne")
+      : t("player.selectionSummary").replace("{n}", num(count));
+
+  // The chips to render: the hand-picked set keys, or the range expanded to
+  // keys. Only the first MAX_VISIBLE_CHIPS are built; the remainder collapse to
+  // a "+K more" pill so a 286-verse selection never freezes (B5).
+  const allKeys = range
+    ? resolvedItems().map((it) => `${it.surah}:${it.ayah}`)
+    : set;
+  const visibleKeys = allKeys.slice(0, MAX_VISIBLE_CHIPS);
+  const overflow = allKeys.length - visibleKeys.length;
+  // Range keys have no per-chip remove (a range is one contiguous unit cleared
+  // as a whole); set keys each remove individually.
+  const chipsRemovable = !range;
+
+  const refOf = (key: string) => {
+    const [s, a] = key.split(":").map(Number);
+    return isAr ? `${toArabicIndic(s)}:${toArabicIndic(a)}` : `${s}:${a}`;
+  };
+
+  const playSelection = () => {
+    if (range) {
+      usePlayer.getState().playRange(range.surah, range.from, range.to);
+      return;
+    }
+    const items = resolvedItems();
+    if (items.length > 0) usePlayer.getState().playSet(items);
+  };
+
+  // Clear is one action: empty the selection AND, if the engine is currently
+  // playing the queue built from this selection, stop it so playback ends
+  // cleanly and the surface folds away (B7). The "is this selection playing"
+  // test compares the live queue to the selection's resolved items, so clearing
+  // an unrelated single-verse play is left alone.
+  const clearSelection = () => {
+    const items = resolvedItems();
+    const st = usePlayer.getState();
+    const q = st.queue;
+    const sameQueue =
+      st.status !== "idle" &&
+      q.length === items.length &&
+      items.length > 0 &&
+      items.every((it, i) => q[i] && q[i].surah === it.surah && q[i].ayah === it.ayah);
+    if (sameQueue) st.stop();
+    clear();
+  };
+
+  return (
+    <section aria-label={summary} className="space-y-3 pt-1">
+      {/* Summary count (tabular so the digit does not jitter as it grows). */}
+      <p className="text-small font-medium tabular-nums text-text dark:text-text-dark">{summary}</p>
+
+      {/* Removable chips, capped. Each chip is a verse reference; for a
+          hand-picked set the chip is a remove button, for a range the chips are
+          read-only (the range clears as a unit via Clear). */}
+      <div className="flex flex-wrap gap-1.5">
+        {visibleKeys.map((key) =>
+          chipsRemovable ? (
+            <button
+              key={key}
+              type="button"
+              onClick={() => remove(key)}
+              aria-label={t("player.removeChip").replace("{ref}", refOf(key))}
+              title={t("player.removeChip").replace("{ref}", refOf(key))}
+              className="inline-flex items-center gap-1 rounded-full bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light ps-2 pe-1.5 py-1 text-micro font-medium tabular-nums hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+            >
+              <span>{refOf(key)}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          ) : (
+            <span
+              key={key}
+              className="inline-flex items-center rounded-full bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light px-2 py-1 text-micro font-medium tabular-nums"
+            >
+              {refOf(key)}
+            </span>
+          ),
+        )}
+        {overflow > 0 && (
+          <span className="inline-flex items-center rounded-full bg-bg-subtle dark:bg-bg-subtle-dark text-text-muted px-2 py-1 text-micro font-medium tabular-nums">
+            {t("player.chipMore").replace("{n}", num(overflow))}
+          </span>
+        )}
+      </div>
+
+      {/* Repeat-each stepper: a small bounded set, Off = play once. The active
+          option carries the single accent; reflects the engine's repeatOne. */}
+      <div className="space-y-1.5">
+        <p className="text-micro font-medium uppercase tracking-[0.08em] text-text-muted">{t("player.repeatEach")}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {REPEAT_OPTIONS.map((n) => {
+            const active = repeatOne === n || (n === 0 && repeatOne <= 1);
+            return (
+              <button
+                key={n}
+                type="button"
+                onClick={() => usePlayer.getState().setRepeatOne(n)}
+                aria-pressed={active}
+                className={cn(
+                  "min-w-[44px] min-h-[36px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors",
+                  active
+                    ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                    : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
+                )}
+              >
+                {n === 0 ? t("player.repeatOff") : `×${num(n)}`}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Whole-selection loop toggle (distinct from the per-verse repeat). */}
+      <button
+        type="button"
+        onClick={() => usePlayer.getState().setLoopSelection(!loopSelection)}
+        aria-pressed={loopSelection}
+        className={cn(
+          "inline-flex items-center gap-2 min-h-[36px] px-3 rounded-lg text-small font-medium border transition-colors",
+          loopSelection
+            ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+            : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
+        )}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polyline points="17 1 21 5 17 9" />
+          <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+          <polyline points="7 23 3 19 7 15" />
+          <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+        </svg>
+        {t("player.loopSelection")}
+      </button>
+
+      {/* Inter-verse gap presets. The active preset carries the single accent. */}
+      <div className="space-y-1.5">
+        <p className="text-micro font-medium uppercase tracking-[0.08em] text-text-muted">{t("player.gapBetweenVerses")}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {GAP_PRESETS.map((preset) => {
+            const active = interVersePause === preset.seconds;
+            return (
+              <button
+                key={preset.seconds}
+                type="button"
+                onClick={() => usePlayer.getState().setInterVersePause(preset.seconds)}
+                aria-pressed={active}
+                className={cn(
+                  "min-w-[44px] min-h-[36px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors",
+                  active
+                    ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                    : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
+                )}
+              >
+                {t(preset.key)}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Play the selection (set via playSet, range via playRange) and the
+          one-action clear. Play carries the filled accent; clear is a quiet
+          outline (NOT red ochre — that stays the error line only). */}
+      <div className="flex items-center gap-2 pt-1">
+        <button
+          type="button"
+          onClick={playSelection}
+          className="inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-lg bg-primary text-on-primary hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep text-small font-medium transition-colors"
+        >
+          <PlayIcon />
+          {t("player.playSelection")}
+        </button>
+        <button
+          type="button"
+          onClick={clearSelection}
+          className="inline-flex items-center min-h-[44px] px-3 rounded-lg text-small font-medium text-text-muted border border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors"
+        >
+          {t("player.clearSelection")}
+        </button>
+      </div>
+    </section>
+  );
+}
+
 // --- Desktop side panel (>= 1024px) ------------------------------------------
 
 function SidePanel({ model }: { model: SurfaceModel }) {
@@ -278,11 +510,10 @@ function SidePanel({ model }: { model: SurfaceModel }) {
           <ReciterLine name={model.reciterName} />
           <TransportRow model={model} />
 
-          {/* (5) Multi-verse controls slot. Plan 05 fills this with the
-              selection summary, repeat stepper, loop toggle, and inter-verse
-              pause presets, plus (6) the clear-selection action. Kept as a
-              labelled empty region so the layout rhythm is already in place. */}
-          {/* PLAYBACK_SURFACE_MULTIVERSE_SLOT (plan 05) */}
+          {/* (5)+(6) Multi-verse controls: selection summary, capped chips,
+              repeat stepper, loop toggle, inter-verse gap presets, play, and
+              clear. Renders null when nothing is selected (no empty state). */}
+          <MultiVerseControls />
 
           {model.error && <ErrorLine error={model.error} />}
         </>
@@ -495,10 +726,9 @@ function BottomSheet({ model }: { model: SurfaceModel }) {
           )}
           <ReciterLine name={model.reciterName} />
 
-          {/* (5) Multi-verse controls slot, shared with the panel. Plan 05 fills
-              it with the selection summary, repeat stepper, loop toggle, and
-              inter-verse pause presets, plus the clear-selection action. */}
-          {/* PLAYBACK_SURFACE_MULTIVERSE_SLOT (plan 05) */}
+          {/* (5)+(6) Multi-verse controls, shared with the panel. Renders null
+              when nothing is selected. */}
+          <MultiVerseControls />
 
           {model.error && <ErrorLine error={model.error} />}
         </div>
@@ -539,13 +769,45 @@ export function PlaybackSurface({ data }: PlaybackSurfaceProps) {
   const hasPrev = usePlayer((s) => s.index > 0);
   const error = usePlayer((s) => s.error);
 
-  // The surface appears the instant a verse plays and folds away when the
-  // player idles (stop). It is driven purely by store state, so audio started
-  // on a prior page shows the surface immediately on mount too.
-  const visible = cur !== null && status !== "idle";
+  // A selection (built via the page's per-verse add controls) surfaces the
+  // controls so the user can play it even before any audio is sounding.
+  const { hasSelection } = useVerseSelection();
+
+  // The surface appears the instant a verse plays OR a selection is being built,
+  // and folds away when the player idles (stop) with no selection. Driven purely
+  // by store + selection state, so audio started on a prior page shows the
+  // surface immediately on mount too.
+  const playingVisible = cur !== null && status !== "idle";
   // Render nothing surface-specific until the breakpoint resolves, so the first
   // client paint matches the (empty) server paint and never flashes both.
-  if (!visible || !cur || isDesktop === null) return null;
+  if (isDesktop === null) return null;
+  if (!playingVisible && !hasSelection) return null;
+
+  // Selection-only shell: a selection exists but nothing is playing yet (no
+  // current verse to render a reference/verse-text/transport for). Show just the
+  // multi-verse controls so the user can press Play selection; the full surface
+  // (with the playing-verse parts) takes over the moment playback starts.
+  if (!cur) {
+    return isDesktop ? (
+      <aside
+        role="region"
+        aria-label={t("player.play")}
+        className="flex flex-col self-start sticky top-4 rounded-2xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark w-[clamp(360px,28vw,400px)] p-6 transition-[transform,opacity] duration-200 motion-reduce:transition-none"
+        style={{ boxShadow: "0 8px 24px -16px rgba(16,20,32,0.30)" }}
+      >
+        <MultiVerseControls />
+      </aside>
+    ) : (
+      <div
+        role="region"
+        aria-label={t("player.play")}
+        className="fixed inset-x-0 bottom-0 z-40 flex flex-col rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark safe-bottom px-4 pt-3 pb-4 transition-transform duration-200 motion-reduce:transition-none"
+        style={{ boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }}
+      >
+        <MultiVerseControls />
+      </div>
+    );
+  }
 
   const playing = status === "playing";
   const loading = status === "loading";
