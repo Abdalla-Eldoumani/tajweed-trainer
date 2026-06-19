@@ -117,7 +117,7 @@ export function KhatmahCard() {
       </SectionHeading>
       <div className="rounded-xl border border-border bg-bg-card p-6 sm:p-8 dark:bg-bg-card-dark">
         <div className="flex items-baseline gap-1.5">
-          <span className="font-heading text-[2.5rem] font-semibold leading-[1.15] tabular-nums sm:text-[3rem]">
+          <span className="font-heading text-display font-semibold leading-[1.15] tabular-nums sm:text-[3rem]">
             {num(pace.percentComplete)}
           </span>
           <span className="text-h3 font-medium text-text-muted">%</span>

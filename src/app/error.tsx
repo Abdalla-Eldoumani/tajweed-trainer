@@ -24,7 +24,7 @@ export default function Error({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-      <h1 className="font-heading text-2xl font-bold mb-2">{t("error.title")}</h1>
+      <h1 className="font-heading text-h2 font-bold mb-2">{t("error.title")}</h1>
       <p className="text-sm text-text-muted mb-6 max-w-sm">{t("error.body")}</p>
       <div className="flex gap-3">
         <Button onClick={() => reset()}>{t("error.retry")}</Button>
