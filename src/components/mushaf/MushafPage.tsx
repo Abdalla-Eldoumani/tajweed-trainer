@@ -128,6 +128,7 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                   >
                     <TajweedText
                       tajweedHtml={v.tajweedHtml}
+                      explainRules
                       className={cn(
                         "!leading-[2.6] transition-[filter,opacity] duration-300",
                         hideText && "blur-md opacity-60",
