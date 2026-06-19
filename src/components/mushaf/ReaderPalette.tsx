@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { pageForJuz, pageForSurah, TOTAL_JUZ } from "@/lib/navigation";
@@ -245,7 +246,12 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
     trapTab(e);
   };
 
-  return (
+  // Portal to the body so the backdrop escapes the reader's stacking context and
+  // covers the bottom tab bar; mounted gates it for SSR safety.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const content = (
     <div
       role="presentation"
       // While closed the dialog stays in the DOM but inert keeps its controls out
@@ -255,7 +261,7 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
       {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-black/50 transition-opacity duration-200 motion-reduce:transition-none",
+          "fixed inset-0 z-[60] bg-black/50 transition-opacity duration-200 motion-reduce:transition-none",
           open ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
         onClick={onClose}
@@ -265,7 +271,7 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
       {/* Centered card, anchored toward the top third. */}
       <div
         className={cn(
-          "fixed inset-0 z-50 flex items-start justify-center px-4 pt-[12vh]",
+          "fixed inset-0 z-[60] flex items-start justify-center px-4 pt-[12vh]",
           open ? "" : "pointer-events-none",
         )}
         onKeyDown={onKeyDown}
@@ -348,4 +354,6 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
       </div>
     </div>
   );
+
+  return mounted ? createPortal(content, document.body) : null;
 }
