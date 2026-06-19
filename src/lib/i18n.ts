@@ -511,6 +511,12 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.memorizeReveal": { en: "Reveal", ar: "كشف" },
   "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
   "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
+  "mushaf.quickJump": { en: "Jump to…", ar: "انتقال سريع" },
+  "mushaf.quickJumpPlaceholder": { en: "Surah, juz, or page…", ar: "سورة أو جزء أو صفحة…" },
+  "mushaf.quickJumpHint": { en: "Type a surah name, juz, or page number.", ar: "اكتب اسم سورة أو رقم جزء أو صفحة." },
+  "mushaf.quickJumpNoResults": { en: "No surah, juz, or page matches.", ar: "لا توجد سورة أو جزء أو صفحة مطابقة." },
+  "mushaf.quickJumpSurah": { en: "Surah {n}", ar: "سورة {n}" },
+  "mushaf.quickJumpPage": { en: "Page {n}", ar: "الصفحة {n}" },
   "memorize.statsTitle": { en: "Memorization", ar: "الحفظ" },
   "memorize.statsCount": { en: "Memorized verses", ar: "الآيات المحفوظة" },
   "memorize.statsHelp": {
