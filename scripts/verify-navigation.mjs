@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // Network-free verification for navigation state: verse bookmarks, resume
-// reading, and durable storage. Asserts the shape lives in the consolidated
-// progress model (so export / import / reset cover it) and round-trips a sample
-// through the bookmark sanitizer re-implementation.
+// reading (global + per-surah), durable storage, and the backup reminder.
+// Asserts the shape lives in the consolidated progress model (so export /
+// import / reset cover it) and round-trips samples through re-implementations of
+// the bookmark, per-surah, and backup-reminder logic kept in sync with
+// storage.ts.
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -23,6 +25,7 @@ const nav = read("src", "lib", "navigation.ts");
 const reader = read("src", "components", "mushaf", "MushafReader.tsx");
 const mIndex = read("src", "components", "mushaf", "MushafIndex.tsx");
 const home = read("src", "app", "page.tsx");
+const settings = read("src", "app", "settings", "page.tsx");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -154,6 +157,55 @@ record(
 record(
   "Per-surah round-trip never pollutes the prototype",
   ({}).verseKey === undefined && Object.getPrototypeOf(bySurahOut) === Object.prototype,
+);
+
+// Backup reminder (EXT-07): lastBackupAt lives on the consolidated model, is
+// stamped by exportProgress, sanitized to a string, and reset-covered. The
+// reminder is reachable from Settings and gated on meaningful progress + window.
+record("Progress model carries lastBackupAt", /lastBackupAt\?:\s*string/.test(types));
+record("Default progress seeds lastBackupAt", /lastBackupAt:\s*""/.test(storage));
+record("sanitizeProgress includes lastBackupAt", /lastBackupAt:\s*typeof input\.lastBackupAt === "string"/.test(storage));
+record("exportProgress stamps lastBackupAt", /export function exportProgress[\s\S]*?lastBackupAt = new Date\(\)\.toISOString\(\)/.test(storage));
+record("Storage exposes the backup-reminder gate", /export function shouldRemindBackup/.test(storage) && /export function hasMeaningfulProgress/.test(storage));
+record("Settings surfaces the backup reminder", /shouldRemindBackup/.test(settings) && /settings\.backup\.reminder/.test(settings));
+record("Backup reminder is dismissible", /setShowBackupReminder\(false\)/.test(settings));
+
+// Round-trip: shouldRemindBackup re-implementation kept in sync with storage.ts.
+const BACKUP_DAYS = 30;
+const DAY = 24 * 60 * 60 * 1000;
+function hasMeaningfulProgress(p) {
+  if ((p.memorizedVerses?.length ?? 0) > 0) return true;
+  if ((p.bookmarks?.length ?? 0) > 0) return true;
+  if ((p.streaks?.currentStreak ?? 0) > 0) return true;
+  for (const mod of Object.values(p.modules ?? {})) {
+    if ((mod.lessonsCompleted?.length ?? 0) > 0 || (mod.quizScores?.length ?? 0) > 0) return true;
+  }
+  return false;
+}
+function shouldRemindBackup(p, now) {
+  if (!hasMeaningfulProgress(p)) return false;
+  const last = p.lastBackupAt ?? "";
+  if (!last) return true;
+  const lastMs = Date.parse(last);
+  if (Number.isNaN(lastMs)) return true;
+  return now.getTime() - lastMs > BACKUP_DAYS * DAY;
+}
+const NOW = new Date("2026-06-19T00:00:00.000Z");
+const emptyProgress = { modules: {}, memorizedVerses: [], bookmarks: [], streaks: { currentStreak: 0 }, lastBackupAt: "" };
+const withProgress = { ...emptyProgress, bookmarks: ["2:255"] };
+record("No reminder without meaningful progress", shouldRemindBackup(emptyProgress, NOW) === false);
+record("Reminder when progress exists and no backup ever", shouldRemindBackup(withProgress, NOW) === true);
+record(
+  "No reminder right after a fresh backup",
+  shouldRemindBackup({ ...withProgress, lastBackupAt: new Date(NOW.getTime() - 5 * DAY).toISOString() }, NOW) === false,
+);
+record(
+  "Reminder again once the backup is older than 30 days",
+  shouldRemindBackup({ ...withProgress, lastBackupAt: new Date(NOW.getTime() - 31 * DAY).toISOString() }, NOW) === true,
+);
+record(
+  "Reminder when lastBackupAt is unparseable",
+  shouldRemindBackup({ ...withProgress, lastBackupAt: "not-a-date" }, NOW) === true,
 );
 
 const failed = results.filter((r) => !r.ok);

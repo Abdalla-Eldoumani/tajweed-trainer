@@ -49,6 +49,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   lastRead: null,
   lastReadBySurah: {},
   seenOnboarding: false,
+  lastBackupAt: "",
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -370,6 +371,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     lastRead: sanitizeLastRead(input.lastRead),
     lastReadBySurah: sanitizeLastReadBySurah(input.lastReadBySurah),
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
+    lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
   };
 }
 
@@ -514,9 +516,47 @@ export function recordAnalyticsEvent(type: AnalyticsEventType, meta?: string): v
 
 // Returns a JSON snapshot of the entire progress object suitable for download
 // as a backup file. The snapshot already passes through sanitizeProgress on
-// read, so untrusted fields are stripped.
+// read, so untrusted fields are stripped. Stamps lastBackupAt so the snapshot
+// and the stored state agree on when this backup was taken; that timestamp also
+// dismisses the backup reminder. On the server (no window) it returns the
+// snapshot without persisting.
 export function exportProgress(): string {
-  return JSON.stringify(getProgress(), null, 2);
+  const progress = getProgress();
+  progress.lastBackupAt = new Date().toISOString();
+  setProgress(progress);
+  return JSON.stringify(progress, null, 2);
+}
+
+export function getLastBackupAt(): string {
+  return getProgress().lastBackupAt ?? "";
+}
+
+const BACKUP_REMINDER_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// True when the user has done enough to be worth backing up. Kept here next to
+// the data model so the "meaningful" definition has one home. Any completed
+// lesson, quiz score, memorized verse, bookmark, or an active streak counts.
+export function hasMeaningfulProgress(progress: TajweedProgress): boolean {
+  if (progress.memorizedVerses.length > 0) return true;
+  if (progress.bookmarks.length > 0) return true;
+  if (progress.streaks.currentStreak > 0) return true;
+  for (const mod of Object.values(progress.modules)) {
+    if (mod.lessonsCompleted.length > 0 || mod.quizScores.length > 0) return true;
+  }
+  return false;
+}
+
+// Whether to nudge the user to back up: there is meaningful progress AND either
+// no backup was ever taken or the last one is older than the reminder window.
+// `now` is injected so callers (and tests) control the clock.
+export function shouldRemindBackup(progress: TajweedProgress, now: Date): boolean {
+  if (!hasMeaningfulProgress(progress)) return false;
+  const last = progress.lastBackupAt ?? "";
+  if (!last) return true;
+  const lastMs = Date.parse(last);
+  if (Number.isNaN(lastMs)) return true;
+  return now.getTime() - lastMs > BACKUP_REMINDER_DAYS * DAY_MS;
 }
 
 // Replaces stored progress with the parsed payload after sanitization. Returns

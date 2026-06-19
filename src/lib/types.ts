@@ -459,6 +459,10 @@ export interface TajweedProgress {
   // Whether the first-launch onboarding has been shown and dismissed. Cleared by
   // reset so onboarding re-shows.
   seenOnboarding: boolean;
+  // ISO timestamp of the last successful export, stamped by exportProgress().
+  // Empty until the first backup. Drives the gentle backup reminder in Settings;
+  // cleared by reset so the reminder logic restarts with progress.
+  lastBackupAt?: string;
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".
