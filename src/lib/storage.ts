@@ -77,7 +77,7 @@ function deepFreeze<T>(value: T): T {
 // empty state; live reads go through cloneDefaultProgress() instead.
 export const EMPTY_PROGRESS: TajweedProgress = deepFreeze(structuredClone(DEFAULT_PROGRESS));
 
-// Caps protect against pathological inputs from a tampered localStorage —
+// Caps protect against pathological inputs from a tampered localStorage,
 // e.g. a 100,000-entry bookmarks array that bloats every render.
 const MAX_BOOKMARKS = 200;
 const MAX_LESSONS_PER_MODULE = 200;
@@ -223,7 +223,7 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
 
 // Memorized-verse review state. Mirrors sanitizeReviews but the key is a
 // verseKey (not a rule-quiz questionId), so it validates against
-// VERSE_KEY_PATTERN and caps at MAX_MEMORIZED — a separate keyspace that can
+// VERSE_KEY_PATTERN and caps at MAX_MEMORIZED, a separate keyspace that can
 // never collide with `reviews`. A stored object without this field reads back
 // as {} (lossless migration).
 function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState> {
@@ -242,7 +242,7 @@ function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState
 function sanitizeAnalytics(input: unknown): AnalyticsEvent[] {
   if (!Array.isArray(input)) return [];
   const out: AnalyticsEvent[] = [];
-  // Take the most recent MAX_ANALYTICS — older events get evicted as the
+  // Take the most recent MAX_ANALYTICS, older events get evicted as the
   // ring buffer fills up.
   const recent = input.slice(-MAX_ANALYTICS);
   for (const item of recent) {
@@ -732,7 +732,7 @@ export function toggleMemorizedVerse(verseKey: string): boolean {
 
 // Batched mark/unmark over a list of verseKeys: one read, one Set mutation
 // across the whole list, one write (so the change bus fires exactly once
-// regardless of list length — a whole surah is one write, not 286). Set
+// regardless of list length, a whole surah is one write, not 286). Set
 // semantics give union for mark (overlapping marks never double count) and
 // difference for unmark. The 6236 cap is checked inside the loop and invalid
 // keys are skipped. Returns the new memorized count so the caller can update

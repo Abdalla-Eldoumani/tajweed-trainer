@@ -48,7 +48,7 @@ for (const s of surahIndex as Array<{ number: number; nameSimple: string; nameAr
 // The authored pool was written answer-first, so most questions keep the correct
 // option at position A. Shuffle each question's options before display so position
 // carries no signal. Seed the shuffle from the question id (not Math.random) so the
-// order is stable across a session and identical on server and client — a random
+// order is stable across a session and identical on server and client; a random
 // order would reshuffle every render and mismatch SSR hydration.
 function seedFromId(id: string): number {
   let h = 2166136261;

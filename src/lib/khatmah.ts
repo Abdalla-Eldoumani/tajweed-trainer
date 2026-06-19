@@ -4,7 +4,7 @@
 // unit-testable. Every output is clamped and every division is guarded, so a
 // same-day plan or a reader past the end can never produce NaN/Infinity.
 //
-// Model — linear by mushaf page. The whole Quran is 604 pages; being on page N
+// Model, linear by mushaf page. The whole Quran is 604 pages; being on page N
 // is N/604 of the way through (the documented simplifying assumption: pages are
 // treated as equal units, which they are not exactly, but it gives a calm,
 // honest pace without per-page weighting). A plan covers the pages from its
@@ -69,7 +69,7 @@ function clamp(value: number, min: number, max: number): number {
 
 // Compute the full pace snapshot for a plan given the reader's current page and
 // today's date. currentPage is the reader position the app records
-// (lastRead.page); the caller clamps nothing — every field is bounded here.
+// (lastRead.page); the caller clamps nothing, every field is bounded here.
 export function computeKhatmahPace(
   plan: KhatmahPlan,
   currentPage: number,
@@ -135,7 +135,7 @@ export function computeKhatmahPace(
 
 // Derive a target ISO date from a start date and a whole-day duration (used by
 // the duration presets: 30/60/90 days). The duration is the inclusive span, so a
-// 30-day plan beginning on day D targets D+29 — exactly totalDays === 30 above.
+// 30-day plan beginning on day D targets D+29, exactly totalDays === 30 above.
 // Pure date math at UTC midnight; returns YYYY-MM-DD.
 export function targetDateForDuration(startDate: string, days: number): string {
   const start = Date.parse(`${startDate}T00:00:00Z`);

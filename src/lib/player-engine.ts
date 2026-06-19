@@ -1,5 +1,5 @@
 // Pure advance decision and queue builders for the verse-playback engine. No
-// React, no next, no zustand, no DOM — same rule as player-position.ts — so the
+// React, no next, no zustand, no DOM, same rule as player-position.ts, so the
 // store imports it AND a plain Node verify script
 // (scripts/verify-player-engine.mjs) exercises it directly via TS type-stripping.
 //
@@ -70,16 +70,16 @@ export type EndedDecision =
   | { kind: "stop"; status: "paused" | "idle" };
 
 // Decide what happens when the current item ends. Precedence, highest first:
-//   1. repeatOne   — loop the current ayah until repeatsDone+1 reaches the count.
-//   2. repeatRange — walk from..to by ayah, then loop the range `count` times
+//   1. repeatOne   : loop the current ayah until repeatsDone+1 reaches the count.
+//   2. repeatRange : walk from..to by ayah, then loop the range `count` times
 //                    (the existing ayah-based loop; assumes index===ayah-1).
-//   3. loopSelection — NEW whole-queue loop: step to index+1, and at the last
+//   3. loopSelection : NEW whole-queue loop: step to index+1, and at the last
 //                    index wrap back to 0. Works for ANY queue (contiguous or a
 //                    hand-picked set); independent of repeatRange and never
 //                    overloads it.
-//   4. continuous  — auto-advance to index+1 unless the end-of-surah sleep flag
+//   4. continuous  : auto-advance to index+1 unless the end-of-surah sleep flag
 //                    is set.
-//   5. stop        — single returns to "paused", continuous to "idle".
+//   5. stop        : single returns to "paused", continuous to "idle".
 export function nextAfterEnded(s: EndedSnapshot): EndedDecision {
   // 1. Loop the current ayah a set number of times before moving on.
   if (s.repeatOne > 0 && s.repeatsDone + 1 < s.repeatOne) {

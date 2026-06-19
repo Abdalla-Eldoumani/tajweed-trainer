@@ -38,7 +38,7 @@ export function versesForRange(surah: number, start: number, end: number): strin
 
 // The percent of the Quran memorized. The guards exist so the display is honest
 // at the edges: a single memorized verse must not read 0%, and 6235 of 6236 must
-// not read 100% — only a complete 6236 is 100%. The underlying count is always
+// not read 100%, only a complete 6236 is 100%. The underlying count is always
 // shown exactly beside this figure.
 export function memorizedPercent(count: number, total = 6236): number {
   if (count <= 0) return 0;

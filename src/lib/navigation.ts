@@ -1,4 +1,4 @@
-// Mushaf navigation logic, derived entirely from the bundled surah index — no
+// Mushaf navigation logic, derived entirely from the bundled surah index, no
 // network. Exact page<->surah mapping plus clamped page stepping. Juz/hizb jumps
 // depend on per-verse division data the API already returns on each page
 // (MushafPageData.juzNumber); they are not hardcoded here so no structural

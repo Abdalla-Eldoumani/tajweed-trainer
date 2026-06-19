@@ -1,4 +1,4 @@
-// Pure geometry for the movable mini-player. No React, no next, no DOM — so it
+// Pure geometry for the movable mini-player. No React, no next, no DOM, so it
 // is safe to import from server components and from a plain Node verify script
 // (scripts/verify-player-position.mjs). The component measures the live viewport
 // and the player box and feeds them in; this module only does the arithmetic.

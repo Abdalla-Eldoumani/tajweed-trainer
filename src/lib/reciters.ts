@@ -80,7 +80,7 @@ export function normalizeReciterId(value: unknown): string {
 }
 
 // Two display groups per the PRD: Mujawwad, and Murattal (which gathers
-// Murattal, Muallim, and the API's unspecified/null style — all measured
+// Murattal, Muallim, and the API's unspecified/null style, all measured
 // recitations). Each reciter still carries its exact style for display.
 export type ReciterStyleGroup = "mujawwad" | "murattal";
 

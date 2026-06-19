@@ -20,7 +20,7 @@ const MASTERY_BOX = 5;
 // Pure aggregation of saved progress into per-module mastery rows. The caller
 // passes the question -> module map (built from the pool) and the module id
 // order, so this function has no content or storage imports. Per-module only
-// (per-rule has no accuracy signal — see the phase derivation note).
+// (per-rule has no accuracy signal, see the phase derivation note).
 export function getModuleMastery(
   progress: TajweedProgress,
   questionModuleMap: Record<string, string>,

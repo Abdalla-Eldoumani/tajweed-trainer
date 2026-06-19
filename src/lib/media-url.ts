@@ -1,7 +1,7 @@
 // Normalizes the audio paths the Quran.com API hands us into safe, playable
 // URLs. The `url` field is populated by the API, not by the user, but we still
 // refuse to load media from an unexpected origin and never downgrade to plaintext
-// http — defense-in-depth in case the upstream response is ever tampered with.
+// http, defense-in-depth in case the upstream response is ever tampered with.
 // This mirrors the `media-src` allowlist in next.config.mjs.
 
 const ALLOWED_AUDIO_HOSTS = new Set([

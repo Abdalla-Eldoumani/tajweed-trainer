@@ -6,7 +6,7 @@
 // Strategy: ESCAPE every angle bracket to text first, then re-create ONLY the
 // shapes a caller allows. Because the only raw `<`/`>` in the output are the ones
 // we deliberately reconstruct, the single-pass "mutation XSS" reassembly class
-// is impossible — there are no stray brackets left for a stripped-tag splice to
+// is impossible: there are no stray brackets left for a stripped-tag splice to
 // recombine into a new, never-re-scanned tag (e.g. `<<img onerror=x>img ...>`).
 //
 // Pure string ops only: this runs on both server (SSG) and client, so it cannot
