@@ -461,6 +461,15 @@ const translations: Record<string, { en: string; ar: string }> = {
   "notFound.goHome": { en: "Go Home", ar: "العودة للرئيسية" },
   "notFound.startLearning": { en: "Start Learning", ar: "ابدأ التعلّم" },
 
+  // Error boundary
+  "error.title": { en: "Something went wrong", ar: "حدث خطأ ما" },
+  "error.body": {
+    en: "This page ran into a problem. You can try again, or head back home.",
+    ar: "واجهت هذه الصفحة مشكلة. يمكنك إعادة المحاولة أو العودة إلى الرئيسية.",
+  },
+  "error.retry": { en: "Try again", ar: "إعادة المحاولة" },
+  "error.goHome": { en: "Go Home", ar: "العودة للرئيسية" },
+
   // Weekday short labels (JS getDay(): 0=Sun, 1=Mon, ..., 6=Sat)
   "weekday.short.0": { en: "S", ar: "ح" },
   "weekday.short.1": { en: "M", ar: "ن" },
