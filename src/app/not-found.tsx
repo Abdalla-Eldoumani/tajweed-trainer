@@ -18,7 +18,7 @@ export default function NotFound() {
       <div className="flex gap-3">
         <Link
           href="/"
-          className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
+          className="px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-medium hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep transition-colors"
         >
           {t("notFound.goHome")}
         </Link>

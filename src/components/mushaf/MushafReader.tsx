@@ -305,7 +305,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             onClick={playFullSurah}
             aria-label={t("mushaf.playSurah")}
             title={t("mushaf.playSurah")}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3 py-2 min-h-[44px] text-small font-medium hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-on-primary px-3 py-2 min-h-[44px] text-small font-medium hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep transition-colors"
           >
             <PlaySolid />
             <span className="hidden sm:inline">{t("mushaf.playSurah")}</span>

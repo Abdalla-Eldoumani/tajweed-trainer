@@ -427,7 +427,7 @@ export function MiniPlayer() {
                 <button
                   type="button"
                   onClick={() => usePlayer.getState().setRepeatRange(from, to, count)}
-                  className={`rounded-lg px-2 py-1 min-h-[32px] ${repeatRange ? "bg-primary text-white" : "bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light hover:bg-primary/20"}`}
+                  className={`rounded-lg px-2 py-1 min-h-[32px] ${repeatRange ? "bg-primary text-on-primary dark:bg-gold dark:text-ink" : "bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light hover:bg-primary/20"}`}
                 >
                   {t("player.loopStart")}
                 </button>

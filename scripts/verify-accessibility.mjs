@@ -3,12 +3,13 @@
 // no transpile: plain presence/absence checks on file contents, fast and
 // dependency-free like the sibling verify-* scripts. It validates the outputs of
 // 09-01 (focus rings, motion-reduce, smooth-scroll gating, aria-current,
-// scroll-lock) and 09-03 (the mini-player slider dark accent and the
-// contrast-scoped ayah-number pill), so none of them can silently regress.
+// scroll-lock), 09-03 (the mini-player slider dark accent and the
+// contrast-scoped ayah-number pill), and the raw-filled-button dark parity fix
+// (no `bg-primary text-white` left in src), so none of them can silently regress.
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -134,6 +135,28 @@ record(
   "ayah-number pill (dark) sets a scoped color, not var(--gold-dark)",
   /color:\s*#[0-9A-Fa-f]{6}/.test(darkEnd) && !/color:\s*var\(--gold-dark\)/.test(darkEnd),
   "AA-normal contrast-scoped numeral color on the navy pill",
+);
+
+// --- 8. no raw `bg-primary text-white` anywhere in src: filled primary buttons
+//        must flip to gold on the night theme like the Button primitive, so the
+//        only sanctioned pairing is bg-primary text-on-primary (+ the dark:
+//        gold treatment). A bare text-white never flips and is the dark-mode
+//        consistency tell this guard prevents from returning. ---
+function walkSrc(dir, acc = []) {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) walkSrc(full, acc);
+    else if (/\.(tsx?|css)$/.test(entry)) acc.push(full);
+  }
+  return acc;
+}
+const offenders = walkSrc(join(root, "src")).filter((f) =>
+  /bg-primary text-white/.test(readFileSync(f, "utf8")),
+);
+record(
+  "src has zero raw `bg-primary text-white` (filled buttons flip to gold in dark)",
+  offenders.length === 0,
+  offenders.length ? offenders.map((f) => relative(root, f)).join(", ") : "none",
 );
 
 const failed = results.filter((r) => !r.ok);

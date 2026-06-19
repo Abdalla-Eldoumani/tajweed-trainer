@@ -72,7 +72,7 @@ export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, 
       <button
         onClick={handlePlayPause}
         disabled={isLoading}
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-on-primary hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep disabled:opacity-50 transition-colors"
         aria-label={isPlaying ? t("player.pause") : t("player.play")}
       >
         {isLoading ? <LoadingIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
