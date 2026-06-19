@@ -509,7 +509,11 @@ html, body {
   border-radius: 9999px;
   background: var(--bg-subtle);
   border: 1px solid var(--gold-hairline);
-  color: var(--gold-dark);
+  /* Contrast-scoped gold for the small ayah numeral, not the shared --gold-dark.
+     --gold-dark on --bg-subtle is 3.75:1 (AA-large only); this deeper gold reads
+     4.86:1 on the ivory --bg-subtle so the numeral clears AA-normal. Theme-aware:
+     the pill ground flips per theme, so the dark rule below uses a brighter gold. */
+  color: #7A5E15;
   font-size: 0.55em;
   font-weight: 600;
   vertical-align: middle;
@@ -521,7 +525,9 @@ html, body {
 .dark .tajweed-text .end {
   background: var(--bg-subtle);
   border-color: var(--gold-hairline);
-  color: var(--gold-dark);
+  /* Brighter gold on the navy --bg-subtle: --gold-dark was 3.36:1 (sub-AA);
+     this reads 6.50:1 so the numeral clears AA-normal. See the light rule above. */
+  color: #C7A24A;
 }
 
 /* Card elevated variant — a quiet 1px gold hairline and a small neutral
