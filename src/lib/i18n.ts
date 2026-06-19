@@ -648,6 +648,33 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "تم حظر الوصول إلى الميكروفون. اسمح به من إعدادات الموقع في متصفحك ثم حاول مجددًا.",
   },
   "compare.tryAgain": { en: "Try again", ar: "حاول مجددًا" },
+
+  // Private per-verse study notes (local-only, the learner's own words)
+  "notes.title": { en: "Your note", ar: "ملاحظتك" },
+  "notes.add": { en: "Add a note", ar: "إضافة ملاحظة" },
+  "notes.edit": { en: "Edit your note", ar: "تعديل ملاحظتك" },
+  "notes.placeholder": { en: "A private note for this verse…", ar: "ملاحظة خاصة لهذه الآية…" },
+  "notes.privacy": {
+    en: "Private to this device — your own words, never uploaded.",
+    ar: "خاصة بهذا الجهاز — كلماتك أنت، لا تُرفع أبدًا.",
+  },
+  "notes.save": { en: "Save note", ar: "حفظ الملاحظة" },
+  "notes.saved": { en: "Saved", ar: "تم الحفظ" },
+  "notes.clear": { en: "Delete note", ar: "حذف الملاحظة" },
+  "notes.charsLeft": { en: "{n} left", ar: "بقي {n}" },
+  "notes.hasNote": { en: "This verse has a note", ar: "لهذه الآية ملاحظة" },
+
+  // Reciter A/B compare: hear the same verse by two reciters back to back
+  "recompare.title": { en: "Compare reciters", ar: "مقارنة القرّاء" },
+  "recompare.hint": {
+    en: "Hear this verse by two reciters to compare their recitation.",
+    ar: "استمع لهذه الآية بصوت قارئين لمقارنة تلاوتهما.",
+  },
+  "recompare.reciterA": { en: "Reciter A", ar: "القارئ الأول" },
+  "recompare.reciterB": { en: "Reciter B", ar: "القارئ الثاني" },
+  "recompare.playA": { en: "Play A", ar: "تشغيل الأول" },
+  "recompare.playB": { en: "Play B", ar: "تشغيل الثاني" },
+
   "reading.close": { en: "Close", ar: "إغلاق" },
   "settings.readingDepth": { en: "Reading depth", ar: "عمق القراءة" },
   "settings.translationResource": { en: "Translation", ar: "الترجمة" },
