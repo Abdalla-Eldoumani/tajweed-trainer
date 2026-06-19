@@ -2,6 +2,9 @@
   "name": "tajweed-trainer",
   "version": "0.6.0",
   "private": true,
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
