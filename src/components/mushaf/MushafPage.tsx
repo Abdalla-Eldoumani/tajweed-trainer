@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useMemorization } from "@/hooks/useMemorization";
+import { useVerseSelection } from "./useVerseSelection";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { TajweedText } from "@/components/ui/TajweedText";
@@ -10,6 +11,22 @@ import { MushafFrame } from "./MushafFrame";
 import { SurahCartouche } from "./SurahCartouche";
 import { BismillahLine } from "./BismillahLine";
 import type { MushafPageData } from "@/lib/types";
+
+// A plus glyph for "add to selection" and a check for "added"; the add control
+// is a third, distinct per-verse affordance (after the play tap and the details
+// control) so building a revision set is deliberate and never the plain tap.
+const PlusIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
 
 interface MushafPageProps {
   data: MushafPageData;
@@ -31,6 +48,7 @@ interface MushafPageProps {
 export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
+  const { isSelected, toggle: toggleSelected } = useVerseSelection();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
   // Subscribe to the verse the global player is on so the page can mark it while
@@ -84,6 +102,7 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
             const memorized = mounted && isMemorized(v.verseKey);
             const hideText = memorizationMode && memorized && !revealed.has(v.verseKey);
             const isPlaying = v.verseKey === playingKey;
+            const selected = isSelected(v.verseKey);
 
             return (
               <Fragment key={v.verseKey}>
@@ -99,7 +118,12 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                     onClick={() => onPlayVerse?.(v.verseKey)}
                     aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
                     aria-current={isPlaying ? "true" : undefined}
-                    className={cn("mushaf-verse", hideText && "select-none", isPlaying && "mushaf-verse-playing")}
+                    className={cn(
+                      "mushaf-verse",
+                      hideText && "select-none",
+                      isPlaying && "mushaf-verse-playing",
+                      selected && "mushaf-verse-selected",
+                    )}
                   >
                     <TajweedText
                       tajweedHtml={v.tajweedHtml}
@@ -130,6 +154,30 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                       <circle cx="12" cy="12" r="1.8" />
                       <circle cx="19" cy="12" r="1.8" />
                     </svg>
+                  </button>
+                  {/* Add-to-selection: a distinct, always-present control that
+                      toggles the verse in the multi-verse set. Separate from the
+                      plain play tap and the details control, so building a
+                      revision queue is deliberate and a tap is never ambiguous.
+                      stopPropagation keeps it from also firing the verse's play
+                      tap; the aria-label flips with state. */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSelected(v.verseKey);
+                    }}
+                    aria-label={`${selected ? t("player.removeFromSelection") : t("player.addToSelection")} (${v.surah}:${v.ayah})`}
+                    aria-pressed={selected}
+                    title={selected ? t("player.removeFromSelection") : t("player.addToSelection")}
+                    className={cn(
+                      "mushaf-verse-add ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
+                      selected
+                        ? "text-primary dark:text-primary-light bg-primary/10"
+                        : "text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
+                    )}
+                  >
+                    {selected ? <CheckIcon /> : <PlusIcon />}
                   </button>
                   {hideText && (
                     <button

@@ -14,6 +14,7 @@ import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
 import { PlaybackSurface } from "./PlaybackSurface";
+import { VerseSelectionProvider, useVerseSelectionState } from "./useVerseSelection";
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
 import { WordByWord } from "@/components/learn/WordByWord";
 import { RecitationCompare } from "@/components/mushaf/RecitationCompare";
@@ -116,6 +117,11 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const [targetVerseKey, setTargetVerseKey] = useState<string | null>(null);
   // The verse whose reading-depth panel (translation, tafsir, word-by-word) is open.
   const [selectedVerse, setSelectedVerse] = useState<string | null>(null);
+  // Multi-verse selection (a hand-picked set or a contiguous range), lifted here
+  // so the page's per-verse add controls + markers and the playback surface's
+  // chips + transport share one source. In-memory only: it survives in-reader
+  // page navigation (this reader stays mounted) but not a full reload.
+  const selection = useVerseSelectionState();
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -356,18 +362,20 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           plan 04 adds the bottom-sheet branch for that band. The panel is the
           single reader-scoped playback surface (the global MiniPlayer is
           suppressed on /mushaf). */}
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8 lg:items-start">
-        <div data-tajweed-drill={drill || undefined} className="min-w-0">
-          <MushafPage
-            data={data}
-            memorizationMode={memorizationMode}
-            targetVerseKey={targetVerseKey}
-            onPlayVerse={handlePlayVerse}
-            onSelectVerse={setSelectedVerse}
-          />
+      <VerseSelectionProvider value={selection}>
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8 lg:items-start">
+          <div data-tajweed-drill={drill || undefined} className="min-w-0">
+            <MushafPage
+              data={data}
+              memorizationMode={memorizationMode}
+              targetVerseKey={targetVerseKey}
+              onPlayVerse={handlePlayVerse}
+              onSelectVerse={setSelectedVerse}
+            />
+          </div>
+          <PlaybackSurface data={data} />
         </div>
-        <PlaybackSurface data={data} />
-      </div>
+      </VerseSelectionProvider>
 
       {selectedVerse && /^\d{1,3}:\d{1,3}$/.test(selectedVerse) && (() => {
         const [sv, av] = selectedVerse.split(":").map(Number);
