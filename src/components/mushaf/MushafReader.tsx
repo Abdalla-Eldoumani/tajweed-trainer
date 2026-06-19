@@ -9,7 +9,7 @@ import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
-import { pageForJuz, TOTAL_JUZ } from "@/lib/navigation";
+import { pageForJuz, pageForSurah, surahForPage, TOTAL_JUZ } from "@/lib/navigation";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { MushafPage } from "./MushafPage";
@@ -258,6 +258,14 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const atStart = page === 1;
   const atEnd = page === TOTAL_PAGES;
 
+  // The surah selector is a readout of the current page, not a jump-to picker:
+  // its value is a surah genuinely on the page. A page lists its surahs in
+  // data.surahsOnPage; use the first. The fallback chain only fires if that is
+  // ever empty and still resolves to a real surah for the page, never an
+  // invented one (UI-SPEC A1). This is the single place the fallback lives.
+  const currentSurahValue =
+    data.surahsOnPage[0]?.number ?? surahForPage(page)?.number ?? data.verses[0]?.surah ?? 1;
+
   return (
     <div className="space-y-4">
       {/* Toolbar */}
@@ -288,18 +296,22 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Treat the dropdown as a "jump to" picker. A page can show 0, 1, 2,
-              or 3 surah starts, so there is no single right answer for "selected
-              option". Binding value to the page number used to make the label
-              lie when the page coincidentally matched a surah number (e.g.
-              page 106 displaying "106. Quraysh" while showing Al-Ma'idah). */}
+          {/* Surah and juz selectors are controlled readouts of the open page:
+              the surah is one genuinely on the page (currentSurahValue), the juz
+              is the page's juz. Both come from server props, so a deep-linked
+              reload paints the right values on the first frame with no mounted
+              gating. Re-selecting the current value is a guarded no-op; a real
+              choice routes through the single /mushaf/page funnel. */}
           <select
-            value=""
-            onChange={(e) => router.push(`/mushaf/surah/${e.target.value}`)}
+            value={currentSurahValue}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              if (n === currentSurahValue) return;
+              router.push(`/mushaf/page/${pageForSurah(n)}`);
+            }}
             className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
             aria-label={t("mushaf.surahIndex")}
           >
-            <option value="">{t("mushaf.surahIndex")}</option>
             {surahs.map((s) => (
               <option key={s.number} value={s.number}>
                 {s.number}. {isAr ? s.nameArabic : s.nameSimple}
@@ -308,12 +320,15 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           </select>
 
           <select
-            value=""
-            onChange={(e) => e.target.value && router.push(`/mushaf/page/${pageForJuz(Number(e.target.value))}`)}
+            value={data.juzNumber}
+            onChange={(e) => {
+              const j = Number(e.target.value);
+              if (j === data.juzNumber) return;
+              router.push(`/mushaf/page/${pageForJuz(j)}`);
+            }}
             className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
             aria-label={t("mushaf.juzIndex")}
           >
-            <option value="">{t("mushaf.juzIndex")}</option>
             {Array.from({ length: TOTAL_JUZ }, (_, i) => i + 1).map((j) => (
               <option key={j} value={j}>
                 {t("mushaf.juz")} {isAr ? toArabicIndic(j) : j}
