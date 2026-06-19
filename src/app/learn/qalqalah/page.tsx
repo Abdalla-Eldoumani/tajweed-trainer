@@ -46,25 +46,25 @@ export default function QalqalahPage() {
           title={isAr ? qalqalahData.title_ar : qalqalahData.title_en}
           subtitle={isAr ? qalqalahData.title_en : qalqalahData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (qalqalahData.introduction_ar ?? qalqalahData.introduction) : qalqalahData.introduction}
         </p>
       </div>
 
       <Card id="qalqalah-letters">
-        <h2 className="font-heading font-semibold mb-3">{t("qalqalah.fiveLetters")}</h2>
+        <h2 className="font-heading font-semibold text-h2 mb-3">{t("qalqalah.fiveLetters")}</h2>
         <div className="flex flex-wrap justify-center gap-4 mb-4">
           {qalqalahData.letters.map((letter) => (
             <div key={letter.arabic} className="text-center">
               <ArabicText text={letter.arabic} size="xl" className="block text-tajweed-qalqalah" />
-              <p className="text-xs text-text-muted mt-1">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</p>
+              <p className="text-micro text-text-muted mt-1">{isAr ? (letter.name_ar ?? letter.name_en) : letter.name_en}</p>
             </div>
           ))}
         </div>
         <div id="qalqalah-mnemonic" className="p-3 rounded-lg bg-accent/10 text-center scroll-mt-20">
-          <p className="text-xs font-semibold text-text-muted mb-1">{t("module.mnemonic")}</p>
+          <p className="text-micro font-semibold text-text-muted mb-1">{t("module.mnemonic")}</p>
           <ArabicText text={qalqalahData.mnemonic_ar} size="md" />
-          {!isAr && <p className="text-xs text-text-muted mt-1">{qalqalahData.mnemonic_en}</p>}
+          {!isAr && <p className="text-micro text-text-muted mt-1">{qalqalahData.mnemonic_en}</p>}
         </div>
       </Card>
 
@@ -88,10 +88,10 @@ export default function QalqalahPage() {
 
       {qalqalahData.common_mistakes.length > 0 && (
         <Card id="qalqalah-mistakes">
-          <h2 className="font-heading font-semibold text-red-600 dark:text-red-400 mb-3">{t("module.commonMistakes")}</h2>
+          <h2 className="font-heading font-semibold text-h2 text-red-600 dark:text-red-400 mb-3">{t("module.commonMistakes")}</h2>
           <ul className="space-y-2">
             {(isAr && qalqalahData.common_mistakes_ar ? qalqalahData.common_mistakes_ar : qalqalahData.common_mistakes).map((mistake, i) => (
-              <li key={i} className="text-sm text-text-muted flex gap-2">
+              <li key={i} className="text-small text-text-muted flex gap-2">
                 <span className="text-red-500 shrink-0">x</span>
                 {mistake}
               </li>

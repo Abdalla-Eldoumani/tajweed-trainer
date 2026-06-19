@@ -44,15 +44,15 @@ export default function GhunnahPage() {
           title={isAr ? ghunnahData.title_ar : ghunnahData.title_en}
           subtitle={isAr ? ghunnahData.title_en : ghunnahData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (ghunnahData.introduction_ar ?? ghunnahData.introduction) : ghunnahData.introduction}
         </p>
       </div>
 
       <Card id="ghunnah-definition" className="scroll-mt-20">
-        <h2 className="font-heading font-semibold mb-2">{t("ghunnah.definition")}</h2>
-        <p className="text-sm text-text-muted">{isAr && ghunnahData.definition_ar ? ghunnahData.definition_ar : ghunnahData.definition}</p>
-        <p className="text-sm font-medium mt-2 text-primary dark:text-primary-light">
+        <h2 className="font-heading font-semibold text-h2 mb-2">{t("ghunnah.definition")}</h2>
+        <p className="text-small text-text-muted">{isAr && ghunnahData.definition_ar ? ghunnahData.definition_ar : ghunnahData.definition}</p>
+        <p className="text-small font-medium mt-2 text-primary dark:text-primary-light">
           {t("ghunnah.duration")}: {isAr && ghunnahData.duration_ar ? ghunnahData.duration_ar : ghunnahData.duration}
         </p>
       </Card>
@@ -74,28 +74,28 @@ export default function GhunnahPage() {
       </div>
 
       <Card id="ghunnah-prominence" variant="ornate" className="scroll-mt-20">
-        <h2 className="font-heading font-semibold mb-3">{t("ghunnah.ranking")}</h2>
+        <h2 className="font-heading font-semibold text-h2 mb-3">{t("ghunnah.ranking")}</h2>
         <div className="space-y-2">
           {ghunnahData.ghunnah_prominence_ranking.map((item) => (
-            <div key={item.level} className="flex items-start gap-3 text-sm">
-              <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light flex items-center justify-center text-xs font-bold">
+            <div key={item.level} className="flex items-start gap-3 text-small">
+              <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light flex items-center justify-center text-micro font-bold">
                 {item.level}
               </span>
               <div className="flex-1">
                 <span className="font-medium">{isAr && item.maratib_ar ? item.maratib_ar : item.maratib_en}</span>
                 <span className="text-text-muted ms-2">({isAr && item.prominence_ar ? item.prominence_ar : item.prominence})</span>
-                <div className="text-xs text-text-muted">
+                <div className="text-micro text-text-muted">
                   {(isAr && item.contexts_ar ? item.contexts_ar : item.contexts).join(isAr ? "، " : ", ")}
                 </div>
               </div>
               {typeof item.beats === "number" && (
-                <span className="text-xs text-text-muted shrink-0">{item.beats} {t("ghunnah.beats")}</span>
+                <span className="text-micro text-text-muted shrink-0">{item.beats} {t("ghunnah.beats")}</span>
               )}
             </div>
           ))}
         </div>
         {ghunnahData.ghunnah_prominence_ranking_note && (
-          <p className="text-xs text-text-muted mt-3">
+          <p className="text-micro text-text-muted mt-3">
             {isAr && ghunnahData.ghunnah_prominence_ranking_note_ar
               ? ghunnahData.ghunnah_prominence_ranking_note_ar
               : ghunnahData.ghunnah_prominence_ranking_note}
@@ -105,10 +105,10 @@ export default function GhunnahPage() {
 
       {ghunnahData.common_mistakes.length > 0 && (
         <Card>
-          <h2 className="font-heading font-semibold text-red-600 dark:text-red-400 mb-3">{t("module.commonMistakes")}</h2>
+          <h2 className="font-heading font-semibold text-h2 text-red-600 dark:text-red-400 mb-3">{t("module.commonMistakes")}</h2>
           <ul className="space-y-2">
             {(isAr && ghunnahData.common_mistakes_ar ? ghunnahData.common_mistakes_ar : ghunnahData.common_mistakes).map((mistake, i) => (
-              <li key={i} className="text-sm text-text-muted flex gap-2">
+              <li key={i} className="text-small text-text-muted flex gap-2">
                 <span className="text-red-500 shrink-0">x</span>
                 {mistake}
               </li>
