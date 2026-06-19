@@ -32,9 +32,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "home.startLearning": { en: "Start Learning", ar: "ابدأ التعلّم" },
   "home.yourProgress": { en: "Your Progress", ar: "تقدّمك" },
-  "home.streak": { en: "Streak", ar: "أيام متتالية" },
-  "home.streakDays": { en: "days", ar: "يوم" },
-  "home.best": { en: "Best", ar: "الأفضل" },
   "home.learningModules": { en: "Learning Modules", ar: "وحدات التعلّم" },
   "home.learningModulesDesc": {
     en: "From articulation points to stopping rules, covering all essential tajweed topics.",
