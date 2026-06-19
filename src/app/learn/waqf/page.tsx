@@ -44,7 +44,7 @@ export default function WaqfPage() {
           title={isAr ? waqfData.title_ar : waqfData.title_en}
           subtitle={isAr ? waqfData.title_en : waqfData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (waqfData.introduction_ar ?? waqfData.introduction) : waqfData.introduction}
         </p>
       </div>
@@ -57,9 +57,9 @@ export default function WaqfPage() {
                 <ArabicText text={symbol.symbol} size="md" className="text-gold-dark dark:text-gold" />
               </div>
               <div>
-                <h3 className="font-heading font-semibold text-sm">{isAr ? symbol.title_ar : symbol.title_en}</h3>
+                <h3 className="font-heading font-semibold text-small">{isAr ? symbol.title_ar : symbol.title_en}</h3>
                 {!isAr && <ArabicText text={symbol.title_ar} size="sm" className="text-text-muted" />}
-                <p className="text-xs text-text-muted mt-2">{isAr && symbol.description_ar ? symbol.description_ar : symbol.description}</p>
+                <p className="text-micro text-text-muted mt-2">{isAr && symbol.description_ar ? symbol.description_ar : symbol.description}</p>
               </div>
             </div>
           </Card>
@@ -67,10 +67,10 @@ export default function WaqfPage() {
       </div>
 
       <Card id="stopping-effects" className="scroll-mt-20">
-        <h2 className="font-heading font-semibold mb-3">{t("waqf.stoppingEffects")}</h2>
+        <h2 className="font-heading font-semibold text-h2 mb-3">{t("waqf.stoppingEffects")}</h2>
         <ul className="space-y-2">
           {(isAr && waqfData.stopping_effects_ar ? waqfData.stopping_effects_ar : waqfData.stopping_effects).map((effect, i) => (
-            <li key={i} className="text-sm text-text-muted flex gap-2">
+            <li key={i} className="text-small text-text-muted flex gap-2">
               <span className="text-primary dark:text-primary-light shrink-0">-</span>
               {effect}
             </li>

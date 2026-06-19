@@ -84,37 +84,37 @@ export default function MakharijPage() {
           title={isAr ? makharijData.title_ar : makharijData.title_en}
           subtitle={isAr ? makharijData.title_en : makharijData.title_ar}
         />
-        <p className="text-sm text-text-muted mt-4">
+        <p className="text-small text-text-muted mt-4">
           {isAr ? (makharijData.introduction_ar ?? makharijData.introduction) : makharijData.introduction}
         </p>
       </div>
 
       <Card>
-        <h2 className="font-heading font-semibold mb-4">{t("makharij.diagram")}</h2>
+        <h2 className="font-heading font-semibold text-h2 mb-4">{t("makharij.diagram")}</h2>
         <MakhrajDiagram selectedRegion={selectedRegion} onRegionSelect={setSelectedRegion} />
       </Card>
 
       {activeRegion && (
         <Card>
-          <h3 className="font-heading font-semibold">{isAr ? activeRegion.title_ar : activeRegion.title_en}</h3>
+          <h3 className="font-heading font-semibold text-h3">{isAr ? activeRegion.title_ar : activeRegion.title_en}</h3>
           {!isAr && <ArabicText text={activeRegion.title_ar} size="sm" className="text-text-muted" />}
-          <p className="text-sm text-text-muted mt-2">{isAr && (activeRegion as { description_ar?: string }).description_ar ? (activeRegion as { description_ar?: string }).description_ar : activeRegion.description}</p>
-          <p className="text-xs text-text-muted mt-1">{activeRegion.points_count} {t("makharij.articulationPoints")}</p>
+          <p className="text-small text-text-muted mt-2">{isAr && (activeRegion as { description_ar?: string }).description_ar ? (activeRegion as { description_ar?: string }).description_ar : activeRegion.description}</p>
+          <p className="text-micro text-text-muted mt-1">{activeRegion.points_count} {t("makharij.articulationPoints")}</p>
 
           {activeRegion.sub_points && (
             <div className="mt-4 space-y-3">
               {activeRegion.sub_points.map((sp) => (
                 <div key={sp.id} className="p-3 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark">
-                  <p className="text-xs font-medium mb-2">{isAr && sp.title_ar ? sp.title_ar : sp.title_en}</p>
+                  <p className="text-micro font-medium mb-2">{isAr && sp.title_ar ? sp.title_ar : sp.title_en}</p>
                   <div className="flex flex-wrap gap-2">
                     {sp.letters.map((l) => (
                       <div key={l.arabic + l.name_en} className="flex items-center gap-1.5">
                         <ArabicText text={l.arabic} size="md" />
-                        <span className="text-xs text-text-muted">{isAr && (l as { name_ar?: string }).name_ar ? (l as { name_ar?: string }).name_ar : l.name_en}</span>
+                        <span className="text-micro text-text-muted">{isAr && (l as { name_ar?: string }).name_ar ? (l as { name_ar?: string }).name_ar : l.name_en}</span>
                       </div>
                     ))}
                   </div>
-                  {(sp as { note?: string; note_ar?: string }).note && <p className="text-[10px] text-text-muted mt-2 italic">{isAr && (sp as { note_ar?: string }).note_ar ? (sp as { note_ar?: string }).note_ar : (sp as { note?: string }).note}</p>}
+                  {(sp as { note?: string; note_ar?: string }).note && <p className="text-micro text-text-muted mt-2 italic">{isAr && (sp as { note_ar?: string }).note_ar ? (sp as { note_ar?: string }).note_ar : (sp as { note?: string }).note}</p>}
                 </div>
               ))}
             </div>
@@ -125,8 +125,8 @@ export default function MakharijPage() {
               {activeRegion.letters.map((l) => (
                 <div key={l.arabic + l.name_en} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark">
                   <ArabicText text={l.arabic} size="md" />
-                  <span className="text-xs text-text-muted">{isAr && (l as { name_ar?: string }).name_ar ? (l as { name_ar?: string }).name_ar : l.name_en}</span>
-                  {(l as { condition?: string; condition_ar?: string }).condition && <span className="text-[10px] text-text-muted">({isAr && (l as { condition_ar?: string }).condition_ar ? (l as { condition_ar?: string }).condition_ar : (l as { condition?: string }).condition})</span>}
+                  <span className="text-micro text-text-muted">{isAr && (l as { name_ar?: string }).name_ar ? (l as { name_ar?: string }).name_ar : l.name_en}</span>
+                  {(l as { condition?: string; condition_ar?: string }).condition && <span className="text-micro text-text-muted">({isAr && (l as { condition_ar?: string }).condition_ar ? (l as { condition_ar?: string }).condition_ar : (l as { condition?: string }).condition})</span>}
                 </div>
               ))}
             </div>
@@ -135,12 +135,12 @@ export default function MakharijPage() {
       )}
 
       <div>
-        <h2 className="font-heading font-semibold text-lg mb-4">{t("makharij.allLetters")}</h2>
+        <h2 className="font-heading font-semibold text-h2 mb-4">{t("makharij.allLetters")}</h2>
         <LetterGrid groups={letterGroups} />
       </div>
 
       <Card variant="ornate" className="text-center">
-        <p className="text-sm text-text-muted">
+        <p className="text-small text-text-muted">
           <strong>{makharijData.total_points}</strong> {t("makharij.totalPoints")}{" "}
           · <strong>{makharijData.total_letters}</strong> {t("makharij.totalLetters")}
         </p>
