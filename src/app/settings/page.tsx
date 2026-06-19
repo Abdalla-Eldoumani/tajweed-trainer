@@ -114,7 +114,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{t("settings.title")}</h1>
+        <h1 className="font-heading text-h2 font-bold">{t("settings.title")}</h1>
         <p className="text-sm text-text-muted mt-2">{t("settings.description")}</p>
       </div>
 
@@ -141,7 +141,7 @@ export default function SettingsPage() {
                 value={lang.value}
                 checked={settings.language === lang.value}
                 onChange={() => updateSettings({ language: lang.value })}
-                className="accent-primary"
+                className="accent-primary dark:accent-gold"
                 aria-label={lang.label}
               />
               <span className={cn("text-sm font-medium", lang.value === "ar" && "font-arabic")}>{lang.label}</span>
@@ -237,7 +237,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={settings.showTransliteration}
               onChange={(e) => updateSettings({ showTransliteration: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.showTransliteration")}
             />
           </label>
@@ -248,7 +248,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={settings.showTranslation}
               onChange={(e) => updateSettings({ showTranslation: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.showTranslation")}
             />
           </label>
@@ -259,7 +259,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={settings.darkMode}
               onChange={(e) => updateSettings({ darkMode: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.darkMode")}
             />
           </label>
@@ -304,7 +304,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={!!settings.showWordByWord}
               onChange={(e) => updateSettings({ showWordByWord: e.target.checked })}
-              className="accent-primary w-4 h-4"
+              className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.showWordByWord")}
             />
           </label>
