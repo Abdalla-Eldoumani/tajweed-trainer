@@ -34,7 +34,3 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
-
-# capture artifacts
-.playwright-mcp/
-mushaf-screenshots/
