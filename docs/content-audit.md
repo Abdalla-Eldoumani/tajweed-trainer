@@ -81,9 +81,9 @@ flat: cite the surah:ayah whose snapshot actually contains your fragment.
 node scripts/verify-content.mjs
 ```
 
-It is offline and needs no key. A clean run prints `7/7 checks passed`, the count
-of questions whose Arabic was confirmed against its cited verse, and the standing
-warning count. Your change should not raise that warning count or fail any
+It is offline and needs no key. A clean run prints `8/8 checks passed`, the size
+of the question pool, and the standing warning count for fragments written in the
+simplified spelling rather than the Uthmani of the snapshot. Your change should not raise that warning count or fail any
 structural check. Run it alongside the type and lint checks before opening a pull
 request:
 
