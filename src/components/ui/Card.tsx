@@ -5,24 +5,29 @@ import { HTMLAttributes, forwardRef } from "react";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
-  variant?: "default" | "ornate";
+  // One card style. "elevated" adds a 1px inset gold hairline (.card-elevated),
+  // not a glow. "ornate" is kept as an alias of "elevated" so existing
+  // variant="ornate" call sites render the clean elevated card.
+  variant?: "default" | "elevated" | "ornate";
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, hover = false, variant = "default", children, ...props }, ref) => {
+    const isElevated = variant === "elevated" || variant === "ornate";
+
     return (
       <div
         ref={ref}
         className={cn(
-          "rounded-xl p-4 sm:p-6 shadow-sm",
-          variant === "default" && "bg-bg-card border border-gold-light/30 dark:bg-bg-card-dark dark:border-gold-dark/20",
-          variant === "ornate" && "bg-bg-card border-2 border-gold/40 dark:bg-bg-card-dark dark:border-gold-dark/30 islamic-pattern-bg",
+          "rounded-xl p-5 sm:p-6 shadow-sm bg-bg-card border border-border dark:bg-bg-card-dark",
+          // Elevated treatment: a quiet 1px inset gold hairline, no glow.
+          isElevated && "card-elevated",
           hover && "transition-shadow hover:shadow-md cursor-pointer",
           className
         )}
         {...props}
       >
-        {variant === "ornate" ? <div className="relative z-10">{children}</div> : children}
+        {children}
       </div>
     );
   }
@@ -31,3 +36,4 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 Card.displayName = "Card";
 
 export { Card };
+export type { CardProps };
