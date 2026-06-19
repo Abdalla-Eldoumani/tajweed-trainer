@@ -644,6 +644,28 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.tafsirResource": { en: "Tafsir", ar: "التفسير" },
   "settings.showWordByWord": { en: "Word-by-word breakdown", ar: "التحليل كلمة بكلمة" },
   "settings.resourceOnline": { en: "More options load when online.", ar: "تظهر خيارات أكثر عند الاتصال." },
+
+  // Onboarding
+  "onboarding.title": { en: "Welcome to Tajweed Trainer", ar: "مرحباً بك في مدرّب التجويد" },
+  "onboarding.skip": { en: "Skip", ar: "تخطّي" },
+  "onboarding.back": { en: "Back", ar: "رجوع" },
+  "onboarding.done": { en: "Start", ar: "ابدأ" },
+  "onboarding.stepOf": { en: "{current} / {total}", ar: "{current} / {total}" },
+  "onboarding.step.mushaf.title": { en: "Read and listen", ar: "اقرأ واستمع" },
+  "onboarding.step.mushaf.body": {
+    en: "Tap any verse in the mushaf to hear it. A playback surface appears (a side panel on desktop, a bottom sheet on your phone) so you can play one verse, play from a point, or queue several for revision.",
+    ar: "انقر أي آية في المصحف لسماعها. تظهر لوحة تشغيل (جانبية على الحاسوب، وورقة سفلية على الهاتف) لتشغيل آية واحدة، أو المتابعة من موضع، أو ضمّ عدة آيات للمراجعة.",
+  },
+  "onboarding.step.recall.title": { en: "Test yourself", ar: "اختبر نفسك" },
+  "onboarding.step.recall.body": {
+    en: "Turn on Recall to blur the verses you have memorized, recite them from memory, then reveal each one to check.",
+    ar: "شغّل وضع الاستذكار لإخفاء الآيات التي حفظتها، فتتلوها من ذاكرتك، ثم تكشف كلّ آية للتأكد.",
+  },
+  "onboarding.step.tracker.title": { en: "Track your hifz", ar: "تابع حفظك" },
+  "onboarding.step.tracker.body": {
+    en: "Mark verses, whole surahs, or a juz as memorized. Your progress page shows the share of the Quran you have memorized and what is due for review.",
+    ar: "حدّد آيات أو سورة كاملة أو جزءًا كمحفوظ. تعرض صفحة التقدّم نسبة ما حفظته من القرآن وما حان وقت مراجعته.",
+  },
 };
 
 export function t(key: string, lang: Language): string {
