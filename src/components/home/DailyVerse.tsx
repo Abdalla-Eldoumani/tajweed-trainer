@@ -42,7 +42,7 @@ export function DailyVerse() {
       <h2 className="font-heading font-semibold text-sm mb-3">{t("home.dailyVerse")}</h2>
       {/* Focusable so keyboard users can scroll the verse when it overflows. */}
       <div
-        className="text-center overflow-x-auto rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+        className="text-center overflow-x-auto rounded"
         tabIndex={0}
         role="group"
         aria-label={t("home.dailyVerse")}
