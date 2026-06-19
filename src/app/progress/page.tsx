@@ -7,6 +7,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { MasterySection } from "@/components/progress/MasterySection";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
+import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -42,6 +43,10 @@ export default function ProgressPage() {
     return { quizStarts, quizFinishes, topRoutes, total: analyticsEvents.length };
   })();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  // Shared so the empty-state CTA in the tracker and the populated surface's own
+  // trigger open the one bulk disclosure; the surface lives inside this section so
+  // the headline and breakdown stay visible and the count visibly moves on confirm.
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   const totalLessons: Record<string, number> = {};
   for (const m of modules) {
@@ -102,15 +107,27 @@ export default function ProgressPage() {
       )}
 
       {/* Memorization tracker: the headline (or the empty state) plus the
-          breakdown when populated. The tracker owns the empty-vs-populated
-          branch; the breakdown gates on mount + count so it never flashes
-          before hydration. onOpenBulk is wired by the bulk-entry plan. */}
+          breakdown and bulk-entry surface when populated. The tracker owns the
+          empty-vs-populated branch; the breakdown and bulk trigger gate on
+          mount + count so they never flash before hydration. The bulk surface
+          lives inside this section so the headline and breakdown stay visible
+          and the count visibly moves the instant a bulk op confirms (the change
+          bus re-renders all three together — no manual refresh). In the empty
+          state the tracker's own CTA opens the same disclosure, so the surface
+          hides its duplicate trigger there. */}
       <div className="space-y-6">
-        <MemorizationTracker />
+        <MemorizationTracker onOpenBulk={() => setBulkOpen(true)} />
         {memorizedMounted && memorizedCount > 0 && (
           <Card>
             <MemorizationBreakdown memorized={memorized} />
           </Card>
+        )}
+        {memorizedMounted && (
+          <BulkMemorizationEntry
+            open={bulkOpen}
+            onOpenChange={setBulkOpen}
+            showTrigger={memorizedCount > 0}
+          />
         )}
       </div>
 

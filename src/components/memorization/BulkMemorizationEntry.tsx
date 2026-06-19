@@ -34,6 +34,10 @@ interface BulkMemorizationEntryProps {
   // empty-state CTA and this surface's own trigger flip the same boolean.
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  // The empty state already shows a same-labeled "Add memorized verses" CTA, so
+  // the page hides this surface's own trigger there to avoid two identical
+  // controls; the panel still renders when open.
+  showTrigger?: boolean;
 }
 
 // Inline-disclosure bulk surface on /progress (not a modal, not a route): mark or
@@ -41,7 +45,11 @@ interface BulkMemorizationEntryProps {
 // true-delta preview (union for mark, difference for unmark) before the confirm.
 // Marking and unmarking share this one surface. Confirm is a single setMany call
 // (one store write, one change-bus emit) so a 286-verse op never writes per verse.
-export function BulkMemorizationEntry({ open, onOpenChange }: BulkMemorizationEntryProps) {
+export function BulkMemorizationEntry({
+  open,
+  onOpenChange,
+  showTrigger = true,
+}: BulkMemorizationEntryProps) {
   const { t, isAr } = useTranslation();
   const { memorized, setMany } = useMemorization();
 
@@ -100,13 +108,15 @@ export function BulkMemorizationEntry({ open, onOpenChange }: BulkMemorizationEn
 
   return (
     <div>
-      <Button
-        variant="secondary"
-        onClick={() => onOpenChange(!open)}
-        aria-expanded={open}
-      >
-        {t("memorize.bulkOpen")}
-      </Button>
+      {showTrigger && (
+        <Button
+          variant="secondary"
+          onClick={() => onOpenChange(!open)}
+          aria-expanded={open}
+        >
+          {t("memorize.bulkOpen")}
+        </Button>
+      )}
 
       {open && (
         <div
