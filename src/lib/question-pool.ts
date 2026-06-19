@@ -205,10 +205,6 @@ function legacyWrongAnswers(correctRule: string, count: number): string[] {
 
 // ---------- Public API ---------- //
 
-export function getQuestionsForModule(moduleId: string): Question[] {
-  return AUTHORED_BY_MODULE[moduleId] ?? [];
-}
-
 export function getAllQuestions(): Question[] {
   return Object.values(AUTHORED_BY_MODULE).flat();
 }

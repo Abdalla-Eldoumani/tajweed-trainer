@@ -15,10 +15,6 @@ import type { LearningModule, TajweedProgress } from "@/lib/types";
 
 const modules = learningPath.modules as LearningModule[];
 
-export function getLearningModules(): LearningModule[] {
-  return modules;
-}
-
 export function getModuleById(moduleId: string): LearningModule | null {
   return modules.find((m) => m.id === moduleId) ?? null;
 }

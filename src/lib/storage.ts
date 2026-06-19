@@ -423,15 +423,6 @@ export function setSettings(settings: UserSettings): void {
   setProgress(progress);
 }
 
-export function getModuleProgress(moduleId: string): ModuleProgress {
-  const progress = getProgress();
-  return progress.modules[moduleId] ?? {
-    lessonsCompleted: [],
-    quizScores: [],
-    lastAccessed: "",
-  };
-}
-
 export function markLessonComplete(moduleId: string, lessonId: string): void {
   const progress = getProgress();
   if (!progress.modules[moduleId]) {

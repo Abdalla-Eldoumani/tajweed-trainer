@@ -68,10 +68,6 @@ export function getRecitation(id: string): Recitation | undefined {
   return BY_ID.get(id);
 }
 
-export function isKnownReciter(id: unknown): id is string {
-  return typeof id === "string" && BY_ID.has(id);
-}
-
 // Resolve any stored or supplied value to a known recitation id, migrating
 // legacy identifiers and falling back to the default when unknown or malformed.
 export function normalizeReciterId(value: unknown): string {
