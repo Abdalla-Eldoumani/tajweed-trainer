@@ -91,9 +91,12 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
         </div>
         <ArabicText text={question.example.arabic} quran size="lg" />
         <div className="pt-1">
-          <span className="text-xs font-medium text-primary dark:text-primary-light">
-            {question.example.highlight_word}
-          </span>
+          <ArabicText
+            text={question.example.highlight_word}
+            quran
+            size="md"
+            className="font-medium text-primary dark:text-primary-light"
+          />
         </div>
         <AudioPlayer surah={question.example.surah} ayah={question.example.ayah} compact className="mx-auto" />
       </Card>
