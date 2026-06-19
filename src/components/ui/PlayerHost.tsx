@@ -10,6 +10,10 @@ import { fetchAudioUrl } from "@/lib/audio-api";
 export function PlayerHost() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadSeq = useRef(0);
+  // Pending inter-verse gap timer. When interVersePause > 0 the advance to the
+  // next queue item waits this long; the id lives here so a pause/stop landing
+  // mid-gap (or an unmount) can cancel it and nothing auto-resumes.
+  const gapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadToken = usePlayer((s) => s.loadToken);
   const seekToken = usePlayer((s) => s.seekToken);
@@ -24,6 +28,12 @@ export function PlayerHost() {
     audio.preload = "metadata";
     audioRef.current = audio;
     const get = usePlayer.getState;
+    const clearGap = () => {
+      if (gapTimer.current !== null) {
+        clearTimeout(gapTimer.current);
+        gapTimer.current = null;
+      }
+    };
     audio.ontimeupdate = () => get().onTime(audio.currentTime, audio.duration || 0);
     audio.onloadedmetadata = () => {
       const { pendingOffset } = get();
@@ -32,7 +42,27 @@ export function PlayerHost() {
       }
       get().onLoaded(Number.isFinite(audio.duration) ? audio.duration : 0);
     };
-    audio.onended = () => get().onEnded();
+    audio.onended = () => {
+      clearGap();
+      // The store's onEnded owns the advance decision; the host only decides
+      // whether to defer that call by the inter-verse gap (EDGE_CASES B6: a real
+      // timer, never silence baked into audio). At gap 0 the advance is immediate
+      // and unchanged from before. Looping a single ayah (repeatOne) or sitting
+      // at the queue end (stop) gets no gap; only a real move to a next item does.
+      const st = get();
+      const willAdvance = st.status === "playing" && (st.repeatOne <= 0 || st.repeatsDone + 1 >= st.repeatOne);
+      if (st.interVersePause > 0 && willAdvance) {
+        gapTimer.current = setTimeout(() => {
+          gapTimer.current = null;
+          // Re-read at fire time: a pause or stop that landed during the gap
+          // wins, exactly as the fetch resolver drops a load the user stopped.
+          if (usePlayer.getState().status !== "playing") return;
+          usePlayer.getState().onEnded();
+        }, st.interVersePause * 1000);
+        return;
+      }
+      st.onEnded();
+    };
     // A media error after the src is set (404, decode failure, network drop)
     // means this reciter has no playable audio for the current verse. Pause and
     // surface a clear message so the user can switch reciter; the control never
@@ -45,6 +75,7 @@ export function PlayerHost() {
     };
     get().restore();
     return () => {
+      clearGap();
       audio.pause();
       audio.removeAttribute("src");
       audio.ontimeupdate = null;
@@ -121,6 +152,16 @@ export function PlayerHost() {
       if (audio.paused && audio.src) audio.play().catch(() => usePlayer.setState({ status: "paused" }));
     } else if (audio.src && !audio.paused) {
       audio.pause();
+    }
+  }, [status]);
+
+  // A pause or stop that lands during the inter-verse gap must cancel the pending
+  // advance so nothing auto-resumes. Any non-playing status clears the timer; the
+  // gap only ever runs while playing, so this never drops a live advance.
+  useEffect(() => {
+    if (status !== "playing" && gapTimer.current !== null) {
+      clearTimeout(gapTimer.current);
+      gapTimer.current = null;
     }
   }, [status]);
 
