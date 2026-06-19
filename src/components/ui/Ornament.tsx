@@ -6,7 +6,7 @@ interface OrnamentProps {
 
 // Procedural Islamic geometric ornaments. All paths are constructed from
 // symmetric mathematical primitives (8-pointed star, 12-petal rosette,
-// nested diamond chains) — derivable shapes, not copies of any specific
+// nested diamond chains), derivable shapes, not copies of any specific
 // Mushaf decoration.
 
 export function CornerCartouche({ className }: OrnamentProps) {
@@ -66,7 +66,7 @@ export function MedallionOrnament({ className }: OrnamentProps) {
       <circle cx="100" cy="100" r="65" stroke="currentColor" strokeWidth="0.7" opacity="0.6" />
       <circle cx="100" cy="100" r="40" stroke="currentColor" strokeWidth="0.7" opacity="0.7" />
       {/* 12-pointed star. Coordinates are rounded so Node (server) and the
-          browser (client) serialize identical strings — trig differs in the last
+          browser (client) serialize identical strings; trig differs in the last
           float ULP between V8 builds, which otherwise trips a hydration mismatch. */}
       <g stroke="currentColor" strokeWidth="0.6" fill="none" opacity="0.7">
         {Array.from({ length: 12 }).map((_, i) => {

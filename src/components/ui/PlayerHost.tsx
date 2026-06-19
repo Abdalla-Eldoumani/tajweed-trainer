@@ -193,7 +193,7 @@ export function PlayerHost() {
     if (!cur) return;
     const label = surahName ?? `Surah ${cur.surah}`;
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: `${label} — Ayah ${cur.ayah}`,
+      title: `${label}, Ayah ${cur.ayah}`,
       artist: "Quran",
       album: label,
     });

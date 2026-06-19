@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Browser smoke test for the features added in this round:
-//   - Spaced repetition (Leitner) — record review, see Review Due tile.
-//   - Memorization tracker — toggle a verse, check localStorage.
-//   - Memorization mode — Mushaf reader toolbar toggle blurs verse text.
-//   - Global search — /search returns hits for "qalqalah" and a surah name.
-//   - Web Speech TTS — speak button is rendered when supported.
-//   - PWA — /manifest.webmanifest, /icon.svg, /sw.js endpoints respond.
+//   - Spaced repetition (Leitner): record review, see Review Due tile.
+//   - Memorization tracker: toggle a verse, check localStorage.
+//   - Memorization mode: Mushaf reader toolbar toggle blurs verse text.
+//   - Global search: /search returns hits for "qalqalah" and a surah name.
+//   - Web Speech TTS: speak button is rendered when supported.
+//   - PWA: /manifest.webmanifest, /icon.svg, /sw.js endpoints respond.
 //
 // Mirrors the verify-* style. Runs against `npm run dev` (preferred for
 // non-minified errors) but also works against `next start`.
@@ -24,7 +24,7 @@ const BASE = process.env.BASE_URL || "http://localhost:3000";
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 async function main() {
@@ -102,7 +102,7 @@ async function main() {
   record("Answering a question records a review entry", reviews.length === 1, `count: ${reviews.length}`);
 
   // ---- TTS button (Web Speech API support varies) ----
-  // Don't fail if speech is unavailable — just check the button is rendered
+  // Don't fail if speech is unavailable, just check the button is rendered
   // when supported, gracefully absent otherwise.
   const speechBtn = await page.locator('button[aria-label*="Read the question"], button[aria-label*="اقرأ السؤال"]').count();
   record("TTS button renders when speech is supported", speechBtn === 0 || speechBtn === 1, `count: ${speechBtn}`);

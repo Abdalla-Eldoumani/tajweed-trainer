@@ -130,9 +130,17 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `lessonsCompleted` per module | 200 entries | Module ids ≤ 100 chars; lesson ids ≤ 100 chars. |
 | `quizScores` per module | 500 entries | Each entry is `{ lessonId, score, date }`. |
 | `modules` map | 100 keys | Module-id strings 1–100 chars. |
-| `reviews` map | 2000 entries | Authored pool is ≈270; cap leaves headroom. Per entry: `box` clamped to 1–5, dates capped at 32 chars, counters at 100,000. |
+| `reviews` map | 2000 entries | Authored pool is about 280; cap leaves headroom. Per entry: `box` clamped to 1 through 5, dates capped at 32 chars, counters at 100,000. |
+| `memorizationReviews` map | 6,236 entries | Leitner state for memorized-verse review, keyed by verseKey (separate keyspace from `reviews`). Key validated against `^\d{1,3}:\d{1,3}$`; per-entry shape as `reviews`. |
 | `memorizedVerses` | 6,236 entries | One per Quran ayah. Each entry validated against `^\d{1,3}:\d{1,3}$`; deduped on read. |
-| `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1–100 chars. |
+| `bookmarks` | 500 entries | Verse bookmarks (distinct from the page `mushafBookmarks`). Each validated against `^\d{1,3}:\d{1,3}$`; deduped on read. |
+| `lastReadBySurah` map | 114 entries | Per-surah last-read location, keyed by surah 1 to 114. Each value is a `{ verseKey, page }` with page 1 to 604. |
+| `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1 to 100 chars. |
+| `verseNotes` map | 2,000 entries | Key validated against `^\d{1,3}:\d{1,3}$`. Each note trimmed and capped at 1,000 chars; empty notes dropped. |
+| `khatmah` | one plan or null | Both dates must be real ISO calendar dates with `targetDate >= startDate`; `startPage` 1 to 604. A malformed plan stores as null. |
+| `playerResume` | one record or null | Last playback position so the mini-player can resume after a reload. Validated shape; null when none. |
+| `seenOnboarding` | boolean | First-launch onboarding seen-once flag; defaults false so a reset re-shows it. |
+| `lastBackupAt` | ISO string | Stamped by `exportProgress`; empty until the first backup. Drives the backup reminder. |
 | `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
 | `reciter` | one of the 19 `RECITATIONS` ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
 | `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
@@ -142,12 +150,17 @@ Sanitization runs on every `getProgress()` read. Defaults absorb anything malfor
 
 ## Local-only data fields
 
-These four fields on `TajweedProgress` never leave the device. They aren't sent to any server, aren't shared between devices, and don't appear in any network request:
+These fields on `TajweedProgress` never leave the device. They aren't sent to any server, aren't shared between devices, and don't appear in any network request:
 
 - `reviews` — Leitner box state per question id, used by `/practice/review` and the spaced-repetition stats card on `/progress`.
-- `memorizedVerses` — verse keys the user has marked memorized, surfaced in the Mushaf reader and counted on `/progress`.
-- `readSections` — section anchors observed at 40% visibility on each lesson page, used by the floating progress chip.
-- `analytics` — a 1000-event FIFO ring buffer of route views and quiz events. Used by the Insights card on `/progress`. Removable through Reset Progress or by clearing the JSON backup before re-importing.
+- `reviews`: Leitner box state per question id, used by `/practice/review` and the spaced-repetition stats card on `/progress`.
+- `memorizationReviews`: Leitner state for reviewing memorized verses, keyed by verse key in its own keyspace.
+- `memorizedVerses`: verse keys the user has marked memorized, surfaced in the Mushaf reader and counted on `/progress`.
+- `bookmarks` and `lastReadBySurah`: verse bookmarks (listed at `/mushaf/bookmarks`) and the per-surah last-read position behind the resume pills on the index.
+- `readSections`: section anchors observed at 40% visibility on each lesson page, used by the floating progress chip.
+- `verseNotes`: the learner's own private note per verse, written and edited in the Mushaf reader's per-verse panel. Never religious content (the user's own words).
+- `khatmah` and `playerResume`: the opt-in Quran-completion plan tracked on `/progress`, and the saved playback position the mini-player resumes from.
+- `analytics`: a 1000-event FIFO ring buffer of route views and quiz events. Used by the Insights card on `/progress`. Removable through Reset Progress or by clearing the JSON backup before re-importing.
 
 Sanitization rejects malformed input (wrong types, oversized strings, unknown enum values) and replaces it with the matching default. A user who edits localStorage directly cannot make the app reference content it doesn't have or store an unbounded payload.
 

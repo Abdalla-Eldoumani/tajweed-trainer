@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
@@ -8,15 +8,20 @@ import { OrnamentalDivider } from "@/components/ui/Ornament";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { useBookmarks } from "@/hooks/useBookmarks";
+import { getProgress } from "@/lib/storage";
 import { pageForSurah } from "@/lib/navigation";
 import { toArabicIndic, cn } from "@/lib/utils";
-import type { SurahHeader } from "@/lib/types";
+import type { SurahHeader, VerseLocation } from "@/lib/types";
 
 interface MushafIndexProps {
   surahs: SurahHeader[];
 }
 
 type FilterPlace = "all" | "makkah" | "madinah";
+
+// How many verse bookmarks the index previews inline before deferring to the
+// full /mushaf/bookmarks view. Keeps the index strip short.
+const VERSE_BOOKMARK_PREVIEW = 8;
 
 export function MushafIndex({ surahs }: MushafIndexProps) {
   const { settings } = useSettings();
@@ -27,6 +32,25 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
   const lastPage = settings.lastMushafPage ?? 0;
   const bookmarks = settings.mushafBookmarks ?? [];
   const { list: verseBookmarks, mounted: bmMounted } = useBookmarks();
+
+  // Preview the bookmarks in mushaf order (surah, then ayah) so the strip and
+  // the full view agree on which verses come first.
+  const orderedVerseBookmarks = useMemo(
+    () =>
+      [...verseBookmarks].sort((a, b) => {
+        const [sa, aa] = a.split(":").map(Number);
+        const [sb, ab] = b.split(":").map(Number);
+        return sa - sb || aa - ab;
+      }),
+    [verseBookmarks],
+  );
+
+  // Per-surah saved positions, read once after mount (localStorage is
+  // client-only, so this stays empty on the server and never mismatches
+  // hydration). A surah shows a resume affordance only when its saved page is
+  // deeper than the surah's own first page; that filter happens at render.
+  const [resumeBySurah, setResumeBySurah] = useState<Record<number, VerseLocation>>({});
+  useEffect(() => setResumeBySurah(getProgress().lastReadBySurah ?? {}), []);
 
   const filteredSurahs = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -111,12 +135,22 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
         </div>
       )}
 
-      {/* Verse bookmarks */}
+      {/* Verse bookmarks: a compact quick-access strip (capped) with a link to
+          the full bookmarked-verses view, which shows each verse's text and a
+          remove control. Keeps the index calm; the list lives on its own page. */}
       {bmMounted && verseBookmarks.length > 0 && (
         <div>
-          <h2 className="font-heading text-sm font-semibold mb-2">{t("mushaf.verseBookmarks")}</h2>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <h2 className="font-heading text-sm font-semibold">{t("mushaf.verseBookmarks")}</h2>
+            <Link
+              href="/mushaf/bookmarks"
+              className="text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+            >
+              {t("mushaf.bookmarksViewAll")}
+            </Link>
+          </div>
           <div className="flex flex-wrap gap-2">
-            {verseBookmarks.map((vk) => {
+            {orderedVerseBookmarks.slice(0, VERSE_BOOKMARK_PREVIEW).map((vk) => {
               const [sv, av] = vk.split(":").map(Number);
               const meta = surahs.find((s) => s.number === sv);
               const label = meta
@@ -132,44 +166,75 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                 </Link>
               );
             })}
+            {verseBookmarks.length > VERSE_BOOKMARK_PREVIEW && (
+              <Link
+                href="/mushaf/bookmarks"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark text-text-muted text-xs font-medium hover:text-text"
+              >
+                +{isAr ? toArabicIndic(verseBookmarks.length - VERSE_BOOKMARK_PREVIEW) : verseBookmarks.length - VERSE_BOOKMARK_PREVIEW}
+              </Link>
+            )}
           </div>
         </div>
       )}
 
       {/* Surah grid */}
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredSurahs.map((s) => (
-          <Link key={s.number} href={`/mushaf/surah/${s.number}`}>
-            <Card hover className="h-full">
-              <div className="flex items-start gap-3">
-                <div className="w-11 h-11 rounded-xl bg-gold-light/20 dark:bg-gold-dark/20 border border-gold-light/40 dark:border-gold-dark/30 flex items-center justify-center text-gold-dark dark:text-gold-light text-sm font-bold font-arabic shrink-0">
-                  {isAr ? toArabicIndic(s.number) : s.number}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <ArabicText text={s.nameArabic} quran size="sm" className="block text-primary dark:text-primary-light" />
-                    <span
-                      className={cn(
-                        "text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0",
-                        s.revelationPlace === "madinah"
-                          ? "bg-gold/20 text-gold-dark dark:text-gold-light"
-                          : "bg-primary/10 text-primary dark:text-primary-light"
-                      )}
-                    >
-                      {t(`mushaf.revealedIn.${s.revelationPlace}`)}
-                    </span>
+        {filteredSurahs.map((s) => {
+          // Show a resume affordance only when this surah has a saved position
+          // past its own first page (otherwise "resume" would just be "open").
+          const resume = resumeBySurah[s.number];
+          const canResume = !!resume && resume.page > s.pages[0];
+          const surahName = isAr ? s.nameArabic : s.nameSimple;
+          return (
+            <Card key={s.number} className="h-full flex flex-col">
+              <Link href={`/mushaf/surah/${s.number}`} className="block group">
+                <div className="flex items-start gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-gold-light/20 dark:bg-gold-dark/20 border border-gold-light/40 dark:border-gold-dark/30 flex items-center justify-center text-gold-dark dark:text-gold-light text-sm font-bold font-arabic shrink-0">
+                    {isAr ? toArabicIndic(s.number) : s.number}
                   </div>
-                  <p className="text-sm font-medium mt-0.5 truncate">{s.nameSimple}</p>
-                  <p className="text-[11px] text-text-muted mt-1">
-                    {t("mushaf.versesCount").replace("{count}", isAr ? toArabicIndic(s.versesCount) : String(s.versesCount))}
-                    <span className="mx-1.5 opacity-60">·</span>
-                    {t("mushaf.pageNumber")} {isAr ? toArabicIndic(s.pages[0]) : s.pages[0]}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <ArabicText text={s.nameArabic} quran size="sm" className="block text-primary dark:text-primary-light" />
+                      <span
+                        className={cn(
+                          "text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0",
+                          s.revelationPlace === "madinah"
+                            ? "bg-gold/20 text-gold-dark dark:text-gold-light"
+                            : "bg-primary/10 text-primary dark:text-primary-light"
+                        )}
+                      >
+                        {t(`mushaf.revealedIn.${s.revelationPlace}`)}
+                      </span>
+                    </div>
+                    <p className="text-sm font-medium mt-0.5 truncate group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{s.nameSimple}</p>
+                    <p className="text-[11px] text-text-muted mt-1">
+                      {t("mushaf.versesCount").replace("{count}", isAr ? toArabicIndic(s.versesCount) : String(s.versesCount))}
+                      <span className="mx-1.5 opacity-60">·</span>
+                      {t("mushaf.pageNumber")} {isAr ? toArabicIndic(s.pages[0]) : s.pages[0]}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
+              {canResume && (
+                <Link
+                  href={`/mushaf/page/${resume.page}?v=${resume.verseKey}`}
+                  className="mt-3 ms-14 inline-flex items-center gap-1 self-start rounded-lg bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light text-[11px] font-medium px-2.5 py-1 hover:bg-primary/20 transition-colors"
+                  aria-label={t("mushaf.resumeSurahHint")
+                    .replace("{name}", surahName)
+                    .replace("{page}", isAr ? toArabicIndic(resume.page) : String(resume.page))}
+                  title={t("mushaf.resumeSurahHint")
+                    .replace("{name}", surahName)
+                    .replace("{page}", isAr ? toArabicIndic(resume.page) : String(resume.page))}
+                >
+                  <span aria-hidden="true">{isAr ? "←" : "→"}</span>
+                  {t("mushaf.resumeSurah")}
+                  <span className="opacity-70">{isAr ? toArabicIndic(resume.page) : resume.page}</span>
+                </Link>
+              )}
             </Card>
-          </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

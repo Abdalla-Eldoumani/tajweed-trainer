@@ -36,7 +36,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
       <div className="space-y-3">
         <div className="text-center overflow-x-auto">
           {snapshot?.tajweedHtml ? (
-            <TajweedText tajweedHtml={snapshot.tajweedHtml} size="lg" />
+            <TajweedText tajweedHtml={snapshot.tajweedHtml} size="lg" explainRules />
           ) : (
             <ArabicText text={example.arabic} quran size="lg" />
           )}

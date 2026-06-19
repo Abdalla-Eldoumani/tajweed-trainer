@@ -10,7 +10,7 @@
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 // Real captured segments: verse 1:2, reciter 12 (4 words). Each tuple is

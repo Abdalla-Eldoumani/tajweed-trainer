@@ -10,7 +10,11 @@ import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
+import { getColorForClass } from "@/lib/tajweed-colors";
 import ghunnahData from "@/data/content/ghunnah.json";
+
+// The rule-indicator color comes from the single tajweed source (tajweed-colors.ts).
+const GHUNNAH_COLOR = getColorForClass("ghunnah")?.hex ?? "#FF7E1E";
 
 const SECTIONS = [
   "ghunnah-definition",
@@ -66,7 +70,7 @@ export default function GhunnahPage() {
               description={rule.description}
               descriptionAr={rule.description_ar}
               examples={rule.examples}
-              color="#169200"
+              color={GHUNNAH_COLOR}
               defaultExpanded
             />
           </div>

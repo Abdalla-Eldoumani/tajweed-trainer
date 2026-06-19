@@ -3,7 +3,7 @@ import type { TranslationResource } from "./types";
 // A small, conservative set of well-established Quran.com Foundation API v4
 // resource ids so the reading-depth selectors are usable offline. The full
 // catalogue is merged in from /resources/* when online (and those names win).
-// These are catalogue identifiers only — the translation and tafsir TEXT is
+// These are catalogue identifiers only; the translation and tafsir TEXT is
 // always fetched from the API by id, never generated here. Ids omitted where
 // uncertain, per the source-everything rule.
 

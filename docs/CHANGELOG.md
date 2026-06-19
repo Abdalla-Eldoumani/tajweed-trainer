@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.6.0 (2026-06-20)
+
+The Companion redesign, plus a production-hardening finalization. Every surface was lifted to the quality of the home page, the mushaf listening experience was rebuilt for small screens and for memorization revision, the in-reader indexes now reflect where you are, and memorization became a real progress system. The finalization added study tools around the reader, a Quran-completion planner, and a layer of resilience. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them. The only dependency bump was Next 16.2.7 to 16.2.9; the major-version bumps (Tailwind v4, TypeScript 6, ESLint 10) were deferred on purpose to protect the tuned design.
+
+### Added
+
+- **Always-visible playback surface.** A docked, collapsible panel sits beside the page at desktop width (1024px and up) and a bottom sheet takes its place on phone and tablet, so the verse you are playing is never hidden behind the controls. A plain tap on a verse plays just that verse, with an immediate loading state and a quiet marker on the one that is sounding.
+- **Multi-verse selection for revision.** Pick a contiguous range or hand-pick a set of verses; either way they play as one auto-advancing queue on the same audio engine, with a per-verse repeat count, a whole-selection loop, and an inter-verse pause. The selection shows as removable chips with a one-action clear.
+- **Dynamic in-reader index.** The surah and juz pickers always read out the surah(s) and juz on the open page, even after a deep-linked reload, and update as you turn pages. A Cmd/Ctrl+K quick-jump palette (with a visible button) jumps to any surah, page, or juz.
+- **Memorization as a progress system.** Mark verses memorized in bulk by surah, juz, or range, or one at a time, reconciled against the 6236-verse total. The progress page shows a memorized count and percentage with per-surah and per-juz breakdowns, and a review session scoped to your memorized verses runs in recall mode.
+- **First-launch onboarding.** A short, skippable welcome on first open explains the Mushaf, recall mode, and the tracker. It is shown once and is covered by reset.
+- **Tap a colored letter to learn its rule.** Any color-coded letter in the reader and in the lesson examples opens a popover naming the tajweed rule and its color, with a "Learn more" link to the lesson that teaches it. The rule name and color come from the verified map; nothing is explained in the app's own words.
+- **Bookmarked-verses view** at `/mushaf/bookmarks`, linked from the index, listing every saved verse with its text and open / remove actions. Per-surah resume pills on the index jump back to where you left a surah.
+- **Private per-verse notes.** The verse panel holds a personal note in the learner's own words. Notes stay on the device, are never transmitted, are never religious content, and are covered by backup and restore.
+- **Reciter A/B compare.** The verse panel plays the same verse by two reciters in turn on the one audio engine, so recitation styles can be compared by ear.
+- **Khatmah reading planner** on the progress page. Set a target date or pick a 30, 60, or 90-day preset; the planner tracks completion from the reader position and shows the daily pace, the page to reach today, and whether you are ahead or behind. The pace math is a pure library (`src/lib/khatmah.ts`).
+- **Search filters.** Search results filter by kind, with an optional facet that narrows verse hits to the ones you have memorized.
+- **Gentle backup reminder** in Settings, suggesting a fresh export when there is unsaved progress and no backup in the last 30 days.
+
+### Changed
+
+- **Every surface lifted to the home-page bar.** The mushaf, learn, practice, progress, search, settings, and the navigation chrome were brought up to the visual quality and intentionality of the home page, so the app reads as a crafted Islamic product throughout. The tajweed color system was not touched.
+- **Next 16.2.7 to 16.2.9.** The single dependency bump this milestone; security patches track promptly.
+
+### Fixed
+
+- **Listening is reachable on every device.** The old hidden player below the fold is gone; the active-playback surface is always visible, and a tap on a verse plays it immediately rather than requiring a hunt for controls.
+
+### Security and resilience
+
+- **Error boundaries.** A root `error.tsx` and a top-level `global-error.tsx` keep a single failed render from blanking the app.
+- **Route loading skeletons** for the learn, practice, progress, settings, and Mushaf routes while data resolves.
+- **Production dependency audit in CI.** Every push and pull request runs `npm audit --omit=dev --audit-level=high`, failing the build on a high or critical advisory in the shipped tree.
+- **Prototype-pollution guard.** Every keyed map in the localStorage sanitizer skips `__proto__`, `constructor`, and `prototype`, so a crafted backup cannot reach an object prototype.
+- **Reduced-motion and scroll-lock helpers.** JS-driven smooth scrolling is gated on `prefers-reduced-motion`, and stacked overlays coordinate a single ref-counted body-scroll lock.
+
 ## 0.5.0 — 2026-06-12
 
 A guided learning path, a calmer quiz flow, a minimizable player, and a new visual identity, followed by five feature additions: word-synced highlighting, in-browser recitation self-compare, a per-module rule mastery view, a leaner build, and keyboard, screen-reader, and offline hardening. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.

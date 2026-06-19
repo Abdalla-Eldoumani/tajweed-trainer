@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { useRecorder } from "@/hooks/useRecorder";
 import { fetchAudioUrl } from "@/lib/audio-api";
@@ -37,6 +37,9 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
   const { t } = useTranslation();
   const { supported, state, url, record, stop, reset } = useRecorder();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Audio for this reciter/verse can be missing (a reciter with no recording, or
+  // a transient fetch failure). Surface it instead of dead-ending the tap.
+  const [reciterError, setReciterError] = useState(false);
 
   // Own one clip element for this panel and release it on unmount, so a
   // reciter/own-take clip can't keep playing after the panel closes.
@@ -59,11 +62,18 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
   };
 
   const playReciter = async () => {
+    setReciterError(false);
     try {
       const audioUrl = await fetchAudioUrl(surah, ayah, reciter);
+      if (!audioUrl) {
+        setReciterError(true);
+        return;
+      }
       playClip(audioUrl);
     } catch {
-      // No audio for this reciter/verse — nothing to play, no error surfaced.
+      // No audio for this reciter/verse, surface a short message, never a
+      // silent dead tap.
+      setReciterError(true);
     }
   };
 
@@ -95,6 +105,9 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
             <PlayIcon />
             {t("compare.playReciter")}
           </button>
+          {reciterError && (
+            <p className="text-[11px] text-accent" role="status">{t("audio.unavailable")}</p>
+          )}
         </div>
 
         {/* Your take side */}

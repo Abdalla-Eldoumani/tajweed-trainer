@@ -38,7 +38,7 @@ export function PracticeHub({ counts, totalQuestions }: PracticeHubProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold">{t("practice.hub.title")}</h1>
+        <h1 className="font-heading text-h2 font-bold">{t("practice.hub.title")}</h1>
         <p className="text-sm text-text-muted mt-2">{t("practice.hub.subtitle")}</p>
       </div>
 

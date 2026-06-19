@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useMemorization } from "@/hooks/useMemorization";
+import { useVerseNotes } from "@/hooks/useVerseNotes";
 import { useVerseSelection } from "./useVerseSelection";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
@@ -49,6 +50,7 @@ interface MushafPageProps {
 export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
+  const { hasNote, mounted: notesMounted } = useVerseNotes();
   const { isSelected, toggle: toggleSelected } = useVerseSelection();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
@@ -104,6 +106,9 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
             const hideText = memorizationMode && memorized && !revealed.has(v.verseKey);
             const isPlaying = v.verseKey === playingKey;
             const selected = isSelected(v.verseKey);
+            // Gated on notesMounted so the dot never flashes during hydration
+            // (the server snapshot has no notes).
+            const noted = notesMounted && hasNote(v.verseKey);
 
             return (
               <Fragment key={v.verseKey}>
@@ -128,6 +133,7 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                   >
                     <TajweedText
                       tajweedHtml={v.tajweedHtml}
+                      explainRules
                       className={cn(
                         "!leading-[2.6] transition-[filter,opacity] duration-300",
                         hideText && "blur-md opacity-60",
@@ -146,15 +152,24 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                       e.stopPropagation();
                       onSelectVerse?.(v.verseKey);
                     }}
-                    aria-label={`${t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
-                    title={t("mushaf.verseActions")}
-                    className="mushaf-verse-details ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+                    aria-label={`${noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
+                    title={noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")}
+                    className="mushaf-verse-details relative ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                       <circle cx="5" cy="12" r="1.8" />
                       <circle cx="12" cy="12" r="1.8" />
                       <circle cx="19" cy="12" r="1.8" />
                     </svg>
+                    {/* A quiet gold dot marks a verse that carries a private
+                        note; purely decorative (the accessible name above
+                        already says so). */}
+                    {noted && (
+                      <span
+                        className="absolute top-0.5 end-0.5 w-1.5 h-1.5 rounded-full bg-gold"
+                        aria-hidden="true"
+                      />
+                    )}
                   </button>
                   {/* Add-to-selection: a distinct, always-present control that
                       toggles the verse in the multi-verse set. Separate from the

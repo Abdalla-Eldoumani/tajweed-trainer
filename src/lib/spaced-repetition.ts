@@ -4,7 +4,7 @@ import { getProgress, setReview } from "./storage";
 // Leitner spacing in days. A correct answer promotes one box (max 5); a wrong
 // answer drops to box 1. The interval is how long the question stays out of
 // the due-list after the review.
-export const LEITNER_INTERVALS: Record<ReviewBox, number> = {
+const LEITNER_INTERVALS: Record<ReviewBox, number> = {
   1: 1,
   2: 3,
   3: 7,
@@ -12,7 +12,7 @@ export const LEITNER_INTERVALS: Record<ReviewBox, number> = {
   5: 30,
 };
 
-export const MASTERY_BOX: ReviewBox = 5;
+const MASTERY_BOX: ReviewBox = 5;
 
 function toIsoDate(d: Date): string {
   return d.toLocaleDateString("en-CA");
@@ -24,7 +24,7 @@ function addDays(date: Date, days: number): Date {
   return next;
 }
 
-export function computeNextDueDate(box: ReviewBox, now: Date = new Date()): string {
+function computeNextDueDate(box: ReviewBox, now: Date = new Date()): string {
   return toIsoDate(addDays(now, LEITNER_INTERVALS[box]));
 }
 

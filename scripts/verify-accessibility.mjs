@@ -17,7 +17,7 @@ const root = join(__dirname, "..");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 function read(rel) {
   return readFileSync(join(root, rel), "utf8");

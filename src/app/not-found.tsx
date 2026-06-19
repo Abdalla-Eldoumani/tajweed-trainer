@@ -11,7 +11,7 @@ export default function NotFound() {
       <p className="font-arabic text-arabic-xl text-primary/20 dark:text-primary-light/20 mb-2" dir="rtl" lang="ar">
         ٤٠٤
       </p>
-      <h1 className="font-heading text-2xl font-bold mb-2">{t("notFound.title")}</h1>
+      <h1 className="font-heading text-h2 font-bold mb-2">{t("notFound.title")}</h1>
       <p className="text-sm text-text-muted mb-6 max-w-sm">
         {t("notFound.description")}
       </p>

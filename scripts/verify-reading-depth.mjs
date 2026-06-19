@@ -20,7 +20,7 @@ const sanitize = read("src", "lib", "sanitize.ts");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 const fns = [

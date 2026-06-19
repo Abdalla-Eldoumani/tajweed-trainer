@@ -10,6 +10,7 @@ import { MemorizationTracker } from "@/components/memorization/MemorizationTrack
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
 import { MemorizedReview } from "@/components/memorization/MemorizedReview";
+import { KhatmahCard } from "@/components/khatmah/KhatmahCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -114,7 +115,7 @@ export default function ProgressPage() {
           mount + count so they never flash before hydration. The bulk surface
           lives inside this section so the headline and breakdown stay visible
           and the count visibly moves the instant a bulk op confirms (the change
-          bus re-renders all three together — no manual refresh). In the empty
+          bus re-renders all three together, no manual refresh). In the empty
           state the tracker's own CTA opens the same disclosure, so the surface
           hides its duplicate trigger there. */}
       <div className="space-y-6">
@@ -138,6 +139,12 @@ export default function ProgressPage() {
             place. The component owns its own due-vs-empty branch. */}
         {memorizedMounted && memorizedCount > 0 && <MemorizedReview />}
       </div>
+
+      {/* Khatmah planner: an opt-in Quran-completion goal that tracks the
+          reader position the app already records. Lives beside the memorization
+          tracker because both are reading-progress motivators; the card owns its
+          empty / setup / active branches and gates on its own mounted flag. */}
+      <KhatmahCard />
 
       <Card>
         <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.streak")}</h2>

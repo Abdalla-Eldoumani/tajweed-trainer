@@ -16,7 +16,7 @@ const audioCache = new Map<string, { url: string; timestamp: number }>();
 const AUDIO_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 // Word-level timing for one verse, from the Quran.com v4 audio API. Each entry
-// is [wordStartIndex, wordEndIndexExclusive, startMs, endMs] — timing metadata
+// is [wordStartIndex, wordEndIndexExclusive, startMs, endMs], timing metadata
 // about the verified recitation audio, not generated content. Most Quran.com
 // reciters expose it; the EveryAyah reciters and a few Quran.com ones do not,
 // in which case there is simply no highlight.
@@ -84,7 +84,7 @@ export async function fetchAudioUrl(
 
 // Fetch the word-by-word timing for a verse and reciter, or null when none is
 // available (EveryAyah reciters, reciters without segments, or any failure).
-// Cached per verse and reciter alongside the audio URL. Never throws — a
+// Cached per verse and reciter alongside the audio URL. Never throws: a
 // missing or malformed payload degrades silently to no highlight.
 export async function fetchSegments(
   surah: number,

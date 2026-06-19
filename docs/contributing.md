@@ -1,12 +1,6 @@
-# Contributing
+# Contributing: review checklist and PR template
 
-Contributions are welcome. This is a project about Quranic recitation, so accuracy matters more than velocity.
-
-## Before you start
-
-- Read the [README](../README.md) for the project overview.
-- Skim [content-schema.md](content-schema.md) if you plan to touch lesson content.
-- Skim [development.md](development.md) for local setup.
+This is the review-side companion to the root [CONTRIBUTING.md](../CONTRIBUTING.md), which covers setup, the checks, the single-source conventions, the content rule, and how CI gates a pull request. Start there for the workflow; this page holds the pull-request template and the reviewer's checklist, plus where to make common changes and the commit-message style.
 
 ## Ways to contribute
 
@@ -21,19 +15,6 @@ Contributions are welcome. This is a project about Quranic recitation, so accura
 | Report a bug | GitHub Issues |
 | Suggest a feature | GitHub Issues |
 
-## Pull request workflow
-
-1. Open an issue first for non-trivial changes. Lets us discuss scope before code.
-2. Fork and create a branch named after the change (`fix/iqlab-typo`, `feat/per-page-audio`).
-3. Atomic commits. One logical change per commit. Brief, lowercase commit messages that explain why.
-4. Run the checks before pushing:
-   - `npm run lint`
-   - `npx tsc --noEmit`
-   - `npm run build`
-   - `node scripts/verify-mushaf.mjs` (only if you touched the Mushaf)
-5. Visual check in EN, AR, light, and dark before opening the PR.
-6. Open a PR with the template below.
-
 ## PR template
 
 ```markdown
@@ -44,13 +25,13 @@ One sentence describing the change.
 The problem this solves or the use case it enables.
 
 ## Verification
-- [ ] `npm run lint` clean
-- [ ] `npx tsc --noEmit` clean
+- [ ] `npm run verify` clean (tsc, lint, the offline verify scripts)
 - [ ] `npm run build` clean
+- [ ] `npm audit --omit=dev --audit-level=high` clean
 - [ ] Visually checked in EN
 - [ ] Visually checked in AR
 - [ ] Dark mode looks fine
-- [ ] (If Mushaf) `node scripts/verify-mushaf.mjs` 21/21 passing
+- [ ] (If UI) `npm run verify:ui` passing against a running server
 
 ## Notes for reviewers
 Anything unusual, trade-offs you considered, areas you're uncertain about.

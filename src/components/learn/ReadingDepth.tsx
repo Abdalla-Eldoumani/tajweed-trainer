@@ -63,7 +63,10 @@ export function ReadingDepth({ surah, ayah }: ReadingDepthProps) {
   return (
     <div className="mt-2 space-y-2 text-sm">
       {settings.showTranslation && translationState === "loading" && (
-        <p className="text-text-muted">{t("common.loading")}</p>
+        <div className="space-y-2 animate-pulse motion-reduce:animate-none" aria-hidden="true">
+          <div className="h-4 w-full bg-bg-subtle dark:bg-bg-subtle-dark rounded" />
+          <div className="h-4 w-4/5 bg-bg-subtle dark:bg-bg-subtle-dark rounded" />
+        </div>
       )}
       {settings.showTranslation && translationState === "error" && (
         <p className="text-text-muted">{t("reading.unavailable")}</p>
@@ -93,7 +96,13 @@ export function ReadingDepth({ surah, ayah }: ReadingDepthProps) {
           className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 p-3 max-h-72 overflow-y-auto"
           dir="auto"
         >
-          {tafsirState === "loading" && <p className="text-text-muted">{t("common.loading")}</p>}
+          {tafsirState === "loading" && (
+            <div className="space-y-2 animate-pulse motion-reduce:animate-none" aria-hidden="true">
+              <div className="h-4 w-full bg-bg-subtle dark:bg-bg-subtle-dark rounded" />
+              <div className="h-4 w-full bg-bg-subtle dark:bg-bg-subtle-dark rounded" />
+              <div className="h-4 w-2/3 bg-bg-subtle dark:bg-bg-subtle-dark rounded" />
+            </div>
+          )}
           {tafsirState === "error" && <p className="text-text-muted">{t("reading.unavailable")}</p>}
           {/* Already sanitized by getTafsirForVerse; never generated text. */}
           {tafsirState === "ready" && tafsir && (

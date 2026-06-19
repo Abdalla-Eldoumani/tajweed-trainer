@@ -6,10 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatSurahAyah(surah: number, ayah: number): string {
-  return `${surah}:${ayah}`;
-}
-
 type SurahNameInput = string | { en: string; ar?: string };
 
 export function formatSurahReference(

@@ -68,10 +68,6 @@ export function getRecitation(id: string): Recitation | undefined {
   return BY_ID.get(id);
 }
 
-export function isKnownReciter(id: unknown): id is string {
-  return typeof id === "string" && BY_ID.has(id);
-}
-
 // Resolve any stored or supplied value to a known recitation id, migrating
 // legacy identifiers and falling back to the default when unknown or malformed.
 export function normalizeReciterId(value: unknown): string {
@@ -84,7 +80,7 @@ export function normalizeReciterId(value: unknown): string {
 }
 
 // Two display groups per the PRD: Mujawwad, and Murattal (which gathers
-// Murattal, Muallim, and the API's unspecified/null style — all measured
+// Murattal, Muallim, and the API's unspecified/null style, all measured
 // recitations). Each reciter still carries its exact style for display.
 export type ReciterStyleGroup = "mujawwad" | "murattal";
 

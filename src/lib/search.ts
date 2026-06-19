@@ -49,7 +49,7 @@ function pushRule(out: SearchResult[], moduleId: string, rule: RuleLike): void {
 
 let cachedIndex: SearchResult[] | null = null;
 
-export function getSearchIndex(): SearchResult[] {
+function getSearchIndex(): SearchResult[] {
   if (cachedIndex) return cachedIndex;
   const out: SearchResult[] = [];
 
@@ -144,7 +144,7 @@ export function getSearchIndex(): SearchResult[] {
 }
 
 // Simple ranked search: tokenize the query, score by (a) match in title, (b)
-// match in haystack, (c) consecutive token positions. No fuzzy matching — the
+// match in haystack, (c) consecutive token positions. No fuzzy matching, the
 // content is small enough that exact-substring is fine.
 export function search(query: string, limit = 20): SearchResult[] {
   const q = query.trim().toLowerCase();

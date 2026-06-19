@@ -9,11 +9,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "app.titleAr": { en: "تجويد القرآن", ar: "تجويد القرآن" },
 
   // Navigation
-  "nav.home": { en: "Home", ar: "الرئيسية" },
-  "nav.learn": { en: "Learn", ar: "تعلّم" },
   "nav.practice": { en: "Practice", ar: "تدريب" },
-  "nav.progress": { en: "Progress", ar: "تقدّم" },
-  "nav.settings": { en: "Settings", ar: "إعدادات" },
   "nav.allModules": { en: "All Modules", ar: "جميع الوحدات" },
   "nav.closeMenu": { en: "Close menu", ar: "إغلاق القائمة" },
   "nav.toggleMenu": { en: "Toggle menu", ar: "فتح القائمة" },
@@ -22,7 +18,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "nav.drawer": { en: "Menu navigation", ar: "تنقل القائمة" },
 
   // Connectivity
-  "offline.notice": { en: "Offline — opened pages still work", ar: "غير متصل — الصفحات المفتوحة تعمل" },
+  "offline.notice": { en: "Offline, opened pages still work", ar: "غير متصل، الصفحات المفتوحة تعمل" },
 
   // Home page
   "home.title": { en: "Tajweed Trainer", ar: "معلّم التجويد" },
@@ -69,16 +65,13 @@ const translations: Record<string, { en: string; ar: string }> = {
 
   // Learn page
   "learn.title": { en: "Learn Tajweed", ar: "تعلّم التجويد" },
-  "learn.titleAr": { en: "تعلّم التجويد", ar: "تعلّم التجويد" },
   "learn.description": {
     en: "Structured curriculum for learning Tajweed rules, ordered from foundational to advanced.",
     ar: "منهج منظّم لتعلّم أحكام التجويد، مرتّب من الأساسيات إلى المتقدّم.",
   },
   "learn.lessons": { en: "lessons", ar: "دروس" },
-  "learn.estimatedHours": { en: "estimated hours", ar: "ساعات تقديرية" },
   "learn.prerequisite": { en: "Prerequisite", ar: "متطلب سابق" },
   "learn.locked": { en: "Locked", ar: "مقفل" },
-  "learn.completed": { en: "Completed", ar: "مكتمل" },
   "learn.locked.body": {
     en: "This module is locked. Finish the previous module's practice quiz to unlock it.",
     ar: "هذه الوحدة مقفلة. أكمل اختبار التدريب في الوحدة السابقة لفتحها.",
@@ -98,8 +91,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "module.quickReference": { en: "Quick Reference", ar: "مرجع سريع" },
   "module.rule": { en: "Rule", ar: "الحكم" },
   "module.count": { en: "Count", ar: "العدد" },
-  "module.definition": { en: "Definition", ar: "التعريف" },
-  "module.duration": { en: "Duration", ar: "المدة" },
 
   // Module descriptions (Arabic translations for learning-path.json descriptions)
   "module.makharij.desc": {
@@ -179,7 +170,6 @@ const translations: Record<string, { en: string; ar: string }> = {
 
   // Makharij specific
   "makharij.diagram": { en: "Articulation Points Diagram", ar: "مخطط مخارج الحروف" },
-  "makharij.selectRegion": { en: "Select a region to see its articulation points.", ar: "اختر منطقة لعرض مخارجها." },
   "makharij.articulationPoints": { en: "articulation point(s)", ar: "مخرج/مخارج" },
   "makharij.allLetters": { en: "All Letters by Region", ar: "جميع الحروف حسب المنطقة" },
   "makharij.totalPoints": { en: "Total articulation points", ar: "إجمالي المخارج" },
@@ -189,9 +179,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "ghunnah.definition": { en: "Definition", ar: "التعريف" },
   "ghunnah.duration": { en: "Duration", ar: "المدة" },
   "ghunnah.ranking": { en: "Ghunnah Prominence Ranking", ar: "مراتب الغنّة" },
-  "ghunnah.rank": { en: "Rank", ar: "المرتبة" },
-  "ghunnah.context": { en: "Context", ar: "السياق" },
-  "ghunnah.prominence": { en: "Prominence", ar: "الدرجة" },
   "ghunnah.beats": { en: "beats", ar: "حركات" },
 
   // Qalqalah specific
@@ -203,24 +190,18 @@ const translations: Record<string, { en: string; ar: string }> = {
   "madd.type": { en: "Type", ar: "النوع" },
   "madd.beats": { en: "Beats", ar: "الحركات" },
   "madd.trigger": { en: "Trigger", ar: "السبب" },
-  "madd.obligation": { en: "Obligation", ar: "الحكم" },
 
   // Laam-Raa specific
   "laamRaa.example": { en: "Example", ar: "مثال" },
-  "laamRaa.note": { en: "Note", ar: "ملاحظة" },
   "laamRaa.heavyRaa": { en: "Raa with Tafkheem (Heavy)", ar: "الراء المفخّمة" },
   "laamRaa.lightRaa": { en: "Raa with Tarqeeq (Light)", ar: "الراء المرقّقة" },
-  "laamRaa.condition": { en: "Condition", ar: "الشرط" },
-  "laamRaa.result": { en: "Result", ar: "النتيجة" },
 
   // Tafkheem specific
   "tafkheem.alwaysHeavy": { en: "Always Heavy Letters", ar: "الحروف المفخّمة دائما" },
   "tafkheem.alwaysLight": { en: "Always Light Letters", ar: "الحروف المرقّقة دائما" },
-  "tafkheem.variable": { en: "Variable Letters", ar: "الحروف المتردّدة" },
   "tafkheem.levels": { en: "Levels of Tafkheem", ar: "مراتب التفخيم" },
 
   // Waqf specific
-  "waqf.symbols": { en: "Waqf Symbols", ar: "رموز الوقف" },
   "waqf.stoppingEffects": { en: "Effects When Stopping", ar: "أحكام عند الوقف" },
 
   // Practice
@@ -229,14 +210,11 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Test your tajweed knowledge by identifying rules in Quranic examples.",
     ar: "اختبر معرفتك بالتجويد من خلال تحديد الأحكام في أمثلة قرآنية.",
   },
-  "practice.filterByModule": { en: "Filter by Module", ar: "تصفية حسب الوحدة" },
   "practice.allModules": { en: "All Modules", ar: "جميع الوحدات" },
   "practice.startQuiz": { en: "Start Quiz", ar: "ابدأ الاختبار" },
   "practice.quizComplete": { en: "Quiz Complete", ar: "اكتمل الاختبار" },
   "practice.correct": { en: "correct", ar: "إجابة صحيحة" },
-  "practice.score": { en: "Score", ar: "النتيجة" },
   "practice.tryAgain": { en: "Try Again", ar: "حاول مجددا" },
-  "practice.nextQuestion": { en: "Next Question", ar: "السؤال التالي" },
   "practice.questionOf": { en: "Question {current} of {total}", ar: "السؤال {current} من {total}" },
   "practice.identifyRule": { en: "What tajweed rule applies to the highlighted word?", ar: "ما حكم التجويد المطبّق على الكلمة المظلّلة؟" },
   "practice.wellDone": { en: "Well done. You have demonstrated strong knowledge.", ar: "أحسنت. لقد أظهرت معرفة جيّدة." },
@@ -275,7 +253,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "practice.hub.mixedBadge": { en: "All modules", ar: "كل الوحدات" },
   "practice.hub.backToHub": { en: "Practice hub", ar: "صفحة التدريب" },
-  "practice.hub.reviewTitle": { en: "Review Due", ar: "مراجعة مستحقّة" },
   "practice.hub.reviewDesc": {
     en: "Questions you've answered before, scheduled by spaced repetition.",
     ar: "أسئلة أجبت عنها سابقا، مجدولة وفق المراجعة المتباعدة.",
@@ -323,8 +300,8 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "ابدأ اختبار التدريب لأي وحدة لبناء الإتقان. سيظهر تقدّمك هنا.",
   },
   "mastery.help": {
-    en: "Mastery is drawn from your quiz scores and spaced-review progress — nothing is sent anywhere.",
-    ar: "يُحتسب الإتقان من درجات اختباراتك وتقدّم المراجعة المتباعدة — لا يُرسل أي شيء لأي جهة.",
+    en: "Mastery is drawn from your quiz scores and spaced-review progress, nothing is sent anywhere.",
+    ar: "يُحتسب الإتقان من درجات اختباراتك وتقدّم المراجعة المتباعدة، لا يُرسل أي شيء لأي جهة.",
   },
   "mastery.level.untouched": { en: "Not started", ar: "لم يبدأ" },
   "mastery.level.started": { en: "Started", ar: "بدأت" },
@@ -333,10 +310,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mastery.best": { en: "Best", ar: "الأفضل" },
   "mastery.due": { en: "due", ar: "مستحقّ" },
   "mastery.mastered": { en: "mastered", ar: "متقَن" },
-  "mastery.quizzes": { en: "quizzes", ar: "اختبارات" },
   "progress.quizHistory": { en: "Quiz History", ar: "سجلّ الاختبارات" },
-  "progress.module": { en: "Module", ar: "الوحدة" },
-  "progress.date": { en: "Date", ar: "التاريخ" },
   "progress.resetProgress": { en: "Reset Progress", ar: "إعادة تعيين التقدّم" },
   "progress.resetDescription": {
     en: "Clear all completed lessons, quiz scores, and streaks. Your settings will be kept.",
@@ -346,8 +320,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "progress.yesReset": { en: "Yes, reset", ar: "نعم، إعادة تعيين" },
   "progress.cancel": { en: "Cancel", ar: "إلغاء" },
   "progress.resetAll": { en: "Reset All Progress", ar: "إعادة تعيين كل التقدّم" },
-  "progress.days": { en: "days", ar: "يوم" },
-  "progress.noQuizzes": { en: "No quizzes taken yet.", ar: "لم يتم إجراء اختبارات بعد." },
 
   // Settings
   "settings.title": { en: "Settings", ar: "الإعدادات" },
@@ -363,7 +335,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.normal": { en: "Normal", ar: "عادي" },
   "settings.large": { en: "Large", ar: "كبير" },
   "settings.xlarge": { en: "Extra Large", ar: "كبير جدا" },
-  "settings.recitersLoading": { en: "Updating list…", ar: "جاري التحديث…" },
   "settings.recitersDefault": { en: "default", ar: "افتراضي" },
   "settings.reciterSearch": { en: "Search reciters", ar: "ابحث عن قارئ" },
   "settings.reciterStyleMujawwad": { en: "Mujawwad", ar: "مجوّد" },
@@ -381,7 +352,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "common.markComplete": { en: "Mark as Complete", ar: "وضع علامة إتمام" },
   "common.completed": { en: "Completed", ar: "مكتمل" },
   "common.loading": { en: "Loading...", ar: "جاري التحميل..." },
-  "common.error": { en: "An error occurred.", ar: "حدث خطأ." },
   "common.colorLegend": { en: "Tajweed Color Legend", ar: "دليل ألوان التجويد" },
   "legend.group.ghunnahIdgham": { en: "Ghunnah & Idgham", ar: "الغنة والإدغام" },
   "legend.group.madd": { en: "Madd", ar: "المدّ" },
@@ -455,11 +425,25 @@ const translations: Record<string, { en: string; ar: string }> = {
   "audio.changeReciter": { en: "Change reciter", ar: "تغيير القارئ" },
   "lesson.openInReader": { en: "Open in reader", ar: "افتح في المصحف" },
 
+  // Tajweed rule popover (tap a colored letter to see which rule colors it)
+  "ruleInfo.label": { en: "Tajweed rule", ar: "حكم التجويد" },
+  "ruleInfo.learnMore": { en: "Learn about {rule}", ar: "تعلّم {rule}" },
+  "ruleInfo.close": { en: "Close", ar: "إغلاق" },
+
   // Not found
   "notFound.title": { en: "Page Not Found", ar: "الصفحة غير موجودة" },
   "notFound.description": { en: "The page you are looking for does not exist.", ar: "الصفحة التي تبحث عنها غير موجودة." },
   "notFound.goHome": { en: "Go Home", ar: "العودة للرئيسية" },
   "notFound.startLearning": { en: "Start Learning", ar: "ابدأ التعلّم" },
+
+  // Error boundary
+  "error.title": { en: "Something went wrong", ar: "حدث خطأ ما" },
+  "error.body": {
+    en: "This page ran into a problem. You can try again, or head back home.",
+    ar: "واجهت هذه الصفحة مشكلة. يمكنك إعادة المحاولة أو العودة إلى الرئيسية.",
+  },
+  "error.retry": { en: "Try again", ar: "إعادة المحاولة" },
+  "error.goHome": { en: "Go Home", ar: "العودة للرئيسية" },
 
   // Weekday short labels (JS getDay(): 0=Sun, 1=Mon, ..., 6=Sat)
   "weekday.short.0": { en: "S", ar: "ح" },
@@ -479,14 +463,14 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.subtitle": { en: "The complete Quran with tajweed coloring", ar: "المصحف الشريف ملوّنا بأحكام التجويد" },
   "mushaf.openReader": { en: "Open Mushaf", ar: "افتح المصحف" },
   "mushaf.continueReading": { en: "Continue from page {page}", ar: "تابع من الصفحة {page}" },
+  "mushaf.resumeSurah": { en: "Resume", ar: "تابع" },
+  "mushaf.resumeSurahHint": { en: "Resume {name} from page {page}", ar: "تابع {name} من الصفحة {page}" },
   "mushaf.surahIndex": { en: "Surah Index", ar: "فهرس السور" },
   "mushaf.juzIndex": { en: "Juz Index", ar: "فهرس الأجزاء" },
   "mushaf.bookmarks": { en: "Bookmarks", ar: "المفضلة" },
   "mushaf.tapToHear": { en: "Tap to hear this verse", ar: "اضغط لسماع الآية" },
   "mushaf.tapToPlayHint": { en: "Tap a verse to play it", ar: "اضغط على آية لتشغيلها" },
   "mushaf.verseActions": { en: "Translation, tafsir, and verse actions", ar: "الترجمة والتفسير وإجراءات الآية" },
-  "mushaf.verseDetails": { en: "View translation and tafsir", ar: "عرض الترجمة والتفسير" },
-  "mushaf.openDetailsHint": { en: "Tap any verse for translation, tafsir, and audio", ar: "اضغط أي آية لعرض الترجمة والتفسير والصوت" },
   "mushaf.pageNumber": { en: "Page", ar: "الصفحة" },
   "mushaf.previousPage": { en: "Previous page", ar: "الصفحة السابقة" },
   "mushaf.nextPage": { en: "Next page", ar: "الصفحة التالية" },
@@ -501,6 +485,24 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.verseBookmarks": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
   "mushaf.bookmarkVerse": { en: "Bookmark this verse", ar: "حفظ هذه الآية في المفضّلة" },
   "mushaf.bookmarkVerseRemove": { en: "Remove verse bookmark", ar: "إزالة الآية من المفضّلة" },
+  "mushaf.bookmarksViewAll": { en: "View all bookmarks", ar: "عرض كل الآيات المفضّلة" },
+  "mushaf.bookmarksTitle": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
+  "mushaf.bookmarksSubtitle": {
+    en: "Verses you saved while reading.",
+    ar: "آيات حفظتها أثناء القراءة.",
+  },
+  "mushaf.bookmarksCount": { en: "{count} saved", ar: "{count} محفوظة" },
+  "mushaf.bookmarksEmpty": {
+    en: "No bookmarked verses yet.",
+    ar: "لا توجد آيات مفضّلة بعد.",
+  },
+  "mushaf.bookmarksEmptyHint": {
+    en: "Open a verse in the reader and tap the bookmark to save it here.",
+    ar: "افتح آية في القارئ واضغط على المفضّلة لحفظها هنا.",
+  },
+  "mushaf.bookmarksOpenReader": { en: "Open the Mushaf", ar: "افتح المصحف" },
+  "mushaf.bookmarksBack": { en: "Back to index", ar: "العودة إلى الفهرس" },
+  "mushaf.bookmarkOpenVerse": { en: "Open in reader", ar: "افتح في القارئ" },
   "mushaf.memorizeOn": { en: "Hide memorized verses", ar: "إخفاء الآيات المحفوظة" },
   "mushaf.memorizeOff": { en: "Show memorized verses", ar: "إظهار الآيات المحفوظة" },
   "mushaf.recall": { en: "Recall", ar: "استذكار" },
@@ -562,8 +564,6 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "No memorized verses are due for review right now.",
     ar: "لا توجد آيات محفوظة مستحقّة للمراجعة الآن.",
   },
-  "mushaf.loadFailed": { en: "Could not load this page. Please try again.", ar: "تعذّر تحميل الصفحة. الرجاء المحاولة مرة أخرى." },
-  "mushaf.retry": { en: "Retry", ar: "إعادة المحاولة" },
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
@@ -582,8 +582,13 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "That file isn't a valid Tajweed Trainer backup.",
     ar: "هذا الملف ليس نسخة احتياطية صالحة.",
   },
+  "settings.backup.reminder": {
+    en: "Your progress is only on this device. Export a backup to keep it safe.",
+    ar: "تقدّمك محفوظ على هذا الجهاز فقط. صدّر نسخة احتياطية للحفاظ عليه.",
+  },
+  "settings.backup.reminderDismiss": { en: "Dismiss", ar: "إخفاء" },
 
-  // Speech (TTS for prompts only — NOT for Quranic text)
+  // Speech (TTS for prompts only, NOT for Quranic text)
   "speech.read": { en: "Read prompt aloud", ar: "اقرأ السؤال بصوت" },
   "speech.stop": { en: "Stop reading", ar: "إيقاف القراءة" },
 
@@ -608,24 +613,32 @@ const translations: Record<string, { en: string; ar: string }> = {
   "search.noResults": { en: "No matches.", ar: "لا توجد نتائج." },
   "search.verses": { en: "Quran verses", ar: "آيات القرآن" },
   "search.inApp": { en: "In the app", ar: "في التطبيق" },
+  "search.verseError": {
+    en: "Couldn't search Quran verses right now. App results still work.",
+    ar: "تعذّر البحث في آيات القرآن الآن. نتائج التطبيق لا تزال تعمل.",
+  },
+  "search.retry": { en: "Try again", ar: "إعادة المحاولة" },
+  "search.filterAll": { en: "All", ar: "الكل" },
+  "search.filterLabel": { en: "Filter results", ar: "تصفية النتائج" },
+  "search.filterMemorized": { en: "Memorized", ar: "المحفوظة" },
+  "search.filterEmpty": { en: "No results in this filter.", ar: "لا توجد نتائج في هذه التصفية." },
 
   // Reading depth (translation and tafsir, fetched from the verified API)
   "reading.showTafsir": { en: "Show tafsir", ar: "إظهار التفسير" },
   "reading.hideTafsir": { en: "Hide tafsir", ar: "إخفاء التفسير" },
-  "reading.unavailable": { en: "Could not load — try again from the reader.", ar: "تعذّر التحميل — حاول من القارئ." },
+  "reading.unavailable": { en: "Could not load, try again from the reader.", ar: "تعذّر التحميل، حاول من القارئ." },
   "reading.noTafsir": { en: "No tafsir available for this verse.", ar: "لا يوجد تفسير لهذه الآية." },
   "reading.wordByWord": { en: "Word by word", ar: "كلمة بكلمة" },
   "reading.noWords": { en: "Word-by-word is unavailable for this verse.", ar: "التحليل كلمة بكلمة غير متاح لهذه الآية." },
-  "reading.details": { en: "Translation and tafsir", ar: "الترجمة والتفسير" },
   "compare.title": { en: "Compare your recitation", ar: "قارن تلاوتك" },
   "compare.privacy": {
-    en: "For your own ears only. Your voice stays on this device — it is never uploaded, saved, or scored.",
-    ar: "لسمعك وحدك. صوتك يبقى على هذا الجهاز — لا يُرفع ولا يُحفظ ولا يُقيَّم.",
+    en: "For your own ears only. Your voice stays on this device, it is never uploaded, saved, or scored.",
+    ar: "لسمعك وحدك. صوتك يبقى على هذا الجهاز، لا يُرفع ولا يُحفظ ولا يُقيَّم.",
   },
   "compare.reciter": { en: "The reciter", ar: "القارئ" },
   "compare.yourTake": { en: "Your take", ar: "تلاوتك" },
   "compare.record": { en: "Record", ar: "تسجيل" },
-  "compare.recording": { en: "Recording — tap to stop", ar: "جارٍ التسجيل — اضغط للإيقاف" },
+  "compare.recording": { en: "Recording, tap to stop", ar: "جارٍ التسجيل، اضغط للإيقاف" },
   "compare.stop": { en: "Stop", ar: "إيقاف" },
   "compare.playYours": { en: "Play your take", ar: "تشغيل تلاوتك" },
   "compare.playReciter": { en: "Play the reciter", ar: "تشغيل القارئ" },
@@ -635,12 +648,78 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "تم حظر الوصول إلى الميكروفون. اسمح به من إعدادات الموقع في متصفحك ثم حاول مجددًا.",
   },
   "compare.tryAgain": { en: "Try again", ar: "حاول مجددًا" },
+
+  // Private per-verse study notes (local-only, the learner's own words)
+  "notes.title": { en: "Your note", ar: "ملاحظتك" },
+  "notes.add": { en: "Add a note", ar: "إضافة ملاحظة" },
+  "notes.edit": { en: "Edit your note", ar: "تعديل ملاحظتك" },
+  "notes.placeholder": { en: "A private note for this verse…", ar: "ملاحظة خاصة لهذه الآية…" },
+  "notes.privacy": {
+    en: "Private to this device, your own words, never uploaded.",
+    ar: "خاصة بهذا الجهاز، كلماتك أنت، لا تُرفع أبدًا.",
+  },
+  "notes.save": { en: "Save note", ar: "حفظ الملاحظة" },
+  "notes.saved": { en: "Saved", ar: "تم الحفظ" },
+  "notes.clear": { en: "Delete note", ar: "حذف الملاحظة" },
+  "notes.charsLeft": { en: "{n} left", ar: "بقي {n}" },
+  "notes.hasNote": { en: "This verse has a note", ar: "لهذه الآية ملاحظة" },
+
+  // Reciter A/B compare: hear the same verse by two reciters back to back
+  "recompare.title": { en: "Compare reciters", ar: "مقارنة القرّاء" },
+  "recompare.hint": {
+    en: "Hear this verse by two reciters to compare their recitation.",
+    ar: "استمع لهذه الآية بصوت قارئين لمقارنة تلاوتهما.",
+  },
+  "recompare.reciterA": { en: "Reciter A", ar: "القارئ الأول" },
+  "recompare.reciterB": { en: "Reciter B", ar: "القارئ الثاني" },
+  "recompare.playA": { en: "Play A", ar: "تشغيل الأول" },
+  "recompare.playB": { en: "Play B", ar: "تشغيل الثاني" },
+
   "reading.close": { en: "Close", ar: "إغلاق" },
   "settings.readingDepth": { en: "Reading depth", ar: "عمق القراءة" },
   "settings.translationResource": { en: "Translation", ar: "الترجمة" },
   "settings.tafsirResource": { en: "Tafsir", ar: "التفسير" },
   "settings.showWordByWord": { en: "Word-by-word breakdown", ar: "التحليل كلمة بكلمة" },
   "settings.resourceOnline": { en: "More options load when online.", ar: "تظهر خيارات أكثر عند الاتصال." },
+
+  // Khatmah (Quran-completion) planner
+  "khatmah.title": { en: "Khatmah plan", ar: "خطة ختمة" },
+  "khatmah.emptyTitle": { en: "Plan a khatmah", ar: "خطّط لختمة" },
+  "khatmah.emptyBody": {
+    en: "Set a date to finish the whole Quran and we will suggest a gentle daily pace. Your reading in the mushaf moves the plan along on its own.",
+    ar: "حدّد موعدًا لإتمام القرآن كاملًا وسنقترح وتيرة يومية هادئة. قراءتك في المصحف تُحرّك الخطة تلقائيًا.",
+  },
+  "khatmah.emptyHelp": {
+    en: "Optional and private. No reminders, no check-ins.",
+    ar: "اختياري وخاص. بلا تذكيرات ولا تسجيل يومي.",
+  },
+  "khatmah.start": { en: "Start a khatmah", ar: "ابدأ ختمة" },
+  "khatmah.setupTitle": { en: "Set your pace", ar: "اضبط وتيرتك" },
+  "khatmah.duration": { en: "Finish in", ar: "الإتمام خلال" },
+  "khatmah.days30": { en: "30 days", ar: "٣٠ يومًا" },
+  "khatmah.days60": { en: "60 days", ar: "٦٠ يومًا" },
+  "khatmah.days90": { en: "90 days", ar: "٩٠ يومًا" },
+  "khatmah.customDate": { en: "Or pick a date", ar: "أو اختر تاريخًا" },
+  "khatmah.startPageNote": {
+    en: "Starting from your current page ({page}). Reading onward fills the plan.",
+    ar: "يبدأ من صفحتك الحالية ({page}). المتابعة في القراءة تملأ الخطة.",
+  },
+  "khatmah.save": { en: "Save plan", ar: "احفظ الخطة" },
+  "khatmah.cancel": { en: "Cancel", ar: "إلغاء" },
+  "khatmah.edit": { en: "Edit", ar: "تعديل" },
+  "khatmah.end": { en: "End khatmah", ar: "إنهاء الختمة" },
+  "khatmah.endConfirm": { en: "End this khatmah?", ar: "إنهاء هذه الختمة؟" },
+  "khatmah.endYes": { en: "End", ar: "إنهاء" },
+  "khatmah.percentLabel": { en: "of the Quran", ar: "من القرآن" },
+  "khatmah.pagesRead": { en: "{read} of {total} pages", ar: "{read} من {total} صفحة" },
+  "khatmah.dailyGoal": { en: "Daily goal", ar: "الهدف اليومي" },
+  "khatmah.pagesPerDay": { en: "{n} pages/day", ar: "{n} صفحة/يوم" },
+  "khatmah.daysLeft": { en: "{n} days left", ar: "باقٍ {n} يومًا" },
+  "khatmah.dueToday": { en: "Due today", ar: "مستحقّ اليوم" },
+  "khatmah.onTrack": { en: "On track", ar: "على المسار" },
+  "khatmah.aheadDays": { en: "{n} days ahead", ar: "متقدّم بـ {n} يومًا" },
+  "khatmah.behindDays": { en: "{n} days behind", ar: "متأخّر بـ {n} يومًا" },
+  "khatmah.complete": { en: "Khatmah complete, may Allah accept it", ar: "تمّت الختمة، تقبّل الله" },
 
   // Onboarding
   "onboarding.title": { en: "Welcome to Tajweed Trainer", ar: "مرحباً بك في مدرّب التجويد" },

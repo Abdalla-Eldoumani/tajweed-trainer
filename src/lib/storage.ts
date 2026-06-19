@@ -9,6 +9,7 @@ import type {
   AnalyticsEventType,
   PlayerResume,
   VerseLocation,
+  KhatmahPlan,
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
@@ -44,10 +45,14 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   memorizedVerses: [],
   memorizationReviews: {},
   readSections: {},
+  verseNotes: {},
   analytics: [],
   bookmarks: [],
   lastRead: null,
+  lastReadBySurah: {},
+  khatmah: null,
   seenOnboarding: false,
+  lastBackupAt: "",
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -72,7 +77,7 @@ function deepFreeze<T>(value: T): T {
 // empty state; live reads go through cloneDefaultProgress() instead.
 export const EMPTY_PROGRESS: TajweedProgress = deepFreeze(structuredClone(DEFAULT_PROGRESS));
 
-// Caps protect against pathological inputs from a tampered localStorage —
+// Caps protect against pathological inputs from a tampered localStorage,
 // e.g. a 100,000-entry bookmarks array that bloats every render.
 const MAX_BOOKMARKS = 200;
 const MAX_LESSONS_PER_MODULE = 200;
@@ -81,7 +86,14 @@ const MAX_MODULES = 100;
 const MAX_REVIEWS = 2000;
 const MAX_MEMORIZED = 6236;
 const MAX_VERSE_BOOKMARKS = 500;
+const MAX_LAST_READ_BY_SURAH = 114;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
+// Per-verse private notes: a realistic ceiling on how many verses one learner
+// annotates (well under the 6,236-verse maximum) and a per-note length so a
+// tampered store cannot bloat every read. Notes are trimmed and empty ones are
+// dropped, so the count only grows with real annotations.
+const MAX_VERSE_NOTES = 2000;
+const MAX_VERSE_NOTE_LENGTH = 1000;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
 const MAX_ANALYTICS = 1000;
@@ -201,6 +213,7 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
   const out: Record<string, ReviewState> = {};
   const entries = Object.entries(input).slice(0, MAX_REVIEWS);
   for (const [id, value] of entries) {
+    if (id === "__proto__" || id === "constructor" || id === "prototype") continue;
     if (typeof id !== "string" || id.length === 0 || id.length >= 200) continue;
     const review = sanitizeReview(value);
     if (review) out[id] = review;
@@ -210,7 +223,7 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
 
 // Memorized-verse review state. Mirrors sanitizeReviews but the key is a
 // verseKey (not a rule-quiz questionId), so it validates against
-// VERSE_KEY_PATTERN and caps at MAX_MEMORIZED — a separate keyspace that can
+// VERSE_KEY_PATTERN and caps at MAX_MEMORIZED, a separate keyspace that can
 // never collide with `reviews`. A stored object without this field reads back
 // as {} (lossless migration).
 function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState> {
@@ -218,6 +231,7 @@ function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState
   const out: Record<string, ReviewState> = {};
   const entries = Object.entries(input).slice(0, MAX_MEMORIZED);
   for (const [verseKey, value] of entries) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
     if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
     const review = sanitizeReview(value);
     if (review) out[verseKey] = review;
@@ -228,7 +242,7 @@ function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState
 function sanitizeAnalytics(input: unknown): AnalyticsEvent[] {
   if (!Array.isArray(input)) return [];
   const out: AnalyticsEvent[] = [];
-  // Take the most recent MAX_ANALYTICS — older events get evicted as the
+  // Take the most recent MAX_ANALYTICS, older events get evicted as the
   // ring buffer fills up.
   const recent = input.slice(-MAX_ANALYTICS);
   for (const item of recent) {
@@ -247,6 +261,7 @@ function sanitizeReadSections(input: unknown): Record<string, string[]> {
   if (!isObject(input)) return {};
   const out: Record<string, string[]> = {};
   for (const [moduleId, value] of Object.entries(input)) {
+    if (moduleId === "__proto__" || moduleId === "constructor" || moduleId === "prototype") continue;
     if (typeof moduleId !== "string" || moduleId.length === 0 || moduleId.length >= 100) continue;
     if (!Array.isArray(value)) continue;
     const slugs = new Set<string>();
@@ -257,6 +272,29 @@ function sanitizeReadSections(input: unknown): Record<string, string[]> {
       if (slugs.size >= MAX_READ_SECTIONS_PER_MODULE) break;
     }
     out[moduleId] = Array.from(slugs);
+  }
+  return out;
+}
+
+// Per-verse private study notes. Keys are verseKeys (validated against
+// VERSE_KEY_PATTERN); values are the learner's own text, trimmed and capped at
+// MAX_VERSE_NOTE_LENGTH. Empty notes are dropped (an empty note is "no note"),
+// the dangerous prototype keys are skipped like every other keyed-map loop, and
+// the whole map caps at MAX_VERSE_NOTES. A stored object without this field
+// reads back as {} (lossless migration).
+function sanitizeVerseNotes(input: unknown): Record<string, string> {
+  if (!isObject(input)) return {};
+  const out: Record<string, string> = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    if (typeof value !== "string") continue;
+    const text = value.trim().slice(0, MAX_VERSE_NOTE_LENGTH);
+    if (text.length === 0) continue;
+    out[verseKey] = text;
+    count += 1;
+    if (count >= MAX_VERSE_NOTES) break;
   }
   return out;
 }
@@ -298,12 +336,72 @@ function sanitizeBookmarks(input: unknown): string[] {
   return Array.from(out);
 }
 
-function sanitizeLastRead(input: unknown): VerseLocation | null {
+function sanitizeVerseLocation(input: unknown): VerseLocation | null {
   if (!isObject(input)) return null;
   if (typeof input.verseKey !== "string" || !VERSE_KEY_PATTERN.test(input.verseKey)) return null;
   const page = pickNumber(input.page, 1, 1, 604);
   const ts = typeof input.ts === "string" && input.ts.length <= 32 ? input.ts : "";
   return { verseKey: input.verseKey, page, ts };
+}
+
+function sanitizeLastRead(input: unknown): VerseLocation | null {
+  return sanitizeVerseLocation(input);
+}
+
+// Calendar-date shape (YYYY-MM-DD) plus a real-date round-trip, so "2026-02-31"
+// or "2026-13-01" is rejected, not silently kept. Parsing in UTC keeps the
+// check timezone-independent: only the date components are validated here.
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+function isValidIsoDate(value: unknown): value is string {
+  if (typeof value !== "string" || !ISO_DATE_PATTERN.test(value)) return false;
+  const ms = Date.parse(`${value}T00:00:00Z`);
+  if (Number.isNaN(ms)) return false;
+  // Reject inputs the Date parser normalizes (e.g. month 13 -> next year): the
+  // canonical YYYY-MM-DD of the parsed instant must equal the input.
+  return new Date(ms).toISOString().slice(0, 10) === value;
+}
+
+// The opt-in khatmah plan. Both dates must be real ISO calendar dates with the
+// target on or after the start (a same-day plan is allowed; the pace lib guards
+// the zero-day divide). startPage is bounded to the 604-page mushaf. Anything
+// malformed or absent reads back as null (no plan), so a tampered store can
+// never strand a broken plan in the UI. A stored object without this field reads
+// back as null (lossless migration).
+function sanitizeKhatmah(input: unknown): KhatmahPlan | null {
+  if (!isObject(input)) return null;
+  if (!isValidIsoDate(input.startDate) || !isValidIsoDate(input.targetDate)) return null;
+  if (input.targetDate < input.startDate) return null;
+  if (
+    typeof input.startPage !== "number" ||
+    !Number.isInteger(input.startPage) ||
+    input.startPage < 1 ||
+    input.startPage > 604
+  ) {
+    return null;
+  }
+  return { startDate: input.startDate, targetDate: input.targetDate, startPage: input.startPage };
+}
+
+// Per-surah last-read map. Keys are surah numbers 1..114 (validated as integers
+// in range); values are VerseLocation records validated like lastRead. Guards
+// the prototype-pollution keys and caps at 114 entries, mirroring the other map
+// sanitizers. A stored object without this field reads back as {} (lossless
+// migration).
+function sanitizeLastReadBySurah(input: unknown): Record<number, VerseLocation> {
+  if (!isObject(input)) return {};
+  const out: Record<number, VerseLocation> = {};
+  let count = 0;
+  for (const [key, value] of Object.entries(input)) {
+    if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+    const surah = Number(key);
+    if (!Number.isInteger(surah) || surah < 1 || surah > 114) continue;
+    const location = sanitizeVerseLocation(value);
+    if (!location) continue;
+    out[surah] = location;
+    count += 1;
+    if (count >= MAX_LAST_READ_BY_SURAH) break;
+  }
+  return out;
 }
 
 export function sanitizeProgress(input: unknown): TajweedProgress {
@@ -312,6 +410,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
   if (isObject(input.modules)) {
     const entries = Object.entries(input.modules).slice(0, MAX_MODULES);
     for (const [id, mod] of entries) {
+      if (id === "__proto__" || id === "constructor" || id === "prototype") continue;
       if (typeof id === "string" && id.length > 0 && id.length < 100) {
         modules[id] = sanitizeModule(mod);
       }
@@ -332,11 +431,15 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     memorizedVerses: sanitizeMemorized(input.memorizedVerses),
     memorizationReviews: sanitizeMemorizationReviews(input.memorizationReviews),
     readSections: sanitizeReadSections(input.readSections),
+    verseNotes: sanitizeVerseNotes(input.verseNotes),
     analytics: sanitizeAnalytics(input.analytics),
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
     lastRead: sanitizeLastRead(input.lastRead),
+    lastReadBySurah: sanitizeLastReadBySurah(input.lastReadBySurah),
+    khatmah: sanitizeKhatmah(input.khatmah),
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
+    lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
   };
 }
 
@@ -409,6 +512,32 @@ export function setOnboardingSeen(value: boolean): void {
   setProgress(progress);
 }
 
+// The opt-in khatmah plan funnel. Lives on the consolidated progress model
+// (field `khatmah`, not an ad-hoc key) so export / import / reset cover it; the
+// default-null in DEFAULT_PROGRESS makes resetProgress clear any plan. Reads and
+// writes go through the same sanitizer the store applies, so a malformed plan is
+// stored as null (no plan) rather than a broken one. All three setters write
+// through setProgress, which fires the change bus.
+export function getKhatmah(): KhatmahPlan | null {
+  return getProgress().khatmah ?? null;
+}
+
+export function setKhatmah(plan: KhatmahPlan): void {
+  if (!isBrowser()) return;
+  const sanitized = sanitizeKhatmah(plan);
+  if (!sanitized) return;
+  const progress = getProgress();
+  progress.khatmah = sanitized;
+  setProgress(progress);
+}
+
+export function clearKhatmah(): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  progress.khatmah = null;
+  setProgress(progress);
+}
+
 export function getSettings(): UserSettings {
   return getProgress().settings;
 }
@@ -417,15 +546,6 @@ export function setSettings(settings: UserSettings): void {
   const progress = getProgress();
   progress.settings = settings;
   setProgress(progress);
-}
-
-export function getModuleProgress(moduleId: string): ModuleProgress {
-  const progress = getProgress();
-  return progress.modules[moduleId] ?? {
-    lessonsCompleted: [],
-    quizScores: [],
-    lastAccessed: "",
-  };
 }
 
 export function markLessonComplete(moduleId: string, lessonId: string): void {
@@ -490,9 +610,47 @@ export function recordAnalyticsEvent(type: AnalyticsEventType, meta?: string): v
 
 // Returns a JSON snapshot of the entire progress object suitable for download
 // as a backup file. The snapshot already passes through sanitizeProgress on
-// read, so untrusted fields are stripped.
+// read, so untrusted fields are stripped. Stamps lastBackupAt so the snapshot
+// and the stored state agree on when this backup was taken; that timestamp also
+// dismisses the backup reminder. On the server (no window) it returns the
+// snapshot without persisting.
 export function exportProgress(): string {
-  return JSON.stringify(getProgress(), null, 2);
+  const progress = getProgress();
+  progress.lastBackupAt = new Date().toISOString();
+  setProgress(progress);
+  return JSON.stringify(progress, null, 2);
+}
+
+export function getLastBackupAt(): string {
+  return getProgress().lastBackupAt ?? "";
+}
+
+const BACKUP_REMINDER_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// True when the user has done enough to be worth backing up. Kept here next to
+// the data model so the "meaningful" definition has one home. Any completed
+// lesson, quiz score, memorized verse, bookmark, or an active streak counts.
+export function hasMeaningfulProgress(progress: TajweedProgress): boolean {
+  if (progress.memorizedVerses.length > 0) return true;
+  if (progress.bookmarks.length > 0) return true;
+  if (progress.streaks.currentStreak > 0) return true;
+  for (const mod of Object.values(progress.modules)) {
+    if (mod.lessonsCompleted.length > 0 || mod.quizScores.length > 0) return true;
+  }
+  return false;
+}
+
+// Whether to nudge the user to back up: there is meaningful progress AND either
+// no backup was ever taken or the last one is older than the reminder window.
+// `now` is injected so callers (and tests) control the clock.
+export function shouldRemindBackup(progress: TajweedProgress, now: Date): boolean {
+  if (!hasMeaningfulProgress(progress)) return false;
+  const last = progress.lastBackupAt ?? "";
+  if (!last) return true;
+  const lastMs = Date.parse(last);
+  if (Number.isNaN(lastMs)) return true;
+  return now.getTime() - lastMs > BACKUP_REMINDER_DAYS * DAY_MS;
 }
 
 // Replaces stored progress with the parsed payload after sanitization. Returns
@@ -526,6 +684,31 @@ export function markSectionRead(moduleId: string, sectionId: string): void {
   setProgress(progress);
 }
 
+export function getVerseNote(verseKey: string): string {
+  return getProgress().verseNotes[verseKey] ?? "";
+}
+
+// Write (or clear) a learner's private note for one verse, through the change
+// bus. The text is trimmed and capped; an empty result deletes the entry (an
+// empty note is "no note"). A tampered verseKey is rejected. Adding a brand-new
+// note past the cap is a no-op (editing or clearing an existing note always
+// works, so the user is never stuck unable to fix a note).
+export function setVerseNote(verseKey: string, text: string): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  const trimmed = text.trim().slice(0, MAX_VERSE_NOTE_LENGTH);
+  if (trimmed.length === 0) {
+    if (!(verseKey in progress.verseNotes)) return;
+    delete progress.verseNotes[verseKey];
+  } else {
+    const isNew = !(verseKey in progress.verseNotes);
+    if (isNew && Object.keys(progress.verseNotes).length >= MAX_VERSE_NOTES) return;
+    progress.verseNotes[verseKey] = trimmed;
+  }
+  setProgress(progress);
+}
+
 // Returns the new memorized state (true if marked, false if cleared) so the
 // caller can update its UI without reading back from storage.
 export function toggleMemorizedVerse(verseKey: string): boolean {
@@ -549,7 +732,7 @@ export function toggleMemorizedVerse(verseKey: string): boolean {
 
 // Batched mark/unmark over a list of verseKeys: one read, one Set mutation
 // across the whole list, one write (so the change bus fires exactly once
-// regardless of list length — a whole surah is one write, not 286). Set
+// regardless of list length, a whole surah is one write, not 286). Set
 // semantics give union for mark (overlapping marks never double count) and
 // difference for unmark. The 6236 cap is checked inside the loop and invalid
 // keys are skipped. Returns the new memorized count so the caller can update
@@ -601,11 +784,29 @@ export function getLastRead(): VerseLocation | null {
   return getProgress().lastRead ?? null;
 }
 
+// The saved position within one surah, or null if the surah was never opened
+// past its first page. Reading code clamps the surah; callers pass a real surah
+// number from the bundled index.
+export function getLastReadForSurah(surah: number): VerseLocation | null {
+  return getProgress().lastReadBySurah?.[surah] ?? null;
+}
+
 export function setLastRead(verseKey: string, page: number): void {
   if (!isBrowser()) return;
   if (!VERSE_KEY_PATTERN.test(verseKey)) return;
   const progress = getProgress();
-  progress.lastRead = { verseKey, page, ts: new Date().toISOString() };
+  const location: VerseLocation = { verseKey, page, ts: new Date().toISOString() };
+  progress.lastRead = location;
+  // Record the same location under its surah so reopening that surah resumes
+  // here. The surah is the first verseKey segment, already in 1..114 because the
+  // pattern above bounds it to three digits and the map sanitizer re-checks the
+  // range on every read.
+  const surah = Number(verseKey.split(":")[0]);
+  if (Number.isInteger(surah) && surah >= 1 && surah <= 114) {
+    const bySurah = progress.lastReadBySurah ?? {};
+    bySurah[surah] = location;
+    progress.lastReadBySurah = bySurah;
+  }
   setProgress(progress);
 }
 

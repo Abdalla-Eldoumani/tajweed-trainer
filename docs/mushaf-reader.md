@@ -8,8 +8,12 @@ A reproduction of the 604-page Madinan Mushaf, color-coded for tajweed. Tapping 
 - A surah index at `/mushaf` listing all 114 surahs as cards (Arabic name, Latin name, verse count, start page, Makkah / Madinah badge). Search by Latin name, filter by revelation place, and a "continue from page X" callout when there's a saved `lastMushafPage`.
 - The reader at `/mushaf/page/[page]/`: the Madinan layout with surah cartouche, Bismillah line on surah starts, tajweed-colored verses, gold verse-end markers in Arabic-Indic numerals, and a page / juz footer.
 - A surah jump at `/mushaf/surah/[surah]/` that redirects server-side to that surah's start page.
-- Tap a verse to open its reading-depth panel below the page (translation, tafsir, optional word-by-word). The panel is the per-verse action hub: play this verse (`usePlayer.getState().playVerse(surah, ayah, opts)`, single mode), play from here (`playSurah`, continuous), a memorize toggle, and a verse bookmark. It scrolls itself into view on open so a tap near the top of a long page is never silent. The toolbar "Play surah" button also starts continuous playback. The persistent `MiniPlayer` (mounted once in `AppProvider`) is the transport and carries a single ↔ continuous mode toggle.
-- Per-page bookmark toggle, persisted to localStorage. Bookmarks appear on the index as quick-jump chips.
+- Tap a verse to open its reading-depth panel (translation, tafsir, optional word-by-word). The panel is the per-verse action hub: play this verse (`usePlayer.getState().playVerse(surah, ayah, opts)`, single mode), play from here (`playSurah`, continuous), a memorize toggle, a verse bookmark, a private note, and a two-reciter compare. The toolbar "Play surah" button also starts continuous playback. The persistent `MiniPlayer` (mounted once in `AppProvider`) is the transport and carries a single to continuous mode toggle.
+- An always-visible playback surface: a docked, collapsible side panel at 1024px and up, a bottom sheet below that, so the verse you are playing is never hidden behind the controls.
+- Multi-verse selection: pick a contiguous range or hand-pick a set of verses and play them as one auto-advancing queue, with a per-verse repeat count, a whole-selection loop, and an inter-verse pause. The selection shows as removable chips with a one-action clear.
+- A dynamic in-reader index: the surah and juz pickers always read out the surah(s) and juz on the open page, even after a deep-linked reload, and update as you turn pages. A Cmd/Ctrl+K quick-jump palette (with a visible button) jumps to any surah, page, or juz.
+- Tap a color-coded letter to open a popover naming its tajweed rule and color, with a "Learn more" link to the lesson that teaches it.
+- Per-page bookmark toggle, persisted to localStorage. Page bookmarks appear on the index as quick-jump chips; verse bookmarks get a full list at `/mushaf/bookmarks`, linked from the index. Per-surah resume pills on the index jump back to where you left a surah.
 - Keyboard navigation (`ArrowLeft` and `ArrowRight`), mirrored under RTL when the language is set to Arabic.
 - Arabic mode and dark mode are both supported. Every label translates; the gold frame stays legible on dark cream.
 
@@ -50,15 +54,29 @@ The client wrapper around `MushafPage`. It holds:
 - Rule-highlight drill dropdown — greys every tajweed rule except the chosen one (`data-tajweed-drill` plus CSS).
 - Memorization-mode eye toggle (in-session, not persisted) — blurs memorized verses on the page.
 - Bookmark toggle (filled gold star icon when bookmarked).
+- A Cmd/Ctrl+K quick-jump palette (`ReaderPalette`) with a visible toolbar button, jumping to any surah, page, or juz.
 - Keyboard navigation (`ArrowLeft` and `ArrowRight`, mirrored when the language is Arabic).
-- A reading-depth panel that opens below the page when a verse is tapped (translation, tafsir, optional word-by-word). The panel header is the per-verse action hub: play this verse, play from here, memorize toggle, and a verse bookmark. It scrolls itself into view on open. Translation defaults to Saheeh International (resource id 20); tafsir to Ibn Kathir (169).
+- A reading-depth panel that opens when a verse is tapped (translation, tafsir, optional word-by-word). The panel header is the per-verse action hub: play this verse, play from here, memorize toggle, and a verse bookmark; the body adds a private note (`VerseNotes`) and a two-reciter compare (`ReciterCompare`). It scrolls itself into view on open. Translation defaults to Saheeh International (resource id 20); tafsir to Ibn Kathir (169).
+- The panel is presented by `PlaybackSurface`: a docked side panel at 1024px and up, a bottom sheet below that. The expanded sheet locks body scroll through `scroll-lock.ts`.
 - A `useEffect` that writes `lastMushafPage` and `lastRead` to settings on mount. An entry URL of `?v=surah:ayah` scrolls that verse into view and starts it in single mode.
 
 The `mounted` flag pattern defers the bookmark filled state until after hydration. The server can't read localStorage, so it always renders unfilled; the client takes over after mount. Without this, React warns about a hydration mismatch on the SVG `fill` attribute.
 
 ### `MushafIndex`
 
-The surah grid for `/mushaf`. The route fetches `getChaptersIndex()` server-side and passes `surahs` to a client component that handles the search input and Makkah / Madinah filter via `useState`. Bookmarks (if any) appear as quick-jump chips above the grid.
+The surah grid for `/mushaf`. The route fetches `getChaptersIndex()` server-side and passes `surahs` to a client component that handles the search input and Makkah / Madinah filter via `useState`. Page bookmarks (if any) appear as quick-jump chips above the grid, with a preview of verse bookmarks linking to the full list at `/mushaf/bookmarks`. Each surah card shows a resume pill when `lastReadBySurah` holds a saved position past its first page.
+
+### `MushafBookmarks`
+
+The saved-verse list behind `/mushaf/bookmarks`. The route resolves the surah headers server-side (bundled fallback) so the client view can label each bookmarked verse without a round-trip, then lists every verse bookmark with its text and open / remove actions.
+
+### `TajweedRulePopover`
+
+Opened by `TajweedText` when its `explainRules` prop is on (the reader and the lesson examples). Tapping a color-coded letter names the rule and shows its color from `tajweed-colors.ts`, with a "Learn more" lesson link resolved through `getLessonLinkForClass`. Classes with no single owning module show the name and color without a link. It names the rule from the verified map and never explains it in its own words.
+
+### `VerseNotes` and `ReciterCompare`
+
+`VerseNotes` is the private per-verse note in the reading-depth panel, read and written through `getVerseNote` / `setVerseNote`. The note stays on the device, is never transmitted, and is never religious content (the learner's own words). `ReciterCompare` plays the same verse by two reciters in turn on the one `usePlayer` engine, so recitation styles can be compared by ear without a second audio element.
 
 ### `VerseEndMarker`
 
@@ -69,6 +87,8 @@ Currently unused. The API embeds verse-end markers as `<span class="end">N</span
 - `src/app/mushaf/page.tsx` — server component. Calls `getChaptersIndex()` and passes the result to `<MushafIndex/>`.
 - `src/app/mushaf/page/[page]/page.tsx` — server component. `params` is a Promise (Next 16) and is awaited. `generateStaticParams()` pre-renders a spread of common entry points (page 1 and one per juz) at build time; the rest fall through to ISR (`export const revalidate = 86400`, a literal number of seconds). Calls `getTajweedPage` and `getChaptersIndex` and passes both to `<MushafReader/>`.
 - `src/app/mushaf/surah/[surah]/page.tsx` — server component. Looks up the surah's start page from the bundled index and `redirect`s. Pure server-side; no client JS.
+- `src/app/mushaf/bookmarks/page.tsx`: server component. Resolves the surah headers and renders `<MushafBookmarks/>`.
+- `src/app/mushaf/loading.tsx` and `src/app/mushaf/page/[page]/loading.tsx`: route loading skeletons shown while a page resolves.
 
 ## Data flow
 

@@ -335,29 +335,11 @@ export interface WaqfData {
   verified: true;
 }
 
-export interface GlossaryTerm {
-  term_ar: string;
-  term_en: string;
-  definition: string;
-}
-
-export interface GlossaryData {
-  id: string;
-  title_en: string;
-  title_ar: string;
-  terms: GlossaryTerm[];
-  verified: true;
-}
-
 // Reciter id is the Quran.com recitation id as a string (for example "7" =
-// Alafasy, "12" = Al-Husary muallim). Validated against RECITER_ID_PATTERN and
-// the RECITATIONS list in src/lib/reciters.ts; legacy alquran.cloud identifiers
-// (husary, ar.alafasy, ...) are migrated by normalizeReciterId so persisted
-// settings still resolve.
+// Alafasy, "12" = Al-Husary muallim). Validated against the RECITATIONS list in
+// src/lib/reciters.ts; legacy alquran.cloud identifiers (husary, ar.alafasy,
+// ...) are migrated by normalizeReciterId so persisted settings still resolve.
 export type ReciterId = string;
-
-// A Quran.com recitation id is a small integer rendered as a string.
-export const RECITER_ID_PATTERN = /^[0-9]{1,3}$/;
 
 // A recitation from the Quran.com recitations resource.
 export interface Recitation {
@@ -462,6 +444,11 @@ export interface TajweedProgress {
   memorizationReviews: Record<string, ReviewState>;
   // moduleId -> set of section anchor slugs the user has scrolled past.
   readSections: Record<string, string[]>;
+  // verseKey ("surah:ayah") -> the user's own private study note. Local-only,
+  // never transmitted, and never religious content (the learner's own words).
+  // An empty note deletes the entry; capped in count and per-note length by the
+  // storage sanitizer.
+  verseNotes: Record<string, string>;
   analytics: AnalyticsEvent[];
   // Last playback position, so the mini-player can resume after a reload.
   playerResume?: PlayerResume | null;
@@ -469,9 +456,21 @@ export interface TajweedProgress {
   // Kept inside this consolidated model so export / import / reset cover them.
   bookmarks: string[];
   lastRead?: VerseLocation | null;
+  // Per-surah last-read location, keyed by surah number (1..114). The global
+  // lastRead above answers "where was I anywhere"; this answers "where was I in
+  // this surah" so reopening a surah lands at the saved position. Same
+  // VerseLocation shape; capped at 114 entries.
+  lastReadBySurah?: Record<number, VerseLocation>;
+  // The learner's opt-in Quran-completion (khatmah) plan, or null when none is
+  // set. A single plan at a time; tracked from lastRead.page. Cleared by reset.
+  khatmah?: KhatmahPlan | null;
   // Whether the first-launch onboarding has been shown and dismissed. Cleared by
   // reset so onboarding re-shows.
   seenOnboarding: boolean;
+  // ISO timestamp of the last successful export, stamped by exportProgress().
+  // Empty until the first backup. Drives the gentle backup reminder in Settings;
+  // cleared by reset so the reminder logic restarts with progress.
+  lastBackupAt?: string;
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".
@@ -479,6 +478,18 @@ export interface VerseLocation {
   verseKey: string; // "surah:ayah"
   page: number;     // mushaf page 1..604
   ts: string;       // ISO timestamp
+}
+
+// An opt-in plan to finish reading the whole Quran by a target date. Progress is
+// read from the reader position the app already records (lastRead.page), so
+// reading the mushaf advances the plan with no manual logging. The pace model is
+// linear by mushaf page: page N of 604 is N/604 complete (see src/lib/khatmah.ts
+// for the full derivation). startPage is where the reader was when the plan
+// began, so a learner who is already partway in is not counted as starting over.
+export interface KhatmahPlan {
+  startDate: string;  // ISO date (YYYY-MM-DD) the plan began
+  targetDate: string; // ISO date (YYYY-MM-DD) to finish by; >= startDate
+  startPage: number;  // mushaf page 1..604 the reader was on at the start
 }
 
 // Local-only insights ring buffer. Never sent over the network. The fixed set
@@ -540,22 +551,6 @@ export interface MushafPageData {
   juzNumber: number;
   verses: VerseTajweed[];
   surahsOnPage: SurahHeader[];
-}
-
-export interface AlQuranCloudResponse {
-  code: number;
-  status: string;
-  data: {
-    audio: string;
-    audioSecondary?: string[];
-    text: string;
-    edition: {
-      identifier: string;
-      name: string;
-    };
-    surah: { number: number; name: string };
-    numberInSurah: number;
-  };
 }
 
 export interface PracticeQuestion {

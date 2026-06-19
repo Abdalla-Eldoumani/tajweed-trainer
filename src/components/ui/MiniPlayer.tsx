@@ -332,7 +332,7 @@ export function MiniPlayer() {
     // re-enables pointer events and is placed by a transform from the top-left.
     // `inert` while hidden removes the still-mounted transport controls from the
     // tab order and the accessibility tree (aria-hidden alone left them
-    // focusable — the aria-hidden-focus violation).
+    // focusable, the aria-hidden-focus violation).
     <div inert={!visible} aria-hidden={!visible} className="pointer-events-none fixed inset-0 z-40">
       <div
         ref={cardRef}
@@ -407,7 +407,7 @@ export function MiniPlayer() {
                   aria-label={t("player.rangeFrom")}
                   className="w-12 rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
                 />
-                <span className="text-text-muted">–</span>
+                <span className="text-text-muted">-</span>
                 <input
                   type="number" min={1} max={maxAyah} value={to}
                   onChange={(e) => setTo(Number(e.target.value))}

@@ -26,7 +26,7 @@ export default function ReviewPracticePage() {
       </Link>
 
       <div>
-        <h1 className="font-heading text-2xl font-bold">{t("review.title")}</h1>
+        <h1 className="font-heading text-h2 font-bold">{t("review.title")}</h1>
         <p className="text-sm text-text-muted mt-2">{t("review.subtitle")}</p>
       </div>
 

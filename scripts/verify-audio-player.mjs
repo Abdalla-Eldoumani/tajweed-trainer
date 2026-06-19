@@ -20,7 +20,7 @@ const provider = read("src", "components", "layout", "AppProvider.tsx");
 const results = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
 record("Store supports single and continuous modes", /"single"/.test(store) && /"continuous"/.test(store));

@@ -45,7 +45,7 @@ export interface VerseSelection {
 
   isSelected: (verseKey: string) => boolean;
   // Toggle a verse in the hand-picked set. Adding the first set verse clears any
-  // active range (the two modes are mutually exclusive — one queue at a time).
+  // active range (the two modes are mutually exclusive, one queue at a time).
   toggle: (verseKey: string) => void;
   add: (verseKey: string) => void;
   remove: (verseKey: string) => void;

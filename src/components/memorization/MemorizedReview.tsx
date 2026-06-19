@@ -38,7 +38,7 @@ function VerseUnderReview({ verseKey, blurred }: { verseKey: string; blurred: bo
   useEffect(() => {
     // The snapshot path needs no fetch; resolved synchronously below. The
     // component is keyed by verseKey at the call site, so it remounts per verse
-    // and starts from the idle (loader) state — no synchronous reset needed here.
+    // and starts from the idle (loader) state, no synchronous reset needed here.
     if (snapshot) return;
     let alive = true;
     const [surah] = verseKey.split(":").map(Number);
@@ -86,7 +86,7 @@ function VerseUnderReview({ verseKey, blurred }: { verseKey: string; blurred: bo
 // rule-quiz reviews map). It mirrors QuizSession's snapshot-at-start shape: the
 // due queue is captured once on start and never re-queried mid-session, so a
 // bulk-unmark while reviewing cannot corrupt the queue. Each step reconciles in
-// place — a verse no longer memorized is skipped, never rendered or re-read.
+// place: a verse no longer memorized is skipped, never rendered or re-read.
 export function MemorizedReview() {
   const { t, isAr } = useTranslation();
   const { memorized } = useMemorization();
@@ -120,7 +120,7 @@ export function MemorizedReview() {
 
   // Reconciliation (T-07-13 / AC-16): derive the active step by skipping, in
   // render, any queued verse no longer in the memorized Set (e.g. a bulk-unmark
-  // landed mid-session). This is pure derivation — no effect mutates the index —
+  // landed mid-session). This is pure derivation (no effect mutates the index),
   // so a removed verse is never rendered or re-read and the session never throws.
   // currentKey is undefined once the remaining queue is exhausted (finished).
   const activeIndex = useMemo(() => {
@@ -152,7 +152,7 @@ export function MemorizedReview() {
   }, [revealed, activeIndex]);
 
   // Play the verse under review on its own (single mode), through the one player
-  // engine — no second audio element is ever constructed here.
+  // engine, no second audio element is ever constructed here.
   const playCurrent = useCallback(() => {
     if (!currentKey) return;
     const [s, a] = currentKey.split(":").map(Number);
@@ -165,7 +165,7 @@ export function MemorizedReview() {
   }, [currentKey, settings.reciter, settings.playbackSpeed, isAr]);
 
   // Play the remaining queue as a hand-picked set (multi-verse playback), again
-  // through usePlayer — the same engine the reader uses for selections.
+  // through usePlayer, the same engine the reader uses for selections.
   const playQueue = useCallback(() => {
     const items = queue
       .slice(activeIndex)

@@ -36,7 +36,7 @@ function ModuleNotFound({ id }: { id: string }) {
       </Link>
       <div className="text-center space-y-3 py-12">
         <p className="text-sm uppercase tracking-wide text-text-muted">404</p>
-        <h1 className="font-heading text-2xl font-bold">{t("notFound.title")}</h1>
+        <h1 className="font-heading text-h2 font-bold">{t("notFound.title")}</h1>
         <p className="text-sm text-text-muted">
           {t("practice.module.unknown").replace("{id}", id)}
         </p>
@@ -86,7 +86,7 @@ export default function ModulePracticePage({ params }: { params: Promise<{ modul
       </Link>
 
       <div>
-        <h1 className="font-heading text-2xl font-bold">{label}</h1>
+        <h1 className="font-heading text-h2 font-bold">{label}</h1>
         <p className="text-sm text-text-muted mt-2">{t("practice.description")}</p>
       </div>
 

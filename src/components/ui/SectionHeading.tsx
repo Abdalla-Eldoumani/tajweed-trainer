@@ -15,7 +15,7 @@ interface SectionHeadingProps {
 
 // The print-magazine section break (DESIGN_SYSTEM section 6): an optional micro
 // eyebrow, a real Spectral heading, and an optional gold hairline rule that runs
-// the content measure. No gradient, no gold fill behind text — the rule is a
+// the content measure. No gradient, no gold fill behind text; the rule is a
 // hairline only.
 export function SectionHeading({
   children,

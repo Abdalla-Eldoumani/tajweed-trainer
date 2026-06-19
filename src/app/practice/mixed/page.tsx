@@ -26,7 +26,7 @@ export default function MixedPracticePage() {
       </Link>
 
       <div>
-        <h1 className="font-heading text-2xl font-bold">{t("practice.hub.mixedTitle")}</h1>
+        <h1 className="font-heading text-h2 font-bold">{t("practice.hub.mixedTitle")}</h1>
         <p className="text-sm text-text-muted mt-2">{t("practice.hub.mixedDesc")}</p>
       </div>
 

@@ -29,7 +29,7 @@
 // Why 5 is WARN and not a hard FAIL: the Arabic in these files is immutable Quran
 // text. When arabicText does not match its cited verse the fix is an editorial,
 // source-of-truth decision about the Quran reference (correct the citation or the
-// fragment) — not something this tool may auto-resolve, and not something that
+// fragment), not something this tool may auto-resolve, and not something that
 // should silently change. The script therefore surfaces every mismatch loudly and
 // counts it, while the structural checks above are the hard gate. This mirrors the
 // WARN-vs-FAIL split in verify-tajweed-colors.mjs, where verbatim reference values
@@ -55,11 +55,11 @@ const results = [];
 const warnings = [];
 function record(name, ok, details = "") {
   results.push({ name, ok, details });
-  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? " — " + details : ""}`);
+  console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 function warn(name, details = "") {
   warnings.push({ name, details });
-  console.log(`WARN: ${name}${details ? " — " + details : ""}`);
+  console.log(`WARN: ${name}${details ? ": " + details : ""}`);
 }
 
 // The nine real module ids (the learn modules; same set nav-data.tsx exposes).
@@ -111,7 +111,7 @@ async function loadQuestions(file) {
 //   - every harakat and small quranic mark removed (tanwin, short vowels, sukoon,
 //     shadda, superscript dagger alif, the small high/low pause + recitation
 //     marks);
-//   - every long-a form folded away (plain alif, alif-wasla, madda/hamza alif) —
+//   - every long-a form folded away (plain alif, alif-wasla, madda/hamza alif),
 //     the long-a is written three incompatible ways across the two scripts (full
 //     alif, alif-wasla, dagger alif) or omitted entirely in words like الرحمن، الله,
 //     so the only stable comparison drops it on both sides;

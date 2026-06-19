@@ -21,6 +21,8 @@ import { VerseSelectionProvider, useVerseSelectionState } from "./useVerseSelect
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
 import { WordByWord } from "@/components/learn/WordByWord";
 import { RecitationCompare } from "@/components/mushaf/RecitationCompare";
+import { ReciterCompare } from "@/components/mushaf/ReciterCompare";
+import { VerseNotes } from "@/components/mushaf/VerseNotes";
 import type { MushafPageData, SurahHeader } from "@/lib/types";
 import { getColorForClass } from "@/lib/tajweed-colors";
 
@@ -192,6 +194,16 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [page, isAr, router]);
+
+  // Warm the adjacent pages so the common forward read (and a step back) is
+  // instant. These routes are ISR/SSG but most pages are not pre-rendered, so a
+  // cold jump can stall on the data fetch; prefetching the neighbors hides that
+  // latency. This only primes the router cache and changes no navigation
+  // behavior. Boundaries (page 1 / 604) skip the out-of-range neighbor.
+  useEffect(() => {
+    if (page > 1) router.prefetch(`/mushaf/page/${page - 1}`);
+    if (page < TOTAL_PAGES) router.prefetch(`/mushaf/page/${page + 1}`);
+  }, [page, router]);
 
   // Cmd/Ctrl+K opens the quick-jump palette from anywhere in the reader. The
   // browser's own shortcut is prevented; modifier-gated so it never fires while
@@ -549,7 +561,9 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             </div>
             <ReadingDepth surah={sv} ayah={av} />
             {settings.showWordByWord && <WordByWord surah={sv} ayah={av} />}
+            <VerseNotes key={selectedVerse} verseKey={selectedVerse} />
             <RecitationCompare surah={sv} ayah={av} reciter={settings.reciter} />
+            <ReciterCompare surah={sv} ayah={av} surahName={surahLabel || null} />
           </div>
         );
       })()}

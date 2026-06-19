@@ -11,12 +11,18 @@ import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
+import { getColorForClass } from "@/lib/tajweed-colors";
 import laamRaaData from "@/data/content/laam-raa-rules.json";
 
 const SECTIONS = laamRaaData.sections.flatMap((s) => [
   s.id,
   ...((s.subtypes ?? []).map((st) => st.id)),
 ]);
+
+// Laam Shamsiyyah (the silent, merged laam) is the one laam case the API colors,
+// so its indicator comes from the single tajweed source. Laam Qamariyyah is
+// pronounced normally with no API class, so it keeps its existing neutral hue.
+const LAAM_SHAMSIYYAH_COLOR = getColorForClass("laam_shamsiyah")?.hex ?? "#AAAAAA";
 
 export default function LaamRaaPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("laam-raa");
@@ -79,7 +85,7 @@ export default function LaamRaaPage() {
 
             {st.examples?.map((ex, i) => (
               <div key={i} className="mt-3">
-                <ExampleCard example={ex} color={st.id === "laam-shamsiyyah" ? "#707070" : "#1B5E20"} />
+                <ExampleCard example={ex} color={st.id === "laam-shamsiyyah" ? LAAM_SHAMSIYYAH_COLOR : "#1B5E20"} />
               </div>
             ))}
           </div>
