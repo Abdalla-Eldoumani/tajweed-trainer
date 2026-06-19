@@ -458,6 +458,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.subtitle": { en: "The complete Quran with tajweed coloring", ar: "المصحف الشريف ملوّنا بأحكام التجويد" },
   "mushaf.openReader": { en: "Open Mushaf", ar: "افتح المصحف" },
   "mushaf.continueReading": { en: "Continue from page {page}", ar: "تابع من الصفحة {page}" },
+  "mushaf.resumeSurah": { en: "Resume", ar: "تابع" },
+  "mushaf.resumeSurahHint": { en: "Resume {name} from page {page}", ar: "تابع {name} من الصفحة {page}" },
   "mushaf.surahIndex": { en: "Surah Index", ar: "فهرس السور" },
   "mushaf.juzIndex": { en: "Juz Index", ar: "فهرس الأجزاء" },
   "mushaf.bookmarks": { en: "Bookmarks", ar: "المفضلة" },
