@@ -36,12 +36,12 @@ export function StreakCounter() {
       <h2 className="font-heading font-semibold text-sm mb-3">{t("practice.streak")}</h2>
       <div className="flex items-center gap-4 sm:gap-6">
         <div className="text-center">
-          <div className="text-3xl font-bold text-primary dark:text-primary-light">{currentStreak}</div>
+          <div className="text-3xl font-bold text-primary dark:text-primary-light tabular-nums">{currentStreak}</div>
           <p className="text-xs text-text-muted">{t("practice.currentStreak")}</p>
         </div>
         <div className="w-px h-12 bg-gold-light/30 dark:bg-gold-dark/20" />
         <div className="text-center">
-          <div className="text-3xl font-bold text-accent">{longestStreak}</div>
+          <div className="text-3xl font-bold text-accent tabular-nums">{longestStreak}</div>
           <p className="text-xs text-text-muted">{t("practice.longestStreak")}</p>
         </div>
       </div>
