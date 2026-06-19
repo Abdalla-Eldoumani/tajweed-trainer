@@ -582,7 +582,7 @@ function SidePanel({ model, data }: { model: SurfaceModel; data: MushafPageData 
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <p className="text-body font-heading font-semibold text-text dark:text-text-dark truncate">
-                {model.surahName ?? `${t("mushaf.juz")} ${isAr ? toArabicIndic(model.cur.surah) : model.cur.surah}`}
+                {model.surahName ?? `${t("mushaf.surah")} ${isAr ? toArabicIndic(model.cur.surah) : model.cur.surah}`}
               </p>
               <p className="text-small tabular-nums text-text-muted">{model.refLabel}</p>
             </div>
@@ -796,7 +796,7 @@ function BottomSheet({ model, data }: { model: SurfaceModel; data: MushafPageDat
       <div className="flex items-center gap-3 px-4 pb-2">
         <div className="min-w-0 flex-1">
           <p className="text-small font-heading font-semibold text-text dark:text-text-dark truncate">
-            {model.surahName ?? `${t("mushaf.juz")} ${isAr ? toArabicIndic(model.cur.surah) : model.cur.surah}`}
+            {model.surahName ?? `${t("mushaf.surah")} ${isAr ? toArabicIndic(model.cur.surah) : model.cur.surah}`}
           </p>
           <p className="text-micro tabular-nums text-text-muted">{model.refLabel}</p>
         </div>

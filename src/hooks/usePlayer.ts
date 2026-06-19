@@ -143,6 +143,13 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       currentTime: 0,
       duration: 0,
       pendingOffset: 0,
+      // A plain tap is single -> paused; clear any study-tool flags left from a
+      // prior selection so the tapped verse does not inherit repeat/loop.
+      repeatOne: 0,
+      repeatsDone: 0,
+      repeatRange: null,
+      rangeLoopsDone: 0,
+      loopSelection: false,
       error: null,
       loadToken: s.loadToken + 1,
     })),
@@ -159,6 +166,13 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       currentTime: 0,
       duration: 0,
       pendingOffset: 0,
+      // Continuous surah play stops idle at the end; clear study-tool flags left
+      // from a prior selection so it does not inherit repeat/loop.
+      repeatOne: 0,
+      repeatsDone: 0,
+      repeatRange: null,
+      rangeLoopsDone: 0,
+      loopSelection: false,
       error: null,
       loadToken: s.loadToken + 1,
     })),

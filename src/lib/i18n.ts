@@ -494,6 +494,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.previousPage": { en: "Previous page", ar: "الصفحة السابقة" },
   "mushaf.nextPage": { en: "Next page", ar: "الصفحة التالية" },
   "mushaf.juz": { en: "Juz", ar: "الجزء" },
+  "mushaf.surah": { en: "Surah", ar: "سورة" },
   "mushaf.versesCount": { en: "{count} verses", ar: "{count} آية" },
   "mushaf.revealedIn.makkah": { en: "Makki", ar: "مكية" },
   "mushaf.revealedIn.madinah": { en: "Madani", ar: "مدنية" },
