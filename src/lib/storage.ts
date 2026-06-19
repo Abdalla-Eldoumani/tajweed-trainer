@@ -439,6 +439,22 @@ export function setReview(questionId: string, state: ReviewState): void {
   setProgress(progress);
 }
 
+// Memorized-verse review funnel: mirrors getReviews/setReview but over the
+// separate memorizationReviews map (keyed by verseKey, never colliding with the
+// rule-quiz reviews keyspace). The key is validated so a tampered call can't
+// write a non-verseKey entry.
+export function getMemorizationReviews(): Record<string, ReviewState> {
+  return getProgress().memorizationReviews;
+}
+
+export function setMemorizationReview(verseKey: string, state: ReviewState): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  progress.memorizationReviews[verseKey] = state;
+  setProgress(progress);
+}
+
 export function getAnalytics(): AnalyticsEvent[] {
   return getProgress().analytics;
 }
@@ -513,6 +529,32 @@ export function toggleMemorizedVerse(verseKey: string): boolean {
   progress.memorizedVerses = Array.from(set);
   setProgress(progress);
   return nowMemorized;
+}
+
+// Batched mark/unmark over a list of verseKeys: one read, one Set mutation
+// across the whole list, one write (so the change bus fires exactly once
+// regardless of list length — a whole surah is one write, not 286). Set
+// semantics give union for mark (overlapping marks never double count) and
+// difference for unmark. The 6236 cap is checked inside the loop and invalid
+// keys are skipped. Returns the new memorized count so the caller can update
+// without re-reading. Mirrors toggleMemorizedVerse; the single-verse helper
+// stays for per-verse toggles.
+export function setMemorizedVerses(verseKeys: string[], memorize: boolean): number {
+  if (!isBrowser()) return 0;
+  const progress = getProgress();
+  const set = new Set(progress.memorizedVerses);
+  for (const key of verseKeys) {
+    if (!VERSE_KEY_PATTERN.test(key)) continue;
+    if (memorize) {
+      if (set.size >= MAX_MEMORIZED && !set.has(key)) continue;
+      set.add(key);
+    } else {
+      set.delete(key);
+    }
+  }
+  progress.memorizedVerses = Array.from(set);
+  setProgress(progress);
+  return progress.memorizedVerses.length;
 }
 
 export function getBookmarks(): string[] {
