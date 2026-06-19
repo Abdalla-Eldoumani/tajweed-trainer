@@ -49,7 +49,7 @@ function pushRule(out: SearchResult[], moduleId: string, rule: RuleLike): void {
 
 let cachedIndex: SearchResult[] | null = null;
 
-export function getSearchIndex(): SearchResult[] {
+function getSearchIndex(): SearchResult[] {
   if (cachedIndex) return cachedIndex;
   const out: SearchResult[] = [];
 
