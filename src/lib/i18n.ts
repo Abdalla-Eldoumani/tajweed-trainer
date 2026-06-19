@@ -618,6 +618,10 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "تعذّر البحث في آيات القرآن الآن. نتائج التطبيق لا تزال تعمل.",
   },
   "search.retry": { en: "Try again", ar: "إعادة المحاولة" },
+  "search.filterAll": { en: "All", ar: "الكل" },
+  "search.filterLabel": { en: "Filter results", ar: "تصفية النتائج" },
+  "search.filterMemorized": { en: "Memorized", ar: "المحفوظة" },
+  "search.filterEmpty": { en: "No results in this filter.", ar: "لا توجد نتائج في هذه التصفية." },
 
   // Reading depth (translation and tafsir, fetched from the verified API)
   "reading.showTafsir": { en: "Show tafsir", ar: "إظهار التفسير" },
