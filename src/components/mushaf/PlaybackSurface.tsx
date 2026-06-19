@@ -734,6 +734,19 @@ function BottomSheet({ model, data }: { model: SurfaceModel; data: MushafPageDat
     if (expanded) dismissRef.current?.focus();
   }, [expanded]);
 
+  // Lock body scroll ONLY while expanded, mirroring MobileDrawer: an expanded
+  // sheet is a modal dialog and the page behind it must not scroll. Peek leaves
+  // the page scrollable so the verses and tab bar stay reachable. The cleanup
+  // restores scrolling on collapse and on unmount, since the sheet unmounts
+  // straight from the expanded state on close (stop() idles the player).
+  useEffect(() => {
+    if (expanded) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [expanded]);
+
   // Grab-handle drag: down past the threshold closes; up from peek expands; a
   // small movement is a tap that toggles peek<->expanded.
   const onHandlePointerDown = (e: React.PointerEvent) => {
