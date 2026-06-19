@@ -16,6 +16,11 @@ const engine = read("src", "lib", "player-engine.ts");
 const css = read("src", "app", "globals.css");
 const miniPlayer = read("src", "components", "ui", "MiniPlayer.tsx");
 const host = read("src", "components", "ui", "PlayerHost.tsx");
+const ruleLinks = read("src", "lib", "tajweed-rule-links.ts");
+const colors = read("src", "lib", "tajweed-colors.ts");
+const tajweedText = read("src", "components", "ui", "TajweedText.tsx");
+const mushafPage = read("src", "components", "mushaf", "MushafPage.tsx");
+const exampleCard = read("src", "components", "learn", "ExampleCard.tsx");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -74,6 +79,32 @@ record(
   /\[data-tajweed-drill="ghunnah"\][\s\S]*?\.ghunnah\s*\{[\s\S]*?var\(--tajweed-ghunnah\)/.test(css) &&
     /\[data-tajweed-drill="ikhafa"\][\s\S]*?var\(--tajweed-ikhafa\)/.test(css),
 );
+
+// --- Tap-a-letter rule popover (EXT-02) ---
+// Every class in the rule-link map must be a real key in the tajweed map, so the
+// popover can never offer a "Learn more" link for a class that has no color /
+// name (a dead link) and the two maps can never drift.
+const linkClasses = [...ruleLinks.matchAll(/^ {2}([a-z_]+):\s*"\/learn\//gm)].map((m) => m[1]);
+const defKeys = new Set([...colors.matchAll(/^ {2}([a-z_]+):\s*\{/gm)].map((m) => m[1]));
+record("Rule-link map has entries", linkClasses.length > 0, `${linkClasses.length} classes`);
+const orphanLinks = linkClasses.filter((c) => !defKeys.has(c));
+record("Every rule-link class exists in the tajweed map", orphanLinks.length === 0, orphanLinks.join(", "));
+
+// The link map is structural routing only: every route value it maps to must be
+// a /learn lesson route, never anything else (it carries no verified content).
+const routeValues = [...ruleLinks.matchAll(/:\s*"(\/[^"]*)"/g)].map((m) => m[1]);
+const badRoutes = routeValues.filter((r) => !r.startsWith("/learn/"));
+record("Rule-link map points only at /learn routes", badRoutes.length === 0, badRoutes.join(", "));
+
+// The delegated handler owns the colored-letter tap so the reader's verse play
+// button does not also fire (stopPropagation), and only acts on a known rule.
+record("TajweedText resolves the tapped class via the tajweed map", /closest\("tajweed"\)[\s\S]*?getColorForClass\(/.test(tajweedText));
+record("TajweedText stops propagation on a colored-letter tap", /getColorForClass\(cssClass\)\)\s*return;[\s\S]*?stopPropagation\(\)/.test(tajweedText));
+record("Rule popover is opt-in via explainRules", /explainRules\?:\s*boolean/.test(tajweedText) && /if \(!explainRules\)/.test(tajweedText));
+
+// explainRules is enabled where intended: the reader page and lesson examples.
+record("Reader enables explainRules on verse text", /<TajweedText[\s\S]*?explainRules/.test(mushafPage));
+record("Lesson examples enable explainRules", /<TajweedText[\s\S]*?explainRules/.test(exampleCard));
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);
