@@ -247,17 +247,6 @@ export function getColorForClass(cssClass: string): TajweedColor | undefined {
   return def ? resolve(key, def) : undefined;
 }
 
-// Unique by color (light hex), so the legend shows one row per distinct color
-// rather than one per class. Matches the pre-rebuild behavior.
-export function getUniqueColors(): TajweedColor[] {
-  const seen = new Set<string>();
-  return TAJWEED_COLORS.filter((c) => {
-    if (seen.has(c.hex)) return false;
-    seen.add(c.hex);
-    return true;
-  });
-}
-
 export const TAJWEED_GROUP_ORDER: TajweedGroup[] = [
   "ghunnah-idgham",
   "madd",
