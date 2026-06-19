@@ -196,7 +196,10 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     });
   };
 
-  // Play a single verse (single mode) from the reading-depth panel.
+  // Play a single verse (single mode). Used by both the plain verse tap on the
+  // page and the reading-depth panel's play control, so a tap and the panel
+  // share one code path and the loading state appears within 100ms (playVerse
+  // sets status "loading" synchronously).
   const playSingleVerse = (sv: number, av: number) => {
     const header = surahs.find((s) => s.number === sv);
     usePlayer.getState().playVerse(sv, av, {
@@ -204,6 +207,15 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       speed: settings.playbackSpeed,
       surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
     });
+  };
+
+  // A plain tap on a verse plays it (single mode) and surfaces the playback
+  // panel. The reading-depth panel is reached from the per-verse details
+  // control instead, so the tap is never ambiguous and never double-plays.
+  const handlePlayVerse = (verseKey: string) => {
+    if (!/^\d{1,3}:\d{1,3}$/.test(verseKey)) return;
+    const [sv, av] = verseKey.split(":").map(Number);
+    playSingleVerse(sv, av);
   };
 
   // Play continuously from this verse to the end of its surah.
@@ -334,13 +346,14 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
         </div>
       </div>
 
-      <p className="text-center text-micro text-text-muted px-2">{t("mushaf.openDetailsHint")}</p>
+      <p className="text-center text-micro text-text-muted px-2">{t("mushaf.tapToPlayHint")}</p>
 
       <div data-tajweed-drill={drill || undefined}>
         <MushafPage
           data={data}
           memorizationMode={memorizationMode}
           targetVerseKey={targetVerseKey}
+          onPlayVerse={handlePlayVerse}
           onSelectVerse={setSelectedVerse}
         />
       </div>

@@ -18,11 +18,17 @@ interface MushafPageProps {
   memorizationMode?: boolean;
   // "surah:ayah" to scroll into view on mount (a lesson "open in reader" link).
   targetVerseKey?: string | null;
-  // Opens the reading-depth panel (translation, tafsir, word-by-word) for a verse.
+  // A plain tap on a verse plays it (single mode) and surfaces the playback
+  // surface. This is the primary verse action now; the old tap-opens-panel
+  // behavior moved to the dedicated details control below.
+  onPlayVerse?: (verseKey: string) => void;
+  // Opens the reading-depth panel (translation, tafsir, word-by-word) for a
+  // verse. Reached from a distinct, touch-discoverable per-verse details
+  // control, never the plain tap, so a tap is never ambiguous.
   onSelectVerse?: (verseKey: string) => void;
 }
 
-export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onSelectVerse }: MushafPageProps) {
+export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
@@ -42,8 +48,8 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
     if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
   }, [targetVerseKey, data.pageNumber]);
 
-  // Tapping a verse opens its reading-depth panel (translation, tafsir,
-  // word-by-word); the play / bookmark / memorize actions live in that panel.
+  // The recall Reveal pill temporarily un-blurs one memorized verse; it stops
+  // propagation so it never also fires the verse's play tap.
   const handleReveal = (e: React.MouseEvent, verseKey: string) => {
     e.stopPropagation();
     setRevealed((prev) => {
@@ -90,8 +96,8 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                 <span data-verse-key={v.verseKey} className="inline-flex items-baseline relative">
                   <button
                     type="button"
-                    onClick={() => onSelectVerse?.(v.verseKey)}
-                    aria-label={`${t("mushaf.verseDetails")} (${v.surah}:${v.ayah})`}
+                    onClick={() => onPlayVerse?.(v.verseKey)}
+                    aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
                     aria-current={isPlaying ? "true" : undefined}
                     className={cn("mushaf-verse", hideText && "select-none", isPlaying && "mushaf-verse-playing")}
                   >
@@ -102,6 +108,28 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                         hideText && "blur-md opacity-60",
                       )}
                     />{" "}
+                  </button>
+                  {/* A distinct, always-present details control opens the
+                      reading-depth panel (translation, tafsir, verse actions).
+                      It is the touch-discoverable replacement for the old
+                      tap-opens-panel behavior; stopPropagation keeps it from
+                      also firing the verse's play tap. Quiet glyph inline with
+                      the ayah marker, padded to a 32px+ hit area. */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectVerse?.(v.verseKey);
+                    }}
+                    aria-label={`${t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
+                    title={t("mushaf.verseActions")}
+                    className="mushaf-verse-details ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <circle cx="5" cy="12" r="1.8" />
+                      <circle cx="12" cy="12" r="1.8" />
+                      <circle cx="19" cy="12" r="1.8" />
+                    </svg>
                   </button>
                   {hideText && (
                     <button
