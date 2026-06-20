@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Source-level regression guard for the phase-9 accessibility fixes. No browser,
+// Source-level regression guard for the accessibility fixes. No browser,
 // no transpile: plain presence/absence checks on file contents, fast and
-// dependency-free like the sibling verify-* scripts. It validates the outputs of
-// 09-01 (focus rings, motion-reduce, smooth-scroll gating, aria-current,
-// scroll-lock), 09-03 (the mini-player slider dark accent and the
-// contrast-scoped ayah-number pill), and the raw-filled-button dark parity fix
+// dependency-free like the sibling verify-* scripts. It validates the
+// focus rings, motion-reduce, smooth-scroll gating, aria-current and
+// scroll-lock work, the mini-player slider dark accent and the
+// contrast-scoped ayah-number pill, and the raw-filled-button dark parity fix
 // (no `bg-primary text-white` left in src), so none of them can silently regress.
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
