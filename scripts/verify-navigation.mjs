@@ -59,7 +59,7 @@ record("Juz table has 30 start pages", juzPages.length === 30, String(juzPages.l
 record("Juz start pages match the standard mushaf", JSON.stringify(juzPages) === JSON.stringify(STANDARD_JUZ));
 record("Reader wires the juz jump", /pageForJuz\(/.test(reader));
 
-// Dynamic in-reader index (Phase 6): the surah and juz selectors are CONTROLLED
+// Dynamic in-reader index: the surah and juz selectors are CONTROLLED
 // readouts of the open page, not empty jump-pickers. They read from server
 // props so a deep-linked reload paints correct values on first paint.
 record("Surah selector is controlled by the current page", /value=\{currentSurahValue/.test(reader));
