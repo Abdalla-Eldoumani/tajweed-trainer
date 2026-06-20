@@ -16,7 +16,7 @@ The full reciter roster is in `src/lib/reciters.ts`. The default is Mahmoud Khal
 
 ## Tajweed color scheme
 
-The tajweed letter colors are the "new" (mushaf) scheme from the **Quranic Universal Library (QUL)**, the open data project at `github.com/TarteelAI/quranic-universal-library` that also backs the Quran.com tajweed markup. The values are transcribed verbatim from QUL into `src/lib/tajweed-colors.ts` (the single source of truth), with dark-mode variants checked for contrast. Full provenance is in `.agent/TAJWEED_COLOR_REFERENCE.md`.
+The tajweed letter colors are the "new" (mushaf) scheme from the **Quranic Universal Library (QUL)**, the open data project at `github.com/TarteelAI/quranic-universal-library` that also backs the Quran.com tajweed markup. The values are transcribed verbatim from QUL into `src/lib/tajweed-colors.ts` (the single source of truth), with dark-mode variants checked for contrast.
 
 ## Fonts
 
