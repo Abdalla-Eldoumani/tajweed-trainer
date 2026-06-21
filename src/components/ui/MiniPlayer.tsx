@@ -225,8 +225,8 @@ export function MiniPlayer() {
   // playing->new-queue transition) but NOT on next/prev/onEnded auto-advance
   // (same queue, only `index` moves) nor on navigation (the head is unchanged).
   // prevHeadId starts as the first observed head so the initial mount does not
-  // count as a reset; stop() empties the queue (head null), which is ignored so
-  // the bar does not flicker back on the next play through a null transition.
+  // count as a reset; a null head (no queue yet) is ignored so the bar never
+  // flickers back through a transient null transition.
   const prevHeadId = useRef<string | null>(headId);
   useEffect(() => {
     if (headId !== null && headId !== prevHeadId.current) {
