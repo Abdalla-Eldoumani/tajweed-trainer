@@ -1,7 +1,9 @@
 // Content Security Policy assembled once and shared by every response.
 // connect-src whitelists the Quran.com API we call; media-src whitelists the
 // audio CDNs it hands us (verses.quran.com and the quranicaudio.com mirrors)
-// plus everyayah.com, the reviewed per-ayah source for the EveryAyah reciters.
+// plus everyayah.com, the reviewed per-ayah source for the EveryAyah reciters,
+// and server16.mp3quran.net, the reviewed per-surah Warsh source for the
+// walled-off Younes narration (the specific host only, no wildcard).
 // script-src needs 'unsafe-inline' for Next's runtime hydration shims;
 // style-src needs it for inlined critical CSS.
 //
@@ -22,7 +24,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   "img-src 'self' data: blob:",
-  "media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com",
+  "media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com https://server16.mp3quran.net",
   "connect-src 'self' https://api.quran.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
