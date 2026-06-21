@@ -387,12 +387,16 @@ export default function SettingsPage() {
         <h2 className="font-heading font-semibold text-sm mb-2">{t("settings.backup.title")}</h2>
         <p className="text-xs text-text-muted mb-3">{t("settings.backup.description")}</p>
         {showBackupReminder && (
-          <div className="flex items-start justify-between gap-3 mb-3 rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-gold/10 dark:bg-gold/5 px-3 py-2">
-            <p className="text-xs text-text">{t("settings.backup.reminder")}</p>
+          <div className="flex items-start justify-between gap-3 mb-3 rounded-lg border border-gold-light/60 dark:border-gold-dark/40 bg-bg-subtle dark:bg-bg-subtle-dark px-3 py-2">
+            {/* Message and dismiss read their colors from the per-theme CSS
+                variables so contrast holds on all five grounds (a static
+                Tailwind hex cannot match night, sepia, and mihrab at once). The
+                dismiss steps from muted at rest to full ink on hover. */}
+            <p className="text-xs text-[color:var(--text)]">{t("settings.backup.reminder")}</p>
             <button
               type="button"
               onClick={() => setShowBackupReminder(false)}
-              className="text-xs font-medium text-text-muted hover:text-text shrink-0 transition-colors"
+              className="text-xs font-medium text-[color:var(--text-muted)] hover:text-[color:var(--text)] shrink-0 transition-colors"
               aria-label={t("settings.backup.reminderDismiss")}
             >
               {t("settings.backup.reminderDismiss")}
