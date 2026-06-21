@@ -924,6 +924,28 @@ html, body {
   }
 }
 
+/* A word not yet recited in reveal-as-recited mode: blurred and dimmed so it
+   reads as covered, the same OVER-the-markup layer as .mushaf-word-active (a
+   class on the read-only word grouping, never a markup edit). The blur and dim
+   are the SAME values the whole-verse recall blur uses (Tailwind blur-md =
+   blur(12px), opacity-60) so the per-word and whole-verse reveals look identical;
+   a word with index <= activeIdx simply carries no class and shows through. The
+   transition matches the whole-verse blur's transition-[filter,opacity]
+   duration-300 so a word uncovers with the same calm fade. Crushed to a static
+   swap under reduced motion (the reveal is a state change, not a travelling
+   effect, so the filter/opacity still apply — only the fade is dropped). */
+.mushaf-word-blurred {
+  filter: blur(12px);
+  opacity: 0.6;
+  transition: filter 300ms var(--ease-standard), opacity 300ms var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-word-blurred {
+    transition: none;
+  }
+}
+
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
    The container is sized as a circle for 1-2 digit ayah numbers and grows
    into a stadium pill for 3-digit numbers (Al-Baqarah, Aal-Imran etc.).
