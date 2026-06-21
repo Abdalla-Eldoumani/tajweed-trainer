@@ -786,9 +786,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "warsh.playSurah": { en: "Play surah {surah}", ar: "تشغيل سورة {surah}" },
   "warsh.pause": { en: "Pause", ar: "إيقاف مؤقت" },
   "warsh.notAvailable": { en: "This surah is not available in this narration.", ar: "هذه السورة غير متاحة في هذه الرواية." },
-  "warsh.loadError": { en: "This recording could not be played right now.", ar: "تعذّر تشغيل هذا التسجيل الآن." },
   "warsh.surahSelectLabel": { en: "Choose a surah", ar: "اختر سورة" },
-  "warsh.collapseToggle": { en: "Listen in another narration (Warsh)", ar: "الاستماع برواية أخرى (ورش)" },
 };
 
 export function t(key: string, lang: Language): string {
