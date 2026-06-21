@@ -310,6 +310,17 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mastery.best": { en: "Best", ar: "الأفضل" },
   "mastery.due": { en: "due", ar: "مستحقّ" },
   "mastery.mastered": { en: "mastered", ar: "متقَن" },
+  "weakRules.title": { en: "Where to focus", ar: "أين تركّز" },
+  "weakRules.subtitle": {
+    en: "The rule areas you have missed most often in practice, drawn from your own quiz history.",
+    ar: "أكثر أبواب الأحكام التي أخطأت فيها في التدريب، مأخوذة من سجلّ اختباراتك.",
+  },
+  "weakRules.missedLabel": { en: "{n} missed", ar: "{n} خطأ" },
+  "weakRules.review": { en: "Review", ar: "راجع" },
+  "weakRules.empty": {
+    en: "No weak areas yet. Answer some practice questions and the areas to revisit will show here.",
+    ar: "لا توجد مواطن ضعف بعد. أجب على أسئلة التدريب فتظهر هنا الأبواب التي ينبغي مراجعتها.",
+  },
   "progress.quizHistory": { en: "Quiz History", ar: "سجلّ الاختبارات" },
   "progress.resetProgress": { en: "Reset Progress", ar: "إعادة تعيين التقدّم" },
   "progress.resetDescription": {
