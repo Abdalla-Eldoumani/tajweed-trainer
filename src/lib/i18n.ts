@@ -495,6 +495,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.verseBookmarks": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
   "mushaf.bookmarkVerse": { en: "Bookmark this verse", ar: "حفظ هذه الآية في المفضّلة" },
   "mushaf.bookmarkVerseRemove": { en: "Remove verse bookmark", ar: "إزالة الآية من المفضّلة" },
+  "mushaf.verseOverlayTitle": { en: "Verse", ar: "الآية" },
   "mushaf.bookmarksViewAll": { en: "View all bookmarks", ar: "عرض كل الآيات المفضّلة" },
   "mushaf.bookmarksTitle": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
   "mushaf.bookmarksSubtitle": {
