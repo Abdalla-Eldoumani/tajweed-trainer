@@ -765,6 +765,30 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Mark verses, whole surahs, or a juz as memorized. Your progress page shows the share of the Quran you have memorized and what is due for review.",
     ar: "حدّد آيات أو سورة كاملة أو جزءًا كمحفوظ. تعرض صفحة التقدّم نسبة ما حفظته من القرآن وما حان وقت مراجعته.",
   },
+
+  // Warsh "different narration" surface. Operational copy only (CONST-01): it
+  // states what the app shows and how this entry behaves, and links out to an
+  // external reference. It must never explain what the Warsh narration is or
+  // describe its rules. The AR side is a translation of this operational copy.
+  "warsh.entryTitle": { en: "Listen in another narration (Warsh)", ar: "الاستماع برواية أخرى (ورش)" },
+  "warsh.entrySubtitle": {
+    en: "Per surah only — for this narration, per-verse playback is not available.",
+    ar: "لكل سورة فقط — في هذه الرواية، التشغيل لكل آية غير متاح.",
+  },
+  "warsh.disclaimerTitle": { en: "A different narration", ar: "رواية مختلفة" },
+  "warsh.disclaimerBody": {
+    en: "This is the Warsh narration. The Arabic text and tajweed colouring shown in this app are for Hafs an Asim and do not match this recitation. This app is built for Hafs an Asim. Per-verse playback is not available for this narration.",
+    ar: "هذه رواية ورش. النصّ العربي وتلوين التجويد المعروضان في هذا التطبيق لرواية حفص عن عاصم ولا يطابقان هذه التلاوة. هذا التطبيق مبني على رواية حفص عن عاصم. التشغيل لكل آية غير متاح في هذه الرواية.",
+  },
+  "warsh.referenceLinkLabel": { en: "Learn more about the Qira'at and Warsh", ar: "اعرف المزيد عن القراءات ورواية ورش" },
+  "warsh.acknowledge": { en: "I understand", ar: "فهمت" },
+  "warsh.cancel": { en: "Cancel", ar: "إلغاء" },
+  "warsh.playSurah": { en: "Play surah {surah}", ar: "تشغيل سورة {surah}" },
+  "warsh.pause": { en: "Pause", ar: "إيقاف مؤقت" },
+  "warsh.notAvailable": { en: "This surah is not available in this narration.", ar: "هذه السورة غير متاحة في هذه الرواية." },
+  "warsh.loadError": { en: "This recording could not be played right now.", ar: "تعذّر تشغيل هذا التسجيل الآن." },
+  "warsh.surahSelectLabel": { en: "Choose a surah", ar: "اختر سورة" },
+  "warsh.collapseToggle": { en: "Listen in another narration (Warsh)", ar: "الاستماع برواية أخرى (ورش)" },
 };
 
 export function t(key: string, lang: Language): string {
