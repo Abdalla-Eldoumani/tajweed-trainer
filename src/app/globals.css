@@ -946,6 +946,19 @@ html, body {
   }
 }
 
+/* While per-word reveal is engaged the follow layer marks its root with this
+   class. The reader puts the whole-verse recall blur (Tailwind blur-md opacity-60)
+   on the SAME element for a memorized verse; once the per-word .mushaf-word-blurred
+   wrappers exist they are the single blur source, so the whole-verse blur on the
+   root must be cleared or it would blur the already-revealed words too. Resetting
+   filter and opacity here lets revealed words show at full clarity while the
+   per-word wrappers keep the unrecited words covered. When reveal cannot align the
+   marker is absent and the caller's whole-verse blur stands as the fallback. */
+.mushaf-reveal-active {
+  filter: none;
+  opacity: 1;
+}
+
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
    The container is sized as a circle for 1-2 digit ayah numbers and grows
    into a stadium pill for 3-digit numbers (Al-Baqarah, Aal-Imran etc.).
