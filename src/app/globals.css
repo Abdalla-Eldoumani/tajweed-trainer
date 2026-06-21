@@ -127,6 +127,30 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* Tajweed letter colors retuned for the vellum ground; equals the :root set
+     and THEME_TAJWEED.vellum in src/lib/tajweed-colors.ts (the verbatim QUL
+     light values). */
+  --tajweed-ham_wasl: #AAAAAA;
+  --tajweed-slnt: #AAAAAA;
+  --tajweed-laam_shamsiyah: #AAAAAA;
+  --tajweed-idgham_mutajanisayn: #A1A1A1;
+  --tajweed-idgham_mutaqaribayn: #A1A1A1;
+  --tajweed-ghunnah: #FF7E1E;
+  --tajweed-madda_normal: #537FFF;
+  --tajweed-madda_permissible: #F38E02;
+  --tajweed-madda_necessary: #A9045C;
+  --tajweed-madda_obligatory: #F2007F;
+  --tajweed-madda_obligatory_mottasel: #F2007F;
+  --tajweed-madda_obligatory_monfasel: #F2007F;
+  --tajweed-qalaqah: #009EE6;
+  --tajweed-ikhafa: #9400A8;
+  --tajweed-ikhafa_shafawi: #D500B7;
+  --tajweed-iqlab: #26BFFD;
+  --tajweed-idgham_shafawi: #58B800;
+  --tajweed-idgham_ghunnah: #169200;
+  --tajweed-idgham_wo_ghunnah: #169200;
+  --tajweed-tafkheem: #006994;
 }
 
 /* night: the same manuscript at night, a deep navy ground (the shipped dark
@@ -152,6 +176,29 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* Tajweed letter colors retuned for the night ground; equals the .dark set
+     and THEME_TAJWEED.night in src/lib/tajweed-colors.ts (the navy lifts). */
+  --tajweed-ham_wasl: #B7BCC6;
+  --tajweed-slnt: #B7BCC6;
+  --tajweed-laam_shamsiyah: #B7BCC6;
+  --tajweed-idgham_mutajanisayn: #B0B0B0;
+  --tajweed-idgham_mutaqaribayn: #B0B0B0;
+  --tajweed-ghunnah: #FF8C36;
+  --tajweed-madda_normal: #6E92FF;
+  --tajweed-madda_permissible: #FBA53A;
+  --tajweed-madda_necessary: #E0529A;
+  --tajweed-madda_obligatory: #FF4DA6;
+  --tajweed-madda_obligatory_mottasel: #FF4DA6;
+  --tajweed-madda_obligatory_monfasel: #FF4DA6;
+  --tajweed-qalaqah: #38B6F5;
+  --tajweed-ikhafa: #C95BDC;
+  --tajweed-ikhafa_shafawi: #F45AD8;
+  --tajweed-iqlab: #5BD0FF;
+  --tajweed-idgham_shafawi: #7FD63A;
+  --tajweed-idgham_ghunnah: #38C21F;
+  --tajweed-idgham_wo_ghunnah: #38C21F;
+  --tajweed-tafkheem: #3FA6C9;
 }
 
 /* pearl: a cooler, brighter daytime ground for users who find vellum too warm.
@@ -177,6 +224,29 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* Tajweed letter colors deepened for the brighter, cooler pearl ground; same
+     hues as vellum, retuned to clear contrast. Equals THEME_TAJWEED.pearl. */
+  --tajweed-ham_wasl: #949494;
+  --tajweed-slnt: #949494;
+  --tajweed-laam_shamsiyah: #949494;
+  --tajweed-idgham_mutajanisayn: #8C8C8C;
+  --tajweed-idgham_mutaqaribayn: #8C8C8C;
+  --tajweed-ghunnah: #E56200;
+  --tajweed-madda_normal: #3A6BFF;
+  --tajweed-madda_permissible: #C97500;
+  --tajweed-madda_necessary: #A9045C;
+  --tajweed-madda_obligatory: #D6006F;
+  --tajweed-madda_obligatory_mottasel: #D6006F;
+  --tajweed-madda_obligatory_monfasel: #D6006F;
+  --tajweed-qalaqah: #0090D2;
+  --tajweed-ikhafa: #9400A8;
+  --tajweed-ikhafa_shafawi: #BC00A1;
+  --tajweed-iqlab: #0093CE;
+  --tajweed-idgham_shafawi: #4A9C00;
+  --tajweed-idgham_ghunnah: #169200;
+  --tajweed-idgham_wo_ghunnah: #169200;
+  --tajweed-tafkheem: #006994;
 }
 
 /* sepia: a low-blue-light evening reading mode, dark but warm rather than black.
@@ -202,6 +272,29 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* Tajweed letter colors brightened and warmed for the dim sepia ground; same
+     hues as night, retuned for the warm dark. Equals THEME_TAJWEED.sepia. */
+  --tajweed-ham_wasl: #B3AEA2;
+  --tajweed-slnt: #B3AEA2;
+  --tajweed-laam_shamsiyah: #B3AEA2;
+  --tajweed-idgham_mutajanisayn: #ABA69A;
+  --tajweed-idgham_mutaqaribayn: #ABA69A;
+  --tajweed-ghunnah: #FF9442;
+  --tajweed-madda_normal: #7E9DFF;
+  --tajweed-madda_permissible: #FFB04A;
+  --tajweed-madda_necessary: #EA6AAA;
+  --tajweed-madda_obligatory: #FF63B0;
+  --tajweed-madda_obligatory_mottasel: #FF63B0;
+  --tajweed-madda_obligatory_monfasel: #FF63B0;
+  --tajweed-qalaqah: #4FC0F7;
+  --tajweed-ikhafa: #D26FE2;
+  --tajweed-ikhafa_shafawi: #F86FDE;
+  --tajweed-iqlab: #72D7FF;
+  --tajweed-idgham_shafawi: #90DB55;
+  --tajweed-idgham_ghunnah: #4ACC34;
+  --tajweed-idgham_wo_ghunnah: #4ACC34;
+  --tajweed-tafkheem: #54B2D2;
 }
 
 /* mihrab: a deep Islamic green ground with gold leaf, the emerald accent used
@@ -227,6 +320,30 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* Tajweed letter colors brightened for the deep emerald mihrab ground; same
+     hues as night, kept bright so the greens stay distinct from the green
+     ground. Equals THEME_TAJWEED.mihrab. */
+  --tajweed-ham_wasl: #A8B0A6;
+  --tajweed-slnt: #A8B0A6;
+  --tajweed-laam_shamsiyah: #A8B0A6;
+  --tajweed-idgham_mutajanisayn: #A0A89E;
+  --tajweed-idgham_mutaqaribayn: #A0A89E;
+  --tajweed-ghunnah: #FF9038;
+  --tajweed-madda_normal: #7896FF;
+  --tajweed-madda_permissible: #FCAB42;
+  --tajweed-madda_necessary: #E85FA2;
+  --tajweed-madda_obligatory: #FF5AAB;
+  --tajweed-madda_obligatory_mottasel: #FF5AAB;
+  --tajweed-madda_obligatory_monfasel: #FF5AAB;
+  --tajweed-qalaqah: #45BBF6;
+  --tajweed-ikhafa: #CF66DF;
+  --tajweed-ikhafa_shafawi: #F766DC;
+  --tajweed-iqlab: #68D4FF;
+  --tajweed-idgham_shafawi: #88D94D;
+  --tajweed-idgham_ghunnah: #43C92D;
+  --tajweed-idgham_wo_ghunnah: #43C92D;
+  --tajweed-tafkheem: #4BADCE;
 }
 
 body {
