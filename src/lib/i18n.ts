@@ -410,6 +410,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.repeatEach": { en: "Repeat each", ar: "تكرار كل آية" },
   "player.loopSelection": { en: "Loop selection", ar: "تكرار التحديد" },
   "player.revealAsRecited": { en: "Reveal as recited", ar: "الكشف مع التلاوة" },
+  "player.revealAsRecitedOn": { en: "Reveal words as recited", ar: "كشف الكلمات مع التلاوة" },
+  "player.revealAsRecitedOff": { en: "Stop revealing as recited", ar: "إيقاف الكشف مع التلاوة" },
   "player.revealAsRecitedHint": {
     en: "Blur the verse and uncover each word as it is recited",
     ar: "إخفاء الآية وكشف كل كلمة أثناء تلاوتها",
