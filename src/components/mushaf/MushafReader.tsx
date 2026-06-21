@@ -12,6 +12,7 @@ import { pageForJuz, pageForSurah, surahForPage, TOTAL_JUZ } from "@/lib/navigat
 import { clampJuz } from "@/lib/validate";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
+import { ColorLegend } from "@/components/learn/ColorLegend";
 import { MushafPage } from "./MushafPage";
 import { VerseOverlay } from "./VerseOverlay";
 import { ReaderPalette } from "./ReaderPalette";
@@ -87,6 +88,16 @@ const SearchIcon = () => (
   </svg>
 );
 
+const PaletteIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="13.5" cy="6.5" r="0.5" fill="currentColor" />
+    <circle cx="17.5" cy="10.5" r="0.5" fill="currentColor" />
+    <circle cx="8.5" cy="7.5" r="0.5" fill="currentColor" />
+    <circle cx="6.5" cy="12.5" r="0.5" fill="currentColor" />
+    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125 0-.926.746-1.688 1.688-1.688H16c3.314 0 6-2.686 6-6 0-4.972-4.5-9-10-9z" />
+  </svg>
+);
+
 export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { settings, updateSettings } = useSettings();
   const { t, isAr } = useTranslation();
@@ -102,6 +113,11 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   // Single-rule highlight drill: greys every tajweed rule except the chosen one.
   const [drill, setDrill] = useState("");
+  // The color legend disclosure. It is the keyboard/screen-reader path to the
+  // tajweed colors (the hover popover's trigger is pointer-only and not
+  // focusable), so it is a plain in-flow panel: no portal, focus trap, or
+  // scroll lock. In-session reader-local state like drill; not persisted.
+  const [legendOpen, setLegendOpen] = useState(false);
   // A lesson "open in reader" link arrives as ?v=surah:ayah; we scroll that verse
   // into view and start it (single mode). Read client-side so the statically
   // generated page needs no Suspense boundary for useSearchParams.
@@ -408,10 +424,43 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             <span className="hidden sm:inline">{t("mushaf.quickJump")}</span>
             <kbd className="hidden md:inline text-micro text-text-muted/70 font-mono">⌘K</kbd>
           </button>
+
+          {/* The keyboard/all-modes path to the tajweed colors: a plain
+              disclosure that opens the shared ColorLegend in flow below the
+              toolbar. The popover on a colored letter is pointer-only, so this
+              toggle (in the tab order, pressed/expanded state announced) is the
+              accessible route to the same names + swatches. */}
+          <button
+            type="button"
+            onClick={() => setLegendOpen((v) => !v)}
+            aria-label={t("mushaf.legend")}
+            title={t("mushaf.legend")}
+            aria-pressed={legendOpen}
+            aria-expanded={legendOpen}
+            aria-controls="mushaf-color-legend"
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              legendOpen
+                ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
+            )}
+          >
+            <PaletteIcon />
+            <span className="hidden sm:inline">{t("mushaf.legend")}</span>
+          </button>
         </div>
       </div>
 
       <p className="text-center text-micro text-text-muted px-2">{t("mushaf.tapToPlayHint")}</p>
+
+      {/* The legend panel: a plain in-flow disclosure (no portal/trap/lock) so
+          it stays in the tab order as the a11y path to the colors. ColorLegend
+          reads only the verified tajweed map, so no rule prose is introduced. */}
+      {legendOpen && (
+        <div id="mushaf-color-legend" className="px-2">
+          <ColorLegend />
+        </div>
+      )}
 
       {/* A plain verse tap opens the focused verse overlay (the auto-focused
           "play this verse" plays it); the overlay replaces the old page-shrinking
