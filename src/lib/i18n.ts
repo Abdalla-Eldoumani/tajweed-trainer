@@ -688,6 +688,14 @@ const translations: Record<string, { en: string; ar: string }> = {
   "recompare.playA": { en: "Play A", ar: "تشغيل الأول" },
   "recompare.playB": { en: "Play B", ar: "تشغيل الثاني" },
 
+  // Inline reciter / speed / translation-source controls in the verse overlay.
+  // Chrome labels only (the reciter style and translation names come from the
+  // catalogue); they write the same settings the Settings page does.
+  "inlineControls.title": { en: "Playback", ar: "التشغيل" },
+  "inlineControls.reciter": { en: "Reciter", ar: "القارئ" },
+  "inlineControls.speed": { en: "Speed", ar: "السرعة" },
+  "inlineControls.translation": { en: "Translation", ar: "الترجمة" },
+
   "reading.close": { en: "Close", ar: "إغلاق" },
   "settings.readingDepth": { en: "Reading depth", ar: "عمق القراءة" },
   "settings.translationResource": { en: "Translation", ar: "الترجمة" },
