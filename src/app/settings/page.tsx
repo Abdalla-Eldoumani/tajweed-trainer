@@ -10,6 +10,7 @@ import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } f
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
 import type { Recitation, TranslationResource, Theme } from "@/lib/types";
+import { withViewTransition } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 // Literal anchor hexes per theme (DESIGN_SYSTEM_V2.md), used only to paint the
@@ -285,7 +286,7 @@ export default function SettingsPage() {
                   name="theme"
                   value={value}
                   checked={active}
-                  onChange={() => updateSettings({ theme: value })}
+                  onChange={() => withViewTransition(() => updateSettings({ theme: value }))}
                   className="accent-primary dark:accent-gold"
                   aria-label={t(labelKey)}
                 />
