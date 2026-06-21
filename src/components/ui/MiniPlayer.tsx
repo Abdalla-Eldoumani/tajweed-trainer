@@ -10,6 +10,7 @@ import {
   clampPlayerPosition,
   reservedBottomFor,
   KEYBOARD_STEP,
+  MOBILE_BREAKPOINT,
   type PlayerPosition,
   type PlayerSize,
   type Viewport,
@@ -141,9 +142,34 @@ export function MiniPlayer() {
   // bar should reappear only when new playback starts, which the reset effect
   // below keys on the queue head changing.
   const [dismissed, setDismissed] = useState(false);
+  // Below MOBILE_BREAKPOINT (768, the md tab-bar boundary) the player renders as
+  // a minimal docked bar above the tab bar instead of the free-floating card, so
+  // it never overlaps content on touch/narrow. Resolved post-mount (the `mounted`
+  // gate keeps the server paint empty); a resize across 768 swaps the form live.
+  // 768 is the natural boundary here because the docked bar sits above the 64px
+  // tab bar, which only exists below 768, and reservedBottomFor uses the same
+  // boundary for the bottom offset (the reader's 1024 panel/sheet split is a
+  // different concern). reservedBottom is the strip the bar sits above.
+  const [isNarrow, setIsNarrow] = useState(false);
+  const [reservedBottom, setReservedBottom] = useState(0);
   useEffect(() => {
     setMounted(true);
     setMinimized(getPlayerMinimized());
+  }, []);
+
+  useEffect(() => {
+    const recompute = () => {
+      const width = window.innerWidth;
+      setIsNarrow(width < MOBILE_BREAKPOINT);
+      setReservedBottom(reservedBottomFor({ width, height: window.innerHeight }));
+    };
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.addEventListener("orientationchange", recompute);
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.removeEventListener("orientationchange", recompute);
+    };
   }, []);
 
   const toggleMinimized = () => {
@@ -371,6 +397,64 @@ export function MiniPlayer() {
     e.preventDefault();
     commit({ x, y });
   };
+
+  // Touch/narrow: a minimal docked bar above the tab bar + safe area. It reserves
+  // its own strip at the bottom (it does not overlap content the way the floating
+  // card could) and carries only the essentials — play/pause, the label and
+  // reference, and the hide and stop controls — no drag handle, seek, speed, or
+  // study panel. `inert` while hidden keeps the still-mounted transport out of
+  // the tab order, like the floating form. It commands the same store, so it
+  // adds no <audio> element. Mirrors the docked-bottom-bar shape used elsewhere
+  // (rounded top, gold hairline, card ground, soft upward shadow).
+  if (isNarrow) {
+    return (
+      <div
+        inert={!visible}
+        aria-hidden={!visible}
+        role="region"
+        aria-label={t("player.play")}
+        className={`fixed inset-x-0 z-40 flex items-center gap-2 rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark px-3 pt-2 pb-2 safe-bottom transition-opacity duration-150 motion-reduce:transition-none ${
+          visible ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        style={{ bottom: reservedBottom, boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }}
+      >
+        <button
+          type="button"
+          onClick={() => usePlayer.getState().toggle()}
+          aria-label={playing ? t("player.pause") : t("player.play")}
+          className="shrink-0 p-2 min-w-[44px] min-h-[44px] rounded-lg bg-primary/10 dark:bg-primary-light/20 hover:bg-primary/20 inline-flex items-center justify-center"
+        >
+          {status === "loading" ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />}
+        </button>
+        <span
+          className={`min-w-0 flex-1 truncate text-xs ${error ? "text-red-600 dark:text-red-400" : "text-text-muted"}`}
+        >
+          {label}
+          {cur ? ` · ${cur.surah}:${cur.ayah}` : ""}
+        </span>
+        <button
+          type="button"
+          // Hide the bar without ending playback; it returns only when new
+          // playback starts (see the dismissed reset effect).
+          onClick={() => setDismissed(true)}
+          aria-label={t("player.hide")}
+          title={t("player.hide")}
+          className="shrink-0 p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+        >
+          <HideIcon />
+        </button>
+        <button
+          type="button"
+          onClick={() => usePlayer.getState().stop()}
+          aria-label={t("player.close")}
+          title={t("player.close")}
+          className="shrink-0 p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+        >
+          <CloseIcon />
+        </button>
+      </div>
+    );
+  }
 
   return (
     // Full-viewport positioning layer that never blocks clicks; the card inside
