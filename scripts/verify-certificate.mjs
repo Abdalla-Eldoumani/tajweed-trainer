@@ -38,10 +38,18 @@ function record(name, ok, details = "") {
 // --- (a) Source wiring: getCompletedJuz uses the real scope math, the pure half
 // imports only memorization-scope/khatmah, and no Quranic text is generated -----
 record("certificate.ts exports getCompletedJuz", /export function getCompletedJuz/.test(cert));
-record(
-  "getCompletedJuz tests countInScope against versesForJuz length",
-  /countInScope\([\s\S]*?versesForJuz\([\s\S]*?\.length/.test(cert),
-);
+{
+  // The body of getCompletedJuz must drive completion off the real scope math:
+  // it enumerates with versesForJuz, counts the intersection with countInScope,
+  // and accepts a juz only when that count equals the scope length. Matched on
+  // the body (whether the scope is inlined or held in a local), not on a single
+  // call shape, so a clean refactor does not trip the guard.
+  const body = cert.match(/export function getCompletedJuz[\s\S]*?\n\}/)?.[0] ?? "";
+  record(
+    "getCompletedJuz tests countInScope against versesForJuz length",
+    /versesForJuz\(/.test(body) && /countInScope\(/.test(body) && /===\s*\w+\.length/.test(body),
+  );
+}
 record(
   "certificate.ts imports countInScope + versesForJuz from memorization-scope",
   /import\s*\{[^}]*countInScope[^}]*versesForJuz[^}]*\}\s*from\s*["']\.\/memorization-scope["']/.test(cert) ||
