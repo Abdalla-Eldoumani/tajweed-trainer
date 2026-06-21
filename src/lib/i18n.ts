@@ -528,6 +528,13 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.memorizeMark": { en: "Mark verse as memorized", ar: "تحديد الآية كمحفوظة" },
   "mushaf.memorizeUnmark": { en: "Unmark memorized verse", ar: "إلغاء تحديد الآية كمحفوظة" },
   "mushaf.memorizeReveal": { en: "Reveal", ar: "كشف" },
+  "mushaf.followAlong": { en: "Follow along", ar: "تتبّع التلاوة" },
+  "mushaf.followAlongOn": { en: "Highlight the recited word", ar: "تمييز الكلمة المتلوّة" },
+  "mushaf.followAlongOff": { en: "Stop highlighting the recited word", ar: "إيقاف تمييز الكلمة المتلوّة" },
+  "mushaf.followAlongHint": {
+    en: "Light up each word as it is recited",
+    ar: "إضاءة كل كلمة أثناء تلاوتها",
+  },
   "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
   "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
   "mushaf.legend": { en: "Color legend", ar: "دليل الألوان" },
