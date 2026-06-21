@@ -143,30 +143,58 @@ export function TajweedFollowText({
     // word, between words) still blurs every word, so do not early-return there.
     if (activeIdx < 0 && !blurUnrevealed) return;
 
-    // Group the container's direct child nodes into visual words read-only. A new
-    // word starts at each whitespace-only text node (the API separates words with
-    // a space). The trailing <span class="end"> is the ayah number, not a recited
-    // word, so it is excluded from the grouping entirely. Captured BEFORE any
-    // wrapping so relocating one word's nodes never disturbs another's references.
+    // Group the container's content into visual words read-only. The API
+    // separates words with a space, but those spaces sit INSIDE text nodes (one
+    // node like "word1 word2 word3 "), not as standalone whitespace nodes, and a
+    // single word can span several nodes (plain text + <tajweed> letter spans).
+    // So subdivide each text node at its spaces into word-piece and space
+    // fragments -- a read-only split of PLAIN TEXT that never touches a <tajweed>
+    // span, its letters, or their order (CONST-01) -- then accumulate runs of
+    // non-space nodes into words. A space fragment (and the trailing
+    // <span class="end"> ayah number, excluded) closes the current word.
     const groups: Node[][] = [];
     let current: Node[] | null = null;
     for (const node of Array.from(container.childNodes)) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent ?? "";
-        if (text.trim() === "") {
-          // Whitespace boundary: close the current word.
-          current = null;
-          continue;
-        }
-      } else if (
+      if (
         node.nodeType === Node.ELEMENT_NODE &&
         (node as Element).classList.contains("end")
       ) {
-        // The ayah-number span: never part of a recited word; close any open word
-        // so a following node (there is none in practice) starts fresh.
+        // The ayah-number span: never part of a recited word.
         current = null;
         continue;
       }
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent ?? "";
+        if (text === "") continue;
+        // Keep the whitespace runs as separators so each becomes a boundary.
+        const parts = text.split(/(\s+)/).filter((s) => s !== "");
+        let pieces: Node[];
+        if (parts.length > 1) {
+          // Replace the mixed text node with one fragment per piece so a word's
+          // nodes are concrete and wrappable; the exact characters are preserved.
+          const parent = node.parentNode;
+          pieces = parts.map((part) => document.createTextNode(part));
+          for (const piece of pieces) parent?.insertBefore(piece, node);
+          parent?.removeChild(node);
+        } else {
+          // Already a single piece (a word fragment or a lone whitespace run).
+          pieces = [node];
+        }
+        for (const piece of pieces) {
+          if ((piece.textContent ?? "").trim() === "") {
+            // A space fragment: close the current word.
+            current = null;
+            continue;
+          }
+          if (!current) {
+            current = [];
+            groups.push(current);
+          }
+          current.push(piece);
+        }
+        continue;
+      }
+      // A <tajweed> letter span (or any inline element): part of the current word.
       if (!current) {
         current = [];
         groups.push(current);
