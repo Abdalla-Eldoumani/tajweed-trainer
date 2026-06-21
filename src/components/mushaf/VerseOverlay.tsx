@@ -602,6 +602,13 @@ interface VerseOverlayProps {
   // (one place); the overlay just commands them.
   playSingleVerse: (sv: number, av: number) => void;
   playFromVerse: (sv: number, av: number) => void;
+  // Reveal-as-recited in-session state, owned by MushafReader (like
+  // memorizationMode) so the page and this overlay share one source. The toggle
+  // here flips it; MushafPage reads it to uncover the playing verse word-by-word.
+  // Optional so the overlay still renders without the pair (the toggle is then
+  // omitted); when present, the toggle shows beside the playback controls.
+  revealAsRecited?: boolean;
+  onToggleRevealAsRecited?: () => void;
 }
 
 export function VerseOverlay({
@@ -612,6 +619,8 @@ export function VerseOverlay({
   surahs,
   playSingleVerse,
   playFromVerse,
+  revealAsRecited,
+  onToggleRevealAsRecited,
 }: VerseOverlayProps) {
   const { t, isAr } = useTranslation();
   const { settings } = useSettings();
@@ -1043,6 +1052,37 @@ export function VerseOverlay({
               <MultiVerseControls data={data} />
               {playerError && <ErrorLine error={playerError} />}
             </section>
+          )}
+
+          {/* Reveal-as-recited toggle: blur the verse and uncover each word as it
+              is recited (a self-test for any verse, not only memorized ones). An
+              in-session toggle owned by the reader, copying the loop toggle's exact
+              shape (aria-pressed, 44px target, bg-primary/15 active). It sits with
+              the playback affordances; MushafPage reads the shared state to uncover
+              the playing verse word-by-word, falling back to the whole-verse reveal
+              when the reciter has no word segments. Omitted when the reader does
+              not pass the toggle pair. */}
+          {valid && onToggleRevealAsRecited && (
+            <div className="mt-3 border-t border-border pt-4">
+              <button
+                type="button"
+                onClick={onToggleRevealAsRecited}
+                aria-pressed={!!revealAsRecited}
+                title={t("player.revealAsRecitedHint")}
+                className={cn(
+                  "inline-flex items-center gap-2 min-h-[44px] px-3 rounded-lg text-small font-medium border transition-colors motion-reduce:transition-none",
+                  revealAsRecited
+                    ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                    : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
+                )}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                {t("player.revealAsRecited")}
+              </button>
+            </div>
           )}
 
           {/* Reciter / speed / translation source: the inline controls bound to
