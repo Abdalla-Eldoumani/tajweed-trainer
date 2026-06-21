@@ -790,6 +790,35 @@ const translations: Record<string, { en: string; ar: string }> = {
   "khatmah.behindDays": { en: "{n} days behind", ar: "متأخّر بـ {n} يومًا" },
   "khatmah.complete": { en: "Khatmah complete, may Allah accept it", ar: "تمّت الختمة، تقبّل الله" },
 
+  // Milestone certificate. Operational achievement copy only (CONST-01): the
+  // milestone reached, the date, and the app name. It NEVER contains verse or
+  // hadith text. The AR side is a translation of this operational copy.
+  "certificate.title": { en: "Certificate", ar: "شهادة" },
+  "certificate.intro": {
+    en: "Celebrate a milestone with a certificate you can save as an image, made on your device.",
+    ar: "احتفِ بإنجاز بشهادة يمكنك حفظها كصورة، تُصنع على جهازك.",
+  },
+  "certificate.empty": {
+    en: "Complete a juz or a khatmah to unlock a certificate.",
+    ar: "أكمل جزءًا أو ختمة لفتح شهادة.",
+  },
+  "certificate.pick": { en: "Choose a milestone", ar: "اختر إنجازًا" },
+  "certificate.optionJuz": { en: "Juz {n}", ar: "الجزء {n}" },
+  "certificate.optionKhatmah": { en: "The whole Quran", ar: "القرآن كاملًا" },
+  "certificate.save": { en: "Save as image", ar: "احفظ كصورة" },
+  "certificate.canvasLabel": {
+    en: "Milestone certificate, ready to save as an image",
+    ar: "شهادة إنجاز، جاهزة للحفظ كصورة",
+  },
+  // The lines drawn on the canvas itself.
+  "certificate.eyebrow": { en: "Certificate of completion", ar: "شهادة إتمام" },
+  "certificate.juzTitle": { en: "Juz {n}", ar: "الجزء {n}" },
+  "certificate.juzDetail": { en: "Memorized in full", ar: "حُفظ كاملًا" },
+  "certificate.khatmahTitle": { en: "The whole Quran", ar: "القرآن الكريم كاملًا" },
+  "certificate.khatmahDetail": { en: "Recited in full", ar: "تُلِي كاملًا" },
+  "certificate.dateLabel": { en: "Completed {date}", ar: "أُتمّ في {date}" },
+  "certificate.appName": { en: "Tajweed Trainer", ar: "معلّم التجويد" },
+
   // Onboarding
   "onboarding.title": { en: "Welcome to Tajweed Trainer", ar: "مرحباً بك في مدرّب التجويد" },
   "onboarding.skip": { en: "Skip", ar: "تخطّي" },
