@@ -104,6 +104,56 @@
   --tajweed-tafkheem: #3FA6C9;
 }
 
+/* vellum: the warm light manuscript ground (the shipped light palette). Gold is
+   hairline and ornament only; lapis ink and --text carry text. */
+[data-theme="vellum"] {
+  --primary: #1E4279;
+  --accent: #B0552F;
+  --bg: #F5F1E8;
+  --bg-card: #FCFAF3;
+  --bg-subtle: #ECE5D3;
+  --text: #131B2E;
+  --text-muted: #555F77;
+
+  --gold: #D4A843;
+  --gold-hairline: rgba(196, 154, 51, 0.42);
+  --border: #DDD3BC;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+}
+
+/* night: the same manuscript at night, a deep navy ground (the shipped dark
+   palette). Gold doubles as the primary action color. */
+[data-theme="night"] {
+  --primary: #D4A843;
+  --accent: #C9714A;
+  --bg: #0A0F1C;
+  --bg-card: #121A2E;
+  --bg-subtle: #1A2336;
+  --text: #EDEAE0;
+  --text-muted: #99A2B6;
+
+  --gold: #D4A843;
+  --gold-hairline: rgba(212, 168, 67, 0.30);
+  --border: #232E47;
+
+  --margin-bg: #0C1322;
+  --margin-card: #131D33;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.30);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+}
+
 body {
   font-family: var(--font-inter), 'Inter', sans-serif;
   background-color: var(--bg);
