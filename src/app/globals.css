@@ -57,6 +57,18 @@
   --tajweed-idgham_ghunnah: #169200;
   --tajweed-idgham_wo_ghunnah: #169200;
   --tajweed-tafkheem: #006994;
+
+  /* The manuscript's motion language. Durations and easing curves read the same
+     in every theme -- only colors flip per [data-theme] -- so they live here in
+     :root once. micro/short/medium pace component motion (illumination, card and
+     row entrances, overlay); page is the cross-surface turn between routes. */
+  --motion-micro: 120ms;
+  --motion-short: 200ms;
+  --motion-medium: 320ms;
+  --motion-page: 420ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Reference baseline only -- NOT applied at runtime. Nothing sets the old
