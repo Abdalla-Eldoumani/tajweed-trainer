@@ -528,6 +528,15 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "mushaf.bookmarksOpenReader": { en: "Open the Mushaf", ar: "افتح المصحف" },
   "mushaf.bookmarksBack": { en: "Back to index", ar: "العودة إلى الفهرس" },
+  "bookmarks.filterLabel": { en: "Filter bookmarks", ar: "تصفية المفضّلة" },
+  "bookmarks.filterPlaceholder": {
+    en: "Filter by tag, surah, or reference…",
+    ar: "تصفية حسب الوسم أو السورة أو الموضع…",
+  },
+  "bookmarks.filterEmpty": {
+    en: "No bookmarks match your filter.",
+    ar: "لا توجد آيات مفضّلة تطابق التصفية.",
+  },
   "mushaf.bookmarkOpenVerse": { en: "Open in reader", ar: "افتح في القارئ" },
   "mushaf.memorizeOn": { en: "Hide memorized verses", ar: "إخفاء الآيات المحفوظة" },
   "mushaf.memorizeOff": { en: "Show memorized verses", ar: "إظهار الآيات المحفوظة" },
