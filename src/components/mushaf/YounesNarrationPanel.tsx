@@ -105,6 +105,14 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
     return isAr ? meta.nameArabic : meta.nameSimple;
   }, [surahOptions, surah, isAr]);
 
+  // The script name always renders in Arabic, regardless of UI language: it sits
+  // beside the Latin selector as the Arabic-script form, so it must never receive
+  // a Latin string (which ArabicText would set in the Amiri font and RTL).
+  const selectedSurahArabic = useMemo(() => {
+    const meta = surahOptions.find((s) => s.number === surah);
+    return meta?.nameArabic ?? String(surah);
+  }, [surahOptions, surah]);
+
   // Load the per-surah Warsh URL into the isolated element and play it. The URL
   // is built and gated through the host allowlist; a rejected URL (should not
   // happen for server16) or a host/availability failure surfaces the quiet line.
@@ -342,7 +350,7 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
 
           {/* Surah name in the script, for clarity beside the Latin selector. */}
           <ArabicText
-            text={selectedSurahName}
+            text={selectedSurahArabic}
             size="sm"
             className="block text-gold-dark dark:text-gold-light"
           />
