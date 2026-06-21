@@ -26,13 +26,11 @@ function GlobalMiniPlayer() {
 function SettingsSync({ children }: { children: React.ReactNode }) {
   const { settings } = useSettings();
 
+  // The selected theme is applied as data-theme on <html>; every [data-theme]
+  // token block and the widened dark variant key off this attribute.
   useEffect(() => {
-    if (settings.darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [settings.darkMode]);
+    document.documentElement.setAttribute("data-theme", settings.theme);
+  }, [settings.theme]);
 
   useEffect(() => {
     const lang = settings.language ?? "en";
