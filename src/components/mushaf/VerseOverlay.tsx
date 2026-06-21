@@ -15,6 +15,10 @@ import { useSettings } from "@/hooks/useSettings";
 import { TajweedText } from "@/components/ui/TajweedText";
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
 import { WordByWord } from "@/components/learn/WordByWord";
+import { getWordsForChapter } from "@/lib/quran-api";
+import { fetchSegments, type WordSegment } from "@/lib/audio-api";
+import { rangeBounds } from "@/lib/follow-along";
+import type { VerseWord } from "@/lib/types";
 import { useVerseSelection } from "./useVerseSelection";
 import { VerseNotes } from "./VerseNotes";
 import { OverlayInlineControls } from "./OverlayInlineControls";
@@ -529,6 +533,188 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
         </button>
       </div>
     </section>
+  );
+}
+
+// Sub-verse loop control: pick a start WORD .. end WORD within the OPEN verse and
+// loop just that range on the one engine, reusing the existing repeat count and
+// inter-verse gap. It copies RangePicker's disclosure-with-two-selects shape but
+// at word granularity within a single verse. REQUIRES segments (FOLLOW gate): it
+// fetches the open verse's segments for the current reciter and, when there are
+// none (every everyayah ea-* and any segment-less verse), renders nothing — only
+// the whole-verse repeat above remains, with no error shown. The pickers' word
+// labels come from the same word-by-word source the highlight uses (textUthmani),
+// the option count from the segment count. Resolving a range to ms is the pure
+// rangeBounds; engaging it is usePlayer.setSubVerseLoop (one engine, no <audio>).
+// It also records the picked range in useVerseSelection for in-session UI state.
+function SubVerseLoopControl({ surah, ayah }: { surah: number; ayah: number }) {
+  const { t, isAr } = useTranslation();
+  const { settings } = useSettings();
+  const { wordRange, setWordRange, clearWordRange } = useVerseSelection();
+  const [open, setOpen] = useState(false);
+  // segments null = not yet known; an empty array or a resolved null both gate the
+  // control off. words back the readable labels; ready flips once both resolve.
+  const [segments, setSegments] = useState<WordSegment[] | null>(null);
+  const [words, setWords] = useState<VerseWord[]>([]);
+  const [ready, setReady] = useState(false);
+  const [from, setFrom] = useState(0);
+  const [to, setTo] = useState(0);
+  // Mounted-gate the engaged state so the toggle label never mismatches between
+  // SSR and the first client render (it reads the store).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  // Reflect whether a sub-verse loop is currently engaged (it resets on verse
+  // change / playVerse / stop, so an engaged loop belongs to this open verse).
+  const loopEngaged = usePlayer((s) => s.subVerseLoop !== null);
+
+  // Fetch the open verse's segments + words for the current reciter. fetchSegments
+  // is cached and never throws; a segment-less reciter resolves null and hides the
+  // control. Refetches when the verse or reciter changes; drops a stale resolve.
+  useEffect(() => {
+    let alive = true;
+    setReady(false);
+    setSegments(null);
+    Promise.all([
+      fetchSegments(surah, ayah, settings.reciter),
+      getWordsForChapter(surah).then((map) => map[`${surah}:${ayah}`] ?? []).catch(() => []),
+    ]).then(([segs, ws]) => {
+      if (!alive) return;
+      setSegments(segs);
+      setWords(ws);
+      // Default the pickers to the whole verse (first..last word) on (re)load.
+      const count = segs ? segs.length : 0;
+      setFrom(0);
+      setTo(count > 0 ? count - 1 : 0);
+      setReady(true);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [surah, ayah, settings.reciter]);
+
+  // The FOLLOW gate: with no segments the control is unavailable (hidden), so only
+  // the whole-verse repeat remains. No error, matching the no-segment fallback
+  // everywhere else in the follow-along layer.
+  if (!ready || !segments || segments.length === 0) return null;
+
+  const wordCount = segments.length;
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
+  // Word label: the Uthmani text for that index, or the 1-based number as a
+  // fallback when the word list is shorter than the segments (so a select option
+  // is never blank). Indices are 0-based; the visible number is 1-based.
+  const labelFor = (i: number) => words[i]?.textUthmani ?? "";
+  const wordOptions = Array.from({ length: wordCount }, (_, i) => i);
+
+  const applyLoop = () => {
+    const bounds = rangeBounds(segments, from, to);
+    if (!bounds) return;
+    // Reuse the existing repeat count from the store (the whole-verse repeat
+    // stepper), defaulting to 3 passes when repeat is off, per the plan.
+    const count = usePlayer.getState().repeatOne || 3;
+    usePlayer.getState().setSubVerseLoop(bounds.startMs, bounds.endMs, count);
+    setWordRange(surah, ayah, from, to);
+  };
+
+  const stopLoop = () => {
+    usePlayer.getState().clearSubVerseLoop();
+    clearWordRange();
+  };
+
+  // The toggle is engaged when a loop is running AND the in-session word range is
+  // for this verse (so reopening the overlay on a looping verse shows "Stop").
+  const engagedHere =
+    mounted &&
+    loopEngaged &&
+    !!wordRange &&
+    wordRange.surah === surah &&
+    wordRange.ayah === ayah;
+
+  const selectClass =
+    "text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px] max-w-[8rem]";
+
+  return (
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={cn("transition-transform motion-reduce:transition-none", open && "rotate-90")}>
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        {t("player.subVerseLoop")}
+      </button>
+      {open && (
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-end gap-2">
+            <label className="flex flex-col gap-1 text-micro text-text-muted">
+              {t("player.subVerseFrom")}
+              <select
+                value={from}
+                onChange={(e) => setFrom(Number(e.target.value))}
+                className={selectClass}
+                aria-label={t("player.subVerseFrom")}
+                dir={isAr ? "rtl" : "ltr"}
+              >
+                {wordOptions.map((i) => (
+                  <option key={i} value={i}>
+                    {num(i + 1)}. {labelFor(i)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-micro text-text-muted">
+              {t("player.subVerseTo")}
+              <select
+                value={to}
+                onChange={(e) => setTo(Number(e.target.value))}
+                className={selectClass}
+                aria-label={t("player.subVerseTo")}
+                dir={isAr ? "rtl" : "ltr"}
+              >
+                {wordOptions.map((i) => (
+                  <option key={i} value={i}>
+                    {num(i + 1)}. {labelFor(i)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={applyLoop}
+              aria-pressed={engagedHere}
+              className={cn(
+                "inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-lg text-small font-medium border transition-colors motion-reduce:transition-none",
+                engagedHere
+                  ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                  : "bg-primary text-on-primary hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep border-transparent",
+              )}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="17 1 21 5 17 9" />
+                <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                <polyline points="7 23 3 19 7 15" />
+                <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+              </svg>
+              {t("player.loopWords")}
+            </button>
+            {engagedHere && (
+              <button
+                type="button"
+                onClick={stopLoop}
+                className="inline-flex items-center min-h-[44px] px-3 rounded-lg text-small font-medium text-text-muted border border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors motion-reduce:transition-none"
+              >
+                {t("player.stopLoop")}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -1050,6 +1236,12 @@ export function VerseOverlay({
             >
               <TransportRow playing={playing} loading={loading} hasNext={hasNext} hasPrev={hasPrev} />
               <MultiVerseControls data={data} />
+              {/* Sub-verse word-range loop: loop a start..end WORD range within
+                  this verse on the one engine, reusing the repeat count + gap
+                  above. Keyed by verseKey so its segment fetch + open state reset
+                  when the open verse changes; self-hides when the reciter has no
+                  segments for the verse (only whole-verse repeat then remains). */}
+              <SubVerseLoopControl key={verseKey!} surah={sv} ayah={av} />
               {playerError && <ErrorLine error={playerError} />}
             </section>
           )}
