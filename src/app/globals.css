@@ -154,6 +154,81 @@
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
 }
 
+/* pearl: a cooler, brighter daytime ground for users who find vellum too warm.
+   A light theme: gold is hairline and ornament only; --text and --primary carry text. */
+[data-theme="pearl"] {
+  --primary: #16487A;
+  --accent: #16487A;
+  --bg: #F4F6F8;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #E7ECF1;
+  --text: #1B2733;
+  --text-muted: #5B6B7B;
+
+  --gold: #A8801F;
+  --gold-hairline: rgba(168, 128, 31, 0.38);
+  --border: #D5DBE1;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+}
+
+/* sepia: a low-blue-light evening reading mode, dark but warm rather than black.
+   A dark theme: gold doubles as the primary action color. */
+[data-theme="sepia"] {
+  --primary: #D8A24A;
+  --accent: #C98A3C;
+  --bg: #1C1812;
+  --bg-card: #26201A;
+  --bg-subtle: #2F2820;
+  --text: #ECE0CC;
+  --text-muted: #B6A88C;
+
+  --gold: #D8A24A;
+  --gold-hairline: rgba(216, 162, 74, 0.30);
+  --border: #3A3328;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+}
+
+/* mihrab: a deep Islamic green ground with gold leaf, the emerald accent used
+   sparingly. A dark theme: gold doubles as the primary action color. */
+[data-theme="mihrab"] {
+  --primary: #CBA85A;
+  --accent: #1E8A6E;
+  --bg: #08110D;
+  --bg-card: #0F1D17;
+  --bg-subtle: #16261E;
+  --text: #E6E9DF;
+  --text-muted: #92A89A;
+
+  --gold: #CBA85A;
+  --gold-hairline: rgba(203, 168, 90, 0.30);
+  --border: #243A30;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+}
+
 body {
   font-family: var(--font-inter), 'Inter', sans-serif;
   background-color: var(--bg);
