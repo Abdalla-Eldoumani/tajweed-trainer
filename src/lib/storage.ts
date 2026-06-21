@@ -11,6 +11,7 @@ import type {
   PlayerResume,
   VerseLocation,
   KhatmahPlan,
+  CertificateRecord,
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
@@ -54,6 +55,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   lastRead: null,
   lastReadBySurah: {},
   khatmah: null,
+  certificates: [],
   seenOnboarding: false,
   warshNarrationAck: false,
   lastBackupAt: "",
@@ -91,6 +93,10 @@ const MAX_REVIEWS = 2000;
 const MAX_MEMORIZED = 6236;
 const MAX_VERSE_BOOKMARKS = 500;
 const MAX_LAST_READ_BY_SURAH = 114;
+// Milestone certificate records: one per juz (30) plus the khatmah is 31 at most,
+// and the kind+ref dedupe holds the total there, so this cap is effectively
+// unreachable headroom against a tampered store, not a real limit reached in use.
+const MAX_CERTIFICATES = 60;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 // Per-verse private notes: a realistic ceiling on how many verses one learner
 // annotates (well under the 6,236-verse maximum) and a per-note length so a
@@ -450,6 +456,49 @@ function sanitizeKhatmah(input: unknown): KhatmahPlan | null {
   return { startDate: input.startDate, targetDate: input.targetDate, startPage: input.startPage };
 }
 
+// The bounded milestone-certificate record list. Each entry must be an object
+// with `kind` in {"juz","khatmah"}, a real ISO `dateIso` (isValidIsoDate), and a
+// `ref` that is an integer 1..30 for a juz or null for a khatmah; malformed
+// entries are dropped. Records are deduped by kind+ref (one per milestone, so the
+// list cannot grow past ~31), then capped at MAX_CERTIFICATES as a final ceiling.
+// The image is NEVER part of this record (EDGE_CASES_V2 line 50), only the fact
+// that the milestone was reached/exported. This is an array, not a keyed map, so
+// it carries no prototype-pollution-key guard (there are no attacker-controlled
+// object keys to rebuild). A stored object without this field reads back as []
+// (lossless migration).
+function sanitizeCertificates(input: unknown): CertificateRecord[] {
+  if (!Array.isArray(input)) return [];
+  const out: CertificateRecord[] = [];
+  const seen = new Set<string>();
+  for (const entry of input) {
+    if (!isObject(entry)) continue;
+    if (entry.kind !== "juz" && entry.kind !== "khatmah") continue;
+    if (!isValidIsoDate(entry.dateIso)) continue;
+    let ref: number | null;
+    if (entry.kind === "juz") {
+      if (
+        typeof entry.ref !== "number" ||
+        !Number.isInteger(entry.ref) ||
+        entry.ref < 1 ||
+        entry.ref > 30
+      ) {
+        continue;
+      }
+      ref = entry.ref;
+    } else {
+      // A khatmah record carries no juz number.
+      if (entry.ref !== null && entry.ref !== undefined) continue;
+      ref = null;
+    }
+    const dedupeKey = `${entry.kind}:${ref ?? ""}`;
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+    out.push({ kind: entry.kind, ref, dateIso: entry.dateIso });
+    if (out.length >= MAX_CERTIFICATES) break;
+  }
+  return out;
+}
+
 // Per-surah last-read map. Keys are surah numbers 1..114 (validated as integers
 // in range); values are VerseLocation records validated like lastRead. Guards
 // the prototype-pollution keys and caps at 114 entries, mirroring the other map
@@ -507,6 +556,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     lastRead: sanitizeLastRead(input.lastRead),
     lastReadBySurah: sanitizeLastReadBySurah(input.lastReadBySurah),
     khatmah: sanitizeKhatmah(input.khatmah),
+    certificates: sanitizeCertificates(input.certificates),
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
     warshNarrationAck: typeof input.warshNarrationAck === "boolean" ? input.warshNarrationAck : false,
     lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
@@ -620,6 +670,34 @@ export function clearKhatmah(): void {
   if (!isBrowser()) return;
   const progress = getProgress();
   progress.khatmah = null;
+  setProgress(progress);
+}
+
+// The milestone-certificate record funnel. Lives on the consolidated progress
+// model (field `certificates`, not an ad-hoc key) so export / import / reset cover
+// it; the default-[] in DEFAULT_PROGRESS makes resetProgress clear the records.
+// This records only that a milestone was reached and a certificate generated; it
+// NEVER stores the image (EDGE_CASES_V2 line 50).
+export function getCertificates(): CertificateRecord[] {
+  return getProgress().certificates ?? [];
+}
+
+// Append one milestone record, through the change bus. The record is re-validated
+// the same way the sanitizer validates a stored one (a malformed record is
+// rejected). A record for the same kind+ref already present is a no-op (one
+// certificate per milestone). The cap is a final ceiling: a genuinely new record
+// once already at MAX_CERTIFICATES is a no-op, though the kind+ref dedupe holds
+// the total at ~31 so the cap is effectively unreachable.
+export function recordCertificate(rec: CertificateRecord): void {
+  if (!isBrowser()) return;
+  // Re-validate the single record by running it through the array sanitizer.
+  const [valid] = sanitizeCertificates([rec]);
+  if (!valid) return;
+  const progress = getProgress();
+  const current = progress.certificates ?? [];
+  if (current.some((c) => c.kind === valid.kind && c.ref === valid.ref)) return;
+  if (current.length >= MAX_CERTIFICATES) return;
+  progress.certificates = [...current, valid];
   setProgress(progress);
 }
 
