@@ -423,6 +423,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.rangeStart": { en: "From", ar: "من" },
   "player.rangeEnd": { en: "To", ar: "إلى" },
   "player.setRange": { en: "Set range", ar: "تعيين النطاق" },
+  "player.selectionControls": { en: "Range and repeat", ar: "النطاق والتكرار" },
+  "player.readingDepth": { en: "Translation and tafsir", ar: "الترجمة والتفسير" },
   "player.collapsePlayer": { en: "Collapse player", ar: "طيّ المشغّل" },
   "player.expandPlayer": { en: "Expand player", ar: "توسيع المشغّل" },
   "player.closePlayer": { en: "Close player", ar: "إغلاق المشغّل" },
@@ -495,6 +497,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.verseBookmarks": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
   "mushaf.bookmarkVerse": { en: "Bookmark this verse", ar: "حفظ هذه الآية في المفضّلة" },
   "mushaf.bookmarkVerseRemove": { en: "Remove verse bookmark", ar: "إزالة الآية من المفضّلة" },
+  "mushaf.verseOverlayTitle": { en: "Verse", ar: "الآية" },
   "mushaf.bookmarksViewAll": { en: "View all bookmarks", ar: "عرض كل الآيات المفضّلة" },
   "mushaf.bookmarksTitle": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
   "mushaf.bookmarksSubtitle": {

@@ -37,13 +37,13 @@ interface MushafPageProps {
   memorizationMode?: boolean;
   // "surah:ayah" to scroll into view on mount (a lesson "open in reader" link).
   targetVerseKey?: string | null;
-  // A plain tap on a verse plays it (single mode) and surfaces the playback
-  // surface. This is the primary verse action now; the old tap-opens-panel
-  // behavior moved to the dedicated details control below.
+  // A plain tap on a verse opens the focused verse overlay for it; it does not
+  // auto-play (the overlay's auto-focused "play this verse" does). A colored
+  // tajweed letter is exempt: its tap opens the rule popover and stops there
+  // (the explainRules stopPropagation seam), so it never reaches this button.
   onPlayVerse?: (verseKey: string) => void;
-  // Opens the reading-depth panel (translation, tafsir, word-by-word) for a
-  // verse. Reached from a distinct, touch-discoverable per-verse details
-  // control, never the plain tap, so a tap is never ambiguous.
+  // Opens the same verse overlay from a distinct, touch-discoverable per-verse
+  // details control, so the overlay has a non-tap entry point alongside the tap.
   onSelectVerse?: (verseKey: string) => void;
 }
 

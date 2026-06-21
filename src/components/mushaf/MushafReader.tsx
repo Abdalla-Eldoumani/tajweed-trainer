@@ -1,28 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
-import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
 import { pageForJuz, pageForSurah, surahForPage, TOTAL_JUZ } from "@/lib/navigation";
 import { clampJuz } from "@/lib/validate";
 import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
-import { prefersReducedMotion } from "@/lib/reduced-motion";
 import { MushafPage } from "./MushafPage";
-import { PlaybackSurface } from "./PlaybackSurface";
+import { VerseOverlay } from "./VerseOverlay";
 import { ReaderPalette } from "./ReaderPalette";
 import { VerseSelectionProvider, useVerseSelectionState } from "./useVerseSelection";
-import { ReadingDepth } from "@/components/learn/ReadingDepth";
-import { WordByWord } from "@/components/learn/WordByWord";
-import { RecitationCompare } from "@/components/mushaf/RecitationCompare";
-import { ReciterCompare } from "@/components/mushaf/ReciterCompare";
-import { VerseNotes } from "@/components/mushaf/VerseNotes";
 import type { MushafPageData, SurahHeader } from "@/lib/types";
 import { getColorForClass } from "@/lib/tajweed-colors";
 
@@ -87,18 +80,6 @@ const PlaySolid = () => (
   </svg>
 );
 
-const PlayFromHereIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M4 5v14l8-7zM13 5v14l8-7z" />
-  </svg>
-);
-
-const HeartIcon = ({ filled }: { filled: boolean }) => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" aria-hidden="true">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-  </svg>
-);
-
 const SearchIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <circle cx="11" cy="11" r="8" />
@@ -110,11 +91,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const { settings, updateSettings } = useSettings();
   const { t, isAr } = useTranslation();
   const router = useRouter();
-  const { isBookmarked: isVerseBookmarked, toggle: toggleVerseBm, mounted: bmMounted } = useBookmarks();
-  const { isMemorized, toggle: toggleMemorized, count: memorizedCount, mounted: memMounted } = useMemorization();
-  // The reading-depth panel renders below the page; scroll it into view when a
-  // verse is tapped so the translation/tafsir is never opened off-screen.
-  const panelRef = useRef<HTMLDivElement>(null);
+  const { count: memorizedCount, mounted: memMounted } = useMemorization();
   // localStorage isn't available on the server, so any UI driven by it
   // (bookmark fill, last-page label) waits for client hydration.
   const [mounted, setMounted] = useState(false);
@@ -219,22 +196,6 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Bring the reading-depth panel into view when a verse is selected (it renders
-  // below the page, so a tap near the top of a long page would otherwise be silent).
-  useEffect(() => {
-    if (selectedVerse) panelRef.current?.scrollIntoView({ block: "center", behavior: prefersReducedMotion() ? "auto" : "smooth" });
-  }, [selectedVerse]);
-
-  // Escape closes the open reading-depth panel, like any dismissible overlay.
-  useEffect(() => {
-    if (!selectedVerse) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedVerse(null);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [selectedVerse]);
-
   const bookmarks = useMemo(() => settings.mushafBookmarks ?? [], [settings.mushafBookmarks]);
   // Hydration safety: server can't know which pages are bookmarked, so the
   // filled state stays false until after mount.
@@ -258,10 +219,10 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
     });
   };
 
-  // Play a single verse (single mode). Used by both the plain verse tap on the
-  // page and the reading-depth panel's play control, so a tap and the panel
-  // share one code path and the loading state appears within 100ms (playVerse
-  // sets status "loading" synchronously).
+  // Play a single verse (single mode). Passed to the overlay's auto-focused
+  // "play this verse" control, so opening the overlay and playing share one code
+  // path and the loading state appears within 100ms (playVerse sets status
+  // "loading" synchronously).
   const playSingleVerse = (sv: number, av: number) => {
     const header = surahs.find((s) => s.number === sv);
     usePlayer.getState().playVerse(sv, av, {
@@ -269,15 +230,6 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       speed: settings.playbackSpeed,
       surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
     });
-  };
-
-  // A plain tap on a verse plays it (single mode) and surfaces the playback
-  // panel. The reading-depth panel is reached from the per-verse details
-  // control instead, so the tap is never ambiguous and never double-plays.
-  const handlePlayVerse = (verseKey: string) => {
-    if (!/^\d{1,3}:\d{1,3}$/.test(verseKey)) return;
-    const [sv, av] = verseKey.split(":").map(Number);
-    playSingleVerse(sv, av);
   };
 
   // Play continuously from this verse to the end of its surah.
@@ -461,112 +413,34 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
 
       <p className="text-center text-micro text-text-muted px-2">{t("mushaf.tapToPlayHint")}</p>
 
-      {/* A reactive ~1024px matchMedia switch inside PlaybackSurface mounts
-          exactly one presentation: at >= 1024px the docked side panel, where the
-          reading column reflows beside it so the active verse stays visible;
-          below that width the bottom sheet. This is the single reader-scoped
-          playback surface, so the global MiniPlayer is suppressed on /mushaf. */}
+      {/* A plain verse tap opens the focused verse overlay (the auto-focused
+          "play this verse" plays it); the overlay replaces the old page-shrinking
+          docked panel, so the reading column stays full width and never reflows
+          to a second column. The overlay portals to the body but must sit
+          lexically inside VerseSelectionProvider so its range/repeat/loop/gap
+          controls resolve the one selection (useVerseSelection throws otherwise).
+          With the surface as an overlay, the global MiniPlayer is suppressed on
+          /mushaf as before. */}
       <VerseSelectionProvider value={selection}>
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8 lg:items-start">
-          <div data-tajweed-drill={drill || undefined} className="min-w-0">
-            <MushafPage
-              data={data}
-              memorizationMode={memorizationMode}
-              targetVerseKey={targetVerseKey}
-              onPlayVerse={handlePlayVerse}
-              onSelectVerse={setSelectedVerse}
-            />
-          </div>
-          <PlaybackSurface data={data} />
+        <div data-tajweed-drill={drill || undefined} className="min-w-0">
+          <MushafPage
+            data={data}
+            memorizationMode={memorizationMode}
+            targetVerseKey={targetVerseKey}
+            onPlayVerse={setSelectedVerse}
+            onSelectVerse={setSelectedVerse}
+          />
         </div>
+        <VerseOverlay
+          open={!!selectedVerse}
+          verseKey={selectedVerse}
+          onClose={() => setSelectedVerse(null)}
+          data={data}
+          surahs={surahs}
+          playSingleVerse={playSingleVerse}
+          playFromVerse={playFromVerse}
+        />
       </VerseSelectionProvider>
-
-      {selectedVerse && /^\d{1,3}:\d{1,3}$/.test(selectedVerse) && (() => {
-        const [sv, av] = selectedVerse.split(":").map(Number);
-        const header = surahs.find((s) => s.number === sv);
-        const surahLabel = header ? (isAr ? header.nameArabic : header.nameSimple) : "";
-        const refLabel = isAr ? `${toArabicIndic(sv)}:${toArabicIndic(av)}` : `${sv}:${av}`;
-        const verseMemo = memMounted && isMemorized(selectedVerse);
-        const verseBm = bmMounted && isVerseBookmarked(selectedVerse);
-        return (
-          <div
-            ref={panelRef}
-            className="rounded-xl border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark p-4 space-y-3 scroll-mt-20"
-          >
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <span className="text-sm font-heading font-semibold">
-                {surahLabel} <span className="text-text-muted font-mono text-xs">{refLabel}</span>
-              </span>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => playSingleVerse(sv, av)}
-                  aria-label={t("player.playVerse")}
-                  title={t("player.playVerse")}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-primary dark:text-primary-light hover:bg-primary/10 transition-colors"
-                >
-                  <PlaySolid />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => playFromVerse(sv, av)}
-                  aria-label={t("player.playFromHere")}
-                  title={t("player.playFromHere")}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-primary dark:text-primary-light hover:bg-primary/10 transition-colors"
-                >
-                  <PlayFromHereIcon />
-                </button>
-                {memMounted && (
-                  <button
-                    type="button"
-                    onClick={() => toggleMemorized(selectedVerse)}
-                    aria-pressed={verseMemo}
-                    aria-label={verseMemo ? t("mushaf.memorizeUnmark") : t("mushaf.memorizeMark")}
-                    title={verseMemo ? t("mushaf.memorizeUnmark") : t("mushaf.memorizeMark")}
-                    className={cn(
-                      "inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors",
-                      verseMemo
-                        ? "text-primary dark:text-primary-light bg-primary/10"
-                        : "text-text-muted hover:bg-bg-subtle",
-                    )}
-                  >
-                    <HeartIcon filled={verseMemo} />
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => toggleVerseBm(selectedVerse)}
-                  aria-pressed={verseBm}
-                  aria-label={verseBm ? t("mushaf.bookmarkVerseRemove") : t("mushaf.bookmarkVerse")}
-                  title={verseBm ? t("mushaf.bookmarkVerseRemove") : t("mushaf.bookmarkVerse")}
-                  className={cn(
-                    "inline-flex items-center justify-center w-9 h-9 rounded-lg transition-colors",
-                    verseBm
-                      ? "text-gold-dark dark:text-gold-light bg-gold/15"
-                      : "text-text-muted hover:bg-bg-subtle",
-                  )}
-                >
-                  <BookmarkIcon filled={verseBm} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedVerse(null)}
-                  aria-label={t("reading.close")}
-                  title={t("reading.close")}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-text-muted hover:bg-bg-subtle transition-colors"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-            <ReadingDepth surah={sv} ayah={av} />
-            {settings.showWordByWord && <WordByWord surah={sv} ayah={av} />}
-            <VerseNotes key={selectedVerse} verseKey={selectedVerse} />
-            <RecitationCompare surah={sv} ayah={av} reciter={settings.reciter} />
-            <ReciterCompare surah={sv} ayah={av} surahName={surahLabel || null} />
-          </div>
-        );
-      })()}
 
       <ReaderPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} surahs={surahs} />
 

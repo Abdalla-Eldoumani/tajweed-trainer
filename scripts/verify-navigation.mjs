@@ -23,6 +23,9 @@ try {
 }
 const nav = read("src", "lib", "navigation.ts");
 const reader = read("src", "components", "mushaf", "MushafReader.tsx");
+// The per-verse bookmark action lives in the overlay the reader renders, so the
+// "reachable from the reader UI" check looks at both.
+const overlay = read("src", "components", "mushaf", "VerseOverlay.tsx");
 const mIndex = read("src", "components", "mushaf", "MushafIndex.tsx");
 const home = read("src", "app", "page.tsx");
 const settings = read("src", "app", "settings", "page.tsx");
@@ -81,7 +84,7 @@ record(
 record("Surah selector no longer targets the /mushaf/surah redirect", !/\/mushaf\/surah\//.test(reader));
 
 // The new model is actually reachable from the UI (not dead code).
-record("Reader wires verse bookmarks", /useBookmarks/.test(reader));
+record("Reader wires verse bookmarks", /useBookmarks/.test(reader) || /useBookmarks/.test(overlay));
 record("Mushaf index lists verse bookmarks", /useBookmarks/.test(mIndex));
 record("Home surfaces daily verse and resume", /DailyVerse/.test(home) && /ResumeReading/.test(home));
 record("Reader persists lastRead", /setLastRead\(/.test(reader));
