@@ -9,8 +9,29 @@ import { exportProgress, importProgress, getProgress, shouldRemindBackup } from 
 import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
-import type { Recitation, TranslationResource } from "@/lib/types";
+import type { Recitation, TranslationResource, Theme } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+// Literal anchor hexes per theme (DESIGN_SYSTEM_V2.md), used only to paint the
+// preview swatch: ground, ink, gold. These cannot be var(--bg)/var(--text)/
+// var(--gold) because exactly one [data-theme] is active on <html> at a time, so
+// the variables would render every swatch in the active theme. The order is the
+// switcher's display order (two light, then three dark).
+const THEME_PREVIEW: Record<Theme, { bg: string; text: string; gold: string }> = {
+  vellum: { bg: "#F5F1E8", text: "#2A2620", gold: "#D4A843" },
+  pearl: { bg: "#F4F6F8", text: "#1B2733", gold: "#A8801F" },
+  night: { bg: "#0A0F1C", text: "#ECE7DA", gold: "#D4A843" },
+  sepia: { bg: "#1C1812", text: "#ECE0CC", gold: "#D8A24A" },
+  mihrab: { bg: "#08110D", text: "#E6E9DF", gold: "#CBA85A" },
+};
+
+const THEME_OPTIONS: { value: Theme; labelKey: string }[] = [
+  { value: "vellum", labelKey: "settings.themeVellum" },
+  { value: "pearl", labelKey: "settings.themePearl" },
+  { value: "night", labelKey: "settings.themeNight" },
+  { value: "sepia", labelKey: "settings.themeSepia" },
+  { value: "mihrab", labelKey: "settings.themeMihrab" },
+];
 
 export default function SettingsPage() {
   const { settings, updateSettings } = useSettings();
@@ -241,6 +262,51 @@ export default function SettingsPage() {
         </div>
       </Card>
 
+      {/* Theme */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.theme")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.themeHelp")}</p>
+        <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={t("settings.theme")}>
+          {THEME_OPTIONS.map(({ value, labelKey }) => {
+            const preview = THEME_PREVIEW[value];
+            const active = settings.theme === value;
+            return (
+              <label
+                key={value}
+                className={cn(
+                  "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                  active
+                    ? "border-gold bg-primary/10 dark:bg-primary-light/20"
+                    : "border-border hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
+                )}
+              >
+                <input
+                  type="radio"
+                  name="theme"
+                  value={value}
+                  checked={active}
+                  onChange={() => updateSettings({ theme: value })}
+                  className="accent-primary dark:accent-gold"
+                  aria-label={t(labelKey)}
+                />
+                {/* Live preview of this theme's ground, ink, and gold. The frame is
+                    a gold hairline so the swatch reads as a small illuminated tile
+                    rather than a flat color chip. */}
+                <span
+                  aria-hidden="true"
+                  className="flex items-center gap-1.5 rounded-md px-2 py-1.5 shrink-0 ring-1 ring-gold-hairline"
+                  style={{ backgroundColor: preview.bg }}
+                >
+                  <span className="block h-4 w-4 rounded-full" style={{ backgroundColor: preview.text }} />
+                  <span className="block h-4 w-4 rounded-full" style={{ backgroundColor: preview.gold }} />
+                </span>
+                <span className="text-sm font-medium">{t(labelKey)}</span>
+              </label>
+            );
+          })}
+        </div>
+      </Card>
+
       {/* Display Options */}
       <Card>
         <h2 className="font-heading font-semibold text-sm mb-3">{t("settings.displayOptions")}</h2>
@@ -264,17 +330,6 @@ export default function SettingsPage() {
               onChange={(e) => updateSettings({ showTranslation: e.target.checked })}
               className="accent-primary dark:accent-gold w-4 h-4"
               aria-label={t("settings.showTranslation")}
-            />
-          </label>
-
-          <label className="flex items-center justify-between cursor-pointer">
-            <span className="text-sm">{t("settings.darkMode")}</span>
-            <input
-              type="checkbox"
-              checked={settings.darkMode}
-              onChange={(e) => updateSettings({ darkMode: e.target.checked })}
-              className="accent-primary dark:accent-gold w-4 h-4"
-              aria-label={t("settings.darkMode")}
             />
           </label>
         </div>
@@ -332,12 +387,16 @@ export default function SettingsPage() {
         <h2 className="font-heading font-semibold text-sm mb-2">{t("settings.backup.title")}</h2>
         <p className="text-xs text-text-muted mb-3">{t("settings.backup.description")}</p>
         {showBackupReminder && (
-          <div className="flex items-start justify-between gap-3 mb-3 rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-gold/10 dark:bg-gold/5 px-3 py-2">
-            <p className="text-xs text-text">{t("settings.backup.reminder")}</p>
+          <div className="flex items-start justify-between gap-3 mb-3 rounded-lg border border-gold-light/60 dark:border-gold-dark/40 bg-bg-subtle dark:bg-bg-subtle-dark px-3 py-2">
+            {/* Message and dismiss read their colors from the per-theme CSS
+                variables so contrast holds on all five grounds (a static
+                Tailwind hex cannot match night, sepia, and mihrab at once). The
+                dismiss steps from muted at rest to full ink on hover. */}
+            <p className="text-xs text-[color:var(--text)]">{t("settings.backup.reminder")}</p>
             <button
               type="button"
               onClick={() => setShowBackupReminder(false)}
-              className="text-xs font-medium text-text-muted hover:text-text shrink-0 transition-colors"
+              className="text-xs font-medium text-[color:var(--text-muted)] hover:text-[color:var(--text)] shrink-0 transition-colors"
               aria-label={t("settings.backup.reminderDismiss")}
             >
               {t("settings.backup.reminderDismiss")}

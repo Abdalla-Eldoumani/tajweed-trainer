@@ -123,20 +123,25 @@ record(
 
 // --- 7. the ayah-number pill carries its contrast-scoped gold, not the shared
 //        --gold-dark (which sits at AA-large only on --bg-subtle). The pill is
-//        theme-aware: a deeper gold in light, a brighter gold in dark, each
-//        clearing AA-normal on its own --bg-subtle ground. ---
+//        theme-aware: a deeper gold on the light grounds (the base rule), a
+//        brighter gold on the dark grounds. The dark rule is now scoped to the
+//        three dark themes ([data-theme="night"|"sepia"|"mihrab"]) rather than
+//        the removed .dark class, since the phase replaced the single dark class
+//        with per-ground [data-theme] blocks; the numeral must still be a scoped
+//        contrast-safe hex, not the shared var(--gold-dark). ---
 const css = read("src/app/globals.css");
-const lightEnd = (css.match(/\.tajweed-text \.end\s*\{([\s\S]*?)\n\}/) || [])[1] || "";
-const darkEnd = (css.match(/\.dark \.tajweed-text \.end\s*\{([\s\S]*?)\n\}/) || [])[1] || "";
+const lightEnd = (css.match(/(?<![\]"]\s)\.tajweed-text \.end\s*\{([\s\S]*?)\n\}/) || [])[1] || "";
+const darkEnd =
+  (css.match(/\[data-theme="night"\] \.tajweed-text \.end[\s\S]*?\{([\s\S]*?)\n\}/) || [])[1] || "";
 record(
   "ayah-number pill (light) sets a scoped color, not var(--gold-dark)",
   /color:\s*#[0-9A-Fa-f]{6}/.test(lightEnd) && !/color:\s*var\(--gold-dark\)/.test(lightEnd),
   "AA-normal contrast-scoped numeral color on the ivory pill",
 );
 record(
-  "ayah-number pill (dark) sets a scoped color, not var(--gold-dark)",
+  "ayah-number pill (dark themes) sets a scoped color, not var(--gold-dark)",
   /color:\s*#[0-9A-Fa-f]{6}/.test(darkEnd) && !/color:\s*var\(--gold-dark\)/.test(darkEnd),
-  "AA-normal contrast-scoped numeral color on the navy pill",
+  "AA-normal contrast-scoped numeral color on the dark-ground pills",
 );
 
 // --- 8. no raw `bg-primary text-white` anywhere in src: filled primary buttons

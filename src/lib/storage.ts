@@ -3,6 +3,7 @@ import type {
   UserSettings,
   ModuleProgress,
   Language,
+  Theme,
   ReviewState,
   ReviewBox,
   AnalyticsEvent,
@@ -21,6 +22,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   reciter: DEFAULT_RECITER_ID,
   playbackSpeed: 1.0,
   fontSize: "normal",
+  theme: "vellum",
   darkMode: false,
   showTransliteration: true,
   showTranslation: true,
@@ -110,6 +112,7 @@ const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 
 const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
 const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
+const VALID_THEMES: readonly Theme[] = ["vellum", "pearl", "night", "sepia", "mihrab"];
 
 // Resolves any stored value to a known Quran.com recitation id, migrating legacy
 // alquran.cloud identifiers and replacing anything unknown or tampered with the
@@ -138,6 +141,16 @@ function pickNumber(value: unknown, fallback: number, min?: number, max?: number
   return value;
 }
 
+// Resolve the theme on read/import. An explicit valid theme always wins; when it
+// is absent or unknown, migrate the legacy darkMode flag (true -> night) and fall
+// back to the safe default (vellum) for everything else. The darkMode branch must
+// take precedence over the plain default, so it is consulted here rather than
+// leaning on DEFAULT_SETTINGS.theme.
+function resolveTheme(input: Record<string, unknown>): Theme {
+  if (VALID_THEMES.includes(input.theme as Theme)) return input.theme as Theme;
+  return input.darkMode === true ? "night" : "vellum";
+}
+
 function sanitizeSettings(input: unknown): UserSettings {
   if (!isObject(input)) return DEFAULT_SETTINGS;
   const bookmarks = Array.isArray(input.mushafBookmarks)
@@ -156,6 +169,7 @@ function sanitizeSettings(input: unknown): UserSettings {
       ? (input.playbackSpeed as number)
       : DEFAULT_SETTINGS.playbackSpeed,
     fontSize: pickEnum(input.fontSize, VALID_FONT_SIZES, DEFAULT_SETTINGS.fontSize),
+    theme: resolveTheme(input),
     darkMode: typeof input.darkMode === "boolean" ? input.darkMode : DEFAULT_SETTINGS.darkMode,
     showTransliteration:
       typeof input.showTransliteration === "boolean" ? input.showTransliteration : DEFAULT_SETTINGS.showTransliteration,
