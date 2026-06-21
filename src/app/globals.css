@@ -885,6 +885,45 @@ html, body {
   border-inline-end: 2px dashed var(--primary);
 }
 
+/* The single word being recited right now, lit as a separate layer OVER the
+   verified colored markup (the follow-along highlight). It never recolors a
+   tajweed letter: the letter colors come from the <tajweed> spans underneath and
+   are untouched; this only washes the word's ground and underlines it. The wash
+   is a faint --primary tint (distinct from .mushaf-verse-playing, which tints the
+   ground --bg-subtle at VERSE level, and from .mushaf-verse-selected, which adds
+   only a dashed end border) plus a gold underline drawn with an inset box-shadow
+   so it costs no layout box and sits under the glyph. Logical inset-inline padding
+   and rounding keep it correct in RTL. The transition is the same single calm
+   color/background fade the rest of the reader uses, so the lit word glides as the
+   reciter advances rather than blinking. */
+.mushaf-word-active {
+  background-color: rgba(30, 66, 121, 0.1);
+  box-shadow: inset 0 -0.12em 0 var(--gold);
+  border-radius: 0.2em;
+  padding-inline: 0.05em;
+  transition: background-color var(--motion-short) var(--ease-standard),
+    box-shadow var(--motion-short) var(--ease-standard);
+}
+
+/* On the dark grounds the same wash needs the gold-forward primary so it reads
+   against deep navy/sepia/emerald without muddying the ink. */
+[data-theme="night"] .mushaf-word-active,
+[data-theme="sepia"] .mushaf-word-active,
+[data-theme="mihrab"] .mushaf-word-active {
+  background-color: rgba(212, 168, 67, 0.14);
+}
+
+/* Reduced motion: no travelling fade. The word is still indicated by the static
+   wash + underline above; only the glide between words is dropped. The global
+   reduced-motion block already crushes transitions, but this is explicit so the
+   follow-along layer's static-under-reduced-motion contract is guaranteed at the
+   source even if that block is ever scoped. */
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-word-active {
+    transition: none;
+  }
+}
+
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
    The container is sized as a circle for 1-2 digit ayah numbers and grows
    into a stadium pill for 3-digit numbers (Al-Baqarah, Aal-Imran etc.).
