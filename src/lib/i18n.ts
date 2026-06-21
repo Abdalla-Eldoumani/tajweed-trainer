@@ -540,6 +540,13 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Light up each word as it is recited",
     ar: "إضاءة كل كلمة أثناء تلاوتها",
   },
+  "mushaf.focusMode": { en: "Focus mode", ar: "وضع التركيز" },
+  "mushaf.focusModeOn": { en: "Dim the other verses", ar: "تعتيم الآيات الأخرى" },
+  "mushaf.focusModeOff": { en: "Show all verses", ar: "إظهار جميع الآيات" },
+  "mushaf.focusModeHint": {
+    en: "Dim every verse except the one playing or selected",
+    ar: "تعتيم كل آية عدا الآية المشغّلة أو المحدّدة",
+  },
   "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
   "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
   "mushaf.legend": { en: "Color legend", ar: "دليل الألوان" },
