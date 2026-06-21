@@ -20,6 +20,12 @@
 //      three-ground [data-theme] form, an orphaned `.dark .foo {}` rule would
 //      silently apply on only one of the three dark themes; this guard makes
 //      that a build failure. The bare `.dark { }` variable block is allowed.
+//   6. var-driven grounds — the bg / bg-card / text Tailwind tokens resolve to
+//      the per-theme CSS variables, so all five themes flip their ground and
+//      ink on every utility surface, not just a light/dark pair. Reverting any
+//      to a static hex collapses sepia/mihrab into night (and pearl into
+//      vellum) and is a FAIL. The opacity-bearing accent/fill tokens (primary,
+//      gold, accent, bg-subtle, text-muted) stay hex by design, not checked.
 //
 // Mirrors scripts/verify-tajweed-colors.mjs in shape: same record/warn
 // reporting, the same hexToRgb/relLum/contrast helpers, process.exit(1) on FAIL.
@@ -267,6 +273,28 @@ record(
   "globals.css has no orphaned `.dark ` descendant selector",
   !orphanMatch,
   orphanMatch ? `found "${orphanMatch[0]}"` : "only the bare .dark {} variable block",
+);
+
+// --- 6. ground/ink Tailwind tokens are theme-variable driven ---
+// Static hex on bg/bg-card/text collapses the five themes into a light/dark
+// pair on every Tailwind-utility surface (the dominant surfaces). Both the base
+// and the -dark token must resolve to the same per-theme variable so `dark:`
+// utilities re-assert the themed value. Accent/fill tokens that take opacity
+// modifiers stay hex by design and are intentionally not checked here.
+const tw = readFileSync(join(root, "tailwind.config.ts"), "utf8");
+const groundTokenChecks = [
+  [/\bbg:\s*\{[^}]*\bDEFAULT:\s*"var\(--bg\)"/, "bg.DEFAULT -> var(--bg)"],
+  [/\bbg:\s*\{[^}]*\bcard:\s*"var\(--bg-card\)"/, "bg.card -> var(--bg-card)"],
+  [/\bbg:\s*\{[^}]*\bdark:\s*"var\(--bg\)"/, "bg.dark -> var(--bg)"],
+  [/\bbg:\s*\{[^}]*"card-dark":\s*"var\(--bg-card\)"/, "bg.card-dark -> var(--bg-card)"],
+  [/\btext:\s*\{[^}]*\bDEFAULT:\s*"var\(--text\)"/, "text.DEFAULT -> var(--text)"],
+  [/\btext:\s*\{[^}]*\bdark:\s*"var\(--text\)"/, "text.dark -> var(--text)"],
+];
+const groundMisses = groundTokenChecks.filter(([re]) => !re.test(tw)).map(([, label]) => label);
+record(
+  "Ground and ink Tailwind tokens are theme-variable driven",
+  groundMisses.length === 0,
+  groundMisses.length ? `not var-driven: ${groundMisses.join(", ")}` : "bg, bg-card, text resolve to var(--*)",
 );
 
 const failed = results.filter((r) => !r.ok);
