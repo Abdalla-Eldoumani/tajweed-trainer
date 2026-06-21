@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useSettings } from "@/hooks/useSettings";
 import { sanitizeTajweedHtml } from "@/lib/sanitize";
@@ -91,28 +91,29 @@ export function TajweedFollowText({
   const wrapsRef = useRef<HTMLElement[]>([]);
 
   // Unwrap one wrapper element: move its children back to its place and remove it,
-  // leaving the original nodes exactly as injected.
-  const unwrap = (wrap: HTMLElement) => {
+  // leaving the original nodes exactly as injected. Stable (touches no reactive
+  // value) so the effects can depend on it without re-running every render.
+  const unwrap = useCallback((wrap: HTMLElement) => {
     const parent = wrap.parentNode;
     if (!parent) return;
     while (wrap.firstChild) parent.insertBefore(wrap.firstChild, wrap);
     parent.removeChild(wrap);
-  };
+  }, []);
 
   // Unwrap every wrapper this layer inserted, restoring the markup to exactly the
   // injected DOM, and drop the reveal-active marker. Safe to call when nothing is
   // wrapped.
-  const clearWraps = () => {
+  const clearWraps = useCallback(() => {
     for (const wrap of wrapsRef.current) unwrap(wrap);
     wrapsRef.current = [];
     containerRef.current?.classList.remove(REVEAL_ACTIVE_CLASS);
-  };
+  }, [unwrap]);
 
   // Wrap a word's nodes in one class-bearing element and track it for cleanup.
   // Additive only: the wrapper carries just the class; the letter spans and their
   // colors inside are untouched. Returns silently if the group is empty or
   // detached so a degenerate verse never throws.
-  const wrapWord = (wordNodes: Node[], className: string) => {
+  const wrapWord = useCallback((wordNodes: Node[], className: string) => {
     if (wordNodes.length === 0) return;
     const first = wordNodes[0];
     const parent = first.parentNode;
@@ -122,7 +123,7 @@ export function TajweedFollowText({
     parent.insertBefore(wrap, first);
     for (const node of wordNodes) wrap.appendChild(node);
     wrapsRef.current.push(wrap);
-  };
+  }, []);
 
   // Re-evaluate the highlight (and the reveal blur) after every render that can
   // change which word is active (the html re-injects on change;
@@ -204,11 +205,11 @@ export function TajweedFollowText({
     if (activeIdx >= 0 && activeIdx < groups.length) {
       wrapWord(groups[activeIdx], ACTIVE_CLASS);
     }
-  }, [safeHtml, activeIdx, segmentCount, blurUnrevealed]);
+  }, [safeHtml, activeIdx, segmentCount, blurUnrevealed, clearWraps, wrapWord]);
 
   // Remove every wrapper on unmount so a closed page leaves no orphan node. Runs
   // once (clearWraps reads the ref), independent of the per-tick effect above.
-  useEffect(() => clearWraps, []);
+  useEffect(() => clearWraps, [clearWraps]);
 
   const sizeClasses = cn(
     "font-quran leading-[2] tajweed-text",
