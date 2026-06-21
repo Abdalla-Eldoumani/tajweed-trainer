@@ -777,7 +777,7 @@ export function VerseOverlay({
           aria-describedby={bodyId}
           style={{ boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)" }}
           className={cn(
-            "w-[calc(100%-2rem)] max-w-[560px] rounded-xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark p-6 sm:p-8",
+            "w-[calc(100%-2rem)] max-w-[560px] max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain rounded-xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark p-6 sm:p-8",
             "transition-[opacity,transform] [transition-duration:var(--motion-medium)] [transition-timing-function:var(--ease-out)] motion-reduce:transition-none",
             open ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]",
           )}
