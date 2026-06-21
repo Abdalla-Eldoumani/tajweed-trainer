@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
 import { fetchAudioUrl } from "@/lib/audio-api";
+import { subVerseLoopDecision } from "@/lib/follow-along";
 
 // Owns the single <audio> element for the whole session (the iOS single-element
 // rule) and drives it from the global player store. Renders nothing; mounted
@@ -12,8 +13,15 @@ export function PlayerHost() {
   const loadSeq = useRef(0);
   // Pending inter-verse gap timer. When interVersePause > 0 the advance to the
   // next queue item waits this long; the id lives here so a pause/stop landing
-  // mid-gap (or an unmount) can cancel it and nothing auto-resumes.
+  // mid-gap (or an unmount) can cancel it and nothing auto-resumes. The sub-verse
+  // loop reuses this same timer for the gap between its passes.
   const gapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // True from the moment a sub-verse loop pass reaches its end (the seek-back is
+  // initiated, possibly after a gap) until currentTime falls back below endMs.
+  // ontimeupdate fires many times a second, so without this latch the same
+  // reached-end tick would fire the seek-back / stop repeatedly before the seek
+  // takes effect, double-counting passes.
+  const subVerseSeeking = useRef(false);
 
   const loadToken = usePlayer((s) => s.loadToken);
   const seekToken = usePlayer((s) => s.seekToken);
@@ -34,7 +42,58 @@ export function PlayerHost() {
         gapTimer.current = null;
       }
     };
-    audio.ontimeupdate = () => get().onTime(audio.currentTime, audio.duration || 0);
+    audio.ontimeupdate = () => {
+      get().onTime(audio.currentTime, audio.duration || 0);
+      // Sub-verse word-range loop: the audio element only fires onended at file
+      // end, so the stop-at-target-time mid-verse seam lives HERE. The pure
+      // subVerseLoopDecision (no second engine, no timer of its own) decides loop
+      // vs stop from the media time; media seconds are rate-independent, so this
+      // stays aligned at 0.5x/0.75x/1x with no scaling.
+      const st = get();
+      const loop = st.subVerseLoop;
+      if (!loop || st.status !== "playing") return;
+      // Latch: ignore the flood of reached-end ticks until the seek-back lands and
+      // currentTime drops below endMs, so a pass is counted exactly once.
+      if (subVerseSeeking.current) {
+        if (audio.currentTime * 1000 < loop.endMs) subVerseSeeking.current = false;
+        return;
+      }
+      const decision = subVerseLoopDecision(
+        { ...loop, done: st.subVerseLoopsDone },
+        audio.currentTime * 1000,
+      );
+      if (decision.kind === "playing") return;
+      if (decision.kind === "loop") {
+        // A pass ended with more to go: count it now, then seek back to the start
+        // after the existing inter-verse gap (pausing the audio across the gap so
+        // it does not keep playing past the range), or immediately at gap 0. Reuse
+        // the SAME gapTimer + re-read-at-fire-time guard as the onended advance.
+        subVerseSeeking.current = true;
+        get().noteSubVerseLoopPass();
+        const seekBack = () => get().seek(decision.seekMs / 1000);
+        if (st.interVersePause > 0) {
+          audio.pause();
+          gapTimer.current = setTimeout(() => {
+            gapTimer.current = null;
+            // A pause/stop that landed during the gap wins, exactly as the onended
+            // resolver drops an advance the user interrupted.
+            const now = usePlayer.getState();
+            if (now.status !== "playing" || !now.subVerseLoop) return;
+            seekBack();
+            if (audio.paused) audio.play().catch(() => usePlayer.setState({ status: "paused" }));
+          }, st.interVersePause * 1000);
+        } else {
+          seekBack();
+        }
+        return;
+      }
+      // stop: the last pass finished — clear the loop and pause at the range end,
+      // the same calm end the ayah repeatRange exhaustion produces.
+      subVerseSeeking.current = false;
+      clearGap();
+      get().clearSubVerseLoop();
+      get().pause();
+    };
     audio.onloadedmetadata = () => {
       const { pendingOffset } = get();
       if (pendingOffset > 0 && Number.isFinite(audio.duration)) {
@@ -44,6 +103,16 @@ export function PlayerHost() {
     };
     audio.onended = () => {
       clearGap();
+      // A sub-verse loop whose range ends at (or past) the file's true end can hit
+      // onended before ontimeupdate crosses endMs. Treat that as the loop's calm
+      // end: clear it and stop here, never running the queue advance with a stale
+      // word range armed. (The common case ends earlier, in ontimeupdate above.)
+      if (get().subVerseLoop) {
+        subVerseSeeking.current = false;
+        get().clearSubVerseLoop();
+        get().pause();
+        return;
+      }
       // The store's onEnded owns the advance decision; the host only decides
       // whether to defer that call by the inter-verse gap (EDGE_CASES B6: a real
       // timer, never silence baked into audio). At gap 0 the advance is immediate
@@ -157,11 +226,15 @@ export function PlayerHost() {
 
   // A pause or stop that lands during the inter-verse gap must cancel the pending
   // advance so nothing auto-resumes. Any non-playing status clears the timer; the
-  // gap only ever runs while playing, so this never drops a live advance.
+  // gap only ever runs while playing, so this never drops a live advance. The
+  // sub-verse seek latch is reset here too so a stop mid-gap never strands it set.
   useEffect(() => {
-    if (status !== "playing" && gapTimer.current !== null) {
-      clearTimeout(gapTimer.current);
-      gapTimer.current = null;
+    if (status !== "playing") {
+      subVerseSeeking.current = false;
+      if (gapTimer.current !== null) {
+        clearTimeout(gapTimer.current);
+        gapTimer.current = null;
+      }
     }
   }, [status]);
 
