@@ -715,6 +715,12 @@ export function VerseOverlay({
       setSheetState((s) => (s === "peek" ? "expanded" : "peek"));
     }
   };
+  // An OS-level interrupt (incoming call, multitasking swipe) fires pointercancel
+  // instead of pointerup; drop the in-flight drag so a stale delta can never
+  // trigger a spurious dismiss on the next event.
+  const onHandlePointerCancel = () => {
+    dragRef.current = null;
+  };
 
   // Stable ids tie the dialog's accessible name to the verse reference and its
   // description to the verse text.
@@ -902,6 +908,7 @@ export function VerseOverlay({
               onPointerDown={onHandlePointerDown}
               onPointerMove={onHandlePointerMove}
               onPointerUp={onHandlePointerUp}
+              onPointerCancel={onHandlePointerCancel}
               className="flex items-center justify-center w-full h-11 -mb-2 touch-none"
             >
               <span
