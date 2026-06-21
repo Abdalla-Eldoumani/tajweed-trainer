@@ -10,7 +10,7 @@ This is a client-side app with no user accounts, no server data, no payments, an
 - **Clickjacking and framing.** `X-Frame-Options: DENY` and `frame-ancestors 'none'` prevent the app from being embedded.
 - **MIME sniffing.** `X-Content-Type-Options: nosniff`.
 - **Information leakage on outbound requests.** `Referrer-Policy: strict-origin-when-cross-origin`.
-- **Browser API access.** `Permissions-Policy` denies 14 powerful features the app never needs: camera, microphone, geolocation, the FLoC interest cohort, payment, usb, serial, bluetooth, hid, midi, display-capture, accelerometer, gyroscope, and magnetometer.
+- **Browser API access.** `Permissions-Policy` allows the microphone for same-origin only (`microphone=(self)`) — the record-your-own-voice comparison needs it and the clip stays a local blob, never uploaded — and denies 13 other powerful features the app never needs: camera, geolocation, the FLoC interest cohort, payment, usb, serial, bluetooth, hid, midi, display-capture, accelerometer, gyroscope, and magnetometer.
 - **Forced HTTPS.** `Strict-Transport-Security` set to 2 years with subdomain inclusion and preload eligibility.
 
 ## Content Security Policy

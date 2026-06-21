@@ -40,14 +40,16 @@ const securityHeaders = [
   // Isolate the browsing context from cross-origin windows. The app opens no
   // popups and uses no window.opener, so same-origin is free defense.
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-  // Deny every powerful feature the app never uses, shrinking the surface a
-  // post-XSS attacker could reach. The app only plays audio, which needs none
-  // of these.
+  // Deny every powerful feature except the microphone. The record-your-own-voice
+  // comparison (RecitationCompare/useRecorder) needs same-origin, user-prompted
+  // mic access; the recorded clip stays a local blob and is never uploaded, so
+  // `self` is the minimal grant. Everything else stays denied, shrinking the
+  // surface a post-XSS attacker could reach.
   {
     key: "Permissions-Policy",
     value: [
       "camera=()",
-      "microphone=()",
+      "microphone=(self)",
       "geolocation=()",
       "interest-cohort=()",
       "payment=()",
