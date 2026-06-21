@@ -40,6 +40,13 @@ const ACTIVE_CLASS = "mushaf-word-active";
 // The class for a word not yet recited in reveal-as-recited mode. Styled in
 // globals.css with the SAME blur/dim the whole-verse recall blur uses.
 const BLURRED_CLASS = "mushaf-word-blurred";
+// A marker on the container root set ONLY while per-word reveal is actually
+// engaged (reveal mode on AND segments align). It tells globals.css to drop any
+// whole-verse blur the caller put on this element, so the per-word .mushaf-word-
+// blurred wrappers become the single blur source and revealed words show through.
+// When reveal cannot align it is absent, so the caller's whole-verse blur stands
+// as the fallback (the recall path stays hidden; FOLLOW-05).
+const REVEAL_ACTIVE_CLASS = "mushaf-reveal-active";
 // The wrapper element this layer inserts around a word's nodes (the active word
 // and, in reveal mode, each unrevealed word). A custom tag name so a grouping
 // pass never mistakes it for content, and so cleanup can find and unwrap exactly
@@ -93,10 +100,12 @@ export function TajweedFollowText({
   };
 
   // Unwrap every wrapper this layer inserted, restoring the markup to exactly the
-  // injected DOM. Safe to call when nothing is wrapped.
+  // injected DOM, and drop the reveal-active marker. Safe to call when nothing is
+  // wrapped.
   const clearWraps = () => {
     for (const wrap of wrapsRef.current) unwrap(wrap);
     wrapsRef.current = [];
+    containerRef.current?.classList.remove(REVEAL_ACTIVE_CLASS);
   };
 
   // Wrap a word's nodes in one class-bearing element and track it for cleanup.
@@ -179,8 +188,12 @@ export function TajweedFollowText({
     // Reveal-as-recited: blur every word AHEAD of the active one. Words up to and
     // including activeIdx (and, with a negative activeIdx, none) carry no class and
     // show through. Done first, then the active word is wrapped on top, so the two
-    // never fight over the same word (the active word is always <= activeIdx).
+    // never fight over the same word (the active word is always <= activeIdx). The
+    // marker tells globals.css to drop the caller's whole-verse blur now that the
+    // per-word wrappers are the blur source; without it the caller's blur stands as
+    // the fallback (reached only when canAlign fails, above).
     if (blurUnrevealed) {
+      container.classList.add(REVEAL_ACTIVE_CLASS);
       for (let i = 0; i < groups.length; i++) {
         if (i > activeIdx) wrapWord(groups[i], BLURRED_CLASS);
       }
