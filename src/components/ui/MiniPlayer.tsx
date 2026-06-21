@@ -92,6 +92,17 @@ const CloseIcon = () => (
   </svg>
 );
 
+// A slashed eye: hide the transport while audio keeps playing. Distinct from the
+// X (which stops and closes) and the chevron (which minimizes to the pill).
+const HideIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19" />
+    <path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3 8 10 8a9.12 9.12 0 0 0 5.39-1.61" />
+    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+    <line x1="2" y1="2" x2="22" y2="22" />
+  </svg>
+);
+
 const MinimizeIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="6 9 12 15 18 9" />
@@ -124,6 +135,12 @@ export function MiniPlayer() {
   // the explicit stop control dismisses the player. Restored after mount (the
   // server render shows nothing) and persisted so it survives navigation.
   const [minimized, setMinimized] = useState(false);
+  // In-memory only: hide the transport without ending playback. It survives
+  // navigation for free (this component is mounted once in AppProvider) but is
+  // deliberately NOT persisted to storage — a reload restarts the app, and the
+  // bar should reappear only when new playback starts, which the reset effect
+  // below keys on the queue head changing.
+  const [dismissed, setDismissed] = useState(false);
   useEffect(() => {
     setMounted(true);
     setMinimized(getPlayerMinimized());
@@ -139,6 +156,18 @@ export function MiniPlayer() {
 
   const status = usePlayer((s) => s.status);
   const cur = usePlayer((s) => s.queue[s.index] ?? null);
+  // Identity of the queue HEAD (the first item), the signal for "a new playback
+  // session started." Every fresh play action (playVerse/playSurah/playSet/
+  // playRange) replaces the whole queue with a new head; next/prev/onEnded keep
+  // the same queue and only move `index`, so the head is stable across an
+  // advance. Keying the dismissed reset on this (not on loadToken, which also
+  // bumps on advance/nav, and not on idle->active alone, which misses tapping a
+  // new verse while one is already playing) means the bar returns only on a
+  // genuinely new session.
+  const headId = usePlayer((s) => {
+    const head = s.queue[0];
+    return head ? `${head.surah}:${head.ayah}` : null;
+  });
   const surahName = usePlayer((s) => s.surahName);
   const currentTime = usePlayer((s) => s.currentTime);
   const duration = usePlayer((s) => s.duration);
@@ -161,8 +190,24 @@ export function MiniPlayer() {
   // deadline, which doesn't map back to the chosen minutes.
   const [sleepSel, setSleepSel] = useState("");
 
-  const visible = mounted && queueLen > 0 && status !== "idle" && cur !== null;
+  const visible = mounted && !dismissed && queueLen > 0 && status !== "idle" && cur !== null;
   const playing = status === "playing";
+
+  // Reset `dismissed` only when a NEW playback session starts, detected by the
+  // queue head changing to a new non-null verse. This fires on every fresh play
+  // (including tapping a new verse while another is already playing, a
+  // playing->new-queue transition) but NOT on next/prev/onEnded auto-advance
+  // (same queue, only `index` moves) nor on navigation (the head is unchanged).
+  // prevHeadId starts as the first observed head so the initial mount does not
+  // count as a reset; stop() empties the queue (head null), which is ignored so
+  // the bar does not flicker back on the next play through a null transition.
+  const prevHeadId = useRef<string | null>(headId);
+  useEffect(() => {
+    if (headId !== null && headId !== prevHeadId.current) {
+      setDismissed(false);
+    }
+    prevHeadId.current = headId;
+  }, [headId]);
   const label = surahName ?? (cur ? `Surah ${cur.surah}` : "");
   const canRange = mode === "continuous" && queueLen > 1;
   const maxAyah = Math.max(1, queueLen);
@@ -492,6 +537,16 @@ export function MiniPlayer() {
             >
               <ExpandIcon />
             </button>
+            <button
+              type="button"
+              // Hide without stopping; mirrors the expanded card's dismiss.
+              onClick={() => setDismissed(true)}
+              aria-label={t("player.hide")}
+              title={t("player.hide")}
+              className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            >
+              <HideIcon />
+            </button>
           </div>
         ) : (
         <div className="flex items-center gap-2">
@@ -611,6 +666,17 @@ export function MiniPlayer() {
             className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
             <MinimizeIcon />
+          </button>
+          <button
+            type="button"
+            // Hide the bar without ending playback; it returns only when new
+            // playback starts (see the dismissed reset effect).
+            onClick={() => setDismissed(true)}
+            aria-label={t("player.hide")}
+            title={t("player.hide")}
+            className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+          >
+            <HideIcon />
           </button>
           <button
             type="button"
