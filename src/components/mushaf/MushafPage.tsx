@@ -2,13 +2,16 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { usePlayer } from "@/hooks/usePlayer";
+import { useFollowAlong } from "@/hooks/useFollowAlong";
 import { useMemorization } from "@/hooks/useMemorization";
 import { useVerseNotes } from "@/hooks/useVerseNotes";
 import { useVerseSelection } from "./useVerseSelection";
 import { useTranslation } from "@/lib/i18n";
+import { wordCount } from "@/lib/follow-along";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { prefersReducedMotion } from "@/lib/reduced-motion";
 import { TajweedText } from "@/components/ui/TajweedText";
+import { TajweedFollowText } from "@/components/ui/TajweedFollowText";
 import { MushafFrame } from "./MushafFrame";
 import { SurahCartouche } from "./SurahCartouche";
 import { BismillahLine } from "./BismillahLine";
@@ -45,9 +48,15 @@ interface MushafPageProps {
   // Opens the same verse overlay from a distinct, touch-discoverable per-verse
   // details control, so the overlay has a non-tap entry point alongside the tap.
   onSelectVerse?: (verseKey: string) => void;
+  // When true (the default), the verse currently being recited by a
+  // segment-capable reciter gets the word-sync highlight (TajweedFollowText);
+  // every other verse keeps the plain TajweedText. The reader toolbar toggle
+  // (Plan 04) threads this in so a learner can turn the highlight off; off
+  // renders today's TajweedText for every verse.
+  followAlong?: boolean;
 }
 
-export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse }: MushafPageProps) {
+export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
   const { hasNote, mounted: notesMounted } = useVerseNotes();
@@ -61,6 +70,16 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
     const c = s.queue[s.index];
     return c ? `${c.surah}:${c.ayah}` : null;
   });
+
+  // The follow-along controller, read ONCE here (it subscribes narrowly to media
+  // time so the whole page does not re-render on every tick; only the one playing
+  // verse swaps to TajweedFollowText). followKey is the controller's "surah:ayah"
+  // under the status !== "idle" predicate, so it persists while paused — unlike
+  // playingKey, which drops on pause. segmentCount feeds the highlight's canAlign
+  // gate; it is 0 for any segment-less reciter, which silently disables the
+  // highlight.
+  const { verseKey: followKey, activeIdx, segments } = useFollowAlong();
+  const segmentCount = wordCount(segments ?? []);
 
   // Scroll a lesson-targeted verse into view once the page renders.
   useEffect(() => {
@@ -106,6 +125,12 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
             const hideText = memorizationMode && memorized && !revealed.has(v.verseKey);
             const isPlaying = v.verseKey === playingKey;
             const selected = isSelected(v.verseKey);
+            // The one verse that gets the word-sync highlight: the controller's
+            // playing verse (persists on pause), only when follow-along is on and
+            // its segments are present. Every other verse keeps the plain
+            // TajweedText with the rule popover, so the popover still works
+            // off the playing verse.
+            const followHere = followAlong && v.verseKey === followKey && !!segments;
             // Gated on notesMounted so the dot never flashes during hydration
             // (the server snapshot has no notes).
             const noted = notesMounted && hasNote(v.verseKey);
@@ -131,14 +156,33 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                       selected && "mushaf-verse-selected",
                     )}
                   >
-                    <TajweedText
-                      tajweedHtml={v.tajweedHtml}
-                      explainRules
-                      className={cn(
-                        "!leading-[2.6] transition-[filter,opacity] duration-300",
-                        hideText && "blur-md opacity-60",
-                      )}
-                    />{" "}
+                    {followHere ? (
+                      // The playing verse: the word-sync highlight layer over the
+                      // SAME markup. It renders sanitizeTajweedHtml(tajweedHtml)
+                      // unchanged and lights the active word as a separate DOM
+                      // layer; a canAlign mismatch inside it falls back to no
+                      // highlight. explainRules is dropped only on this one verse
+                      // while it plays (the rule popover stays on every other
+                      // verse); the same classes keep the layout identical.
+                      <TajweedFollowText
+                        tajweedHtml={v.tajweedHtml}
+                        activeIdx={activeIdx}
+                        segmentCount={segmentCount}
+                        className={cn(
+                          "!leading-[2.6] transition-[filter,opacity] duration-300",
+                          hideText && "blur-md opacity-60",
+                        )}
+                      />
+                    ) : (
+                      <TajweedText
+                        tajweedHtml={v.tajweedHtml}
+                        explainRules
+                        className={cn(
+                          "!leading-[2.6] transition-[filter,opacity] duration-300",
+                          hideText && "blur-md opacity-60",
+                        )}
+                      />
+                    )}{" "}
                   </button>
                   {/* A distinct, always-present details control opens the
                       reading-depth panel (translation, tafsir, verse actions).
