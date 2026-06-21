@@ -48,6 +48,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   memorizationReviews: {},
   readSections: {},
   verseNotes: {},
+  entryTags: {},
   analytics: [],
   bookmarks: [],
   lastRead: null,
@@ -97,6 +98,13 @@ const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 // dropped, so the count only grows with real annotations.
 const MAX_VERSE_NOTES = 2000;
 const MAX_VERSE_NOTE_LENGTH = 1000;
+// The learner's own short labels per verse. Same ceiling on annotated verses as
+// the notes map (MAX_TAG_ENTRIES mirrors MAX_VERSE_NOTES); a per-entry tag count
+// and a per-tag length so a tampered store cannot bloat every read. Tags are
+// trimmed, deduped, and empty ones dropped, so counts only grow with real use.
+const MAX_TAG_ENTRIES = 2000;
+const MAX_TAGS_PER_ENTRY = 12;
+const MAX_TAG_LENGTH = 40;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
 const MAX_ANALYTICS = 1000;
@@ -314,6 +322,51 @@ function sanitizeVerseNotes(input: unknown): Record<string, string> {
   return out;
 }
 
+// Normalize one verse's tag list: trim each tag, drop empties, cap each tag's
+// length, dedupe case-insensitively (keeping the first-seen casing so the user's
+// own capitalization is preserved), and cap the count. Shared by the sanitizer
+// and setTags so a stored list and a freshly written list are bounded the same
+// way.
+function normalizeTags(input: unknown[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of input) {
+    if (typeof raw !== "string") continue;
+    const tag = raw.trim().slice(0, MAX_TAG_LENGTH);
+    if (tag.length === 0) continue;
+    const key = tag.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(tag);
+    if (out.length >= MAX_TAGS_PER_ENTRY) break;
+  }
+  return out;
+}
+
+// The learner's own short tags per verse. Keys are verseKeys (validated against
+// VERSE_KEY_PATTERN); values are string arrays of the user's own labels, each
+// trimmed/length-capped, deduped, and capped in count by normalizeTags. An entry
+// with no surviving tags is dropped (an empty tag set is "no tags"), the
+// dangerous prototype keys are skipped like every other keyed-map loop, and the
+// whole map caps at MAX_TAG_ENTRIES. A stored object without this field reads
+// back as {} (lossless migration). Tags are never religious content.
+function sanitizeEntryTags(input: unknown): Record<string, string[]> {
+  if (!isObject(input)) return {};
+  const out: Record<string, string[]> = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    if (!Array.isArray(value)) continue;
+    const tags = normalizeTags(value);
+    if (tags.length === 0) continue;
+    out[verseKey] = tags;
+    count += 1;
+    if (count >= MAX_TAG_ENTRIES) break;
+  }
+  return out;
+}
+
 function sanitizeMemorized(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const out = new Set<string>();
@@ -447,6 +500,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     memorizationReviews: sanitizeMemorizationReviews(input.memorizationReviews),
     readSections: sanitizeReadSections(input.readSections),
     verseNotes: sanitizeVerseNotes(input.verseNotes),
+    entryTags: sanitizeEntryTags(input.entryTags),
     analytics: sanitizeAnalytics(input.analytics),
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
@@ -737,6 +791,36 @@ export function setVerseNote(verseKey: string, text: string): void {
     if (isNew && Object.keys(progress.verseNotes).length >= MAX_VERSE_NOTES) return;
     progress.verseNotes[verseKey] = trimmed;
   }
+  setProgress(progress);
+}
+
+// Read the verse's tags as the user's own labels. Lossless migration: a store
+// written before this field reads back as [] (the map is `?? {}` before lookup).
+export function getTags(verseKey: string): string[] {
+  return getProgress().entryTags?.[verseKey] ?? [];
+}
+
+// Write (or clear) a learner's own tags for one verse, through the change bus.
+// The list is normalized the same way the sanitizer does (trim, length-cap,
+// dedupe, count-cap); an empty result deletes the entry (an empty tag set is "no
+// tags"). A tampered verseKey is rejected. Adding tags to a brand-new verse past
+// the entry cap is a no-op (editing or clearing an existing entry always works,
+// mirroring setVerseNote, so the user is never stuck unable to fix tags).
+export function setTags(verseKey: string, tags: string[]): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  const map = progress.entryTags ?? {};
+  const normalized = normalizeTags(tags);
+  if (normalized.length === 0) {
+    if (!(verseKey in map)) return;
+    delete map[verseKey];
+  } else {
+    const isNew = !(verseKey in map);
+    if (isNew && Object.keys(map).length >= MAX_TAG_ENTRIES) return;
+    map[verseKey] = normalized;
+  }
+  progress.entryTags = map;
   setProgress(progress);
 }
 
