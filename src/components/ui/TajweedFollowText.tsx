@@ -17,6 +17,13 @@ interface TajweedFollowTextProps {
   // this equals the rendered visual-word count (canAlign), so a divergence falls
   // back to no highlight rather than lighting a guessed word.
   segmentCount: number;
+  // Reveal-as-recited: when true, every word AHEAD of the active word (index
+  // > activeIdx) is blurred and words up to and including it show through, by
+  // toggling .mushaf-word-blurred on the same read-only word grouping. Gated on
+  // the same canAlign check as the highlight, so a segment mismatch blurs nothing
+  // here (the caller falls back to the whole-verse blur). Default false keeps the
+  // plain highlight behavior untouched.
+  blurUnrevealed?: boolean;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }
@@ -30,9 +37,13 @@ const FONT_SIZE_MAP: Record<string, "sm" | "md" | "lg" | "xl"> = {
 // The class the follow-along layer toggles on the active word's wrapper. Styled
 // in globals.css (a token-driven wash + gold underline, reduced-motion-safe).
 const ACTIVE_CLASS = "mushaf-word-active";
-// The wrapper element this layer inserts around the active word's nodes. A custom
-// tag name so a grouping pass never mistakes it for content, and so cleanup can
-// find and unwrap exactly the nodes it inserted.
+// The class for a word not yet recited in reveal-as-recited mode. Styled in
+// globals.css with the SAME blur/dim the whole-verse recall blur uses.
+const BLURRED_CLASS = "mushaf-word-blurred";
+// The wrapper element this layer inserts around a word's nodes (the active word
+// and, in reveal mode, each unrevealed word). A custom tag name so a grouping
+// pass never mistakes it for content, and so cleanup can find and unwrap exactly
+// the nodes it inserted.
 const WRAP_TAG = "mushaf-word";
 
 // The follow-along highlight layer. It renders the verified colored markup
@@ -40,10 +51,13 @@ const WRAP_TAG = "mushaf-word";
 // the word currently being recited as a SEPARATE visual layer: it walks the
 // rendered DOM read-only, groups the per-letter spans + text into visual words by
 // splitting on whitespace text nodes, and wraps the active word in a class-bearing
-// element. It NEVER edits the markup string, recolors a <tajweed> span, or
-// re-tokenizes the text (CONST-01) — the letter colors come entirely from the
-// untouched spans underneath. On any alignment mismatch or no active word it shows
-// the plain markup with no highlight (silent fallback, never a wrong-word guess).
+// element. With blurUnrevealed on it ALSO wraps every word ahead of the active one
+// in a blurred wrapper (reveal-as-recited): the same grouping drives both, so the
+// reveal and the highlight stay in lockstep. It NEVER edits the markup string,
+// recolors a <tajweed> span, or re-tokenizes the text (CONST-01) — the letter
+// colors come entirely from the untouched spans underneath. On any alignment
+// mismatch it shows the plain markup with no highlight and no blur (silent
+// fallback; the caller handles the whole-verse blur for reveal mode).
 //
 // Kept separate from TajweedText so the many read-only TajweedText uses are
 // untouched; the reader swaps to this only for the one verse being recited.
@@ -51,6 +65,7 @@ export function TajweedFollowText({
   tajweedHtml,
   activeIdx,
   segmentCount,
+  blurUnrevealed = false,
   size,
   className,
 }: TajweedFollowTextProps) {
@@ -62,44 +77,67 @@ export function TajweedFollowText({
   const safeHtml = useMemo(() => sanitizeTajweedHtml(tajweedHtml), [tajweedHtml]);
 
   const containerRef = useRef<HTMLSpanElement | null>(null);
-  // The wrapper currently holding the active word, so the next tick can unwrap it
-  // (restoring the original nodes) before wrapping the new active word. Held in a
-  // ref so it survives re-renders and the unmount cleanup can remove it.
-  const activeWrapRef = useRef<HTMLElement | null>(null);
+  // Every wrapper this layer inserted (the one active-word wrapper plus, in reveal
+  // mode, one per unrevealed word), so the next tick can unwrap them all (restoring
+  // the original nodes) before re-grouping, and the unmount cleanup can remove
+  // them. Held in a ref so it survives re-renders.
+  const wrapsRef = useRef<HTMLElement[]>([]);
 
-  // Unwrap the active word: move the wrapper's children back to its place and
-  // remove the wrapper, leaving the original markup exactly as injected. Safe to
-  // call when nothing is wrapped.
-  const clearActive = () => {
-    const wrap = activeWrapRef.current;
-    if (!wrap) return;
+  // Unwrap one wrapper element: move its children back to its place and remove it,
+  // leaving the original nodes exactly as injected.
+  const unwrap = (wrap: HTMLElement) => {
     const parent = wrap.parentNode;
-    if (parent) {
-      while (wrap.firstChild) parent.insertBefore(wrap.firstChild, wrap);
-      parent.removeChild(wrap);
-    }
-    activeWrapRef.current = null;
+    if (!parent) return;
+    while (wrap.firstChild) parent.insertBefore(wrap.firstChild, wrap);
+    parent.removeChild(wrap);
   };
 
-  // Re-evaluate the highlight after every render that can change which word is
-  // active (the html re-injects on change; activeIdx/segmentCount change per
-  // tick). The grouping is read-only; the only mutation is inserting/removing the
-  // single wrapper element around the active word, which the verified markup
-  // string never sees.
+  // Unwrap every wrapper this layer inserted, restoring the markup to exactly the
+  // injected DOM. Safe to call when nothing is wrapped.
+  const clearWraps = () => {
+    for (const wrap of wrapsRef.current) unwrap(wrap);
+    wrapsRef.current = [];
+  };
+
+  // Wrap a word's nodes in one class-bearing element and track it for cleanup.
+  // Additive only: the wrapper carries just the class; the letter spans and their
+  // colors inside are untouched. Returns silently if the group is empty or
+  // detached so a degenerate verse never throws.
+  const wrapWord = (wordNodes: Node[], className: string) => {
+    if (wordNodes.length === 0) return;
+    const first = wordNodes[0];
+    const parent = first.parentNode;
+    if (!parent) return;
+    const wrap = document.createElement(WRAP_TAG);
+    wrap.className = className;
+    parent.insertBefore(wrap, first);
+    for (const node of wordNodes) wrap.appendChild(node);
+    wrapsRef.current.push(wrap);
+  };
+
+  // Re-evaluate the highlight (and the reveal blur) after every render that can
+  // change which word is active (the html re-injects on change;
+  // activeIdx/segmentCount/blurUnrevealed change per tick). The grouping is
+  // read-only; the only mutation is inserting/removing wrapper elements around
+  // whole words, which the verified markup string never sees.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     // Always start from the unwrapped markup so grouping sees the original nodes
-    // and a stale wrapper from the previous active word is gone.
-    clearActive();
+    // and stale wrappers from the previous tick are gone.
+    clearWraps();
 
-    if (activeIdx < 0) return;
+    // Nothing to do when there is no active word AND reveal mode is off: the plain
+    // markup shows. In reveal mode a negative activeIdx (paused before the first
+    // word, between words) still blurs every word, so do not early-return there.
+    if (activeIdx < 0 && !blurUnrevealed) return;
 
     // Group the container's direct child nodes into visual words read-only. A new
     // word starts at each whitespace-only text node (the API separates words with
     // a space). The trailing <span class="end"> is the ayah number, not a recited
-    // word, so it is excluded from the grouping entirely.
+    // word, so it is excluded from the grouping entirely. Captured BEFORE any
+    // wrapping so relocating one word's nodes never disturbs another's references.
     const groups: Node[][] = [];
     let current: Node[] | null = null;
     for (const node of Array.from(container.childNodes)) {
@@ -126,36 +164,38 @@ export function TajweedFollowText({
       current.push(node);
     }
 
-    // The alignment gate: only highlight when the recited word count matches the
+    // The alignment gate: only mark words when the recited word count matches the
     // visual word count. Any mismatch (or no words) means we cannot say which
-    // visual word the active segment maps to, so render the plain markup with no
-    // highlight (the wrapper stays cleared above).
+    // visual word maps to which segment, so render the plain markup unmarked — no
+    // highlight and no per-word blur (the reveal caller falls back to the
+    // whole-verse blur). A wrong-word highlight or blur is worse than none.
     if (!canAlign(segmentCount, groups.length)) return;
-    if (activeIdx >= groups.length) return;
 
-    const wordNodes = groups[activeIdx];
-    if (!wordNodes || wordNodes.length === 0) return;
-
-    // Wrap exactly the active word's nodes in one class-bearing element. This is
-    // additive: the wrapper carries only the highlight class; the letter spans and
-    // their colors inside it are untouched. Under reduced motion the class still
-    // applies (the static wash + underline); there is no JS-driven glow to gate,
-    // but reading the preference here keeps the gate explicit and ready if a
-    // travelling effect is ever added.
+    // Reduced motion is read so the static-under-reduced-motion contract is
+    // explicit; the wash/underline and the blur are state changes (the CSS drops
+    // their transitions), and there is no JS-driven travelling effect to gate.
     prefersReducedMotion();
-    const first = wordNodes[0];
-    const parent = first.parentNode;
-    if (!parent) return;
-    const wrap = document.createElement(WRAP_TAG);
-    wrap.className = ACTIVE_CLASS;
-    parent.insertBefore(wrap, first);
-    for (const node of wordNodes) wrap.appendChild(node);
-    activeWrapRef.current = wrap;
-  }, [safeHtml, activeIdx, segmentCount]);
 
-  // Remove the wrapper on unmount so a closed page leaves no orphan node. Runs
-  // once (clearActive reads the ref), independent of the per-tick effect above.
-  useEffect(() => clearActive, []);
+    // Reveal-as-recited: blur every word AHEAD of the active one. Words up to and
+    // including activeIdx (and, with a negative activeIdx, none) carry no class and
+    // show through. Done first, then the active word is wrapped on top, so the two
+    // never fight over the same word (the active word is always <= activeIdx).
+    if (blurUnrevealed) {
+      for (let i = 0; i < groups.length; i++) {
+        if (i > activeIdx) wrapWord(groups[i], BLURRED_CLASS);
+      }
+    }
+
+    // The active word's highlight wrapper (only when there is a real active word
+    // in range).
+    if (activeIdx >= 0 && activeIdx < groups.length) {
+      wrapWord(groups[activeIdx], ACTIVE_CLASS);
+    }
+  }, [safeHtml, activeIdx, segmentCount, blurUnrevealed]);
+
+  // Remove every wrapper on unmount so a closed page leaves no orphan node. Runs
+  // once (clearWraps reads the ref), independent of the per-tick effect above.
+  useEffect(() => clearWraps, []);
 
   const sizeClasses = cn(
     "font-quran leading-[2] tajweed-text",
