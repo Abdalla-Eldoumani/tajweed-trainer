@@ -109,6 +109,11 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // Memorization mode hides verse text the user has marked memorized so they
   // can recall it. Off by default; in-session state, not persisted.
   const [memorizationMode, setMemorizationMode] = useState(false);
+  // Reveal-as-recited: blur the verse being recited and uncover each word as it
+  // is recited. Owned here (like memorizationMode) so the page and the verse
+  // overlay share one source: the overlay toggle flips it and MushafPage reads it.
+  // In-session reader-local state, reset on a route change, never persisted.
+  const [revealAsRecited, setRevealAsRecited] = useState(false);
   // The Cmd/Ctrl+K quick-jump palette. In-session, not persisted.
   const [paletteOpen, setPaletteOpen] = useState(false);
   // Single-rule highlight drill: greys every tajweed rule except the chosen one.
@@ -475,6 +480,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           <MushafPage
             data={data}
             memorizationMode={memorizationMode}
+            revealAsRecited={revealAsRecited}
             targetVerseKey={targetVerseKey}
             onPlayVerse={setSelectedVerse}
             onSelectVerse={setSelectedVerse}
@@ -488,6 +494,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           surahs={surahs}
           playSingleVerse={playSingleVerse}
           playFromVerse={playFromVerse}
+          revealAsRecited={revealAsRecited}
+          onToggleRevealAsRecited={() => setRevealAsRecited((v) => !v)}
         />
       </VerseSelectionProvider>
 
