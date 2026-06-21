@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { exportProgress, importProgress, getProgress, shouldRemindBackup, getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
+import { subscribeProgressChanged } from "@/lib/progress-events";
 import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
@@ -61,6 +62,10 @@ export default function SettingsPage() {
     setShowBackupReminder(shouldRemindBackup(getProgress(), new Date()));
     setShowTour(!getOnboardingSeen());
     setOnboardingMounted(true);
+    // Keep the toggle in lockstep with the flag through the change bus: if the
+    // tour self-dismisses (writes seenOnboarding=true) while Settings is open,
+    // the checkbox reflects it without needing a revisit.
+    return subscribeProgressChanged(() => setShowTour(!getOnboardingSeen()));
   }, []);
 
   // Resource catalogues load from the API when online; offline the curated
