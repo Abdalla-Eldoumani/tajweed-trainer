@@ -102,7 +102,7 @@ Reciter ids cannot reference an unknown reciter: `normalizeReciterId` maps any v
 The Content Security Policy is assembled once in `next.config.mjs` (the single source for all response headers; `vercel.json` carries only framework + buildCommand). The origins relevant to these integrations:
 
 - `connect-src 'self' https://api.quran.com` — the only cross-origin host the app fetches JSON from.
-- `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com` — the audio hosts that per-ayah and per-word URLs resolve to.
+- `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com https://server16.mp3quran.net` — the audio hosts that per-ayah and per-word URLs resolve to (the last serves the per-surah Warsh narration on the surah index, the specific host only — no wildcard).
 - `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR). `style-src`/`font-src` list no Google Fonts origins — all fonts are self-hosted via next/font.
 
 The service worker is served by the `src/app/sw.js/route.ts` route handler (`force-static`), which stamps a unique per-build version into `scripts/sw-template.js` so each deploy gets fresh cache namespaces and the activate step purges the previous build's caches. Its scope is deliberately limited to same-origin requests: HTML navigation (network-first) and same-origin static assets (cache-first). It does **not** intercept cross-origin Quran audio (mp3) or the Quran.com API — those stream/fetch natively, so the worker can never break audio playback. The trade-off is that Quran audio and API content are not available offline.
@@ -142,7 +142,7 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `seenOnboarding` | boolean | First-launch onboarding seen-once flag; defaults false so a reset re-shows it. |
 | `lastBackupAt` | ISO string | Stamped by `exportProgress`; empty until the first backup. Drives the backup reminder. |
 | `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
-| `reciter` | one of the 19 `RECITATIONS` ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
+| `reciter` | one of the `RECITATIONS` Hafs reciter ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
 | `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
 | `lastMushafPage` | integer 1–604 | Out-of-range values fall back to 1. |
 
