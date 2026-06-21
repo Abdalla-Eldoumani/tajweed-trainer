@@ -81,6 +81,32 @@ const PlaySolid = () => (
   </svg>
 );
 
+// A crosshair/target for reading focus mode: a ring with a center dot and four
+// edge ticks. Distinct from the recall eye so the two toolbar toggles never read
+// the same at a glance.
+const FocusIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="7" />
+    <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <line x1="12" y1="2" x2="12" y2="4" />
+    <line x1="12" y1="20" x2="12" y2="22" />
+    <line x1="2" y1="12" x2="4" y2="12" />
+    <line x1="20" y1="12" x2="22" y2="12" />
+  </svg>
+);
+
+// A small underline-of-a-word glyph for the follow-along toggle: a short word
+// run with an emphasis bar beneath it, echoing the active-word underline the
+// highlight draws. Distinct from the focus crosshair and the recall eye.
+const FollowAlongIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <line x1="4" y1="8" x2="20" y2="8" />
+    <line x1="4" y1="12" x2="14" y2="12" />
+    <line x1="4" y1="16" x2="11" y2="16" />
+    <line x1="14" y1="16" x2="20" y2="16" />
+  </svg>
+);
+
 const SearchIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <circle cx="11" cy="11" r="8" />
@@ -114,6 +140,11 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // overlay share one source: the overlay toggle flips it and MushafPage reads it.
   // In-session reader-local state, reset on a route change, never persisted.
   const [revealAsRecited, setRevealAsRecited] = useState(false);
+  // Reading focus mode: dim every verse except the active one (the playing verse,
+  // else the single selected verse). Verse-level and segment-independent, so it
+  // works for every reciter and with audio paused. Off by default; in-session
+  // reader-local state like memorizationMode, reset on a route change, never persisted.
+  const [focusMode, setFocusMode] = useState(false);
   // The Cmd/Ctrl+K quick-jump palette. In-session, not persisted.
   const [paletteOpen, setPaletteOpen] = useState(false);
   // Single-rule highlight drill: greys every tajweed rule except the chosen one.
@@ -404,6 +435,30 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             );
           })()}
 
+          {/* Reading focus mode: dims every verse but the active one (the playing
+              verse, else the single selected verse). Verse-level and
+              segment-independent, so it needs no reciter/mounted gate beyond the
+              reader's own — it reads the live playing/selected verse. Same
+              toolbar-toggle shape as the recall eye: label beside the icon (>=sm),
+              aria-pressed for state, the on/off aria-label pair, and the hint in
+              the title. */}
+          <button
+            type="button"
+            onClick={() => setFocusMode((v) => !v)}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              focusMode
+                ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
+            )}
+            aria-label={focusMode ? t("mushaf.focusModeOff") : t("mushaf.focusModeOn")}
+            aria-pressed={focusMode}
+            title={t("mushaf.focusModeHint")}
+          >
+            <FocusIcon />
+            <span className="hidden sm:inline">{t("mushaf.focusMode")}</span>
+          </button>
+
           <button
             onClick={toggleBookmark}
             className={cn(
@@ -481,6 +536,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             data={data}
             memorizationMode={memorizationMode}
             revealAsRecited={revealAsRecited}
+            focusMode={focusMode}
             targetVerseKey={targetVerseKey}
             onPlayVerse={setSelectedVerse}
             onSelectVerse={setSelectedVerse}
