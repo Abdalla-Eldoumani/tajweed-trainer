@@ -321,6 +321,16 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "No weak areas yet. Answer some practice questions and the areas to revisit will show here.",
     ar: "لا توجد مواطن ضعف بعد. أجب على أسئلة التدريب فتظهر هنا الأبواب التي ينبغي مراجعتها.",
   },
+  "resume.listenTitle": { en: "Resume listening", ar: "متابعة الاستماع" },
+  "resume.listenSubtitle": {
+    en: "Pick up audio from the last verse you played.",
+    ar: "تابع الصوت من آخر آية شغّلتها.",
+  },
+  "resume.listenButton": { en: "Resume listening", ar: "متابعة الاستماع" },
+  "resume.listenAria": {
+    en: "Resume listening from {surah}, verse {ref}",
+    ar: "متابعة الاستماع من {surah}، الآية {ref}",
+  },
   "progress.quizHistory": { en: "Quiz History", ar: "سجلّ الاختبارات" },
   "progress.resetProgress": { en: "Reset Progress", ar: "إعادة تعيين التقدّم" },
   "progress.resetDescription": {
