@@ -705,6 +705,17 @@ const translations: Record<string, { en: string; ar: string }> = {
   "notes.charsLeft": { en: "{n} left", ar: "بقي {n}" },
   "notes.hasNote": { en: "This verse has a note", ar: "لهذه الآية ملاحظة" },
 
+  // Tags: the learner's own short labels for organizing notes and bookmarks
+  "tags.title": { en: "Your tags", ar: "وسومك" },
+  "tags.add": { en: "Add tag", ar: "إضافة وسم" },
+  "tags.placeholder": { en: "Add a label…", ar: "أضف وسمًا…" },
+  "tags.remove": { en: "Remove tag {tag}", ar: "إزالة الوسم {tag}" },
+  "tags.privacy": {
+    en: "Your own labels, private to this device, never uploaded.",
+    ar: "وسومك أنت، خاصة بهذا الجهاز، لا تُرفع أبدًا.",
+  },
+  "tags.empty": { en: "No tags yet", ar: "لا توجد وسوم بعد" },
+
   // Reciter A/B compare: hear the same verse by two reciters back to back
   "recompare.title": { en: "Compare reciters", ar: "مقارنة القرّاء" },
   "recompare.hint": {
