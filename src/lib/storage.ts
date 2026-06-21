@@ -54,6 +54,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   lastReadBySurah: {},
   khatmah: null,
   seenOnboarding: false,
+  warshNarrationAck: false,
   lastBackupAt: "",
 };
 
@@ -453,6 +454,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     lastReadBySurah: sanitizeLastReadBySurah(input.lastReadBySurah),
     khatmah: sanitizeKhatmah(input.khatmah),
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
+    warshNarrationAck: typeof input.warshNarrationAck === "boolean" ? input.warshNarrationAck : false,
     lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
   };
 }
@@ -523,6 +525,21 @@ export function getOnboardingSeen(): boolean {
 export function setOnboardingSeen(value: boolean): void {
   const progress = getProgress();
   progress.seenOnboarding = value;
+  setProgress(progress);
+}
+
+// The Warsh "different narration" disclaimer acknowledged flag. Same shape as
+// the onboarding flag: lives on the consolidated progress object (not an ad-hoc
+// key) so export / import / reset cover it; the default-false in DEFAULT_PROGRESS
+// makes resetProgress re-show the disclaimer. The setter writes through
+// setProgress, which fires the change bus.
+export function getWarshDisclaimerAck(): boolean {
+  return getProgress().warshNarrationAck ?? false;
+}
+
+export function setWarshDisclaimerAck(value: boolean): void {
+  const progress = getProgress();
+  progress.warshNarrationAck = value;
   setProgress(progress);
 }
 
