@@ -8,6 +8,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
 import { getPlayerResume } from "@/lib/storage";
+import { subscribeProgressChanged } from "@/lib/progress-events";
 import { getBundledChaptersIndex } from "@/lib/quran-api";
 import { toArabicIndic } from "@/lib/utils";
 import type { PlayerResume } from "@/lib/types";
@@ -34,6 +35,9 @@ export function ResumeListeningCard() {
   useEffect(() => {
     setMounted(true);
     setResume(getPlayerResume());
+    // Stay in sync with playback in the same tab (e.g. a recall session) so the
+    // card reflects the latest played verse without a reload.
+    return subscribeProgressChanged(() => setResume(getPlayerResume()));
   }, []);
 
   // Before mount, and when nothing has been played, render no card at all.
