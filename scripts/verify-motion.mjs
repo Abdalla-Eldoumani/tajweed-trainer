@@ -26,6 +26,11 @@
 //      component), and next.config.mjs has no experimental viewTransition flag.
 //      A CSP non-regression check confirms connect-src still names only
 //      'self' https://api.quran.com (the motion work needs no new origin).
+//   7. settings mounted-gate — SettingsProvider exposes DEFAULT_SETTINGS until
+//      mounted (so the first client render matches the server's no-localStorage
+//      default) and SettingsSync gates both <html> writes on mounted (so it
+//      never clobbers the pre-paint bootstrap). This is the real fix for the
+//      AR/EN first-render hydration mismatch (#418).
 //
 // Mirrors scripts/verify-themes.mjs in shape: same record reporter, the same
 // brace-aware block parsing, the cssNoComments comment-stripping so a prose
@@ -273,6 +278,27 @@ record(
   "CSP connect-src is unchanged (no new origin for the motion work)",
   connectOk,
   connectOk ? "connect-src 'self' https://api.quran.com intact" : "connect-src changed or not found",
+);
+
+// --- 7. the settings mounted-gate (the real first-render hydration fix) ---
+// The provider must expose DEFAULT_SETTINGS until mounted so the first client
+// render matches the server (which has no localStorage), and SettingsSync must
+// gate its <html> writes on mounted so it never clobbers the pre-paint bootstrap
+// with the default. This is what actually clears the AR/EN first-render #418;
+// the wordmark suppression in check 5 is belt-and-suspenders.
+const useSettingsSrc = read("src", "hooks", "useSettings.tsx");
+const appProviderSrc = read("src", "components", "layout", "AppProvider.tsx");
+const providerGates = /mounted\s*\?\s*settings\s*:\s*DEFAULT_SETTINGS/.test(useSettingsSrc);
+record(
+  "SettingsProvider exposes DEFAULT_SETTINGS until mounted",
+  providerGates,
+  providerGates ? "first client render matches the server default" : "the settings value is not gated on mounted",
+);
+const syncGuards = (appProviderSrc.match(/if\s*\(\s*!mounted\s*\)\s*return/g) || []).length >= 2;
+record(
+  "SettingsSync gates its data-theme and dir/lang writes on mounted",
+  syncGuards,
+  syncGuards ? "both <html> effects skip until mounted (no bootstrap clobber)" : "the SettingsSync effects are not both mounted-gated",
 );
 
 const failed = results.filter((r) => !r.ok);
