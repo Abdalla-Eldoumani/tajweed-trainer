@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
+import { sheetBottomOffset, keyboardBottomOffset } from "@/lib/player-position";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -39,6 +41,12 @@ const GAP_PRESETS: { seconds: number; key: string }[] = [
 // (up to 286 verses, Al-Baqarah) never freezes building chips. The summary count
 // stays exact regardless; the overflow shows a "+K more" affordance.
 const MAX_VISIBLE_CHIPS = 30;
+
+// Past this many pixels of downward drag on the sheet's grab handle, a release
+// dismisses the sheet (a smaller movement is treated as a tap that toggles the
+// height); an upward drag past it expands from peek. Ported verbatim from the
+// retired PlaybackSurface bottom sheet so the gesture feels identical.
+const SWIPE_CLOSE_THRESHOLD = 64;
 
 // Action-row glyphs, copied from the reading-depth panel header and the playback
 // surface so the overlay reads in the same visual language. No emoji as an
@@ -621,6 +629,86 @@ export function VerseOverlay({
   // The element focused when the overlay opened (the tapped verse button), so
   // closing returns focus there instead of letting it fall to <body>.
   const openerRef = useRef<HTMLElement | null>(null);
+
+  // Panel (>=1024) vs bottom-sheet (<1024) chrome. null until the post-mount
+  // measure resolves; while null the dialog is held at the closed/opacity-0
+  // state below so neither form's chrome flashes on the first frame (a phone
+  // never sees a centered panel, the MOBILE-01 surface). matchMedia resolves in
+  // the hook's mount effect right after first paint, so this is a one-frame
+  // delay, not a wrong-form flash.
+  const isDesktop = useIsDesktop();
+  const isSheet = isDesktop === false;
+
+  // Sheet height: peek shows the compact top, expanded the full body. The
+  // overlay opens already expanded (a verse tap is a deliberate open, unlike
+  // PlaybackSurface which opened in peek), but the peek/expanded split is kept so
+  // an upward drag still expands and the handle tap still toggles the height.
+  const [sheetState, setSheetState] = useState<"peek" | "expanded">("expanded");
+  const expanded = sheetState === "expanded";
+  // Pointer-drag bookkeeping for the grab handle (start Y + running delta).
+  const dragRef = useRef<{ startY: number; delta: number } | null>(null);
+
+  // Reset to expanded whenever the overlay (re)opens, so reopening for a new
+  // verse never lands in a stale peek left from a previous handle tap.
+  useEffect(() => {
+    if (open) setSheetState("expanded");
+  }, [open]);
+
+  // The sheet's bottom offset in CSS pixels, ported from PlaybackSurface: it
+  // reserves the tab-bar strip only in peek below 768px (sheetBottomOffset); when
+  // the keyboard is up it rides the visual viewport so the focused note field
+  // stays above the keyboard inset. Recomputed on window resize/orientationchange
+  // and visualViewport resize/scroll, all four listeners removed in cleanup. Only
+  // runs while open (guarded like the scroll lock), so it does nothing for the
+  // panel form.
+  const [bottomOffset, setBottomOffset] = useState(0);
+  useEffect(() => {
+    if (!open) return;
+    const vv = window.visualViewport;
+    const recompute = () => {
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      const keyboard = vv
+        ? keyboardBottomOffset(window.innerHeight, vv.height, vv.offsetTop)
+        : 0;
+      setBottomOffset(keyboard > 0 ? keyboard : sheetBottomOffset(viewport, expanded));
+    };
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.addEventListener("orientationchange", recompute);
+    vv?.addEventListener("resize", recompute);
+    vv?.addEventListener("scroll", recompute);
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.removeEventListener("orientationchange", recompute);
+      vv?.removeEventListener("resize", recompute);
+      vv?.removeEventListener("scroll", recompute);
+    };
+  }, [open, expanded]);
+
+  // Grab-handle drag, ported from PlaybackSurface with one adaptation: a
+  // swipe-down past the threshold calls the overlay's onClose (close the overlay,
+  // KEEP audio playing and the verse visible), NEVER the player's stop(). An
+  // upward drag past the threshold expands; a small movement is a tap that
+  // toggles peek<->expanded.
+  const onHandlePointerDown = (e: React.PointerEvent) => {
+    dragRef.current = { startY: e.clientY, delta: 0 };
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  const onHandlePointerMove = (e: React.PointerEvent) => {
+    if (dragRef.current) dragRef.current.delta = e.clientY - dragRef.current.startY;
+  };
+  const onHandlePointerUp = () => {
+    const drag = dragRef.current;
+    dragRef.current = null;
+    if (!drag) return;
+    if (drag.delta > SWIPE_CLOSE_THRESHOLD) {
+      onClose();
+    } else if (drag.delta < -SWIPE_CLOSE_THRESHOLD) {
+      setSheetState("expanded");
+    } else {
+      setSheetState((s) => (s === "peek" ? "expanded" : "peek"));
+    }
+  };
 
   // Stable ids tie the dialog's accessible name to the verse reference and its
   // description to the verse text.
