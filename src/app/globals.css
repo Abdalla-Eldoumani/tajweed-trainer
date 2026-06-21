@@ -59,6 +59,11 @@
   --tajweed-tafkheem: #006994;
 }
 
+/* Reference baseline only -- NOT applied at runtime. Nothing sets the old
+   dark-mode class anymore; the live night theme is the [data-theme="night"]
+   block below. This block is retained as the shipped-dark baseline that
+   verify-themes.mjs checks the night theme against. Do not add new variables
+   here -- add them to the [data-theme] blocks. */
 .dark {
   --primary: #D4A843;
   --accent: #C9714A;
