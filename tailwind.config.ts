@@ -23,10 +23,14 @@ const config: Config = {
     extend: {
       colors: {
         // Manuscript palette: lapis ink for interaction, gold leaf for
-        // ornament, vellum ivory for ground. Light values are duplicated as
-        // CSS variables in globals.css for the var-driven surfaces (frames,
-        // ornaments, tajweed); dark mode flips through the .dark variable
-        // block plus explicit dark: utilities, matching the existing pattern.
+        // ornament, vellum ivory for ground. The ground and ink tokens (bg,
+        // bg-card, text) are driven by the per-theme CSS variables in
+        // globals.css so all five themes render their own ground and ink, not
+        // just a light/dark pair. Both the base and the -dark token resolve to
+        // the same variable, so existing `dark:` utilities keep working and
+        // simply re-assert the themed value. Accent and fill tokens that take
+        // opacity modifiers (primary, gold, accent, bg-subtle, text-muted) stay
+        // static hex so the `/<alpha>` utilities stay valid.
         primary: {
           DEFAULT: "#1E4279",
           light: "#D9B45C",
@@ -47,17 +51,17 @@ const config: Config = {
           dark: "#ECE5D3",
         },
         bg: {
-          DEFAULT: "#F5F1E8",
-          card: "#FCFAF3",
+          DEFAULT: "var(--bg)",
+          card: "var(--bg-card)",
           subtle: "#ECE5D3",
           "subtle-dark": "#1A2336",
-          dark: "#0A0F1C",
-          "card-dark": "#121A2E",
+          dark: "var(--bg)",
+          "card-dark": "var(--bg-card)",
         },
         text: {
-          DEFAULT: "#131B2E",
+          DEFAULT: "var(--text)",
           muted: "#555F77",
-          dark: "#EDEAE0",
+          dark: "var(--text)",
         },
         border: "var(--border)",
         tajweed: {
