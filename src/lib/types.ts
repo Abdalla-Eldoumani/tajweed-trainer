@@ -474,6 +474,9 @@ export interface TajweedProgress {
   // Whether the first-launch onboarding has been shown and dismissed. Cleared by
   // reset so onboarding re-shows.
   seenOnboarding: boolean;
+  // Whether the Warsh "different narration" disclaimer has been acknowledged.
+  // Local-only; cleared by reset so the disclaimer re-shows.
+  warshNarrationAck: boolean;
   // ISO timestamp of the last successful export, stamped by exportProgress().
   // Empty until the first backup. Drives the gentle backup reminder in Settings;
   // cleared by reset so the reminder logic restarts with progress.
