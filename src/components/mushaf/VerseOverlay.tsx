@@ -1260,6 +1260,7 @@ export function VerseOverlay({
                 type="button"
                 onClick={onToggleRevealAsRecited}
                 aria-pressed={!!revealAsRecited}
+                aria-label={revealAsRecited ? t("player.revealAsRecitedOff") : t("player.revealAsRecitedOn")}
                 title={t("player.revealAsRecitedHint")}
                 className={cn(
                   "inline-flex items-center gap-2 min-h-[44px] px-3 rounded-lg text-small font-medium border transition-colors motion-reduce:transition-none",
