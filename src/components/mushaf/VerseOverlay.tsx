@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
+import { sheetBottomOffset, keyboardBottomOffset } from "@/lib/player-position";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
@@ -39,6 +41,12 @@ const GAP_PRESETS: { seconds: number; key: string }[] = [
 // (up to 286 verses, Al-Baqarah) never freezes building chips. The summary count
 // stays exact regardless; the overflow shows a "+K more" affordance.
 const MAX_VISIBLE_CHIPS = 30;
+
+// Past this many pixels of downward drag on the sheet's grab handle, a release
+// dismisses the sheet (a smaller movement is treated as a tap that toggles the
+// height); an upward drag past it expands from peek. Ported verbatim from the
+// retired PlaybackSurface bottom sheet so the gesture feels identical.
+const SWIPE_CLOSE_THRESHOLD = 64;
 
 // Action-row glyphs, copied from the reading-depth panel header and the playback
 // surface so the overlay reads in the same visual language. No emoji as an
@@ -390,19 +398,25 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
       <div className="flex flex-wrap gap-1.5">
         {visibleKeys.map((key) =>
           chipsRemovable ? (
+            // A >=44px-tall transparent hit target wrapping the compact pill, so
+            // the remove control is touch-operable without bloating the chip's
+            // visual size. The focus ring frames the inner pill, not the taller
+            // hit area.
             <button
               key={key}
               type="button"
               onClick={() => remove(key)}
               aria-label={t("player.removeChip").replace("{ref}", refOf(key))}
               title={t("player.removeChip").replace("{ref}", refOf(key))}
-              className="inline-flex items-center gap-1 rounded-full bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light ps-2 pe-1.5 py-1 text-micro font-medium tabular-nums hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+              className="group inline-flex items-center min-h-[44px] focus-visible:outline-none"
             >
-              <span>{refOf(key)}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light ps-2 pe-1.5 py-1 text-micro font-medium tabular-nums group-hover:bg-primary/20 group-focus-visible:ring-2 group-focus-visible:ring-gold group-focus-visible:ring-offset-1">
+                <span>{refOf(key)}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </span>
             </button>
           ) : (
             <span
@@ -434,7 +448,7 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
                 onClick={() => usePlayer.getState().setRepeatOne(n)}
                 aria-pressed={active}
                 className={cn(
-                  "min-w-[44px] min-h-[36px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
+                  "min-w-[44px] min-h-[44px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
                   active
                     ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                     : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
@@ -453,7 +467,7 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
         onClick={() => usePlayer.getState().setLoopSelection(!loopSelection)}
         aria-pressed={loopSelection}
         className={cn(
-          "inline-flex items-center gap-2 min-h-[36px] px-3 rounded-lg text-small font-medium border transition-colors motion-reduce:transition-none",
+          "inline-flex items-center gap-2 min-h-[44px] px-3 rounded-lg text-small font-medium border transition-colors motion-reduce:transition-none",
           loopSelection
             ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
             : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
@@ -481,7 +495,7 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
                 onClick={() => usePlayer.getState().setInterVersePause(preset.seconds)}
                 aria-pressed={active}
                 className={cn(
-                  "min-w-[44px] min-h-[36px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
+                  "min-w-[44px] min-h-[44px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
                   active
                     ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                     : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
@@ -622,6 +636,92 @@ export function VerseOverlay({
   // closing returns focus there instead of letting it fall to <body>.
   const openerRef = useRef<HTMLElement | null>(null);
 
+  // Panel (>=1024) vs bottom-sheet (<1024) chrome. null until the post-mount
+  // measure resolves; while null the dialog is held at the closed/opacity-0
+  // state below so neither form's chrome flashes on the first frame (a phone
+  // never sees a centered panel, the MOBILE-01 surface). matchMedia resolves in
+  // the hook's mount effect right after first paint, so this is a one-frame
+  // delay, not a wrong-form flash.
+  const isDesktop = useIsDesktop();
+  const isSheet = isDesktop === false;
+
+  // Sheet height: peek shows the compact top, expanded the full body. The
+  // overlay opens already expanded (a verse tap is a deliberate open, unlike
+  // PlaybackSurface which opened in peek), but the peek/expanded split is kept so
+  // an upward drag still expands and the handle tap still toggles the height.
+  const [sheetState, setSheetState] = useState<"peek" | "expanded">("expanded");
+  const expanded = sheetState === "expanded";
+  // Pointer-drag bookkeeping for the grab handle (start Y + running delta).
+  const dragRef = useRef<{ startY: number; delta: number } | null>(null);
+
+  // Reset to expanded whenever the overlay (re)opens, so reopening for a new
+  // verse never lands in a stale peek left from a previous handle tap.
+  useEffect(() => {
+    if (open) setSheetState("expanded");
+  }, [open]);
+
+  // The sheet's bottom offset in CSS pixels, ported from PlaybackSurface: it
+  // reserves the tab-bar strip only in peek below 768px (sheetBottomOffset); when
+  // the keyboard is up it rides the visual viewport so the focused note field
+  // stays above the keyboard inset. Recomputed on window resize/orientationchange
+  // and visualViewport resize/scroll, all four listeners removed in cleanup. Only
+  // runs while open (guarded like the scroll lock), so it does nothing for the
+  // panel form.
+  const [bottomOffset, setBottomOffset] = useState(0);
+  useEffect(() => {
+    if (!open) return;
+    const vv = window.visualViewport;
+    const recompute = () => {
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      const keyboard = vv
+        ? keyboardBottomOffset(window.innerHeight, vv.height, vv.offsetTop)
+        : 0;
+      setBottomOffset(keyboard > 0 ? keyboard : sheetBottomOffset(viewport, expanded));
+    };
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.addEventListener("orientationchange", recompute);
+    vv?.addEventListener("resize", recompute);
+    vv?.addEventListener("scroll", recompute);
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.removeEventListener("orientationchange", recompute);
+      vv?.removeEventListener("resize", recompute);
+      vv?.removeEventListener("scroll", recompute);
+    };
+  }, [open, expanded]);
+
+  // Grab-handle drag, ported from PlaybackSurface with one adaptation: a
+  // swipe-down past the threshold calls the overlay's onClose (close the overlay,
+  // KEEP audio playing and the verse visible), NEVER the player's stop(). An
+  // upward drag past the threshold expands; a small movement is a tap that
+  // toggles peek<->expanded.
+  const onHandlePointerDown = (e: React.PointerEvent) => {
+    dragRef.current = { startY: e.clientY, delta: 0 };
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  const onHandlePointerMove = (e: React.PointerEvent) => {
+    if (dragRef.current) dragRef.current.delta = e.clientY - dragRef.current.startY;
+  };
+  const onHandlePointerUp = () => {
+    const drag = dragRef.current;
+    dragRef.current = null;
+    if (!drag) return;
+    if (drag.delta > SWIPE_CLOSE_THRESHOLD) {
+      onClose();
+    } else if (drag.delta < -SWIPE_CLOSE_THRESHOLD) {
+      setSheetState("expanded");
+    } else {
+      setSheetState((s) => (s === "peek" ? "expanded" : "peek"));
+    }
+  };
+  // An OS-level interrupt (incoming call, multitasking swipe) fires pointercancel
+  // instead of pointerup; drop the in-flight drag so a stale delta can never
+  // trigger a spurious dismiss on the next event.
+  const onHandlePointerCancel = () => {
+    dragRef.current = null;
+  };
+
   // Stable ids tie the dialog's accessible name to the verse reference and its
   // description to the verse text.
   const baseId = useId();
@@ -725,42 +825,100 @@ export function VerseOverlay({
   const playing = status === "playing";
   const loading = status === "loading";
 
+  // The visible entrance is gated on the width resolving so a phone never flashes
+  // the centered panel for one frame: while isDesktop is null (the pre-measure
+  // frame) the dialog and scrim stay at the closed/opacity-0 state, painting
+  // NEITHER form's chrome; the rise/fade begins only once open AND the form is
+  // known. Inertness and pointer/dismiss wiring still key on `open` directly so
+  // closing is immediate. matchMedia resolves right after first paint, so this is
+  // an imperceptible one-frame delay, not a wrong-form flash.
+  const entered = open && isDesktop !== null;
+
   const content = (
     <div role="presentation" inert={!open}>
       {/* Scrim: the ink at ~60%, a faint backdrop blur as a focus aid only (not a
-          frosted aesthetic). Tap = dismiss. Fades at the short motion duration. */}
+          frosted aesthetic). Identical for both forms. Tap = dismiss. Its visible
+          opacity follows `entered` so it does not flash before the form resolves;
+          pointer-events still key on `open`. Fades at the short motion duration. */}
       <div
         className={cn(
           "fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity [transition-duration:var(--motion-short)] motion-reduce:transition-none",
-          open ? "opacity-100" : "opacity-0 pointer-events-none",
+          entered ? "opacity-100" : "opacity-0",
+          open ? "" : "pointer-events-none",
         )}
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Centered container; Escape + Tab trap live here. */}
+      {/* Container; Escape + Tab trap live here. Centered for the panel, bottom
+          aligned for the sheet so the dialog rises from the bottom edge. */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] flex items-center justify-center px-4 py-8",
+          "fixed inset-0 z-[60] flex",
+          isSheet ? "items-end justify-center" : "items-center justify-center px-4 py-8",
           open ? "" : "pointer-events-none",
         )}
         onKeyDown={onKeyDown}
       >
-        {/* Panel rises from 0.98 scale at the medium duration with the standard
-            ease-out; reduced motion is opacity-only. */}
+        {/* ONE dialog box, ONE onKeyDown, ONE body — only the chrome differs by
+            width. The panel rises from 0.98 scale at the medium duration; the
+            sheet is fixed to the bottom edge (its `bottom` reserves the tab bar /
+            lifts above the keyboard) and rises with a transform. Reduced motion
+            is opacity-only for both. */}
         <div
           ref={panelRef}
           role="dialog"
           aria-modal="true"
           aria-labelledby={labelId}
           aria-describedby={bodyId}
-          style={{ boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)" }}
+          style={
+            isSheet
+              ? { bottom: bottomOffset, boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }
+              : { boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)" }
+          }
           className={cn(
-            "w-[calc(100%-2rem)] max-w-[560px] max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain rounded-xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark p-6 sm:p-8",
-            "transition-[opacity,transform] [transition-duration:var(--motion-medium)] [transition-timing-function:var(--ease-out)] motion-reduce:transition-none",
-            open ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]",
+            isSheet
+              ? // Bottom sheet: full width, top corners rounded, capped height with
+                // internal scroll so the verse it concerns stays visible above it
+                // and long verses stay reachable. z-[60] matches the shared scrim
+                // (NOT PlaybackSurface's z-40). safe-bottom reserves the home-bar.
+                // Height follows peek/expanded so the handle's toggle/drag is real:
+                // expanded fills toward 80vh, peek shrinks back so more of the verse
+                // shows above. Never full-height in either state.
+                cn(
+                  "fixed inset-x-0 z-[60] flex flex-col overflow-y-auto overscroll-contain rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark px-5 pb-5 safe-bottom transition-[transform,max-height] [transition-duration:var(--motion-short)] motion-reduce:transition-none",
+                  expanded ? "max-h-[80vh]" : "max-h-[45vh]",
+                )
+              : "w-[calc(100%-2rem)] max-w-[560px] max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain rounded-xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark p-6 sm:p-8 transition-[opacity,transform] [transition-duration:var(--motion-medium)] [transition-timing-function:var(--ease-out)] motion-reduce:transition-none",
+            entered
+              ? "opacity-100 scale-100 translate-y-0"
+              : isSheet
+                ? "opacity-0 translate-y-full"
+                : "opacity-0 scale-[0.98]",
           )}
         >
+          {/* Grab handle: a 36x4px bar inside a >=44px-tall touch target, at the
+              TOP of the sheet above the body. Tap toggles peek/expanded, swipe
+              down dismisses (onClose), swipe up expands. Sheet form only. */}
+          {isSheet && (
+            <button
+              type="button"
+              aria-label={t("player.grabHandle")}
+              aria-expanded={expanded}
+              onPointerDown={onHandlePointerDown}
+              onPointerMove={onHandlePointerMove}
+              onPointerUp={onHandlePointerUp}
+              onPointerCancel={onHandlePointerCancel}
+              className="flex items-center justify-center w-full h-11 -mb-2 touch-none"
+            >
+              <span
+                className="block w-9 h-1 rounded-full"
+                style={{ backgroundColor: "var(--text-muted)", opacity: 0.4 }}
+                aria-hidden="true"
+              />
+            </button>
+          )}
+
           {/* Header: eyebrow + the verse reference (the dialog's accessible
               name), then the verse Arabic read-only. */}
           <div id={labelId}>

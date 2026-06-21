@@ -96,19 +96,21 @@ record(
   "loading skeleton honors reduced motion",
 );
 
-// --- 5. scroll-lock on the expanded playback sheet (lock and release), now via
-//        the shared ref-counted source in lib/scroll-lock so stacked overlays
-//        coordinate (the body stays locked until the last one releases). ---
-const surfaceSrc = read("src/components/mushaf/PlaybackSurface.tsx");
+// --- 5. scroll-lock on the verse overlay (lock and release) via the shared
+//        ref-counted source in lib/scroll-lock so stacked overlays coordinate
+//        (the body stays locked until the last one releases). Assert the STRICT
+//        cleanup form (mirroring verify-overlay) so an imported-but-never-called
+//        unlock — an unbalanced lock — fails. ---
+const overlaySrc = read("src/components/mushaf/VerseOverlay.tsx");
 record(
-  "PlaybackSurface.tsx locks body scroll while expanded",
-  /lockBodyScroll\(\)/.test(surfaceSrc),
-  "lockBodyScroll() while expanded",
+  "VerseOverlay.tsx locks body scroll while open",
+  /lockBodyScroll\(\)/.test(overlaySrc),
+  "lockBodyScroll() while open",
 );
 record(
-  "PlaybackSurface.tsx restores body scroll on close",
-  /unlockBodyScroll\(\)/.test(surfaceSrc),
-  "unlockBodyScroll() on collapse/unmount",
+  "VerseOverlay.tsx restores body scroll in a cleanup",
+  /return\s*\(\)\s*=>[^}]*unlockBodyScroll/.test(overlaySrc),
+  "return () => unlockBodyScroll() on close/unmount",
 );
 
 // --- 6. aria-current wiring on both nav surfaces. ---

@@ -10,6 +10,7 @@ import {
   clampPlayerPosition,
   reservedBottomFor,
   KEYBOARD_STEP,
+  MOBILE_BREAKPOINT,
   type PlayerPosition,
   type PlayerSize,
   type Viewport,
@@ -92,6 +93,17 @@ const CloseIcon = () => (
   </svg>
 );
 
+// A slashed eye: hide the transport while audio keeps playing. Distinct from the
+// X (which stops and closes) and the chevron (which minimizes to the pill).
+const HideIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19" />
+    <path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3 8 10 8a9.12 9.12 0 0 0 5.39-1.61" />
+    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+    <line x1="2" y1="2" x2="22" y2="22" />
+  </svg>
+);
+
 const MinimizeIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="6 9 12 15 18 9" />
@@ -124,9 +136,40 @@ export function MiniPlayer() {
   // the explicit stop control dismisses the player. Restored after mount (the
   // server render shows nothing) and persisted so it survives navigation.
   const [minimized, setMinimized] = useState(false);
+  // In-memory only: hide the transport without ending playback. It survives
+  // navigation for free (this component is mounted once in AppProvider) but is
+  // deliberately NOT persisted to storage — a reload restarts the app, and the
+  // bar should reappear only when new playback starts, which the reset effect
+  // below keys on the queue head changing.
+  const [dismissed, setDismissed] = useState(false);
+  // Below MOBILE_BREAKPOINT (768, the md tab-bar boundary) the player renders as
+  // a minimal docked bar above the tab bar instead of the free-floating card, so
+  // it never overlaps content on touch/narrow. Resolved post-mount (the `mounted`
+  // gate keeps the server paint empty); a resize across 768 swaps the form live.
+  // 768 is the natural boundary here because the docked bar sits above the 64px
+  // tab bar, which only exists below 768, and reservedBottomFor uses the same
+  // boundary for the bottom offset (the reader's 1024 panel/sheet split is a
+  // different concern). reservedBottom is the strip the bar sits above.
+  const [isNarrow, setIsNarrow] = useState(false);
+  const [reservedBottom, setReservedBottom] = useState(0);
   useEffect(() => {
     setMounted(true);
     setMinimized(getPlayerMinimized());
+  }, []);
+
+  useEffect(() => {
+    const recompute = () => {
+      const width = window.innerWidth;
+      setIsNarrow(width < MOBILE_BREAKPOINT);
+      setReservedBottom(reservedBottomFor({ width, height: window.innerHeight }));
+    };
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.addEventListener("orientationchange", recompute);
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.removeEventListener("orientationchange", recompute);
+    };
   }, []);
 
   const toggleMinimized = () => {
@@ -139,6 +182,18 @@ export function MiniPlayer() {
 
   const status = usePlayer((s) => s.status);
   const cur = usePlayer((s) => s.queue[s.index] ?? null);
+  // Identity of the queue HEAD (the first item), the signal for "a new playback
+  // session started." Every fresh play action (playVerse/playSurah/playSet/
+  // playRange) replaces the whole queue with a new head; next/prev/onEnded keep
+  // the same queue and only move `index`, so the head is stable across an
+  // advance. Keying the dismissed reset on this (not on loadToken, which also
+  // bumps on advance/nav, and not on idle->active alone, which misses tapping a
+  // new verse while one is already playing) means the bar returns only on a
+  // genuinely new session.
+  const headId = usePlayer((s) => {
+    const head = s.queue[0];
+    return head ? `${head.surah}:${head.ayah}` : null;
+  });
   const surahName = usePlayer((s) => s.surahName);
   const currentTime = usePlayer((s) => s.currentTime);
   const duration = usePlayer((s) => s.duration);
@@ -161,8 +216,24 @@ export function MiniPlayer() {
   // deadline, which doesn't map back to the chosen minutes.
   const [sleepSel, setSleepSel] = useState("");
 
-  const visible = mounted && queueLen > 0 && status !== "idle" && cur !== null;
+  const visible = mounted && !dismissed && queueLen > 0 && status !== "idle" && cur !== null;
   const playing = status === "playing";
+
+  // Reset `dismissed` only when a NEW playback session starts, detected by the
+  // queue head changing to a new non-null verse. This fires on every fresh play
+  // (including tapping a new verse while another is already playing, a
+  // playing->new-queue transition) but NOT on next/prev/onEnded auto-advance
+  // (same queue, only `index` moves) nor on navigation (the head is unchanged).
+  // prevHeadId starts as the first observed head so the initial mount does not
+  // count as a reset; a null head (no queue yet) is ignored so the bar never
+  // flickers back through a transient null transition.
+  const prevHeadId = useRef<string | null>(headId);
+  useEffect(() => {
+    if (headId !== null && headId !== prevHeadId.current) {
+      setDismissed(false);
+    }
+    prevHeadId.current = headId;
+  }, [headId]);
   const label = surahName ?? (cur ? `Surah ${cur.surah}` : "");
   const canRange = mode === "continuous" && queueLen > 1;
   const maxAyah = Math.max(1, queueLen);
@@ -326,6 +397,64 @@ export function MiniPlayer() {
     e.preventDefault();
     commit({ x, y });
   };
+
+  // Touch/narrow: a minimal docked bar above the tab bar + safe area. It reserves
+  // its own strip at the bottom (it does not overlap content the way the floating
+  // card could) and carries only the essentials — play/pause, the label and
+  // reference, and the hide and stop controls — no drag handle, seek, speed, or
+  // study panel. `inert` while hidden keeps the still-mounted transport out of
+  // the tab order, like the floating form. It commands the same store, so it
+  // adds no <audio> element. Mirrors the docked-bottom-bar shape used elsewhere
+  // (rounded top, gold hairline, card ground, soft upward shadow).
+  if (isNarrow) {
+    return (
+      <div
+        inert={!visible}
+        aria-hidden={!visible}
+        role="region"
+        aria-label={t("player.play")}
+        className={`fixed inset-x-0 z-40 flex items-center gap-2 rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark px-3 pt-2 pb-2 safe-bottom transition-opacity duration-150 motion-reduce:transition-none ${
+          visible ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        style={{ bottom: reservedBottom, boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }}
+      >
+        <button
+          type="button"
+          onClick={() => usePlayer.getState().toggle()}
+          aria-label={playing ? t("player.pause") : t("player.play")}
+          className="shrink-0 p-2 min-w-[44px] min-h-[44px] rounded-lg bg-primary/10 dark:bg-primary-light/20 hover:bg-primary/20 inline-flex items-center justify-center"
+        >
+          {status === "loading" ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />}
+        </button>
+        <span
+          className={`min-w-0 flex-1 truncate text-xs ${error ? "text-red-600 dark:text-red-400" : "text-text-muted"}`}
+        >
+          {label}
+          {cur ? ` · ${cur.surah}:${cur.ayah}` : ""}
+        </span>
+        <button
+          type="button"
+          // Hide the bar without ending playback; it returns only when new
+          // playback starts (see the dismissed reset effect).
+          onClick={() => setDismissed(true)}
+          aria-label={t("player.hide")}
+          title={t("player.hide")}
+          className="shrink-0 p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+        >
+          <HideIcon />
+        </button>
+        <button
+          type="button"
+          onClick={() => usePlayer.getState().stop()}
+          aria-label={t("player.close")}
+          title={t("player.close")}
+          className="shrink-0 p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+        >
+          <CloseIcon />
+        </button>
+      </div>
+    );
+  }
 
   return (
     // Full-viewport positioning layer that never blocks clicks; the card inside
@@ -492,6 +621,16 @@ export function MiniPlayer() {
             >
               <ExpandIcon />
             </button>
+            <button
+              type="button"
+              // Hide without stopping; mirrors the expanded card's dismiss.
+              onClick={() => setDismissed(true)}
+              aria-label={t("player.hide")}
+              title={t("player.hide")}
+              className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            >
+              <HideIcon />
+            </button>
           </div>
         ) : (
         <div className="flex items-center gap-2">
@@ -611,6 +750,17 @@ export function MiniPlayer() {
             className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
             <MinimizeIcon />
+          </button>
+          <button
+            type="button"
+            // Hide the bar without ending playback; it returns only when new
+            // playback starts (see the dismissed reset effect).
+            onClick={() => setDismissed(true)}
+            aria-label={t("player.hide")}
+            title={t("player.hide")}
+            className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+          >
+            <HideIcon />
           </button>
           <button
             type="button"
