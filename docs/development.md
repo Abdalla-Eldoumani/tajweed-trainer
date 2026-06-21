@@ -152,7 +152,8 @@ See [content-schema.md](content-schema.md). In short: edit the relevant JSON, se
 
 - The Mushaf reader pre-renders 36 SSG pages (page 1, a spread of early surah starts, and one per juz) and ISRs the rest at 24 hours. To extend SSG coverage, expand the array in `generateStaticParams` of `src/app/mushaf/page/[page]/page.tsx`.
 - The chapters list cache is 7 days. Audio URLs cache 1 hour. Tajweed pages cache 15 minutes. Tweak in the respective wrapper.
-- Bundle sizes (gzipped, page bundles, not including shared chunks): home is around 5 kB, the largest module page is around 7 kB, and the Mushaf reader is around 5 kB. All comfortably below 200 kB First-Load JS.
+- Heavy, non-critical surfaces are lazy-loaded with `next/dynamic` so the reader and progress first load stay light. In the verse overlay, the reciter compare, record-and-compare, word-by-word, and reading-depth section each split into their own chunk and load on first overlay open; the primary action row and transport stay eager so a verse tap and play are immediate. The progress milestone certificate's canvas loads only when that card renders. The placeholder during a chunk load is reduced-motion-safe.
+- Bundle sizes (gzipped, page bundles, not including shared chunks): home is around 5 kB, the largest module page is around 7 kB, and the Mushaf reader is around 5 kB. All comfortably below 200 kB First-Load JS. These are local build figures; measure true Core Web Vitals against the deployed preview, not a dev server.
 
 ## Manual smoke checklist for installable / offline behavior
 

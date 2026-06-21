@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -8,7 +9,6 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MasterySection } from "@/components/progress/MasterySection";
 import { WeakRulesSection } from "@/components/progress/WeakRulesSection";
 import { ResumeListeningCard } from "@/components/progress/ResumeListeningCard";
-import { MilestoneCertificate } from "@/components/progress/MilestoneCertificate";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
@@ -25,6 +25,22 @@ import { toArabicIndic } from "@/lib/utils";
 import { MODULES } from "@/components/layout/nav-data";
 import learningPath from "@/data/content/learning-path.json";
 import type { LearningModule } from "@/lib/types";
+
+// The milestone certificate draws a 1200x848 canvas and pulls the certificate
+// drawing lib; it is a rare on-completion surface (most loads of /progress show
+// only its calm empty line) and renders nothing before mount. Lazy-loaded so its
+// weight stays off the /progress initial bundle; it splits into its own chunk and
+// loads after mount. The placeholder matches its section footprint and is
+// reduced-motion-safe.
+const MilestoneCertificate = dynamic(
+  () => import("@/components/progress/MilestoneCertificate").then((m) => ({ default: m.MilestoneCertificate })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-24 rounded-xl bg-bg-subtle dark:bg-bg-subtle-dark animate-pulse motion-reduce:animate-none" />
+    ),
+  },
+);
 
 const modules = learningPath.modules as LearningModule[];
 
