@@ -398,19 +398,25 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
       <div className="flex flex-wrap gap-1.5">
         {visibleKeys.map((key) =>
           chipsRemovable ? (
+            // A >=44px-tall transparent hit target wrapping the compact pill, so
+            // the remove control is touch-operable without bloating the chip's
+            // visual size. The focus ring frames the inner pill, not the taller
+            // hit area.
             <button
               key={key}
               type="button"
               onClick={() => remove(key)}
               aria-label={t("player.removeChip").replace("{ref}", refOf(key))}
               title={t("player.removeChip").replace("{ref}", refOf(key))}
-              className="inline-flex items-center gap-1 rounded-full bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light ps-2 pe-1.5 py-1 text-micro font-medium tabular-nums hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+              className="group inline-flex items-center min-h-[44px] focus-visible:outline-none"
             >
-              <span>{refOf(key)}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light ps-2 pe-1.5 py-1 text-micro font-medium tabular-nums group-hover:bg-primary/20 group-focus-visible:ring-2 group-focus-visible:ring-gold group-focus-visible:ring-offset-1">
+                <span>{refOf(key)}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </span>
             </button>
           ) : (
             <span
@@ -442,7 +448,7 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
                 onClick={() => usePlayer.getState().setRepeatOne(n)}
                 aria-pressed={active}
                 className={cn(
-                  "min-w-[44px] min-h-[36px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
+                  "min-w-[44px] min-h-[44px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
                   active
                     ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                     : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
@@ -461,7 +467,7 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
         onClick={() => usePlayer.getState().setLoopSelection(!loopSelection)}
         aria-pressed={loopSelection}
         className={cn(
-          "inline-flex items-center gap-2 min-h-[36px] px-3 rounded-lg text-small font-medium border transition-colors motion-reduce:transition-none",
+          "inline-flex items-center gap-2 min-h-[44px] px-3 rounded-lg text-small font-medium border transition-colors motion-reduce:transition-none",
           loopSelection
             ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
             : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
@@ -489,7 +495,7 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
                 onClick={() => usePlayer.getState().setInterVersePause(preset.seconds)}
                 aria-pressed={active}
                 className={cn(
-                  "min-w-[44px] min-h-[36px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
+                  "min-w-[44px] min-h-[44px] px-2 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
                   active
                     ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                     : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
