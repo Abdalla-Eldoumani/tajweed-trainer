@@ -813,42 +813,99 @@ export function VerseOverlay({
   const playing = status === "playing";
   const loading = status === "loading";
 
+  // The visible entrance is gated on the width resolving so a phone never flashes
+  // the centered panel for one frame: while isDesktop is null (the pre-measure
+  // frame) the dialog and scrim stay at the closed/opacity-0 state, painting
+  // NEITHER form's chrome; the rise/fade begins only once open AND the form is
+  // known. Inertness and pointer/dismiss wiring still key on `open` directly so
+  // closing is immediate. matchMedia resolves right after first paint, so this is
+  // an imperceptible one-frame delay, not a wrong-form flash.
+  const entered = open && isDesktop !== null;
+
   const content = (
     <div role="presentation" inert={!open}>
       {/* Scrim: the ink at ~60%, a faint backdrop blur as a focus aid only (not a
-          frosted aesthetic). Tap = dismiss. Fades at the short motion duration. */}
+          frosted aesthetic). Identical for both forms. Tap = dismiss. Its visible
+          opacity follows `entered` so it does not flash before the form resolves;
+          pointer-events still key on `open`. Fades at the short motion duration. */}
       <div
         className={cn(
           "fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity [transition-duration:var(--motion-short)] motion-reduce:transition-none",
-          open ? "opacity-100" : "opacity-0 pointer-events-none",
+          entered ? "opacity-100" : "opacity-0",
+          open ? "" : "pointer-events-none",
         )}
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Centered container; Escape + Tab trap live here. */}
+      {/* Container; Escape + Tab trap live here. Centered for the panel, bottom
+          aligned for the sheet so the dialog rises from the bottom edge. */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] flex items-center justify-center px-4 py-8",
+          "fixed inset-0 z-[60] flex",
+          isSheet ? "items-end justify-center" : "items-center justify-center px-4 py-8",
           open ? "" : "pointer-events-none",
         )}
         onKeyDown={onKeyDown}
       >
-        {/* Panel rises from 0.98 scale at the medium duration with the standard
-            ease-out; reduced motion is opacity-only. */}
+        {/* ONE dialog box, ONE onKeyDown, ONE body — only the chrome differs by
+            width. The panel rises from 0.98 scale at the medium duration; the
+            sheet is fixed to the bottom edge (its `bottom` reserves the tab bar /
+            lifts above the keyboard) and rises with a transform. Reduced motion
+            is opacity-only for both. */}
         <div
           ref={panelRef}
           role="dialog"
           aria-modal="true"
           aria-labelledby={labelId}
           aria-describedby={bodyId}
-          style={{ boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)" }}
+          style={
+            isSheet
+              ? { bottom: bottomOffset, boxShadow: "0 -8px 32px -16px rgba(16,20,32,0.40)" }
+              : { boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)" }
+          }
           className={cn(
-            "w-[calc(100%-2rem)] max-w-[560px] max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain rounded-xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark p-6 sm:p-8",
-            "transition-[opacity,transform] [transition-duration:var(--motion-medium)] [transition-timing-function:var(--ease-out)] motion-reduce:transition-none",
-            open ? "opacity-100 scale-100" : "opacity-0 scale-[0.98]",
+            isSheet
+              ? // Bottom sheet: full width, top corners rounded, capped height with
+                // internal scroll so the verse it concerns stays visible above it
+                // and long verses stay reachable. z-[60] matches the shared scrim
+                // (NOT PlaybackSurface's z-40). safe-bottom reserves the home-bar.
+                // Height follows peek/expanded so the handle's toggle/drag is real:
+                // expanded fills toward 80vh, peek shrinks back so more of the verse
+                // shows above. Never full-height in either state.
+                cn(
+                  "fixed inset-x-0 z-[60] flex flex-col overflow-y-auto overscroll-contain rounded-t-2xl border-t border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark px-5 pb-5 safe-bottom transition-[transform,max-height] [transition-duration:var(--motion-short)] motion-reduce:transition-none",
+                  expanded ? "max-h-[80vh]" : "max-h-[45vh]",
+                )
+              : "w-[calc(100%-2rem)] max-w-[560px] max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain rounded-xl border border-[var(--gold-hairline)] bg-bg-card dark:bg-bg-card-dark p-6 sm:p-8 transition-[opacity,transform] [transition-duration:var(--motion-medium)] [transition-timing-function:var(--ease-out)] motion-reduce:transition-none",
+            entered
+              ? "opacity-100 scale-100 translate-y-0"
+              : isSheet
+                ? "opacity-0 translate-y-full"
+                : "opacity-0 scale-[0.98]",
           )}
         >
+          {/* Grab handle: a 36x4px bar inside a >=44px-tall touch target, at the
+              TOP of the sheet above the body. Tap toggles peek/expanded, swipe
+              down dismisses (onClose), swipe up expands. Sheet form only. */}
+          {isSheet && (
+            <button
+              type="button"
+              aria-label={t("player.grabHandle")}
+              aria-expanded={expanded}
+              onPointerDown={onHandlePointerDown}
+              onPointerMove={onHandlePointerMove}
+              onPointerUp={onHandlePointerUp}
+              className="flex items-center justify-center w-full h-11 -mb-2 touch-none"
+            >
+              <span
+                className="block w-9 h-1 rounded-full"
+                style={{ backgroundColor: "var(--text-muted)", opacity: 0.4 }}
+                aria-hidden="true"
+              />
+            </button>
+          )}
+
           {/* Header: eyebrow + the verse reference (the dialog's accessible
               name), then the verse Arabic read-only. */}
           <div id={labelId}>
