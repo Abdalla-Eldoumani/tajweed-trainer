@@ -1,7 +1,19 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
+  // The dark variant matches all three dark grounds, not a single class, so
+  // every existing `dark:` utility applies on night, sepia, and mihrab without
+  // rewriting the component tree. Each selector is the ancestor form (the
+  // attribute lives on <html>); the two light themes (vellum, pearl) do not
+  // match. CSS-var consumers flip per theme through the [data-theme] blocks.
+  darkMode: [
+    "variant",
+    [
+      '[data-theme="night"] &',
+      '[data-theme="sepia"] &',
+      '[data-theme="mihrab"] &',
+    ],
+  ],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
