@@ -61,13 +61,21 @@ interface MushafPageProps {
   // per-word uncover for a memorized playing verse; without segments (or when the
   // toggle is off) both paths keep the existing whole-verse blur. In-session only.
   revealAsRecited?: boolean;
+  // Reading focus mode: when true, every verse EXCEPT the active one is dimmed
+  // (opacity only) so the reader's eye rests on the verse in hand. The active
+  // verse is the playing verse, else the single selected verse, else none (with
+  // nothing playing/selected focus mode dims nothing). VERSE-level and
+  // segment-INDEPENDENT: it keys on the playing/selected verse, never the active
+  // word index, so it works for every reciter and with audio paused. Fed by the
+  // reader toolbar toggle (Plan 04). In-session only.
+  focusMode?: boolean;
 }
 
-export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true, revealAsRecited = false }: MushafPageProps) {
+export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true, revealAsRecited = false, focusMode = false }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
   const { hasNote, mounted: notesMounted } = useVerseNotes();
-  const { isSelected, toggle: toggleSelected } = useVerseSelection();
+  const { isSelected, toggle: toggleSelected, count: selectedCount, markedKeys } = useVerseSelection();
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
   // Subscribe to the verse the global player is on so the page can mark it while
@@ -87,6 +95,16 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
   // highlight.
   const { verseKey: followKey, activeIdx, segments } = useFollowAlong();
   const segmentCount = wordCount(segments ?? []);
+
+  // The verse focus mode treats as active: the playing verse first, else the
+  // single selected verse when exactly one is selected, else null. This is
+  // VERSE-level and segment-INDEPENDENT — it reads playingKey/the selection, NOT
+  // activeIdx/follow-along, so it works for every reciter and with audio paused.
+  // With nothing playing or singly selected, focusActiveKey is null and focus
+  // mode dims nothing (no surprise blackout). markedKeys holds the one selected
+  // key when selectedCount === 1 (a range of one is also a single key).
+  const focusActiveKey =
+    playingKey ?? (focusMode && selectedCount === 1 ? [...markedKeys][0] ?? null : null);
 
   // Scroll a lesson-targeted verse into view once the page renders.
   useEffect(() => {
@@ -132,6 +150,11 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
             const hideText = memorizationMode && memorized && !revealed.has(v.verseKey);
             const isPlaying = v.verseKey === playingKey;
             const selected = isSelected(v.verseKey);
+            // Focus mode dims every verse except the active one. Verse-level and
+            // segment-independent: keyed on focusActiveKey (playing else single
+            // selected), never the active word index. Only the verse span is
+            // dimmed; the surah cartouche/bismillah header below is never touched.
+            const dimmed = focusMode && !!focusActiveKey && v.verseKey !== focusActiveKey;
             // The one verse that gets the word-sync highlight: the controller's
             // playing verse (persists on pause), only when follow-along is on and
             // its segments are present. Every other verse keeps the plain
@@ -159,7 +182,10 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                     <BismillahLine surahNumber={v.surah} />
                   </header>
                 )}
-                <span data-verse-key={v.verseKey} className="inline-flex items-baseline relative">
+                <span
+                  data-verse-key={v.verseKey}
+                  className={cn("inline-flex items-baseline relative", dimmed && "mushaf-verse-dimmed")}
+                >
                   <button
                     type="button"
                     onClick={() => onPlayVerse?.(v.verseKey)}
