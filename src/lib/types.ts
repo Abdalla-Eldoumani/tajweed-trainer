@@ -2,6 +2,10 @@ import type { PlayerPosition } from "./player-position";
 
 export type Language = 'en' | 'ar';
 
+// The five art-directed themes. The value is the `[data-theme="..."]` attribute
+// set on <html>; each name has a matching token block in globals.css.
+export type Theme = 'vellum' | 'pearl' | 'night' | 'sepia' | 'mihrab';
+
 export interface ArabicLetter {
   arabic: string;
   name_ar?: string;
@@ -374,6 +378,9 @@ export interface UserSettings {
   reciter: ReciterId;
   playbackSpeed: number;
   fontSize: 'normal' | 'large' | 'xlarge';
+  theme: Theme;
+  // Retained only for backward-compatible import this release: the sanitizer
+  // migrates a stored darkMode into `theme`, and old backups still carry it.
   darkMode: boolean;
   showTransliteration: boolean;
   showTranslation: boolean;
