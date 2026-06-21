@@ -48,16 +48,33 @@ export function ReadingDepth({ surah, ayah }: ReadingDepthProps) {
     };
   }, [surah, verseKey, settings.showTranslation, settings.translationId]);
 
-  function toggleTafsir() {
-    setTafsirOpen((open) => !open);
-    if (tafsir !== null || tafsirState === "loading") return;
+  // On-demand: fetch only once the panel is open, and refetch whenever the
+  // source (settings.tafsirId) changes while it stays open, so switching the
+  // tafsir in Settings updates the open panel instead of showing the first
+  // source forever. Resetting tafsir on key change avoids flashing the previous
+  // source before the new one arrives. "" from the wrapper is "no tafsir", which
+  // the ready+!tafsir branch below renders as reading.noTafsir, not an error.
+  useEffect(() => {
+    if (!tafsirOpen) return;
+    let alive = true;
+    setTafsir(null);
     setTafsirState("loading");
     getTafsirForVerse(verseKey, settings.tafsirId ?? 169)
       .then((html) => {
+        if (!alive) return;
         setTafsir(html);
         setTafsirState("ready");
       })
-      .catch(() => setTafsirState("error"));
+      .catch(() => {
+        if (alive) setTafsirState("error");
+      });
+    return () => {
+      alive = false;
+    };
+  }, [verseKey, settings.tafsirId, tafsirOpen]);
+
+  function toggleTafsir() {
+    setTafsirOpen((open) => !open);
   }
 
   return (

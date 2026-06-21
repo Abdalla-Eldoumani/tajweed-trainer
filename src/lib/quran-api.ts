@@ -287,12 +287,15 @@ interface SearchApiResponse {
 }
 
 // Search the Quran by text via the API endpoint. The query is sanitized before
-// it reaches the URL; results below the 2-char minimum return empty. Verse text
-// comes from the API, never generated.
-export async function searchVerses(query: string): Promise<VerseSearchResult[]> {
+// it reaches the URL; results below the 2-char minimum return empty. The snippet
+// is the API's text in the requested translation resource, never generated here;
+// requesting that resource keeps search in the same language as the reading-depth
+// panel instead of the API's English default.
+export async function searchVerses(query: string, translationId = 20): Promise<VerseSearchResult[]> {
   const q = sanitizeSearchQuery(query);
   if (q.length < 2) return [];
-  const url = `${BASE_URL}/search?q=${encodeURIComponent(q)}&size=20&page=0`;
+  const tid = isValidResourceId(translationId) ? translationId : 20;
+  const url = `${BASE_URL}/search?q=${encodeURIComponent(q)}&size=20&page=0&translations=${tid}`;
   const data = await fetchWithCache<SearchApiResponse>(url);
   return (data.search?.results ?? [])
     .map((r) => ({ verseKey: r.verse_key, text: r.translations?.[0]?.text ?? r.text ?? "" }))

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { useTranslation } from "@/lib/i18n";
+import { useSettings } from "@/hooks/useSettings";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import type { SearchResult } from "@/lib/search";
 import { searchVerses, type VerseSearchResult } from "@/lib/quran-api";
@@ -29,6 +30,9 @@ const stripTags = (s: string) => s.replace(/<[^>]*>/g, "");
 
 export default function SearchPage() {
   const { t, isAr } = useTranslation();
+  // The selected translation resource. Threaded into the verse search so its
+  // snippets render in the same language as the reading-depth panel.
+  const { settings } = useSettings();
   const [query, setQuery] = useState("");
   // Single-select kind filter. Single (not multi) keeps the control calm: the
   // kind set is tiny and "all" plus one active chip reads clearly. Filtering is
@@ -81,7 +85,7 @@ export default function SearchPage() {
     }
     let alive = true;
     setVerseState("loading");
-    searchVerses(q)
+    searchVerses(q, settings.translationId ?? 20)
       .then((r) => {
         if (!alive) return;
         setVerses(r);
@@ -93,7 +97,7 @@ export default function SearchPage() {
     return () => {
       alive = false;
     };
-  }, [debounced, retryTick]);
+  }, [debounced, retryTick, settings.translationId]);
 
   const short = query.trim().length < 2;
 
