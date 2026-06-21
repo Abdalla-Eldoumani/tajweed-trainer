@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { useSettings } from "@/hooks/useSettings";
 import { sanitizeTajweedHtml } from "@/lib/sanitize";
 import { canAlign } from "@/lib/follow-along";
-import { prefersReducedMotion } from "@/lib/reduced-motion";
 
 interface TajweedFollowTextProps {
   // The SAME text_uthmani_tajweed markup TajweedText receives; sanitized
@@ -214,10 +213,9 @@ export function TajweedFollowText({
     // whole-verse blur). A wrong-word highlight or blur is worse than none.
     if (!canAlign(segmentCount, groups.length)) return;
 
-    // Reduced motion is read so the static-under-reduced-motion contract is
-    // explicit; the wash/underline and the blur are state changes (the CSS drops
-    // their transitions), and there is no JS-driven travelling effect to gate.
-    prefersReducedMotion();
+    // Reduced motion is handled entirely in CSS: the wash/underline and the blur
+    // are state changes whose transitions the prefers-reduced-motion block drops.
+    // There is no JS-driven travelling effect to gate here.
 
     // Reveal-as-recited: blur every word AHEAD of the active one. Words up to and
     // including activeIdx (and, with a negative activeIdx, none) carry no class and
