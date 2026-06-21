@@ -71,10 +71,15 @@ record(
   /prefersReducedMotion\(\)/.test(pageSrc),
   "reduced-motion guard present",
 );
+// The verse-scroll-into-view moved out of the reader into MushafPage/the
+// overlay, so the reader does no scrolling. Require the reduced-motion guard
+// only if the reader actually scrolls (so it stays in force if a scroll ever
+// returns here), and accept it as satisfied when there is no scroll to gate.
+const readerScrolls = /scrollIntoView|scrollTo|window\.scroll/.test(readerSrc);
 record(
-  "MushafReader.tsx calls prefersReducedMotion()",
-  /prefersReducedMotion\(\)/.test(readerSrc),
-  "reduced-motion guard present",
+  "MushafReader.tsx gates any scroll through prefersReducedMotion()",
+  !readerScrolls || /prefersReducedMotion\(\)/.test(readerSrc),
+  readerScrolls ? "reduced-motion guard present where the reader scrolls" : "reader does no scrolling, nothing to gate",
 );
 
 // --- 4. motion-reduce on the cited spinner/pulse animations. ---
