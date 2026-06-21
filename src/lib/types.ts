@@ -456,6 +456,12 @@ export interface TajweedProgress {
   // An empty note deletes the entry; capped in count and per-note length by the
   // storage sanitizer.
   verseNotes: Record<string, string>;
+  // verseKey ("surah:ayah") -> the learner's own short labels for organizing
+  // notes and bookmarks. Local-only, never transmitted, and never religious
+  // content (the user's own words, like a personal sticky note). An empty tag
+  // set deletes the entry; bounded in count, per-entry tag count, and per-tag
+  // length by the storage sanitizer. Additive optional for lossless migration.
+  entryTags?: Record<string, string[]>;
   analytics: AnalyticsEvent[];
   // Last playback position, so the mini-player can resume after a reload.
   playerResume?: PlayerResume | null;
