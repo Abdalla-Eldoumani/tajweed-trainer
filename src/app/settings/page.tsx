@@ -295,7 +295,7 @@ export default function SettingsPage() {
                     rather than a flat color chip. */}
                 <span
                   aria-hidden="true"
-                  className="flex items-center gap-1.5 rounded-md px-2 py-1.5 shrink-0 ring-1 ring-gold-hairline"
+                  className="flex items-center gap-1.5 rounded-md px-2 py-1.5 shrink-0 border border-[var(--gold-hairline)]"
                   style={{ backgroundColor: preview.bg }}
                 >
                   <span className="block h-4 w-4 rounded-full" style={{ backgroundColor: preview.text }} />
