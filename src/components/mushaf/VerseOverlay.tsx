@@ -9,11 +9,17 @@ import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
+import { useSettings } from "@/hooks/useSettings";
 import { getRecitation } from "@/lib/reciters";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { TajweedText } from "@/components/ui/TajweedText";
+import { ReadingDepth } from "@/components/learn/ReadingDepth";
+import { WordByWord } from "@/components/learn/WordByWord";
 import { useVerseSelection } from "./useVerseSelection";
-import type { MushafPageData, SurahHeader } from "@/lib/types";
+import { VerseNotes } from "./VerseNotes";
+import { ReciterCompare } from "./ReciterCompare";
+import { RecitationCompare } from "./RecitationCompare";
+import type { MushafPageData, ReciterId, SurahHeader } from "@/lib/types";
 
 // Per-verse repeat options for the stepper, lifted with MultiVerseControls from
 // PlaybackSurface. "Off" (count 0/1) plays each verse once; the rest mirror the
@@ -530,6 +536,50 @@ function MultiVerseControls({ data }: { data: MushafPageData }) {
   );
 }
 
+// The reading-depth section: an opt-in disclosure holding the existing
+// translation/tafsir, word-by-word (when enabled), and record-and-compare
+// surfaces, mounted unchanged. A standalone component so its open state resets
+// by remount (keyed by verseKey at the call site) when the open verse changes,
+// without a reset effect. All read-only religious content; RecitationCompare
+// records the user's own voice into its own clip element (the lone allowed extra
+// audio), it is not a second playback path.
+function ReadingDepthSection({
+  surah,
+  ayah,
+  reciter,
+  showWordByWord,
+}: {
+  surah: number;
+  ayah: number;
+  reciter: ReciterId;
+  showWordByWord: boolean;
+}) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-t border-border pt-4">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={cn("transition-transform motion-reduce:transition-none", open && "rotate-90")}>
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        {t("player.readingDepth")}
+      </button>
+      {open && (
+        <div className="mt-3 space-y-3">
+          <ReadingDepth surah={surah} ayah={ayah} />
+          {showWordByWord && <WordByWord surah={surah} ayah={ayah} />}
+          <RecitationCompare surah={surah} ayah={ayah} reciter={reciter} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // One focused surface for a single verse, opened over a dimmed, inert page. It
 // replaces the page-shrinking docked panel as the primary verse interaction on a
 // pointer device: tapping a verse opens this, and everything the learner can do
@@ -568,6 +618,7 @@ export function VerseOverlay({
   playFromVerse,
 }: VerseOverlayProps) {
   const { t, isAr } = useTranslation();
+  const { settings } = useSettings();
   const { isMemorized, toggle: toggleMemorized, mounted: memMounted } = useMemorization();
   const { isBookmarked: isVerseBookmarked, toggle: toggleVerseBm, mounted: bmMounted } = useBookmarks();
   // Live player state for the transport row, the reciter line, and the error
@@ -579,9 +630,10 @@ export function VerseOverlay({
   const hasPrev = usePlayer((s) => s.index > 0);
   const playerError = usePlayer((s) => s.error);
   const panelRef = useRef<HTMLDivElement>(null);
-  // The note section is mounted into this seam in a following step; the note
-  // control scrolls it into view. Empty for now so no note content is fabricated.
-  const noteSeamRef = useRef<HTMLDivElement>(null);
+  // The note-section wrapper. The action-row note button reveals this region and
+  // scrolls it into view (and focuses VerseNotes' first control), so a brand-new
+  // note opens from the row even though VerseNotes itself starts collapsed.
+  const notesRef = useRef<HTMLDivElement>(null);
   // The "play this verse" control: the auto-focused primary so Enter/tap plays
   // immediately on open. Pointed at the button in the action row below.
   const primaryRef = useRef<HTMLButtonElement>(null);
@@ -674,10 +726,17 @@ export function VerseOverlay({
   const verseMemo = valid && memMounted && isMemorized(verseKey!);
   const verseBm = valid && bmMounted && isVerseBookmarked(verseKey!);
 
-  // Reveal the note section (mounted in a following step): scroll its seam into
-  // view so the note control has a real destination without fabricating content.
+  // Reveal the note region from the action-row note button: scroll it into view
+  // and move focus to its first control (VerseNotes' "Add a note" button when the
+  // verse has no note yet, or its textarea once a note exists), so the row button
+  // has a real destination and a brand-new note is one Enter away, never inert.
   const goToNote = () => {
-    noteSeamRef.current?.scrollIntoView({ block: "nearest" });
+    const region = notesRef.current;
+    if (!region) return;
+    region.scrollIntoView({ block: "nearest" });
+    region.querySelector<HTMLElement>(
+      'button, textarea, input, a[href], [tabindex]:not([tabindex="-1"])',
+    )?.focus();
   };
 
   // Transport state for the lifted row. Loading and stopped both read as "play"
@@ -849,10 +908,41 @@ export function VerseOverlay({
             </section>
           )}
 
-          {/* Seam for the reciter compare, the per-verse note field, and the
-              reading-depth section, mounted in the following step. The note
-              control above scrolls here. */}
-          <div ref={noteSeamRef} />
+          {/* Reciter A/B compare: hear this verse by two reciters back to back.
+              Self-contained and collapsible; plays through the one engine
+              (usePlayer.playVerse), no second <audio>. */}
+          {valid && (
+            <div className="mt-3">
+              <ReciterCompare surah={sv} ayah={av} surahName={surahLabel || null} />
+            </div>
+          )}
+
+          {/* Per-verse private note (local-only, the learner's own words). Keyed
+              by verseKey so it re-syncs when the open verse changes. Always
+              rendered so an existing note shows and the action-row note button
+              has a destination to scroll to and focus. */}
+          {valid && (
+            <div ref={notesRef} className="mt-3 scroll-mt-4">
+              <VerseNotes key={verseKey!} verseKey={verseKey!} />
+            </div>
+          )}
+
+          {/* Reading depth: an opt-in disclosure holding translation + tafsir,
+              the word-by-word breakdown (when enabled), and record-and-compare.
+              Keyed by verseKey so it collapses fresh when the open verse changes.
+              All read-only religious content (RecitationCompare records the
+              user's own voice into its own clip — the lone allowed extra audio). */}
+          {valid && (
+            <div className="mt-3">
+              <ReadingDepthSection
+                key={verseKey!}
+                surah={sv}
+                ayah={av}
+                reciter={settings.reciter}
+                showWordByWord={!!settings.showWordByWord}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
