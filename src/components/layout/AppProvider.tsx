@@ -24,19 +24,24 @@ function GlobalMiniPlayer() {
 }
 
 function SettingsSync({ children }: { children: React.ReactNode }) {
-  const { settings } = useSettings();
+  const { settings, mounted } = useSettings();
 
-  // The selected theme is applied as data-theme on <html>; every [data-theme]
-  // token block and the widened dark variant key off this attribute.
+  // The pre-paint bootstrap in layout.tsx already set data-theme, lang and dir
+  // from storage before first paint. Until the provider mounts, settings is the
+  // default, so these effects must NOT run — applying the default would clobber
+  // the bootstrap and flash the theme/direction. After mount they apply the
+  // real values (a no-op vs the bootstrap) and thereafter react to user changes.
   useEffect(() => {
+    if (!mounted) return;
     document.documentElement.setAttribute("data-theme", settings.theme);
-  }, [settings.theme]);
+  }, [settings.theme, mounted]);
 
   useEffect(() => {
+    if (!mounted) return;
     const lang = settings.language ?? "en";
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-  }, [settings.language]);
+  }, [settings.language, mounted]);
 
   return <>{children}</>;
 }
