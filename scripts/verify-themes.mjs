@@ -103,10 +103,22 @@ function parseThemeTajweed() {
 }
 const mapTajweed = parseThemeTajweed();
 
-// --- parse a [data-theme="name"] block body ---
+// --- parse a [data-theme="name"] block body (brace-depth aware so a future
+// nested rule inside a theme block does not truncate the capture) ---
 function themeBlock(name) {
-  const re = new RegExp(`\\[data-theme="${name}"\\]\\s*\\{([\\s\\S]*?)\\n\\}`);
-  return (css.match(re) || [])[1] || "";
+  const start = css.indexOf(`[data-theme="${name}"]`);
+  if (start < 0) return "";
+  const open = css.indexOf("{", start);
+  if (open < 0) return "";
+  let depth = 1;
+  let i = open + 1;
+  while (i < css.length && depth > 0) {
+    const ch = css[i];
+    if (ch === "{") depth++;
+    else if (ch === "}") depth--;
+    i++;
+  }
+  return css.slice(open + 1, i - 1);
 }
 // --- parse the leading :root / .dark variable blocks (first match only) ---
 function leadBlock(selector) {
