@@ -11,6 +11,10 @@ const ALLOWED_AUDIO_HOSTS = new Set([
   // Reviewed per-ayah source for the EveryAyah reciters (deterministic file
   // paths, no API). Mirrored in the CSP media-src in next.config.mjs.
   "everyayah.com",
+  // Reviewed per-surah Warsh source for the walled-off Younes narration
+  // exception. The specific host only (no *.mp3quran.net wildcard); mirrored in
+  // the CSP media-src in next.config.mjs.
+  "server16.mp3quran.net",
 ]);
 
 function isAllowedAudioHost(hostname: string): boolean {
