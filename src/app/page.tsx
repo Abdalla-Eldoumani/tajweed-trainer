@@ -89,21 +89,28 @@ export default function HomePage() {
       <ResumeReading />
       <DailyVerse />
 
-      {/* Feature Cards */}
+      {/* Feature Cards. Each lifts off the page through the shared elevation
+          primitive (variant="elevated": the per-theme ink page-lift shadow plus
+          the inset gold hairline), so the grid reads as raised paper, not a flat
+          row of boxes. The learning-path list below stays flat by contrast.
+          Each eases in on load with the shared .enter-settle entrance (opacity
+          plus a short upward settle at --motion-short); it is reduced-motion-safe
+          via the globals.css off-switch, so under reduced motion the cards just
+          appear with no slide. */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card variant="elevated" className="enter-settle">
           <div className="text-h2 mb-2 text-gold-dark dark:text-gold font-heading font-bold">9</div>
           <h3 className="font-heading font-semibold text-small">{t("home.learningModules")}</h3>
           <p className="text-micro text-text-muted mt-1">{t("home.learningModulesDesc")}</p>
         </Card>
 
-        <Card>
+        <Card variant="elevated" className="enter-settle">
           <div className="text-h2 mb-2 font-quran" style={{ color: COLOR_CODED_DEMO }} dir="rtl" lang="ar">ن</div>
           <h3 className="font-heading font-semibold text-small">{t("home.colorCodedText")}</h3>
           <p className="text-micro text-text-muted mt-1">{t("home.colorCodedTextDesc")}</p>
         </Card>
 
-        <Card>
+        <Card variant="elevated" className="enter-settle">
           <div className="text-h2 mb-2 text-gold-dark dark:text-gold">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
@@ -113,7 +120,7 @@ export default function HomePage() {
           <p className="text-micro text-text-muted mt-1">{t("home.audioExamplesDesc")}</p>
         </Card>
 
-        <Card>
+        <Card variant="elevated" className="enter-settle">
           <div className="text-h2 mb-2 text-gold-dark dark:text-gold">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" />
@@ -123,7 +130,7 @@ export default function HomePage() {
           <p className="text-micro text-text-muted mt-1">{t("home.practiceQuizzesDesc")}</p>
         </Card>
 
-        <Card>
+        <Card variant="elevated" className="enter-settle">
           <div className="text-h2 mb-2 text-gold-dark dark:text-gold">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
@@ -133,7 +140,7 @@ export default function HomePage() {
           <p className="text-micro text-text-muted mt-1">{t("home.progressTrackingDesc")}</p>
         </Card>
 
-        <Card>
+        <Card variant="elevated" className="enter-settle">
           <div className="text-h2 mb-2 font-arabic text-primary dark:text-primary-light" dir="rtl" lang="ar">حفص</div>
           <h3 className="font-heading font-semibold text-small">{t("home.hafsAnAsim")}</h3>
           <p className="text-micro text-text-muted mt-1">{t("home.hafsAnAsimDesc")}</p>
@@ -149,7 +156,10 @@ export default function HomePage() {
         <div className="space-y-2">
           {modules.map((module) => (
             <Link key={module.id} href={`/learn/${module.id}`}>
-              <div className="flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors">
+              {/* The rows stay flat (no elevation) but share the same quiet
+                  entrance as the cards above, so the whole page settles in
+                  together; the existing hover tint is unchanged. */}
+              <div className="enter-settle flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors">
                 <span className="w-8 h-8 rounded-full bg-gold-light/30 text-gold-dark dark:bg-gold-dark/20 dark:text-gold-light flex items-center justify-center text-micro font-bold border border-gold-light/40 dark:border-gold-dark/30">
                   {module.order}
                 </span>

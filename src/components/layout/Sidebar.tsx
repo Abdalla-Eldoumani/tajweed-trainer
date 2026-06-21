@@ -62,7 +62,11 @@ export function Sidebar() {
           <Link href="/" className="block">
             <h1 className="flex items-center gap-2 text-lg font-heading font-bold text-[var(--margin-active)]">
               <StarIcon className="shrink-0 opacity-80" />
-              {t("app.title")}
+              {/* The wordmark text is locale-dependent: the server resolves the
+                  English default (no localStorage) while the client's first
+                  render reads the stored language. Suppress on this one text
+                  node so React patches it to the client value with no warning. */}
+              <span suppressHydrationWarning>{t("app.title")}</span>
             </h1>
             <p className="text-sm font-arabic text-[var(--margin-muted)] mt-0.5" dir="rtl" lang="ar">
               {t("app.titleAr")}

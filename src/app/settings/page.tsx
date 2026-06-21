@@ -10,6 +10,7 @@ import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } f
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
 import type { Recitation, TranslationResource, Theme } from "@/lib/types";
+import { withViewTransition } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 // Literal anchor hexes per theme (DESIGN_SYSTEM_V2.md), used only to paint the
@@ -285,7 +286,7 @@ export default function SettingsPage() {
                   name="theme"
                   value={value}
                   checked={active}
-                  onChange={() => updateSettings({ theme: value })}
+                  onChange={() => withViewTransition(() => updateSettings({ theme: value }))}
                   className="accent-primary dark:accent-gold"
                   aria-label={t(labelKey)}
                 />
@@ -294,7 +295,7 @@ export default function SettingsPage() {
                     rather than a flat color chip. */}
                 <span
                   aria-hidden="true"
-                  className="flex items-center gap-1.5 rounded-md px-2 py-1.5 shrink-0 ring-1 ring-gold-hairline"
+                  className="flex items-center gap-1.5 rounded-md px-2 py-1.5 shrink-0 border border-[var(--gold-hairline)]"
                   style={{ backgroundColor: preview.bg }}
                 >
                   <span className="block h-4 w-4 rounded-full" style={{ backgroundColor: preview.text }} />

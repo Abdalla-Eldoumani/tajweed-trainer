@@ -57,6 +57,33 @@
   --tajweed-idgham_ghunnah: #169200;
   --tajweed-idgham_wo_ghunnah: #169200;
   --tajweed-tafkheem: #006994;
+
+  /* The manuscript's motion language. Durations and easing curves read the same
+     in every theme -- only colors flip per [data-theme] -- so they live here in
+     :root once. micro/short/medium pace component motion (illumination, card and
+     row entrances, overlay); page is the cross-surface turn between routes. */
+  --motion-micro: 120ms;
+  --motion-short: 200ms;
+  --motion-medium: 320ms;
+  --motion-page: 420ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Depth: a raised surface is the manuscript page lifting off the constant desk
+     surface (the navigation band). The shadow is a soft, low, two-part ink lift
+     -- a tight contact shadow plus a wide low-opacity ambient -- KEYED TO THE
+     THEME'S INK, so its value differs per [data-theme] and must live there. This
+     :root default uses vellum's navy ink and covers any paint before a theme is
+     stamped. Deliberately paper-and-ink: no glassmorphism, no backdrop blur as a
+     style, no neon or colored glow. The gold hairline border is layered
+     separately in .card-elevated. A barely-there top-edge light (the near-white
+     inset) catches the page like raking light; it is kept off the dark grounds
+     where a light inset would read as a glow rim. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 1px 2px rgba(19, 27, 46, 0.05),
+    0 12px 28px -18px rgba(19, 27, 46, 0.20);
 }
 
 /* Reference baseline only -- NOT applied at runtime. Nothing sets the old
@@ -133,6 +160,13 @@
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
+  /* The page-lift shadow, keyed to vellum's navy ink (#131B2E), with a faint
+     near-white top-edge light catching the page. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 1px 2px rgba(19, 27, 46, 0.05),
+    0 12px 28px -18px rgba(19, 27, 46, 0.20);
+
   /* Tajweed letter colors retuned for the vellum ground; equals the :root set
      and THEME_TAJWEED.vellum in src/lib/tajweed-colors.ts (the verbatim QUL
      light values). */
@@ -182,6 +216,13 @@
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
+  /* The page-lift shadow on a dark ground reads as near-black, not the light
+     ink -- a deeper, slightly larger ambient so the surface still lifts off the
+     navy desk (mirrors the shipped dark .card-elevated). */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
+
   /* Tajweed letter colors retuned for the night ground; equals the .dark set
      and THEME_TAJWEED.night in src/lib/tajweed-colors.ts (the navy lifts). */
   --tajweed-ham_wasl: #B7BCC6;
@@ -229,6 +270,13 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow, keyed to pearl's cool ink (#1B2733), with a faint
+     near-white top-edge light catching the page. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.60),
+    0 1px 2px rgba(27, 39, 51, 0.05),
+    0 12px 28px -18px rgba(27, 39, 51, 0.20);
 
   /* Tajweed letter colors deepened for the brighter, cooler pearl ground; same
      hues as vellum, retuned to clear contrast. Equals THEME_TAJWEED.pearl. */
@@ -278,6 +326,12 @@
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
+  /* The page-lift shadow on the warm dim sepia ground: near-black, deeper and
+     slightly larger so the warm-dark surface still lifts off the desk. */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
+
   /* Tajweed letter colors brightened and warmed for the dim sepia ground; same
      hues as night, retuned for the warm dark. Equals THEME_TAJWEED.sepia. */
   --tajweed-ham_wasl: #B3AEA2;
@@ -325,6 +379,12 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow on the deep emerald mihrab ground: near-black, deeper
+     and slightly larger so the surface still lifts off the green-black desk. */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
 
   /* Tajweed letter colors brightened for the deep emerald mihrab ground; same
      hues as night, kept bright so the greens stay distinct from the green
@@ -377,6 +437,71 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Page motion: the cross-surface turn between routes and the theme crossfade.
+   RouteTransition remounts on each navigation (key={pathname}) so .route-enter
+   replays per route; the ::view-transition root rules style the swap the
+   withViewTransition() helper drives (currently the theme change in settings).
+   Reduced motion disables both for an instant swap; browsers without the View
+   Transitions API are handled in the helper, which feature-detects and just
+   applies the update. */
+@keyframes route-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.route-enter {
+  animation: route-enter var(--motion-page) var(--ease-out) both;
+}
+
+/* The View Transitions root cross-fade: the old layer fades out while the new
+   layer fades in and settles from a 0.5% scale, keyed to the page motion
+   token. */
+@keyframes route-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+::view-transition-old(root) {
+  animation: route-fade-out var(--motion-page) var(--ease-out) both;
+}
+
+::view-transition-new(root) {
+  animation: route-fade-in var(--motion-page) var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-enter {
+    animation: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }
 
@@ -473,6 +598,21 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   }
 }
 
+/* The card/row entrance: opacity plus a short upward settle of a few pixels, as
+   if the page settled onto the desk. The single shared entrance primitive every
+   surface (home, the ui primitives) consumes, driven by the motion tokens so it
+   stays in step with the rest of the manuscript's motion. */
+@keyframes page-settle {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -482,6 +622,21 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
      keep a fixed width and do not jitter as a count updates. */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Apply the page-settle entrance. `both` holds the element at opacity 0 before
+     it plays and at its resting position after. */
+  .enter-settle {
+    animation: page-settle var(--motion-short) var(--ease-out) both;
+  }
+}
+
+/* Reduced motion: drop the entrance entirely so the element appears at its
+   resting position with no slide and no lingering offset (the global crush
+   already removes the movement; this keeps it explicit). */
+@media (prefers-reduced-motion: reduce) {
+  .enter-settle {
+    animation: none;
   }
 }
 
@@ -768,20 +923,15 @@ html, body {
   color: #C7A24A;
 }
 
-/* Card elevated variant: a quiet 1px gold hairline and a small neutral
-   shadow. No gold glow. */
+/* The shared elevation/hairline primitive: a raised manuscript page. It layers
+   the quiet 1px inset gold hairline (the hairline primitive, reusing
+   --gold-hairline) over the per-theme --elevation page-lift shadow, so every
+   surface inherits the same theme-aware depth from one token. Paper-and-ink, not
+   glass-and-glow: no backdrop blur, no neon or colored shadow, gold as leaf not
+   paint. */
 .card-elevated {
   position: relative;
   box-shadow:
     inset 0 0 0 1px var(--gold-hairline),
-    0 1px 2px rgba(16, 20, 32, 0.04),
-    0 2px 8px rgba(16, 20, 32, 0.04);
-}
-
-[data-theme="night"] .card-elevated,
-[data-theme="sepia"] .card-elevated,
-[data-theme="mihrab"] .card-elevated {
-  box-shadow:
-    inset 0 0 0 1px var(--gold-hairline),
-    0 8px 24px -12px rgba(0, 0, 0, 0.4);
+    var(--elevation);
 }

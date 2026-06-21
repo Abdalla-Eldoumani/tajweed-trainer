@@ -21,7 +21,7 @@ type ButtonProps =
   | (Omit<ButtonBaseProps, "aria-label"> & { variant: "icon" } & IconLabel);
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", style, children, ...props }, ref) => {
     const isIcon = variant === "icon";
     // outline is kept as an alias of the design-system secondary (outline) so
     // existing variant="outline" call sites render the single outline style.
@@ -30,6 +30,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
+        // Pin the color transition to the manuscript's micro duration and
+        // symmetric easing so hover/focus reads immediate and in step with the
+        // rest of the motion language; transition-colors keeps it to color only,
+        // never layout. The global reduced-motion crush still zeroes it.
+        style={{
+          transitionDuration: "var(--motion-micro)",
+          transitionTimingFunction: "var(--ease-standard)",
+          ...style,
+        }}
         className={cn(
           "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           {

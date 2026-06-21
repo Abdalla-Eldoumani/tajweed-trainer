@@ -7,15 +7,28 @@ import type { UserSettings } from "@/lib/types";
 interface SettingsContextValue {
   settings: UserSettings;
   updateSettings: (updates: Partial<UserSettings>) => void;
+  // False until the client has mounted. SettingsSync gates its <html> writes on
+  // this so it never clobbers the pre-paint bootstrap with the default before
+  // the stored settings are available.
+  mounted: boolean;
 }
 
 const SettingsContext = createContext<SettingsContextValue>({
   settings: DEFAULT_SETTINGS,
   updateSettings: () => {},
+  mounted: false,
 });
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettingsState] = useState<UserSettings>(() => getSettings());
+  // Until the client has mounted, expose DEFAULT_SETTINGS so the first client
+  // render matches the server (which has no localStorage and renders the
+  // default). Without this, the state initializer reads stored Arabic on the
+  // client's first render while the server rendered the English default, and
+  // every localized string mismatches (React hydration error #418). The real
+  // settings swap in right after mount; the pre-paint bootstrap already set
+  // dir/lang on <html>, so only text content settles from default to stored.
+  const [mounted, setMounted] = useState(false);
   // Serialized form of the last value known to match storage. The mount
   // re-read below always produces a new object identity for unchanged values,
   // so equality (not identity, and not a skip-first-pass flag) must decide
@@ -24,6 +37,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const lastPersisted = useRef<string | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     setSettingsState(getSettings());
   }, []);
 
@@ -47,7 +61,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SettingsContext.Provider value={{ settings, updateSettings }}>
+    <SettingsContext.Provider value={{ settings: mounted ? settings : DEFAULT_SETTINGS, updateSettings, mounted }}>
       {children}
     </SettingsContext.Provider>
   );

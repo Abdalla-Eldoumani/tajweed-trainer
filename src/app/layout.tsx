@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Spectral, JetBrains_Mono, Amiri, Amiri_Quran } from "next/font/google";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { RouteTransition } from "@/components/layout/RouteTransition";
 import { AppProvider } from "@/components/layout/AppProvider";
 import "./globals.css";
 
@@ -91,7 +92,7 @@ export default function RootLayout({
             <div className="flex-1 min-w-0 md:ms-[260px]">
               <Header />
               <main className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 safe-bottom">
-                {children}
+                <RouteTransition>{children}</RouteTransition>
               </main>
             </div>
           </div>
