@@ -132,6 +132,13 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent<HTMLSpanElement>) => {
+      // Clear any stale one-shot suppression left by an aborted prior long-press
+      // (e.g. an OS pointercancel that fired after the timer set the flag but
+      // before the synthesized click arrived), so a fresh gesture's click is
+      // never wrongly eaten. Safe for the same gesture: the click that follows a
+      // successful long-press fires before the next pointerdown, so the flag set
+      // below still reaches onClickCapture and is eaten there.
+      suppressNextClick.current = false;
       if (e.pointerType !== "touch") return;
       const target = e.target;
       longPressStart.current = { x: e.clientX, y: e.clientY };
