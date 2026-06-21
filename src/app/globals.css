@@ -885,6 +885,102 @@ html, body {
   border-inline-end: 2px dashed var(--primary);
 }
 
+/* Reading focus mode: every verse EXCEPT the active one (the playing verse, else
+   the single selected verse) is dimmed so the reader's eye rests on the verse in
+   hand. This is the verse-level analog of the data-tajweed-drill grey-out, but it
+   dims by OPACITY only — it never recolors a tajweed letter or touches the markup
+   (the colored spans underneath are untouched; this only fades the whole verse
+   span's wrapper). Opacity 0.35 is clearly dimmed yet still legible. Pure opacity,
+   no transform, so it is reduced-motion-safe by construction; the transition is
+   the same single calm fade the rest of the reader uses (matching .mushaf-verse),
+   crushed to a static swap under reduced motion. It is applied only to verse spans
+   (MushafPage scopes it), never the surah cartouche or bismillah header. */
+.mushaf-verse-dimmed,
+.mushaf-verse-dimmed:hover {
+  opacity: 0.35;
+  transition: opacity var(--motion-short) var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-verse-dimmed {
+    transition: none;
+  }
+}
+
+/* The single word being recited right now, lit as a separate layer OVER the
+   verified colored markup (the follow-along highlight). It never recolors a
+   tajweed letter: the letter colors come from the <tajweed> spans underneath and
+   are untouched; this only washes the word's ground and underlines it. The wash
+   is a faint --primary tint (distinct from .mushaf-verse-playing, which tints the
+   ground --bg-subtle at VERSE level, and from .mushaf-verse-selected, which adds
+   only a dashed end border) plus a gold underline drawn with an inset box-shadow
+   so it costs no layout box and sits under the glyph. Logical inset-inline padding
+   and rounding keep it correct in RTL. The transition is the same single calm
+   color/background fade the rest of the reader uses, so the lit word glides as the
+   reciter advances rather than blinking. */
+.mushaf-word-active {
+  background-color: rgba(30, 66, 121, 0.1);
+  box-shadow: inset 0 -0.12em 0 var(--gold);
+  border-radius: 0.2em;
+  padding-inline: 0.05em;
+  transition: background-color var(--motion-short) var(--ease-standard),
+    box-shadow var(--motion-short) var(--ease-standard);
+}
+
+/* On the dark grounds the same wash needs the gold-forward primary so it reads
+   against deep navy/sepia/emerald without muddying the ink. */
+[data-theme="night"] .mushaf-word-active,
+[data-theme="sepia"] .mushaf-word-active,
+[data-theme="mihrab"] .mushaf-word-active {
+  background-color: rgba(212, 168, 67, 0.14);
+}
+
+/* Reduced motion: no travelling fade. The word is still indicated by the static
+   wash + underline above; only the glide between words is dropped. The global
+   reduced-motion block already crushes transitions, but this is explicit so the
+   follow-along layer's static-under-reduced-motion contract is guaranteed at the
+   source even if that block is ever scoped. */
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-word-active {
+    transition: none;
+  }
+}
+
+/* A word not yet recited in reveal-as-recited mode: blurred and dimmed so it
+   reads as covered, the same OVER-the-markup layer as .mushaf-word-active (a
+   class on the read-only word grouping, never a markup edit). The blur and dim
+   are the SAME values the whole-verse recall blur uses (Tailwind blur-md =
+   blur(12px), opacity-60) so the per-word and whole-verse reveals look identical;
+   a word with index <= activeIdx simply carries no class and shows through. The
+   transition matches the whole-verse blur's transition-[filter,opacity]
+   duration-300 so a word uncovers with the same calm fade. Crushed to a static
+   swap under reduced motion (the reveal is a state change, not a travelling
+   effect, so the filter/opacity still apply — only the fade is dropped). */
+.mushaf-word-blurred {
+  filter: blur(12px);
+  opacity: 0.6;
+  transition: filter 300ms var(--ease-standard), opacity 300ms var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-word-blurred {
+    transition: none;
+  }
+}
+
+/* While per-word reveal is engaged the follow layer marks its root with this
+   class. The reader puts the whole-verse recall blur (Tailwind blur-md opacity-60)
+   on the SAME element for a memorized verse; once the per-word .mushaf-word-blurred
+   wrappers exist they are the single blur source, so the whole-verse blur on the
+   root must be cleared or it would blur the already-revealed words too. Resetting
+   filter and opacity here lets revealed words show at full clarity while the
+   per-word wrappers keep the unrecited words covered. When reveal cannot align the
+   marker is absent and the caller's whole-verse blur stands as the fallback. */
+.mushaf-reveal-active {
+  filter: none;
+  opacity: 1;
+}
+
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
    The container is sized as a circle for 1-2 digit ayah numbers and grows
    into a stadium pill for 3-digit numbers (Al-Baqarah, Aal-Imran etc.).

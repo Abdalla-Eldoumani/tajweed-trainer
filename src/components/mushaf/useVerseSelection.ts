@@ -29,6 +29,18 @@ export interface SelectionRange {
   to: number;
 }
 
+// A sub-verse WORD range within ONE verse, for the overlay's word-range loop. It
+// is a drill on a single verse, NOT a multi-verse selection, so it is kept apart
+// from the ayah-level set/range above and never folds into markedKeys/isSelected.
+// fromWord/toWord are 0-based word indices (matching follow-along's rangeBounds),
+// normalized when reversed. In-session only, like the rest of this hook.
+export interface WordRange {
+  surah: number;
+  ayah: number;
+  fromWord: number;
+  toWord: number;
+}
+
 export interface VerseSelection {
   // The hand-picked set, in the order verses were added (de-duped).
   set: string[];
@@ -53,6 +65,13 @@ export interface VerseSelection {
   // (B1). A one-verse range (from === to) is kept as-is and plays like single
   // play (B2). Setting a range clears the hand-picked set.
   setRange: (surah: number, start: number, end: number) => void;
+  // The sub-verse word range for the overlay's word-range loop, or null when
+  // none is picked. Independent of the set/range above (a single-verse drill).
+  wordRange: WordRange | null;
+  // Pick a start + end WORD (0-based) within one verse; normalizes a reversed
+  // pair. In-session only; does NOT touch the set/range.
+  setWordRange: (surah: number, ayah: number, fromWord: number, toWord: number) => void;
+  clearWordRange: () => void;
   clear: () => void;
   // The resolved queue for the engine: the set mapped to {surah,ayah}, or the
   // range expanded. Empty when nothing is selected.
@@ -85,6 +104,9 @@ function rangeToKeys(range: SelectionRange): string[] {
 export function useVerseSelectionState(): VerseSelection {
   const [set, setSet] = useState<string[]>([]);
   const [range, setRangeState] = useState<SelectionRange | null>(null);
+  // The sub-verse word range is kept independent of set/range: picking words for
+  // a single-verse loop is not a multi-verse selection, so it has its own state.
+  const [wordRange, setWordRangeState] = useState<WordRange | null>(null);
 
   const add = useCallback((verseKey: string) => {
     if (!VERSE_KEY_RE.test(verseKey)) return;
@@ -114,9 +136,24 @@ export function useVerseSelectionState(): VerseSelection {
     setRangeState({ surah: s, from, to });
   }, []);
 
+  // Pick a sub-verse word range, normalizing a reversed from/to (like setRange).
+  // Word indices are 0-based (follow-along's rangeBounds convention), so they
+  // clamp at 0, not 1. Independent of the set/range: it does not clear them.
+  const setWordRange = useCallback((surah: number, ayah: number, fromWord: number, toWord: number) => {
+    const sv = Math.max(1, Math.floor(surah));
+    const av = Math.max(1, Math.floor(ayah));
+    const a = Math.max(0, Math.floor(fromWord));
+    const b = Math.max(0, Math.floor(toWord));
+    setWordRangeState({ surah: sv, ayah: av, fromWord: Math.min(a, b), toWord: Math.max(a, b) });
+  }, []);
+
+  const clearWordRange = useCallback(() => setWordRangeState(null), []);
+
   const clear = useCallback(() => {
     setSet([]);
     setRangeState(null);
+    // A full clear of the selection also drops the sub-verse word range.
+    setWordRangeState(null);
   }, []);
 
   const markedKeys = useMemo(() => {
@@ -145,6 +182,9 @@ export function useVerseSelectionState(): VerseSelection {
     add,
     remove,
     setRange,
+    wordRange,
+    setWordRange,
+    clearWordRange,
     clear,
     resolvedItems,
   };

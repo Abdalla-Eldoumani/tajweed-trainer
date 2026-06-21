@@ -81,6 +81,32 @@ const PlaySolid = () => (
   </svg>
 );
 
+// A crosshair/target for reading focus mode: a ring with a center dot and four
+// edge ticks. Distinct from the recall eye so the two toolbar toggles never read
+// the same at a glance.
+const FocusIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="7" />
+    <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <line x1="12" y1="2" x2="12" y2="4" />
+    <line x1="12" y1="20" x2="12" y2="22" />
+    <line x1="2" y1="12" x2="4" y2="12" />
+    <line x1="20" y1="12" x2="22" y2="12" />
+  </svg>
+);
+
+// A small underline-of-a-word glyph for the follow-along toggle: a short word
+// run with an emphasis bar beneath it, echoing the active-word underline the
+// highlight draws. Distinct from the focus crosshair and the recall eye.
+const FollowAlongIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <line x1="4" y1="8" x2="20" y2="8" />
+    <line x1="4" y1="12" x2="14" y2="12" />
+    <line x1="4" y1="16" x2="11" y2="16" />
+    <line x1="14" y1="16" x2="20" y2="16" />
+  </svg>
+);
+
 const SearchIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <circle cx="11" cy="11" r="8" />
@@ -109,6 +135,23 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // Memorization mode hides verse text the user has marked memorized so they
   // can recall it. Off by default; in-session state, not persisted.
   const [memorizationMode, setMemorizationMode] = useState(false);
+  // Reveal-as-recited: blur the verse being recited and uncover each word as it
+  // is recited. Owned here (like memorizationMode) so the page and the verse
+  // overlay share one source: the overlay toggle flips it and MushafPage reads it.
+  // In-session reader-local state, reset on a route change, never persisted.
+  const [revealAsRecited, setRevealAsRecited] = useState(false);
+  // Reading focus mode: dim every verse except the active one (the playing verse,
+  // else the single selected verse). Verse-level and segment-independent, so it
+  // works for every reciter and with audio paused. Off by default; in-session
+  // reader-local state like memorizationMode, reset on a route change, never persisted.
+  const [focusMode, setFocusMode] = useState(false);
+  // Word-sync follow-along: the highlight on the recited word. Default ON — the
+  // highlight IS the follow-along. For a segment-less reciter the highlight layer
+  // already no-ops (no segments => no highlight), so this stays a plain
+  // always-enabled toggle and the layer's absence is the "off for no-segment
+  // reciter" behavior; no reciter gate needed. In-session, reset on a route
+  // change, never persisted.
+  const [followAlong, setFollowAlong] = useState(true);
   // The Cmd/Ctrl+K quick-jump palette. In-session, not persisted.
   const [paletteOpen, setPaletteOpen] = useState(false);
   // Single-rule highlight drill: greys every tajweed rule except the chosen one.
@@ -399,6 +442,54 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             );
           })()}
 
+          {/* Reading focus mode: dims every verse but the active one (the playing
+              verse, else the single selected verse). Verse-level and
+              segment-independent, so it needs no reciter/mounted gate beyond the
+              reader's own — it reads the live playing/selected verse. Same
+              toolbar-toggle shape as the recall eye: label beside the icon (>=sm),
+              aria-pressed for state, the on/off aria-label pair, and the hint in
+              the title. */}
+          <button
+            type="button"
+            onClick={() => setFocusMode((v) => !v)}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              focusMode
+                ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
+            )}
+            aria-label={focusMode ? t("mushaf.focusModeOff") : t("mushaf.focusModeOn")}
+            aria-pressed={focusMode}
+            title={t("mushaf.focusModeHint")}
+          >
+            <FocusIcon />
+            <span className="hidden sm:inline">{t("mushaf.focusMode")}</span>
+          </button>
+
+          {/* Word-sync follow-along on/off. Same toolbar-toggle shape as the
+              recall eye / focus toggle. Default on; toggling off renders plain
+              TajweedText for every verse (the highlight layer is dropped). For a
+              segment-less reciter the highlight never renders regardless, so this
+              is a plain always-enabled toggle with no reciter gate — the absent
+              highlight is the "off for no-segment reciter" state. The on/off
+              aria-label pair describes the next press; the hint is in the title. */}
+          <button
+            type="button"
+            onClick={() => setFollowAlong((v) => !v)}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              followAlong
+                ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
+            )}
+            aria-label={followAlong ? t("mushaf.followAlongOff") : t("mushaf.followAlongOn")}
+            aria-pressed={followAlong}
+            title={t("mushaf.followAlongHint")}
+          >
+            <FollowAlongIcon />
+            <span className="hidden sm:inline">{t("mushaf.followAlong")}</span>
+          </button>
+
           <button
             onClick={toggleBookmark}
             className={cn(
@@ -475,6 +566,9 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           <MushafPage
             data={data}
             memorizationMode={memorizationMode}
+            revealAsRecited={revealAsRecited}
+            focusMode={focusMode}
+            followAlong={followAlong}
             targetVerseKey={targetVerseKey}
             onPlayVerse={setSelectedVerse}
             onSelectVerse={setSelectedVerse}
@@ -488,6 +582,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           surahs={surahs}
           playSingleVerse={playSingleVerse}
           playFromVerse={playFromVerse}
+          revealAsRecited={revealAsRecited}
+          onToggleRevealAsRecited={() => setRevealAsRecited((v) => !v)}
         />
       </VerseSelectionProvider>
 
