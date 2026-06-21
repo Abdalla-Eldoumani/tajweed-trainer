@@ -106,6 +106,11 @@ export function TajweedFollowText({
   const clearWraps = useCallback(() => {
     for (const wrap of wrapsRef.current) unwrap(wrap);
     wrapsRef.current = [];
+    // Re-merge the word/space text fragments the grouping split out, restoring the
+    // container to the exact injected markup so nothing accumulates across ticks or
+    // lingers. normalize() only merges adjacent plain-text nodes; the colored
+    // <tajweed> spans and their order are untouched (CONST-01).
+    containerRef.current?.normalize();
     containerRef.current?.classList.remove(REVEAL_ACTIVE_CLASS);
   }, [unwrap]);
 
