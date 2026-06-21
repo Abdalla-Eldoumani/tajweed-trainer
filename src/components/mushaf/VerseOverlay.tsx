@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic, cn } from "@/lib/utils";
@@ -13,8 +14,6 @@ import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
 import { useSettings } from "@/hooks/useSettings";
 import { TajweedText } from "@/components/ui/TajweedText";
-import { ReadingDepth } from "@/components/learn/ReadingDepth";
-import { WordByWord } from "@/components/learn/WordByWord";
 import { getWordsForChapter } from "@/lib/quran-api";
 import { fetchSegments, type WordSegment } from "@/lib/audio-api";
 import { rangeBounds } from "@/lib/follow-along";
@@ -22,9 +21,42 @@ import type { VerseWord } from "@/lib/types";
 import { useVerseSelection } from "./useVerseSelection";
 import { VerseNotes } from "./VerseNotes";
 import { OverlayInlineControls } from "./OverlayInlineControls";
-import { ReciterCompare } from "./ReciterCompare";
-import { RecitationCompare } from "./RecitationCompare";
 import type { MushafPageData, ReciterId, SurahHeader } from "@/lib/types";
+
+// Secondary surfaces of the overlay, all of which render only inside the opened
+// overlay and most behind their own expandable disclosure (reciter compare, and
+// the reading-depth section's translation/tafsir, word-by-word, and
+// record-and-compare). Lazy-loaded so the reader's initial bundle does not carry
+// their fetch/canvas/MediaRecorder weight; each splits into its own chunk and
+// loads on first overlay open. The primary action row and transport stay eager
+// (CONST-02: verse-tap -> open -> play must be immediate). A tiny reduced-motion
+// -safe placeholder holds space while the chunk arrives.
+const LazyLine = () => (
+  <div
+    className="h-4 w-32 rounded bg-bg-subtle dark:bg-bg-subtle-dark animate-pulse motion-reduce:animate-none"
+    aria-hidden="true"
+  />
+);
+
+const ReadingDepth = dynamic(
+  () => import("@/components/learn/ReadingDepth").then((m) => ({ default: m.ReadingDepth })),
+  { ssr: false, loading: () => <LazyLine /> },
+);
+
+const WordByWord = dynamic(
+  () => import("@/components/learn/WordByWord").then((m) => ({ default: m.WordByWord })),
+  { ssr: false, loading: () => <LazyLine /> },
+);
+
+const ReciterCompare = dynamic(
+  () => import("./ReciterCompare").then((m) => ({ default: m.ReciterCompare })),
+  { ssr: false, loading: () => <LazyLine /> },
+);
+
+const RecitationCompare = dynamic(
+  () => import("./RecitationCompare").then((m) => ({ default: m.RecitationCompare })),
+  { ssr: false, loading: () => <LazyLine /> },
+);
 
 // Per-verse repeat options for the stepper, lifted with MultiVerseControls from
 // PlaybackSurface. "Off" (count 0/1) plays each verse once; the rest mirror the
