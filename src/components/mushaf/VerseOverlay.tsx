@@ -10,13 +10,12 @@ import { usePlayer } from "@/hooks/usePlayer";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMemorization } from "@/hooks/useMemorization";
 import { useSettings } from "@/hooks/useSettings";
-import { getRecitation } from "@/lib/reciters";
-import { ArabicText } from "@/components/ui/ArabicText";
 import { TajweedText } from "@/components/ui/TajweedText";
 import { ReadingDepth } from "@/components/learn/ReadingDepth";
 import { WordByWord } from "@/components/learn/WordByWord";
 import { useVerseSelection } from "./useVerseSelection";
 import { VerseNotes } from "./VerseNotes";
+import { OverlayInlineControls } from "./OverlayInlineControls";
 import { ReciterCompare } from "./ReciterCompare";
 import { RecitationCompare } from "./RecitationCompare";
 import type { MushafPageData, ReciterId, SurahHeader } from "@/lib/types";
@@ -129,27 +128,10 @@ const LoadingIcon = () => (
 // the collapse rail, the matchMedia switch, the player-position offset math) is
 // deliberately NOT lifted: that is the retired docked/sheet presentation.
 
-// Reciter name + a change affordance pointing at settings. Phase 4 replaces this
-// "Change reciter" link with an inline reciter/speed/translation-source selector
-// in the overlay; this line is the current seam for that work.
-function ReciterLine({ name }: { name: string }) {
-  const { t } = useTranslation();
-  return (
-    <div className="flex items-center justify-between gap-2 text-small">
-      <ArabicText
-        text={name}
-        size="sm"
-        className="!text-small !leading-[1.5] text-text-muted truncate min-w-0"
-      />
-      <Link
-        href="/settings"
-        className="shrink-0 font-medium text-primary dark:text-primary-light underline underline-offset-2 hover:no-underline"
-      >
-        {t("audio.changeReciter")}
-      </Link>
-    </div>
-  );
-}
+// The reciter readout + "Change reciter" settings link that used to sit above the
+// transport was retired in Phase 4: OverlayInlineControls now shows the current
+// reciter and changes it in place, so the link is no longer the way to do it. The
+// ErrorLine below keeps its own settings link as an error-recovery affordance.
 
 // Transport row at 44px targets. Commands store actions only.
 function TransportRow({
@@ -621,11 +603,10 @@ export function VerseOverlay({
   const { settings } = useSettings();
   const { isMemorized, toggle: toggleMemorized, mounted: memMounted } = useMemorization();
   const { isBookmarked: isVerseBookmarked, toggle: toggleVerseBm, mounted: bmMounted } = useBookmarks();
-  // Live player state for the transport row, the reciter line, and the error
-  // line. Subscribed narrowly so a time tick does not re-render the whole
-  // overlay; the row commands the same single store through usePlayer.getState().
+  // Live player state for the transport row and the error line. Subscribed
+  // narrowly so a time tick does not re-render the whole overlay; the row
+  // commands the same single store through usePlayer.getState().
   const status = usePlayer((s) => s.status);
-  const reciterId = usePlayer((s) => s.reciter);
   const hasNext = usePlayer((s) => s.index < s.queue.length - 1);
   const hasPrev = usePlayer((s) => s.index > 0);
   const playerError = usePlayer((s) => s.error);
@@ -743,8 +724,6 @@ export function VerseOverlay({
   // intent; only an actively playing verse shows pause.
   const playing = status === "playing";
   const loading = status === "loading";
-  const reciter = getRecitation(reciterId);
-  const reciterName = reciter ? (isAr ? reciter.nameAr : reciter.nameEn) : reciterId;
 
   const content = (
     <div role="presentation" inert={!open}>
@@ -890,22 +869,36 @@ export function VerseOverlay({
             </button>
           </div>
 
-          {/* Playback + selection: the reciter line, transport (prev / play /
-              next), and the multi-verse controls (range picker when nothing is
-              selected; summary + capped chips + repeat stepper + loop toggle +
-              gap presets + play-selection + clear once a selection exists). All
-              lifted from PlaybackSurface; all command the one store + selection
-              source, no second <audio>. */}
+          {/* Playback + selection: the transport (prev / play / next) and the
+              multi-verse controls (range picker when nothing is selected;
+              summary + capped chips + repeat stepper + loop toggle + gap presets
+              + play-selection + clear once a selection exists). All lifted from
+              PlaybackSurface; all command the one store + selection source, no
+              second <audio>. The reciter / speed / translation-source controls
+              sit in their own section below. */}
           {valid && (
             <section
               aria-label={t("player.selectionControls")}
               className="mt-5 space-y-3 border-t border-border pt-4"
             >
-              <ReciterLine name={reciterName} />
               <TransportRow playing={playing} loading={loading} hasNext={hasNext} hasPrev={hasPrev} />
               <MultiVerseControls data={data} />
               {playerError && <ErrorLine error={playerError} />}
             </section>
+          )}
+
+          {/* Reciter / speed / translation source: the inline controls bound to
+              the one settings store (settings.reciter / playbackSpeed /
+              translationId). It writes settings only — the one usePlayer engine
+              reads the reciter and speed on the next play, and the reading-depth
+              panel re-fetches when the translation id changes. This is the
+              "reciter and speed and translation source" slot of the
+              DESIGN_SYSTEM_V2 content order, and it replaces the old "Change
+              reciter -> /settings" link. No second <audio>, no second store. */}
+          {valid && (
+            <div className="mt-3 border-t border-border pt-4">
+              <OverlayInlineControls />
+            </div>
           )}
 
           {/* Reciter A/B compare: hear this verse by two reciters back to back.

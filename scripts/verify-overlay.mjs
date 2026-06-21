@@ -24,6 +24,20 @@
 //   9. mount site      — MushafReader renders <VerseOverlay> LEXICALLY INSIDE
 //      <VerseSelectionProvider>, so useVerseSelection() resolves at runtime
 //      instead of throwing (which would kill the selection controls).
+//  10. inline mount    — the overlay imports AND renders <OverlayInlineControls/>
+//      (the reciter / speed / translation-source section), so the controls are
+//      reachable inside the real overlay, not just defined.
+//  11. inline bindings — OverlayInlineControls writes reciter, playbackSpeed, and
+//      translationId through updateSettings (the one funnel), so each control is
+//      two-way-bound to its setting (INLINE-01/02/03); a regression to local
+//      state drops a write and fails.
+//  12. inline one path — OverlayInlineControls READS settings.reciter /
+//      .playbackSpeed / .translationId (the store, not a local mirror) and adds
+//      no second <audio> / new Audio(.
+//  13. seam retired    — the old "Change reciter -> /settings" line above the
+//      transport is gone (ReciterLine removed); audio.changeReciter appears
+//      EXACTLY ONCE, the kept ErrorLine recovery link. Re-adding a main-section
+//      link or dropping the recovery link flips this to FAIL.
 //
 // Mirrors scripts/verify-motion.mjs in shape: the same record reporter, the same
 // comment-stripping technique, process.exit(1) on any FAIL.
@@ -172,6 +186,83 @@ record(
   mountedInside
     ? "overlay sits between the provider's open and close tags"
     : `providerOpen=${providerOpen} overlayAt=${overlayAt} providerClose=${providerClose}`,
+);
+
+// --- The inline reciter / speed / translation-source controls (Phase 4) -------
+// Read the inline-controls source too, so the binding checks below assert against
+// the component that actually writes settings, not just its presence in the
+// overlay. Stripped so a comment mention of updateSettings never satisfies a
+// check.
+const inline = stripComments(
+  read("src", "components", "mushaf", "OverlayInlineControls.tsx"),
+);
+const inlineNorm = norm(inline);
+
+// --- 10. the overlay MOUNTS the inline controls (import + render) ---
+// Both an import of the component and a JSX render usage, so a stray import with
+// no mount (or a mount with no import) fails rather than passing on one half.
+const importsInline = /import\s*\{\s*OverlayInlineControls\s*\}/.test(src);
+const rendersInline = src.includes("<OverlayInlineControls");
+record(
+  "overlay imports and renders <OverlayInlineControls/>",
+  importsInline && rendersInline,
+  importsInline && rendersInline
+    ? "OverlayInlineControls imported and mounted in the overlay"
+    : `import=${importsInline} render=${rendersInline}`,
+);
+
+// --- 11. inline controls bind the one funnel: updateSettings for all 3 fields --
+// The INLINE-01/02/03 binding assertion. Each control writes its field through
+// updateSettings; tolerate whitespace inside the object literal. A control that
+// regressed to local state would drop its updateSettings({ <field> write here.
+const FIELD_WRITES = [
+  { field: "reciter", re: /updateSettings\(\{\s*reciter\b/ },
+  { field: "playbackSpeed", re: /updateSettings\(\{\s*playbackSpeed\b/ },
+  { field: "translationId", re: /updateSettings\(\{\s*translationId\b/ },
+];
+const writeMisses = FIELD_WRITES.filter((f) => !f.re.test(inlineNorm)).map((f) => f.field);
+record(
+  "inline controls write reciter / playbackSpeed / translationId via updateSettings",
+  writeMisses.length === 0,
+  writeMisses.length
+    ? `missing updateSettings write for: ${writeMisses.join(", ")}`
+    : "all three fields bound through updateSettings",
+);
+
+// --- 12. inline controls read the store, not a local mirror; no second audio ---
+// They must bind settings.<field> (the one store) for each of the three values,
+// and construct no <audio> / new Audio( (the one-engine invariant for this file
+// too). A local-state fork would read its own variable instead of settings.X.
+const READS = ["settings.reciter", "settings.playbackSpeed", "settings.translationId"];
+const readMisses = READS.filter((tok) => !inline.includes(tok));
+const inlineNoNewAudio = !inline.includes("new Audio(");
+const inlineNoAudioTag = !inline.includes("<audio");
+const inlineBindsStore = readMisses.length === 0 && inlineNoNewAudio && inlineNoAudioTag;
+record(
+  "inline controls read settings.reciter/playbackSpeed/translationId and add no second <audio>",
+  inlineBindsStore,
+  inlineBindsStore
+    ? "binds settings.{reciter,playbackSpeed,translationId}; no new Audio( / <audio"
+    : `readMisses=[${readMisses.join(", ")}] noNewAudio=${inlineNoNewAudio} noAudioTag=${inlineNoAudioTag}`,
+);
+
+// --- 13. the change-reciter-via-link seam is retired in the MAIN section ---
+// Phase 4 retired the old "Change reciter -> /settings" line above the transport:
+// the inline reciter control changes the reciter in place now. The ErrorLine's
+// recovery link (the same audio.changeReciter + href="/settings" pair) is kept on
+// purpose. Assert PRECISELY: the retired ReciterLine component is gone, AND
+// audio.changeReciter appears EXACTLY ONCE (only the error-recovery link). This
+// bites both ways: re-adding a main-section change-reciter link pushes the count
+// to 2 (FAIL), and dropping the error-recovery link pushes it to 0 (FAIL).
+const reciterLineGone = !src.includes("function ReciterLine") && !src.includes("<ReciterLine");
+const changeReciterCount = (src.match(/audio\.changeReciter/g) || []).length;
+const seamRetired = reciterLineGone && changeReciterCount === 1;
+record(
+  "the main-section change-reciter link is retired (only the error-recovery link remains)",
+  seamRetired,
+  seamRetired
+    ? "ReciterLine removed; audio.changeReciter appears once (the ErrorLine recovery link)"
+    : `reciterLineGone=${reciterLineGone} audio.changeReciter count=${changeReciterCount} (expected 1)`,
 );
 
 const failed = results.filter((r) => !r.ok);
