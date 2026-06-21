@@ -5,7 +5,9 @@ import { HTMLAttributes, forwardRef } from "react";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
-  // One card style. "elevated" adds a 1px inset gold hairline (.card-elevated),
+  // One card style. "elevated" routes through the shared elevation primitive
+  // (.card-elevated): a 1px inset gold hairline over the per-theme ink-keyed
+  // page-lift shadow, so the card inherits theme-aware depth -- paper-and-ink,
   // not a glow. "ornate" is kept as an alias of "elevated" so existing
   // variant="ornate" call sites render the clean elevated card.
   variant?: "default" | "elevated" | "ornate";
@@ -20,7 +22,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={cn(
           "rounded-xl p-5 sm:p-6 shadow-sm bg-bg-card border border-border dark:bg-bg-card-dark",
-          // Elevated treatment: a quiet 1px inset gold hairline, no glow.
+          // Elevated treatment: the shared elevation primitive (per-theme ink
+          // page-lift shadow + the inset gold hairline), no glow.
           isElevated && "card-elevated",
           hover && "transition-shadow hover:shadow-md cursor-pointer",
           className
