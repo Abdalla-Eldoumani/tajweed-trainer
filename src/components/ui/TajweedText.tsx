@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSettings } from "@/hooks/useSettings";
 import { sanitizeTajweedHtml } from "@/lib/sanitize";
@@ -15,18 +15,20 @@ interface TajweedTextProps {
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
   loading?: boolean;
-  // Opt-in: tapping a color-coded letter opens a small popover naming the
-  // tajweed rule that colors it (with its swatch and a "Learn more" link).
-  // Off by default so the many read-only uses of this component are unchanged.
+  // Opt-in: a color-coded letter that maps to a known rule reveals a small
+  // popover naming that rule (with its swatch and a "Learn more" link). Off by
+  // default so the many read-only uses of this component are unchanged.
   //
   // Reader conflict (tap-to-play): in the Mushaf the verse is a button that
-  // plays audio and this text is its child, so a letter tap would bubble up and
-  // also start playback. The delegated handler resolves this by calling
-  // stopPropagation ONLY when a colored letter with a known rule is tapped:
-  // that tap explains the rule and does not play, while a tap on any
-  // non-colored glyph does not stop propagation and still reaches the play
-  // button. So in the reader a colored letter teaches its rule and the rest of
-  // the verse plays it, with no double-fire.
+  // opens the verse overlay and this text is its child, so the letter gesture
+  // must not hijack the plain tap. The rule popover therefore opens on a hover
+  // (mouse/pen) or a deliberate long-press (touch); a plain tap/click does
+  // nothing locally and bubbles to the verse so the overlay still opens. A
+  // fired long-press suppresses exactly the one synthetic click that follows so
+  // it does not also open the overlay. An uncolored glyph, or a colored letter
+  // with no known rule, always bubbles. The trigger is detected from the
+  // event's pointerType, never a media query, so a hybrid device behaves per
+  // the actual gesture used.
   explainRules?: boolean;
 }
 
@@ -45,24 +47,121 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
   // and <span class="end"> before injecting it. See src/lib/sanitize.ts.
   const safeHtml = useMemo(() => sanitizeTajweedHtml(tajweedHtml), [tajweedHtml]);
 
-  // Delegated click: the markup is injected via dangerouslySetInnerHTML, so we
-  // listen on the wrapper and find the nearest <tajweed> ancestor of the tapped
-  // node. A tap on an uncolored glyph (no <tajweed> ancestor, or one whose class
-  // is not a known rule) is a no-op and is left to bubble (see explainRules).
-  const handleClick = useCallback((e: React.MouseEvent<HTMLSpanElement>) => {
-    const tag = (e.target as HTMLElement | null)?.closest("tajweed");
-    if (!tag) return;
-    const cssClass = tag.getAttribute("class")?.trim() ?? "";
-    if (!cssClass || !getColorForClass(cssClass)) return;
-    // A colored, known rule was tapped: own this gesture so the reader's verse
-    // play button does not also fire, and open the popover anchored at the letter.
-    e.stopPropagation();
-    const rect = tag.getBoundingClientRect();
-    setRuleTarget({
-      cssClass,
-      rect: { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right },
-    });
+  // Gesture timers/flags live in refs so they survive re-renders and the cleanup
+  // effect can clear a pending timer on unmount. openTimer holds the armed hover
+  // or long-press timer; longPressStart is the touch start point used to cancel
+  // the long-press on movement; suppressNextClick eats the one synthetic click
+  // that follows a fired long-press so it does not also reach the verse button.
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressStart = useRef<{ x: number; y: number } | null>(null);
+  const suppressNextClick = useRef(false);
+
+  const clearOpenTimer = useCallback(() => {
+    if (openTimer.current !== null) {
+      clearTimeout(openTimer.current);
+      openTimer.current = null;
+    }
   }, []);
+
+  // The reusable core, shared by both triggers: find the nearest <tajweed>
+  // ancestor of the event target, resolve a KNOWN rule, and open the popover
+  // anchored at the letter's rect. Returns early (no-op) for an uncolored glyph
+  // (no <tajweed> ancestor) or a colored letter whose class is not a known rule,
+  // so those gestures are left to bubble. autoFocus moves focus to the lesson
+  // link only on a deliberate (long-press) open, never on hover.
+  const openForEvent = useCallback(
+    (target: EventTarget | null, autoFocus: boolean) => {
+      const tag = (target as HTMLElement | null)?.closest("tajweed");
+      if (!tag) return;
+      const cssClass = tag.getAttribute("class")?.trim() ?? "";
+      if (!cssClass || !getColorForClass(cssClass)) return;
+      const rect = tag.getBoundingClientRect();
+      setRuleTarget({
+        cssClass,
+        rect: { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right },
+        autoFocus,
+      });
+    },
+    [],
+  );
+
+  // Hover (mouse/pen): arm a short flicker-guard delay, then open without taking
+  // focus. Re-arming on move keeps the target current as the pointer slides
+  // across letters; leaving clears any pending open. Touch is excluded here so a
+  // tap-drag never opens via hover. The popover's own pointer-leave/Escape/scroll
+  // dismissal closes it.
+  const HOVER_DELAY_MS = 140;
+  const onPointerEnter = useCallback(
+    (e: React.PointerEvent<HTMLSpanElement>) => {
+      if (e.pointerType === "touch") return;
+      const target = e.target;
+      clearOpenTimer();
+      openTimer.current = setTimeout(() => openForEvent(target, false), HOVER_DELAY_MS);
+    },
+    [clearOpenTimer, openForEvent],
+  );
+
+  // Long-press (touch): arm a deliberate ~500ms timer; cancel it if the finger
+  // moves beyond a small threshold (a scroll/drag, not a press). When it fires,
+  // open with focus AND set the suppress flag so the click that follows release
+  // does not also open the verse overlay. A quick tap leaves the timer un-fired
+  // and bubbles normally.
+  const LONG_PRESS_MS = 500;
+  const MOVE_CANCEL_PX = 10;
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent<HTMLSpanElement>) => {
+      if (e.pointerType === "touch") {
+        const start = longPressStart.current;
+        if (
+          start &&
+          (Math.abs(e.clientX - start.x) > MOVE_CANCEL_PX ||
+            Math.abs(e.clientY - start.y) > MOVE_CANCEL_PX)
+        ) {
+          clearOpenTimer();
+          longPressStart.current = null;
+        }
+        return;
+      }
+      // Mouse/pen: keep the hover target current as the pointer slides.
+      const target = e.target;
+      clearOpenTimer();
+      openTimer.current = setTimeout(() => openForEvent(target, false), HOVER_DELAY_MS);
+    },
+    [clearOpenTimer, openForEvent],
+  );
+
+  const onPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLSpanElement>) => {
+      if (e.pointerType !== "touch") return;
+      const target = e.target;
+      longPressStart.current = { x: e.clientX, y: e.clientY };
+      clearOpenTimer();
+      openTimer.current = setTimeout(() => {
+        suppressNextClick.current = true;
+        openForEvent(target, true);
+      }, LONG_PRESS_MS);
+    },
+    [clearOpenTimer, openForEvent],
+  );
+
+  const endGesture = useCallback(() => {
+    clearOpenTimer();
+    longPressStart.current = null;
+  }, [clearOpenTimer]);
+
+  // Eat exactly one click when a long-press just fired (otherwise it would also
+  // open the verse overlay), then reset. A plain tap leaves the flag false and
+  // bubbles to the verse button.
+  const onClickCapture = useCallback((e: React.MouseEvent<HTMLSpanElement>) => {
+    if (suppressNextClick.current) {
+      suppressNextClick.current = false;
+      e.stopPropagation();
+    }
+  }, []);
+
+  // Clear any pending hover/long-press timer on unmount so it never fires after
+  // the component is gone.
+  useEffect(() => clearOpenTimer, [clearOpenTimer]);
 
   const sizeClasses = cn(
     "font-quran leading-[2] tajweed-text",
@@ -102,17 +201,24 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
     );
   }
 
-  // explainRules on: the injected text gets the delegated click handler, and the
+  // explainRules on: the injected text gets the hover/long-press gesture, and the
   // popover renders alongside (it portals to the body, so it never affects the
   // verse layout). The handler element can't also hold React children, so the
-  // popover is a sibling. The wrapper is display:contents so it adds no box.
+  // popover is a sibling. The wrapper is display:contents so it adds no box. No
+  // plain-click handler here: a plain tap bubbles to the verse button.
   return (
     <span style={{ display: "contents" }}>
       <span
         dir="rtl"
         lang="ar"
         className={sizeClasses}
-        onClick={handleClick}
+        onPointerEnter={onPointerEnter}
+        onPointerMove={onPointerMove}
+        onPointerLeave={endGesture}
+        onPointerDown={onPointerDown}
+        onPointerUp={endGesture}
+        onPointerCancel={endGesture}
+        onClickCapture={onClickCapture}
         dangerouslySetInnerHTML={{ __html: safeHtml }}
       />
       <TajweedRulePopover target={ruleTarget} onClose={() => setRuleTarget(null)} />
