@@ -69,6 +69,21 @@
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Depth: a raised surface is the manuscript page lifting off the constant desk
+     surface (the navigation band). The shadow is a soft, low, two-part ink lift
+     -- a tight contact shadow plus a wide low-opacity ambient -- KEYED TO THE
+     THEME'S INK, so its value differs per [data-theme] and must live there. This
+     :root default uses vellum's navy ink and covers any paint before a theme is
+     stamped. Deliberately paper-and-ink: no glassmorphism, no backdrop blur as a
+     style, no neon or colored glow. The gold hairline border is layered
+     separately in .card-elevated. A barely-there top-edge light (the near-white
+     inset) catches the page like raking light; it is kept off the dark grounds
+     where a light inset would read as a glow rim. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 1px 2px rgba(19, 27, 46, 0.05),
+    0 12px 28px -18px rgba(19, 27, 46, 0.20);
 }
 
 /* Reference baseline only -- NOT applied at runtime. Nothing sets the old
@@ -145,6 +160,13 @@
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
+  /* The page-lift shadow, keyed to vellum's navy ink (#131B2E), with a faint
+     near-white top-edge light catching the page. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 1px 2px rgba(19, 27, 46, 0.05),
+    0 12px 28px -18px rgba(19, 27, 46, 0.20);
+
   /* Tajweed letter colors retuned for the vellum ground; equals the :root set
      and THEME_TAJWEED.vellum in src/lib/tajweed-colors.ts (the verbatim QUL
      light values). */
@@ -194,6 +216,13 @@
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
+  /* The page-lift shadow on a dark ground reads as near-black, not the light
+     ink -- a deeper, slightly larger ambient so the surface still lifts off the
+     navy desk (mirrors the shipped dark .card-elevated). */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
+
   /* Tajweed letter colors retuned for the night ground; equals the .dark set
      and THEME_TAJWEED.night in src/lib/tajweed-colors.ts (the navy lifts). */
   --tajweed-ham_wasl: #B7BCC6;
@@ -241,6 +270,13 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow, keyed to pearl's cool ink (#1B2733), with a faint
+     near-white top-edge light catching the page. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.60),
+    0 1px 2px rgba(27, 39, 51, 0.05),
+    0 12px 28px -18px rgba(27, 39, 51, 0.20);
 
   /* Tajweed letter colors deepened for the brighter, cooler pearl ground; same
      hues as vellum, retuned to clear contrast. Equals THEME_TAJWEED.pearl. */
@@ -290,6 +326,12 @@
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
 
+  /* The page-lift shadow on the warm dim sepia ground: near-black, deeper and
+     slightly larger so the warm-dark surface still lifts off the desk. */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
+
   /* Tajweed letter colors brightened and warmed for the dim sepia ground; same
      hues as night, retuned for the warm dark. Equals THEME_TAJWEED.sepia. */
   --tajweed-ham_wasl: #B3AEA2;
@@ -337,6 +379,12 @@
   --margin-active: #E3C77F;
   --margin-active-bg: rgba(212, 168, 67, 0.13);
   --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow on the deep emerald mihrab ground: near-black, deeper
+     and slightly larger so the surface still lifts off the green-black desk. */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
 
   /* Tajweed letter colors brightened for the deep emerald mihrab ground; same
      hues as night, kept bright so the greens stay distinct from the green
@@ -845,20 +893,15 @@ html, body {
   color: #C7A24A;
 }
 
-/* Card elevated variant: a quiet 1px gold hairline and a small neutral
-   shadow. No gold glow. */
+/* The shared elevation/hairline primitive: a raised manuscript page. It layers
+   the quiet 1px inset gold hairline (the hairline primitive, reusing
+   --gold-hairline) over the per-theme --elevation page-lift shadow, so every
+   surface inherits the same theme-aware depth from one token. Paper-and-ink, not
+   glass-and-glow: no backdrop blur, no neon or colored shadow, gold as leaf not
+   paint. */
 .card-elevated {
   position: relative;
   box-shadow:
     inset 0 0 0 1px var(--gold-hairline),
-    0 1px 2px rgba(16, 20, 32, 0.04),
-    0 2px 8px rgba(16, 20, 32, 0.04);
-}
-
-[data-theme="night"] .card-elevated,
-[data-theme="sepia"] .card-elevated,
-[data-theme="mihrab"] .card-elevated {
-  box-shadow:
-    inset 0 0 0 1px var(--gold-hairline),
-    0 8px 24px -12px rgba(0, 0, 0, 0.4);
+    var(--elevation);
 }
