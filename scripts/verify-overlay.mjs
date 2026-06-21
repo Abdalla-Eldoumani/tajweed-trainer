@@ -39,6 +39,32 @@
 //      EXACTLY ONCE, the kept ErrorLine recovery link. Re-adding a main-section
 //      link or dropping the recovery link flips this to FAIL.
 //
+// The sheet form (the touch presentation of the same shell) and the docked
+// mini-player add eight more, so the mobile reader cannot silently regress:
+//  14. width switch    — VerseOverlay imports AND calls useIsDesktop, the one
+//      boundary that picks the centered panel (>=1024) vs the bottom sheet.
+//  15. swipe present    — SWIPE_CLOSE_THRESHOLD exists (the downward-drag close
+//      distance ported from the retired PlaybackSurface sheet).
+//  16. swipe closes,    — the grab-handle pointer-up dismiss body references
+//      not stops         onClose and contains NO `stop`, so a swipe-down closes
+//      the overlay while audio KEEPS playing; AND `.stop(` appears EXACTLY ONCE
+//      in the overlay (the pre-existing clearSelection sameQueue guard, NOT the
+//      dismiss). A file-wide no-stop check would falsely fail on clearSelection,
+//      so this is scoped to the handler body + an occurrence count.
+//  17. reserved bottom  — sheetBottomOffset and keyboardBottomOffset are wired,
+//      so the sheet sits above the tab bar and rides above the keyboard.
+//  18. verse stays      — the sheet box is a capped max-h-[..vh] with
+//      visible           overflow-y-auto (NOT full-height), so the verse it
+//      concerns stays readable above it and long verses scroll internally.
+//  19. touch targets    — zero min-h-[36px] remain in the overlay (MOBILE-02:
+//      the range stepper/loop/gap controls are >=44px for touch).
+//  20. dismissed flag   — MiniPlayer has a `dismissed` flag AND the `visible`
+//      expression includes `!dismissed`, so dismissing hides the bar without
+//      ending playback and it stays gone until new playback.
+//  21. docked, one      — MiniPlayer references reservedBottomFor (the docked
+//      audio             bar sits above the tab bar, no content overlap) and
+//      adds no second <audio> / new Audio( (the one-engine invariant).
+//
 // Mirrors scripts/verify-motion.mjs in shape: the same record reporter, the same
 // comment-stripping technique, process.exit(1) on any FAIL.
 
@@ -263,6 +289,130 @@ record(
   seamRetired
     ? "ReciterLine removed; audio.changeReciter appears once (the ErrorLine recovery link)"
     : `reciterLineGone=${reciterLineGone} audio.changeReciter count=${changeReciterCount} (expected 1)`,
+);
+
+// --- The sheet form: a width-selected bottom-sheet variant of the same shell ---
+// Phase 6 ported PlaybackSurface's bottom sheet into the overlay as a touch form
+// chosen by width; the panel is the >=1024 form. These checks lock the sheet's
+// defining behaviors against the comment-stripped overlay source.
+
+// --- 14. width switch: the overlay imports AND calls useIsDesktop ---
+// Both the import and a call, so a stray import with no call (or vice versa)
+// fails rather than passing on one half. useIsDesktop is the one boundary that
+// selects the centered panel vs the bottom sheet.
+const importsIsDesktop = /import\s*\{\s*useIsDesktop\s*\}/.test(src);
+const callsIsDesktop = src.includes("useIsDesktop(");
+record(
+  "overlay imports and calls useIsDesktop to switch panel vs sheet by width",
+  importsIsDesktop && callsIsDesktop,
+  importsIsDesktop && callsIsDesktop
+    ? "useIsDesktop imported and called (the panel/sheet width switch)"
+    : `import=${importsIsDesktop} call=${callsIsDesktop}`,
+);
+
+// --- 15. the swipe-to-close threshold is present ---
+const hasSwipeThreshold = src.includes("SWIPE_CLOSE_THRESHOLD");
+record(
+  "the sheet defines a swipe-close threshold (SWIPE_CLOSE_THRESHOLD)",
+  hasSwipeThreshold,
+  hasSwipeThreshold ? "SWIPE_CLOSE_THRESHOLD present" : "no SWIPE_CLOSE_THRESHOLD",
+);
+
+// --- 16. swipe-dismiss closes the overlay, it does NOT stop audio ---
+// The single most important port adaptation: PlaybackSurface's sheet stopped the
+// player on close; the overlay's swipe must call onClose (close the overlay,
+// KEEP audio playing and the verse visible), never stop(). Scope the no-stop
+// assertion to the grab-handle pointer-up handler BODY, because the overlay
+// legitimately keeps exactly ONE st.stop() — the clearSelection sameQueue guard
+// lifted from PlaybackSurface, which is NOT the dismiss. A file-wide no-stop
+// check would falsely fail on that line. So: (a) the dismiss handler body
+// references onClose and contains no `stop`, and (b) `.stop(` occurs EXACTLY
+// ONCE in the overlay (the clearSelection one), mirroring the occurrence-count
+// style this file already uses for audio.changeReciter.
+const handleUpMatch = src.match(/onHandlePointerUp\s*=\s*\(\)\s*=>\s*\{([\s\S]*?)\n\s*\};/);
+const handleBody = handleUpMatch ? handleUpMatch[1] : "";
+const dismissCallsOnClose = handleBody.includes("onClose(");
+const dismissNoStop = handleBody.length > 0 && !/stop/.test(handleBody);
+const stopCount = (src.match(/\.stop\(/g) || []).length;
+const swipeClosesNotStops =
+  !!handleUpMatch && dismissCallsOnClose && dismissNoStop && stopCount === 1;
+record(
+  "swipe-dismiss calls onClose (audio keeps playing), never stop; .stop( appears once",
+  swipeClosesNotStops,
+  swipeClosesNotStops
+    ? "grab-handle pointer-up calls onClose with no stop; .stop( count=1 (clearSelection guard)"
+    : `handlerFound=${!!handleUpMatch} dismissCallsOnClose=${dismissCallsOnClose} dismissNoStop=${dismissNoStop} stopCount=${stopCount} (expected 1)`,
+);
+
+// --- 17. reserved-bottom math: the sheet sits above the tab bar / keyboard ---
+const usesSheetOffset = src.includes("sheetBottomOffset");
+const usesKeyboardOffset = src.includes("keyboardBottomOffset");
+record(
+  "the sheet wires sheetBottomOffset and keyboardBottomOffset (above the tab bar / keyboard)",
+  usesSheetOffset && usesKeyboardOffset,
+  usesSheetOffset && usesKeyboardOffset
+    ? "sheetBottomOffset + keyboardBottomOffset referenced"
+    : `sheetBottomOffset=${usesSheetOffset} keyboardBottomOffset=${usesKeyboardOffset}`,
+);
+
+// --- 18. the sheet is sized to keep the verse visible (capped + scrolls) ---
+// A capped viewport-height cap (max-h-[..vh]) plus overflow-y-auto, so the sheet
+// covers only the lower portion and the verse it concerns stays readable above
+// it; a full-height sheet would hide the verse. Assert the capped form exists.
+const sheetCapped = /max-h-\[\d+vh\]/.test(src);
+const sheetScrolls = src.includes("overflow-y-auto");
+record(
+  "the sheet uses a capped max-h-[..vh] with overflow-y-auto (not full-height)",
+  sheetCapped && sheetScrolls,
+  sheetCapped && sheetScrolls
+    ? "capped max-h-[..vh] + overflow-y-auto so the verse stays visible above the sheet"
+    : `cappedVh=${sheetCapped} overflowYAuto=${sheetScrolls}`,
+);
+
+// --- 19. MOBILE-02 touch targets: no sub-44px range controls remain ---
+// The lifted range stepper / loop / gap controls were bumped to >=44px for
+// touch; assert zero min-h-[36px] survive in the overlay.
+const hasSmallTargets = src.includes("min-h-[36px]");
+record(
+  "no sub-44px (min-h-[36px]) touch targets remain in the overlay (MOBILE-02)",
+  !hasSmallTargets,
+  hasSmallTargets ? "min-h-[36px] still present" : "no min-h-[36px]; range targets are >=44px",
+);
+
+// --- The docked global mini-player (off the reader) ---------------------------
+// Read the mini-player source (stripped) so the dismissed-flag and docked-bar
+// checks assert against the component that actually renders the bar.
+const miniPlayer = stripComments(read("src", "components", "ui", "MiniPlayer.tsx"));
+
+// --- 20. the dismissed flag is present AND gates visibility ---
+// MOBILE-03: dismissing hides the bar without ending playback (distinct from
+// "no audio"), so it must both exist and be in the `visible` expression. A
+// `dismissed` that is set but not read in `visible` would not actually hide the
+// bar, so require it inside the visible computation.
+const hasDismissed = miniPlayer.includes("dismissed");
+const visibleGatesDismissed = /const visible =[^;]*!dismissed/.test(miniPlayer);
+record(
+  "the mini-player has a dismissed flag and the visible gate includes !dismissed",
+  hasDismissed && visibleGatesDismissed,
+  hasDismissed && visibleGatesDismissed
+    ? "dismissed present and `visible` includes !dismissed"
+    : `dismissed=${hasDismissed} visibleIncludesNotDismissed=${visibleGatesDismissed}`,
+);
+
+// --- 21. the docked bar reuses reservedBottomFor and adds no second audio ---
+// The narrow/touch docked bar sits above the tab bar via reservedBottomFor (no
+// content overlap), and like every player surface it constructs no <audio> /
+// new Audio( — the one engine is PlayerHost.
+const miniUsesReserved = miniPlayer.includes("reservedBottomFor");
+const miniNoNewAudio = !miniPlayer.includes("new Audio(");
+const miniNoAudioTag = !miniPlayer.includes("<audio");
+const miniDocked = miniUsesReserved && miniNoNewAudio && miniNoAudioTag;
+record(
+  "the mini-player docks via reservedBottomFor and adds no second <audio>",
+  miniDocked,
+  miniDocked
+    ? "reservedBottomFor referenced; no new Audio( / <audio"
+    : `reservedBottomFor=${miniUsesReserved} noNewAudio=${miniNoNewAudio} noAudioTag=${miniNoAudioTag}`,
 );
 
 const failed = results.filter((r) => !r.ok);
