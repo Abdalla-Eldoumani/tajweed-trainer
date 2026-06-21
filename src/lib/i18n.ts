@@ -376,6 +376,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.previous": { en: "Previous verse", ar: "الآية السابقة" },
   "player.next": { en: "Next verse", ar: "الآية التالية" },
   "player.close": { en: "Stop and close player", ar: "إيقاف وإغلاق المشغّل" },
+  "player.hide": { en: "Hide player, keep playing", ar: "إخفاء المشغّل مع استمرار التشغيل" },
   "player.minimize": { en: "Minimize player", ar: "تصغير المشغّل" },
   "player.expand": { en: "Expand player", ar: "توسيع المشغّل" },
   "player.seek": { en: "Seek", ar: "تغيير الموضع" },
