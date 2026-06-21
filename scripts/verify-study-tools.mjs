@@ -11,6 +11,10 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
+// Strip TS/TSX block then line comments so a prose mention of an identifier in a
+// comment never satisfies a source scan (the same technique verify-overlay.mjs
+// and verify-motion.mjs use).
+const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
 const store = read("src", "hooks", "usePlayer.ts");
 const engine = read("src", "lib", "player-engine.ts");
 const css = read("src", "app", "globals.css");
@@ -96,11 +100,26 @@ const routeValues = [...ruleLinks.matchAll(/:\s*"(\/[^"]*)"/g)].map((m) => m[1])
 const badRoutes = routeValues.filter((r) => !r.startsWith("/learn/"));
 record("Rule-link map points only at /learn routes", badRoutes.length === 0, badRoutes.join(", "));
 
-// The delegated handler owns the colored-letter tap so the reader's verse play
-// button does not also fire (stopPropagation), and only acts on a known rule.
-record("TajweedText resolves the tapped class via the tajweed map", /closest\("tajweed"\)[\s\S]*?getColorForClass\(/.test(tajweedText));
-record("TajweedText stops propagation on a colored-letter tap", /getColorForClass\(cssClass\)\)\s*return;[\s\S]*?stopPropagation\(\)/.test(tajweedText));
-record("Rule popover is opt-in via explainRules", /explainRules\?:\s*boolean/.test(tajweedText) && /if \(!explainRules\)/.test(tajweedText));
+// The rule popover opens on hover (mouse/pen) or a deliberate long-press
+// (touch), resolving the nearest <tajweed> ancestor to a known rule. The
+// resolution still runs first, so the popover only opens for a colored letter
+// that maps to a rule. Strip comments before the gesture scan so the prose above
+// the handlers (which names the same identifiers) cannot satisfy a check.
+const tajweedTextSrc = stripComments(tajweedText);
+record("TajweedText resolves the tapped class via the tajweed map", /closest\("tajweed"\)[\s\S]*?getColorForClass\(/.test(tajweedTextSrc));
+// New gesture: a colored-letter tap bubbles to the verse (no stopPropagation on
+// the plain-click path), so tap-to-play still fires; the popover opens on hover
+// (onPointerEnter) or long-press (onPointerDown), branched on the event's
+// pointerType, not a media query. The only suppression is the post-long-press
+// one-shot click guard inside onClickCapture, never on the early-return path.
+record(
+  "TajweedText opens the popover on hover/long-press via pointerType (no verse-eating click)",
+  /onPointerEnter=/.test(tajweedTextSrc) &&
+    /onPointerDown=/.test(tajweedTextSrc) &&
+    /pointerType/.test(tajweedTextSrc) &&
+    !/getColorForClass\(cssClass\)\)\s*return;\s*[^]*?stopPropagation\(\)/.test(tajweedTextSrc.split("onClickCapture")[0]),
+);
+record("Rule popover is opt-in via explainRules", /explainRules\?:\s*boolean/.test(tajweedTextSrc) && /if \(!explainRules\)/.test(tajweedTextSrc));
 
 // explainRules is enabled where intended: the reader page and lesson examples.
 record("Reader enables explainRules on verse text", /<TajweedText[\s\S]*?explainRules/.test(mushafPage));

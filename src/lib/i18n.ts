@@ -529,6 +529,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.memorizeReveal": { en: "Reveal", ar: "كشف" },
   "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
   "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
+  "mushaf.legend": { en: "Color legend", ar: "دليل الألوان" },
   "mushaf.quickJump": { en: "Jump to…", ar: "انتقال سريع" },
   "mushaf.quickJumpPlaceholder": { en: "Surah, juz, or page…", ar: "سورة أو جزء أو صفحة…" },
   "mushaf.quickJumpHint": { en: "Type a surah name, juz, or page number.", ar: "اكتب اسم سورة أو رقم جزء أو صفحة." },
