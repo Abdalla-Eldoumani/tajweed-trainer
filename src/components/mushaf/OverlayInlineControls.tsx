@@ -84,7 +84,7 @@ export function OverlayInlineControls() {
           settings.playbackSpeed. No local speed state. */}
       <div className="flex flex-col gap-1">
         <span className={labelClass}>{t("inlineControls.speed")}</span>
-        <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={t("inlineControls.speed")}>
+        <div className="flex flex-wrap gap-1.5" aria-label={t("inlineControls.speed")}>
           {SPEEDS.map((speed) => {
             const active = settings.playbackSpeed === speed;
             return (
@@ -92,8 +92,7 @@ export function OverlayInlineControls() {
                 key={speed}
                 type="button"
                 onClick={() => updateSettings({ playbackSpeed: speed })}
-                role="radio"
-                aria-checked={active}
+                aria-pressed={active}
                 aria-label={`${speed}x`}
                 className={speedChip(active)}
               >
