@@ -392,6 +392,71 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   }
 }
 
+/* Page motion: the cross-surface turn between routes and the theme crossfade.
+   RouteTransition remounts on each navigation (key={pathname}) so .route-enter
+   replays per route; the ::view-transition root rules style the swap the
+   withViewTransition() helper drives (currently the theme change in settings).
+   Reduced motion disables both for an instant swap; browsers without the View
+   Transitions API are handled in the helper, which feature-detects and just
+   applies the update. */
+@keyframes route-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.route-enter {
+  animation: route-enter var(--motion-page) var(--ease-out) both;
+}
+
+/* The View Transitions root cross-fade: the old layer fades out while the new
+   layer fades in and settles from a 0.5% scale, keyed to the page motion
+   token. */
+@keyframes route-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+::view-transition-old(root) {
+  animation: route-fade-out var(--motion-page) var(--ease-out) both;
+}
+
+::view-transition-new(root) {
+  animation: route-fade-in var(--motion-page) var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-enter {
+    animation: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
 /* Tajweed letter colors. Each selector is the exact class name the Quran.com
    API emits, reading a CSS variable set from the single source of truth in
    src/lib/tajweed-colors.ts. Legacy pre-rebuild names follow as aliases. */
