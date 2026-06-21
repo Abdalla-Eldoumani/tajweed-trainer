@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
-import { exportProgress, importProgress, getProgress, shouldRemindBackup } from "@/lib/storage";
+import { exportProgress, importProgress, getProgress, shouldRemindBackup, getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
+import { subscribeProgressChanged } from "@/lib/progress-events";
 import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
@@ -44,6 +45,12 @@ export default function SettingsPage() {
   // session-scoped in-memory state, and an export clears it immediately because
   // exportProgress() stamps a fresh lastBackupAt.
   const [showBackupReminder, setShowBackupReminder] = useState(false);
+  // The welcome-tour toggle reads the same seenOnboarding flag the tour reads;
+  // "show the tour" is the inverse of the flag. The flag is client-only
+  // (localStorage), so seed it after mount (and gate the control on
+  // onboardingMounted) to avoid a hydration flash, mirroring showBackupReminder.
+  const [showTour, setShowTour] = useState(false);
+  const [onboardingMounted, setOnboardingMounted] = useState(false);
   const [reciterQuery, setReciterQuery] = useState("");
   const [translations, setTranslations] = useState<TranslationResource[]>(CURATED_TRANSLATIONS);
   const [tafsirs, setTafsirs] = useState<TranslationResource[]>(CURATED_TAFSIRS);
@@ -53,6 +60,12 @@ export default function SettingsPage() {
   // meaningful progress and the 30-day window.
   useEffect(() => {
     setShowBackupReminder(shouldRemindBackup(getProgress(), new Date()));
+    setShowTour(!getOnboardingSeen());
+    setOnboardingMounted(true);
+    // Keep the toggle in lockstep with the flag through the change bus: if the
+    // tour self-dismisses (writes seenOnboarding=true) while Settings is open,
+    // the checkbox reflects it without needing a revisit.
+    return subscribeProgressChanged(() => setShowTour(!getOnboardingSeen()));
   }, []);
 
   // Resource catalogues load from the API when online; offline the curated
@@ -104,6 +117,15 @@ export default function SettingsPage() {
     };
     reader.readAsText(file);
     e.target.value = "";
+  };
+
+  // "Show the tour" is the inverse of seenOnboarding. Checking it clears the flag
+  // (writes false), which the change bus delivers to the mounted-once tour so it
+  // re-opens over this page with no reload; unchecking dismisses it (writes true).
+  const handleTourToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const show = e.target.checked;
+    setOnboardingSeen(!show);
+    setShowTour(show);
   };
 
   // Reciters grouped into the two display styles (Mujawwad, then Murattal),
@@ -431,6 +453,23 @@ export default function SettingsPage() {
             {t(backupStatus.key)}
           </p>
         )}
+      </Card>
+
+      {/* Welcome tour */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-3">{t("settings.onboardingTour")}</h2>
+        <label className="flex items-center justify-between cursor-pointer">
+          <span className="text-sm">{t("settings.onboardingTour")}</span>
+          <input
+            type="checkbox"
+            checked={showTour}
+            onChange={handleTourToggle}
+            disabled={!onboardingMounted}
+            className="accent-primary dark:accent-gold w-4 h-4"
+            aria-label={t("settings.onboardingTour")}
+          />
+        </label>
+        <p className="text-xs text-text-muted mt-2">{t("settings.onboardingTourHelp")}</p>
       </Card>
     </div>
   );
