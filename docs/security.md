@@ -24,7 +24,7 @@ The CSP and all response headers are assembled once in `next.config.mjs` and app
 | `style-src 'self' 'unsafe-inline'` | Self plus inline critical CSS. |
 | `font-src 'self' data:` | Self-hosted fonts (next/font); no Google Fonts origins. |
 | `img-src 'self' data: blob:` | Self plus data and blob URIs (icons, ornaments). |
-| `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com` | The per-ayah audio origins (Quran.com CDNs plus EveryAyah). |
+| `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com https://server16.mp3quran.net` | The per-ayah audio origins (Quran.com CDNs plus EveryAyah) and the single host serving the per-surah Warsh narration (specific host, no wildcard). |
 | `connect-src 'self' https://api.quran.com` | The Quran.com API. |
 | `frame-ancestors 'none'` | No embedding. |
 | `base-uri 'self'` | No `<base>` redirection. |
