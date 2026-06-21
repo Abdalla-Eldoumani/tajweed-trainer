@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { OrnamentalDivider } from "@/components/ui/Ornament";
+import { YounesNarrationPanel } from "@/components/mushaf/YounesNarrationPanel";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { useBookmarks } from "@/hooks/useBookmarks";
@@ -177,6 +178,12 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
           </div>
         </div>
       )}
+
+      {/* A different narration (Warsh, per-surah): a fully walled-off, disclaimer
+          gated entry with its own isolated <audio>. It never enters the Hafs
+          reciter list, the per-verse reader, or the shared player. Placed here as
+          a calm, clearly-separated section, never among the Hafs surah list. */}
+      <YounesNarrationPanel surahs={surahs} />
 
       {/* Surah grid */}
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
