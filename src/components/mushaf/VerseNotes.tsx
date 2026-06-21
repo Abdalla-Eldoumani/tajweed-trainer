@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { useVerseNotes } from "@/hooks/useVerseNotes";
 import { toArabicIndic } from "@/lib/utils";
+import { TagEditor } from "./TagEditor";
 
 // Must match MAX_VERSE_NOTE_LENGTH in src/lib/storage.ts. The textarea enforces
 // it client-side for live feedback; the storage funnel re-trims and re-caps on
@@ -86,20 +87,16 @@ export function VerseNotes({ verseKey }: VerseNotesProps) {
     isAr ? toArabicIndic(remaining) : String(remaining),
   );
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={openEditor}
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
-      >
-        <NoteIcon />
-        {hasNote ? t("notes.edit") : t("notes.add")}
-      </button>
-    );
-  }
-
-  return (
+  const noteUi = !open ? (
+    <button
+      type="button"
+      onClick={openEditor}
+      className="inline-flex items-center gap-1.5 text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+    >
+      <NoteIcon />
+      {hasNote ? t("notes.edit") : t("notes.add")}
+    </button>
+  ) : (
     <div className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 p-3 space-y-2">
       <div className="flex items-center justify-between gap-2">
         <h4 className="text-xs font-semibold text-text-muted">{t("notes.title")}</h4>
@@ -148,6 +145,16 @@ export function VerseNotes({ verseKey }: VerseNotesProps) {
           </span>
         )}
       </div>
+    </div>
+  );
+
+  // The note and the tags are both the learner's own private per-verse metadata;
+  // they sit together in the per-verse panel. TagEditor is mounted-gated on its
+  // own hook, so it renders independently of the note's open/closed state.
+  return (
+    <div className="space-y-3">
+      {noteUi}
+      <TagEditor verseKey={verseKey} />
     </div>
   );
 }
