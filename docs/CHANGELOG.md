@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.0.0 — 2026-06-22
+
+A major release. The interface gained five art-directed manuscript themes and a deeper sense of paper and ink; the Mushaf reader's per-verse interaction was rebuilt around a single focused overlay; recitation gained a follow-along layer that highlights the word as it is read; and the progress side gained a forgetting-curve review, a most-missed rule-areas dashboard, and an on-device completion certificate. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
+
+### Added
+
+- **Five themes.** Two light (vellum, pearl) and three dark (night, sepia, mihrab), the same manuscript seen in different light. A theme switcher in Settings previews each with live swatches and crossfades the page when you choose one. This replaces the old dark-mode on/off switch; an existing dark-mode preference carries over.
+- **The verse overlay.** Tapping a verse now opens one focused surface — a centered panel on a wide screen, a bottom sheet on a phone or tablet — that holds everything you can do to that verse: play it, play from here, memorize, bookmark, a private note, and its translation, on-demand tafsir, and word-by-word. The page itself stays a clean color-coded Mushaf with no inline buttons. Playback still runs through the one audio engine, with the always-visible mini-player as the transport.
+- **Word-range and selection controls in the overlay.** Pick a contiguous range or a hand-picked set of verses and play them as one queue, with a per-verse repeat count, a whole-selection loop, and an inter-verse pause. For reciters with word timings you can also loop a single start-word to end-word range within one verse.
+- **Reciter A/B compare and record-and-compare.** Hear the same verse by two reciters back to back, or record your own recitation in the browser and replay it next to the reciter to judge by ear. The recording never leaves the device, is held only in memory, and is never scored.
+- **Follow-along.** For reciters that publish word timings, the recited word highlights in time over the verified coloring as the verse plays. A reveal-as-recited mode blurs the verse and uncovers each word as it is read, for memorization self-testing, and a reading-focus mode dims every verse but the active one. Reciters without timings simply show no highlight; nothing about the text is generated.
+- **Tap a colored letter for its rule.** Any color-coded letter in the reader names its tajweed rule with its swatch and a link to the lesson that teaches it. An always-available color legend gives the same names and swatches to keyboard users, and the rule-highlight drill dims all but one rule across the page.
+- **Reciter roster.** Around 42 reciters in the Hafs 'an 'Asim recitation (twelve from Quran.com, thirty from everyayah.com), grouped by style and searchable, defaulting to Al-Husary in the teaching style. A single per-surah recitation in the Warsh narration (Younes Souilass) is offered behind a disclaimer on the surah index, kept entirely separate from the Hafs experience and the per-verse player.
+- **Progress, deeper.** A forgetting-curve review of your memorized verses surfaces in recall; a most-missed rule-areas dashboard reads your quiz history and links each weak area to targeted practice; notes and bookmarks gained tags and a filter; a resume-listening entry returns you to the last verse you played, separate from the last page you read; and finishing a juz or a khatmah draws an on-device certificate you can keep.
+- **A reworked first-run tour** covering the v2 experience, with a permanent dismiss and a Settings toggle to replay it whenever you want.
+
+### Changed
+
+- **Paper-and-ink depth.** Surfaces gained a per-theme elevation shadow and a fine gold hairline instead of glass or glow, and route and section changes use the browser's own View Transitions for a calm crossfade. Everything respects the reduced-motion preference.
+- **Translation and tafsir are fetched per verse and rendered sanitized**, never generated, and global search returns verses in whichever language you are reading in.
+- **The reader's first load stays light.** The overlay's heavier surfaces (reciter compare, record-and-compare, word-by-word, the reading-depth section) and the progress certificate are loaded only when first opened.
+
+### Security
+
+- **A tightened Content-Security-Policy and response headers**, API HTML sanitized at every boundary, and a localStorage sanitizer that rejects prototype-pollution keys on every read. No user data leaves the device: notes, tags, bookmarks, memorization, review state, and insights are all local, and a backup is an explicit export you control.
+
 ## 0.6.0 (2026-06-20)
 
 The Companion redesign, plus a production-hardening finalization. Every surface was lifted to the quality of the home page, the mushaf listening experience was rebuilt for small screens and for memorization revision, the in-reader indexes now reflect where you are, and memorization became a real progress system. The finalization added study tools around the reader, a Quran-completion planner, and a layer of resilience. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them. The only dependency bump was Next 16.2.7 to 16.2.9; the major-version bumps (Tailwind v4, TypeScript 6, ESLint 10) were deferred on purpose to protect the tuned design.
