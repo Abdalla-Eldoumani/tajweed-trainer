@@ -54,9 +54,16 @@ interface MushafPageProps {
   // (Plan 04) threads this in so a learner can turn the highlight off; off
   // renders today's TajweedText for every verse.
   followAlong?: boolean;
+  // Reveal-as-recited: when true, the verse being recited (with alignable
+  // segments) is blurred and each word uncovers as it is recited, driven by the
+  // same active-word index as the highlight. Fed by the verse-overlay toggle
+  // (threaded from MushafReader). It also turns the recall whole-verse blur into a
+  // per-word uncover for a memorized playing verse; without segments (or when the
+  // toggle is off) both paths keep the existing whole-verse blur. In-session only.
+  revealAsRecited?: boolean;
 }
 
-export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true }: MushafPageProps) {
+export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true, revealAsRecited = false }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
   const { hasNote, mounted: notesMounted } = useVerseNotes();
@@ -131,6 +138,15 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
             // TajweedText with the rule popover, so the popover still works
             // off the playing verse.
             const followHere = followAlong && v.verseKey === followKey && !!segments;
+            // Reveal-as-recited engages for the verse being recited (followHere
+            // already requires it is the controller's verse with segments) when
+            // either the overlay toggle is on OR it is a memorized verse in recall
+            // mode still hidden (hideText). When it engages, TajweedFollowText
+            // blurs per word (uncovering up to activeIdx) and drops the whole-verse
+            // recall blur on its root via the reveal-active marker; when segments
+            // do not align it adds nothing, so the recall path's whole-verse blur
+            // below stands as the fallback and the toggle path shows plain text.
+            const revealHere = followHere && (revealAsRecited || hideText);
             // Gated on notesMounted so the dot never flashes during hydration
             // (the server snapshot has no notes).
             const noted = notesMounted && hasNote(v.verseKey);
@@ -164,10 +180,20 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                       // highlight. explainRules is dropped only on this one verse
                       // while it plays (the rule popover stays on every other
                       // verse); the same classes keep the layout identical.
+                      //
+                      // blurUnrevealed turns on reveal-as-recited for this verse:
+                      // the layer blurs words ahead of the active one and (via its
+                      // reveal-active marker) drops the whole-verse recall blur
+                      // below so revealed words show. The hideText whole-verse blur
+                      // stays on the element so that when segments do not align the
+                      // layer adds no marker and the recall verse stays fully
+                      // blurred (the FOLLOW-05 fallback); the Reveal pill remains
+                      // the manual escape.
                       <TajweedFollowText
                         tajweedHtml={v.tajweedHtml}
                         activeIdx={activeIdx}
                         segmentCount={segmentCount}
+                        blurUnrevealed={revealHere}
                         className={cn(
                           "!leading-[2.6] transition-[filter,opacity] duration-300",
                           hideText && "blur-md opacity-60",
