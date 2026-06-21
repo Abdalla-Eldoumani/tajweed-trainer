@@ -74,8 +74,10 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
-  // null = no message; otherwise a localized key for the quiet failure line.
-  const [errorKey, setErrorKey] = useState<"warsh.notAvailable" | "warsh.loadError" | null>(null);
+  // null = no message; otherwise a localized key for the quiet failure line. The
+  // <audio> onError cannot distinguish a 404 (uncovered surah) from a transient
+  // network failure, so both land on the one "not available" line.
+  const [errorKey, setErrorKey] = useState<"warsh.notAvailable" | null>(null);
 
   // The disclaimer gate (clone of OnboardingTour mechanics). It opens on the
   // first play attempt while not acknowledged; acknowledging sets the flag and
