@@ -423,6 +423,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.rangeStart": { en: "From", ar: "من" },
   "player.rangeEnd": { en: "To", ar: "إلى" },
   "player.setRange": { en: "Set range", ar: "تعيين النطاق" },
+  "player.selectionControls": { en: "Range and repeat", ar: "النطاق والتكرار" },
+  "player.readingDepth": { en: "Translation and tafsir", ar: "الترجمة والتفسير" },
   "player.collapsePlayer": { en: "Collapse player", ar: "طيّ المشغّل" },
   "player.expandPlayer": { en: "Expand player", ar: "توسيع المشغّل" },
   "player.closePlayer": { en: "Close player", ar: "إغلاق المشغّل" },
