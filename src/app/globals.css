@@ -57,8 +57,40 @@
   --tajweed-idgham_ghunnah: #169200;
   --tajweed-idgham_wo_ghunnah: #169200;
   --tajweed-tafkheem: #006994;
+
+  /* The manuscript's motion language. Durations and easing curves read the same
+     in every theme -- only colors flip per [data-theme] -- so they live here in
+     :root once. micro/short/medium pace component motion (illumination, card and
+     row entrances, overlay); page is the cross-surface turn between routes. */
+  --motion-micro: 120ms;
+  --motion-short: 200ms;
+  --motion-medium: 320ms;
+  --motion-page: 420ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Depth: a raised surface is the manuscript page lifting off the constant desk
+     surface (the navigation band). The shadow is a soft, low, two-part ink lift
+     -- a tight contact shadow plus a wide low-opacity ambient -- KEYED TO THE
+     THEME'S INK, so its value differs per [data-theme] and must live there. This
+     :root default uses vellum's navy ink and covers any paint before a theme is
+     stamped. Deliberately paper-and-ink: no glassmorphism, no backdrop blur as a
+     style, no neon or colored glow. The gold hairline border is layered
+     separately in .card-elevated. A barely-there top-edge light (the near-white
+     inset) catches the page like raking light; it is kept off the dark grounds
+     where a light inset would read as a glow rim. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 1px 2px rgba(19, 27, 46, 0.05),
+    0 12px 28px -18px rgba(19, 27, 46, 0.20);
 }
 
+/* Reference baseline only -- NOT applied at runtime. Nothing sets the old
+   dark-mode class anymore; the live night theme is the [data-theme="night"]
+   block below. This block is retained as the shipped-dark baseline that
+   verify-themes.mjs checks the night theme against. Do not add new variables
+   here -- add them to the [data-theme] blocks. */
 .dark {
   --primary: #D4A843;
   --accent: #C9714A;
@@ -104,6 +136,281 @@
   --tajweed-tafkheem: #3FA6C9;
 }
 
+/* vellum: the warm light manuscript ground (the shipped light palette). Gold is
+   hairline and ornament only; lapis ink and --text carry text. */
+[data-theme="vellum"] {
+  --primary: #1E4279;
+  --accent: #B0552F;
+  --bg: #F5F1E8;
+  --bg-card: #FCFAF3;
+  --bg-subtle: #ECE5D3;
+  --text: #131B2E;
+  --text-muted: #555F77;
+
+  --gold: #D4A843;
+  --gold-hairline: rgba(196, 154, 51, 0.42);
+  --border: #DDD3BC;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow, keyed to vellum's navy ink (#131B2E), with a faint
+     near-white top-edge light catching the page. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.50),
+    0 1px 2px rgba(19, 27, 46, 0.05),
+    0 12px 28px -18px rgba(19, 27, 46, 0.20);
+
+  /* Tajweed letter colors retuned for the vellum ground; equals the :root set
+     and THEME_TAJWEED.vellum in src/lib/tajweed-colors.ts (the verbatim QUL
+     light values). */
+  --tajweed-ham_wasl: #AAAAAA;
+  --tajweed-slnt: #AAAAAA;
+  --tajweed-laam_shamsiyah: #AAAAAA;
+  --tajweed-idgham_mutajanisayn: #A1A1A1;
+  --tajweed-idgham_mutaqaribayn: #A1A1A1;
+  --tajweed-ghunnah: #FF7E1E;
+  --tajweed-madda_normal: #537FFF;
+  --tajweed-madda_permissible: #F38E02;
+  --tajweed-madda_necessary: #A9045C;
+  --tajweed-madda_obligatory: #F2007F;
+  --tajweed-madda_obligatory_mottasel: #F2007F;
+  --tajweed-madda_obligatory_monfasel: #F2007F;
+  --tajweed-qalaqah: #009EE6;
+  --tajweed-ikhafa: #9400A8;
+  --tajweed-ikhafa_shafawi: #D500B7;
+  --tajweed-iqlab: #26BFFD;
+  --tajweed-idgham_shafawi: #58B800;
+  --tajweed-idgham_ghunnah: #169200;
+  --tajweed-idgham_wo_ghunnah: #169200;
+  --tajweed-tafkheem: #006994;
+}
+
+/* night: the same manuscript at night, a deep navy ground (the shipped dark
+   palette). Gold doubles as the primary action color. */
+[data-theme="night"] {
+  --primary: #D4A843;
+  --accent: #C9714A;
+  --bg: #0A0F1C;
+  --bg-card: #121A2E;
+  --bg-subtle: #1A2336;
+  --text: #EDEAE0;
+  --text-muted: #99A2B6;
+
+  --gold: #D4A843;
+  --gold-hairline: rgba(212, 168, 67, 0.30);
+  --border: #232E47;
+
+  --margin-bg: #0C1322;
+  --margin-card: #131D33;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.30);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow on a dark ground reads as near-black, not the light
+     ink -- a deeper, slightly larger ambient so the surface still lifts off the
+     navy desk (mirrors the shipped dark .card-elevated). */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
+
+  /* Tajweed letter colors retuned for the night ground; equals the .dark set
+     and THEME_TAJWEED.night in src/lib/tajweed-colors.ts (the navy lifts). */
+  --tajweed-ham_wasl: #B7BCC6;
+  --tajweed-slnt: #B7BCC6;
+  --tajweed-laam_shamsiyah: #B7BCC6;
+  --tajweed-idgham_mutajanisayn: #B0B0B0;
+  --tajweed-idgham_mutaqaribayn: #B0B0B0;
+  --tajweed-ghunnah: #FF8C36;
+  --tajweed-madda_normal: #6E92FF;
+  --tajweed-madda_permissible: #FBA53A;
+  --tajweed-madda_necessary: #E0529A;
+  --tajweed-madda_obligatory: #FF4DA6;
+  --tajweed-madda_obligatory_mottasel: #FF4DA6;
+  --tajweed-madda_obligatory_monfasel: #FF4DA6;
+  --tajweed-qalaqah: #38B6F5;
+  --tajweed-ikhafa: #C95BDC;
+  --tajweed-ikhafa_shafawi: #F45AD8;
+  --tajweed-iqlab: #5BD0FF;
+  --tajweed-idgham_shafawi: #7FD63A;
+  --tajweed-idgham_ghunnah: #38C21F;
+  --tajweed-idgham_wo_ghunnah: #38C21F;
+  --tajweed-tafkheem: #3FA6C9;
+}
+
+/* pearl: a cooler, brighter daytime ground for users who find vellum too warm.
+   A light theme: gold is hairline and ornament only; --text and --primary carry text. */
+[data-theme="pearl"] {
+  --primary: #16487A;
+  --accent: #16487A;
+  --bg: #F4F6F8;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #E7ECF1;
+  --text: #1B2733;
+  --text-muted: #5B6B7B;
+
+  --gold: #A8801F;
+  --gold-hairline: rgba(168, 128, 31, 0.38);
+  --border: #D5DBE1;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow, keyed to pearl's cool ink (#1B2733), with a faint
+     near-white top-edge light catching the page. */
+  --elevation:
+    inset 0 1px 0 rgba(255, 255, 255, 0.60),
+    0 1px 2px rgba(27, 39, 51, 0.05),
+    0 12px 28px -18px rgba(27, 39, 51, 0.20);
+
+  /* Tajweed letter colors deepened for the brighter, cooler pearl ground; same
+     hues as vellum, retuned to clear contrast. Equals THEME_TAJWEED.pearl. */
+  --tajweed-ham_wasl: #949494;
+  --tajweed-slnt: #949494;
+  --tajweed-laam_shamsiyah: #949494;
+  --tajweed-idgham_mutajanisayn: #8C8C8C;
+  --tajweed-idgham_mutaqaribayn: #8C8C8C;
+  --tajweed-ghunnah: #E56200;
+  --tajweed-madda_normal: #3A6BFF;
+  --tajweed-madda_permissible: #C97500;
+  --tajweed-madda_necessary: #A9045C;
+  --tajweed-madda_obligatory: #D6006F;
+  --tajweed-madda_obligatory_mottasel: #D6006F;
+  --tajweed-madda_obligatory_monfasel: #D6006F;
+  --tajweed-qalaqah: #0090D2;
+  --tajweed-ikhafa: #9400A8;
+  --tajweed-ikhafa_shafawi: #BC00A1;
+  --tajweed-iqlab: #0A78A8;
+  --tajweed-idgham_shafawi: #4A9C00;
+  --tajweed-idgham_ghunnah: #169200;
+  --tajweed-idgham_wo_ghunnah: #169200;
+  --tajweed-tafkheem: #006994;
+}
+
+/* sepia: a low-blue-light evening reading mode, dark but warm rather than black.
+   A dark theme: gold doubles as the primary action color. */
+[data-theme="sepia"] {
+  --primary: #D8A24A;
+  --accent: #C98A3C;
+  --bg: #1C1812;
+  --bg-card: #26201A;
+  --bg-subtle: #2F2820;
+  --text: #ECE0CC;
+  --text-muted: #B6A88C;
+
+  --gold: #D8A24A;
+  --gold-hairline: rgba(216, 162, 74, 0.30);
+  --border: #3A3328;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow on the warm dim sepia ground: near-black, deeper and
+     slightly larger so the warm-dark surface still lifts off the desk. */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
+
+  /* Tajweed letter colors brightened and warmed for the dim sepia ground; same
+     hues as night, retuned for the warm dark. Equals THEME_TAJWEED.sepia. */
+  --tajweed-ham_wasl: #B3AEA2;
+  --tajweed-slnt: #B3AEA2;
+  --tajweed-laam_shamsiyah: #B3AEA2;
+  --tajweed-idgham_mutajanisayn: #ABA69A;
+  --tajweed-idgham_mutaqaribayn: #ABA69A;
+  --tajweed-ghunnah: #FF9442;
+  --tajweed-madda_normal: #7E9DFF;
+  --tajweed-madda_permissible: #FFB04A;
+  --tajweed-madda_necessary: #EA6AAA;
+  --tajweed-madda_obligatory: #FF63B0;
+  --tajweed-madda_obligatory_mottasel: #FF63B0;
+  --tajweed-madda_obligatory_monfasel: #FF63B0;
+  --tajweed-qalaqah: #4FC0F7;
+  --tajweed-ikhafa: #D26FE2;
+  --tajweed-ikhafa_shafawi: #F86FDE;
+  --tajweed-iqlab: #72D7FF;
+  --tajweed-idgham_shafawi: #90DB55;
+  --tajweed-idgham_ghunnah: #4ACC34;
+  --tajweed-idgham_wo_ghunnah: #4ACC34;
+  --tajweed-tafkheem: #54B2D2;
+}
+
+/* mihrab: a deep Islamic green ground with gold leaf, the emerald accent used
+   sparingly. A dark theme: gold doubles as the primary action color. */
+[data-theme="mihrab"] {
+  --primary: #CBA85A;
+  --accent: #1E8A6E;
+  --bg: #08110D;
+  --bg-card: #0F1D17;
+  --bg-subtle: #16261E;
+  --text: #E6E9DF;
+  --text-muted: #92A89A;
+
+  --gold: #CBA85A;
+  --gold-hairline: rgba(203, 168, 90, 0.30);
+  --border: #243A30;
+
+  --margin-bg: #0E1626;
+  --margin-card: #14203A;
+  --margin-text: #EDEAE0;
+  --margin-muted: #97A0B5;
+  --margin-line: rgba(212, 168, 67, 0.34);
+  --margin-active: #E3C77F;
+  --margin-active-bg: rgba(212, 168, 67, 0.13);
+  --margin-hover-bg: rgba(237, 234, 224, 0.07);
+
+  /* The page-lift shadow on the deep emerald mihrab ground: near-black, deeper
+     and slightly larger so the surface still lifts off the green-black desk. */
+  --elevation:
+    0 1px 2px rgba(0, 0, 0, 0.30),
+    0 12px 28px -14px rgba(0, 0, 0, 0.45);
+
+  /* Tajweed letter colors brightened for the deep emerald mihrab ground; same
+     hues as night, kept bright so the greens stay distinct from the green
+     ground. Equals THEME_TAJWEED.mihrab. */
+  --tajweed-ham_wasl: #A8B0A6;
+  --tajweed-slnt: #A8B0A6;
+  --tajweed-laam_shamsiyah: #A8B0A6;
+  --tajweed-idgham_mutajanisayn: #A0A89E;
+  --tajweed-idgham_mutaqaribayn: #A0A89E;
+  --tajweed-ghunnah: #FF9038;
+  --tajweed-madda_normal: #7896FF;
+  --tajweed-madda_permissible: #FCAB42;
+  --tajweed-madda_necessary: #E85FA2;
+  --tajweed-madda_obligatory: #FF5AAB;
+  --tajweed-madda_obligatory_mottasel: #FF5AAB;
+  --tajweed-madda_obligatory_monfasel: #FF5AAB;
+  --tajweed-qalaqah: #45BBF6;
+  --tajweed-ikhafa: #CF66DF;
+  --tajweed-ikhafa_shafawi: #F766DC;
+  --tajweed-iqlab: #68D4FF;
+  --tajweed-idgham_shafawi: #88D94D;
+  --tajweed-idgham_ghunnah: #43C92D;
+  --tajweed-idgham_wo_ghunnah: #43C92D;
+  --tajweed-tafkheem: #4BADCE;
+}
+
 body {
   font-family: var(--font-inter), 'Inter', sans-serif;
   background-color: var(--bg);
@@ -130,6 +437,71 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Page motion: the cross-surface turn between routes and the theme crossfade.
+   RouteTransition remounts on each navigation (key={pathname}) so .route-enter
+   replays per route; the ::view-transition root rules style the swap the
+   withViewTransition() helper drives (currently the theme change in settings).
+   Reduced motion disables both for an instant swap; browsers without the View
+   Transitions API are handled in the helper, which feature-detects and just
+   applies the update. */
+@keyframes route-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.route-enter {
+  animation: route-enter var(--motion-page) var(--ease-out) both;
+}
+
+/* The View Transitions root cross-fade: the old layer fades out while the new
+   layer fades in and settles from a 0.5% scale, keyed to the page motion
+   token. */
+@keyframes route-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+::view-transition-old(root) {
+  animation: route-fade-out var(--motion-page) var(--ease-out) both;
+}
+
+::view-transition-new(root) {
+  animation: route-fade-in var(--motion-page) var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-enter {
+    animation: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }
 
@@ -175,8 +547,12 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   color: #b9b9b9;
   transition: color 0.15s ease;
 }
-.dark [data-tajweed-drill] .tajweed-text,
-.dark [data-tajweed-drill] .tajweed-text tajweed {
+[data-theme="night"] [data-tajweed-drill] .tajweed-text,
+[data-theme="night"] [data-tajweed-drill] .tajweed-text tajweed,
+[data-theme="sepia"] [data-tajweed-drill] .tajweed-text,
+[data-theme="sepia"] [data-tajweed-drill] .tajweed-text tajweed,
+[data-theme="mihrab"] [data-tajweed-drill] .tajweed-text,
+[data-theme="mihrab"] [data-tajweed-drill] .tajweed-text tajweed {
   color: #4a5160;
 }
 [data-tajweed-drill="ghunnah"] .tajweed-text .ghunnah { color: var(--tajweed-ghunnah); }
@@ -222,6 +598,21 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
   }
 }
 
+/* The card/row entrance: opacity plus a short upward settle of a few pixels, as
+   if the page settled onto the desk. The single shared entrance primitive every
+   surface (home, the ui primitives) consumes, driven by the motion tokens so it
+   stays in step with the rest of the manuscript's motion. */
+@keyframes page-settle {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -231,6 +622,21 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
      keep a fixed width and do not jitter as a count updates. */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Apply the page-settle entrance. `both` holds the element at opacity 0 before
+     it plays and at its resting position after. */
+  .enter-settle {
+    animation: page-settle var(--motion-short) var(--ease-out) both;
+  }
+}
+
+/* Reduced motion: drop the entrance entirely so the element appears at its
+   resting position with no slide and no lingering offset (the global crush
+   already removes the movement; this keeps it explicit). */
+@media (prefers-reduced-motion: reduce) {
+  .enter-settle {
+    animation: none;
   }
 }
 
@@ -271,7 +677,9 @@ html, body {
   background-size: 80px 80px;
 }
 
-.dark .islamic-pattern-bg::before {
+[data-theme="night"] .islamic-pattern-bg::before,
+[data-theme="sepia"] .islamic-pattern-bg::before,
+[data-theme="mihrab"] .islamic-pattern-bg::before {
   opacity: 0.06;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23D4B96A' stroke-width='0.8'%3E%3Cpath d='M40 0L50 15L65 10L55 25L70 30L55 35L65 50L50 45L40 60L30 45L15 50L25 35L10 30L25 25L15 10L30 15Z'/%3E%3Cpath d='M0 40L10 25L0 10L15 20L20 5L25 20L40 15L35 30L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 25L80 10L65 20L60 5L55 20L40 15L45 30L40 40' opacity='0.5'/%3E%3Cpath d='M0 40L10 55L0 70L15 60L20 75L25 60L40 65L35 50L40 40' opacity='0.5'/%3E%3Cpath d='M80 40L70 55L80 70L65 60L60 75L55 60L40 65L45 50L40 40' opacity='0.5'/%3E%3C/g%3E%3C/svg%3E");
 }
@@ -375,7 +783,9 @@ html, body {
   background-repeat: no-repeat;
 }
 
-.dark .mushaf-frame::after {
+[data-theme="night"] .mushaf-frame::after,
+[data-theme="sepia"] .mushaf-frame::after,
+[data-theme="mihrab"] .mushaf-frame::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23D8B25A' stroke-width='1'/%3E%3C/svg%3E");
 }
 
@@ -409,8 +819,12 @@ html, body {
 .surah-cartouche::before { inset-inline-start: 8px; }
 .surah-cartouche::after { inset-inline-end: 8px; }
 
-.dark .surah-cartouche::before,
-.dark .surah-cartouche::after {
+[data-theme="night"] .surah-cartouche::before,
+[data-theme="night"] .surah-cartouche::after,
+[data-theme="sepia"] .surah-cartouche::before,
+[data-theme="sepia"] .surah-cartouche::after,
+[data-theme="mihrab"] .surah-cartouche::before,
+[data-theme="mihrab"] .surah-cartouche::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23D8B25A' stroke-width='1'/%3E%3C/svg%3E");
 }
 
@@ -429,8 +843,12 @@ html, body {
   outline: none;
 }
 
-.dark .mushaf-verse:hover,
-.dark .mushaf-verse:focus-visible {
+[data-theme="night"] .mushaf-verse:hover,
+[data-theme="night"] .mushaf-verse:focus-visible,
+[data-theme="sepia"] .mushaf-verse:hover,
+[data-theme="sepia"] .mushaf-verse:focus-visible,
+[data-theme="mihrab"] .mushaf-verse:hover,
+[data-theme="mihrab"] .mushaf-verse:focus-visible {
   background-color: rgba(212, 185, 106, 0.18);
 }
 
@@ -467,6 +885,102 @@ html, body {
   border-inline-end: 2px dashed var(--primary);
 }
 
+/* Reading focus mode: every verse EXCEPT the active one (the playing verse, else
+   the single selected verse) is dimmed so the reader's eye rests on the verse in
+   hand. This is the verse-level analog of the data-tajweed-drill grey-out, but it
+   dims by OPACITY only — it never recolors a tajweed letter or touches the markup
+   (the colored spans underneath are untouched; this only fades the whole verse
+   span's wrapper). Opacity 0.35 is clearly dimmed yet still legible. Pure opacity,
+   no transform, so it is reduced-motion-safe by construction; the transition is
+   the same single calm fade the rest of the reader uses (matching .mushaf-verse),
+   crushed to a static swap under reduced motion. It is applied only to verse spans
+   (MushafPage scopes it), never the surah cartouche or bismillah header. */
+.mushaf-verse-dimmed,
+.mushaf-verse-dimmed:hover {
+  opacity: 0.35;
+  transition: opacity var(--motion-short) var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-verse-dimmed {
+    transition: none;
+  }
+}
+
+/* The single word being recited right now, lit as a separate layer OVER the
+   verified colored markup (the follow-along highlight). It never recolors a
+   tajweed letter: the letter colors come from the <tajweed> spans underneath and
+   are untouched; this only washes the word's ground and underlines it. The wash
+   is a faint --primary tint (distinct from .mushaf-verse-playing, which tints the
+   ground --bg-subtle at VERSE level, and from .mushaf-verse-selected, which adds
+   only a dashed end border) plus a gold underline drawn with an inset box-shadow
+   so it costs no layout box and sits under the glyph. Logical inset-inline padding
+   and rounding keep it correct in RTL. The transition is the same single calm
+   color/background fade the rest of the reader uses, so the lit word glides as the
+   reciter advances rather than blinking. */
+.mushaf-word-active {
+  background-color: rgba(30, 66, 121, 0.1);
+  box-shadow: inset 0 -0.12em 0 var(--gold);
+  border-radius: 0.2em;
+  padding-inline: 0.05em;
+  transition: background-color var(--motion-short) var(--ease-standard),
+    box-shadow var(--motion-short) var(--ease-standard);
+}
+
+/* On the dark grounds the same wash needs the gold-forward primary so it reads
+   against deep navy/sepia/emerald without muddying the ink. */
+[data-theme="night"] .mushaf-word-active,
+[data-theme="sepia"] .mushaf-word-active,
+[data-theme="mihrab"] .mushaf-word-active {
+  background-color: rgba(212, 168, 67, 0.14);
+}
+
+/* Reduced motion: no travelling fade. The word is still indicated by the static
+   wash + underline above; only the glide between words is dropped. The global
+   reduced-motion block already crushes transitions, but this is explicit so the
+   follow-along layer's static-under-reduced-motion contract is guaranteed at the
+   source even if that block is ever scoped. */
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-word-active {
+    transition: none;
+  }
+}
+
+/* A word not yet recited in reveal-as-recited mode: blurred and dimmed so it
+   reads as covered, the same OVER-the-markup layer as .mushaf-word-active (a
+   class on the read-only word grouping, never a markup edit). The blur and dim
+   are the SAME values the whole-verse recall blur uses (Tailwind blur-md =
+   blur(12px), opacity-60) so the per-word and whole-verse reveals look identical;
+   a word with index <= activeIdx simply carries no class and shows through. The
+   transition matches the whole-verse blur's transition-[filter,opacity]
+   duration-300 so a word uncovers with the same calm fade. Crushed to a static
+   swap under reduced motion (the reveal is a state change, not a travelling
+   effect, so the filter/opacity still apply — only the fade is dropped). */
+.mushaf-word-blurred {
+  filter: blur(12px);
+  opacity: 0.6;
+  transition: filter 300ms var(--ease-standard), opacity 300ms var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-word-blurred {
+    transition: none;
+  }
+}
+
+/* While per-word reveal is engaged the follow layer marks its root with this
+   class. The reader puts the whole-verse recall blur (Tailwind blur-md opacity-60)
+   on the SAME element for a memorized verse; once the per-word .mushaf-word-blurred
+   wrappers exist they are the single blur source, so the whole-verse blur on the
+   root must be cleared or it would blur the already-revealed words too. Resetting
+   filter and opacity here lets revealed words show at full clarity while the
+   per-word wrappers keep the unrecited words covered. When reveal cannot align the
+   marker is absent and the caller's whole-verse blur stands as the fallback. */
+.mushaf-reveal-active {
+  filter: none;
+  opacity: 1;
+}
+
 /* Style the verse-end marker the API embeds: <span class="end">١</span>.
    The container is sized as a circle for 1-2 digit ayah numbers and grows
    into a stadium pill for 3-digit numbers (Al-Baqarah, Aal-Imran etc.).
@@ -495,7 +1009,9 @@ html, body {
   white-space: nowrap;
 }
 
-.dark .tajweed-text .end {
+[data-theme="night"] .tajweed-text .end,
+[data-theme="sepia"] .tajweed-text .end,
+[data-theme="mihrab"] .tajweed-text .end {
   background: var(--bg-subtle);
   border-color: var(--gold-hairline);
   /* Brighter gold on the navy --bg-subtle: this reads 6.50:1 so the numeral
@@ -503,18 +1019,15 @@ html, body {
   color: #C7A24A;
 }
 
-/* Card elevated variant: a quiet 1px gold hairline and a small neutral
-   shadow. No gold glow. */
+/* The shared elevation/hairline primitive: a raised manuscript page. It layers
+   the quiet 1px inset gold hairline (the hairline primitive, reusing
+   --gold-hairline) over the per-theme --elevation page-lift shadow, so every
+   surface inherits the same theme-aware depth from one token. Paper-and-ink, not
+   glass-and-glow: no backdrop blur, no neon or colored shadow, gold as leaf not
+   paint. */
 .card-elevated {
   position: relative;
   box-shadow:
     inset 0 0 0 1px var(--gold-hairline),
-    0 1px 2px rgba(16, 20, 32, 0.04),
-    0 2px 8px rgba(16, 20, 32, 0.04);
-}
-
-.dark .card-elevated {
-  box-shadow:
-    inset 0 0 0 1px var(--gold-hairline),
-    0 8px 24px -12px rgba(0, 0, 0, 0.4);
+    var(--elevation);
 }

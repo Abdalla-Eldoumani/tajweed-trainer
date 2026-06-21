@@ -310,6 +310,27 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mastery.best": { en: "Best", ar: "الأفضل" },
   "mastery.due": { en: "due", ar: "مستحقّ" },
   "mastery.mastered": { en: "mastered", ar: "متقَن" },
+  "weakRules.title": { en: "Where to focus", ar: "أين تركّز" },
+  "weakRules.subtitle": {
+    en: "The rule areas you have missed most often in practice, drawn from your own quiz history.",
+    ar: "أكثر أبواب الأحكام التي أخطأت فيها في التدريب، مأخوذة من سجلّ اختباراتك.",
+  },
+  "weakRules.missedLabel": { en: "{n} missed", ar: "{n} خطأ" },
+  "weakRules.review": { en: "Review", ar: "راجع" },
+  "weakRules.empty": {
+    en: "No weak areas yet. Answer some practice questions and the areas to revisit will show here.",
+    ar: "لا توجد مواطن ضعف بعد. أجب على أسئلة التدريب فتظهر هنا الأبواب التي ينبغي مراجعتها.",
+  },
+  "resume.listenTitle": { en: "Resume listening", ar: "متابعة الاستماع" },
+  "resume.listenSubtitle": {
+    en: "Pick up audio from the last verse you played.",
+    ar: "تابع الصوت من آخر آية شغّلتها.",
+  },
+  "resume.listenButton": { en: "Resume listening", ar: "متابعة الاستماع" },
+  "resume.listenAria": {
+    en: "Resume listening from {surah}, verse {ref}",
+    ar: "متابعة الاستماع من {surah}، الآية {ref}",
+  },
   "progress.quizHistory": { en: "Quiz History", ar: "سجلّ الاختبارات" },
   "progress.resetProgress": { en: "Reset Progress", ar: "إعادة تعيين التقدّم" },
   "progress.resetDescription": {
@@ -331,6 +352,21 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.showTransliteration": { en: "Show Transliteration", ar: "إظهار النقحرة" },
   "settings.showTranslation": { en: "Show Translation", ar: "إظهار الترجمة" },
   "settings.darkMode": { en: "Dark Mode", ar: "الوضع الداكن" },
+  "settings.theme": { en: "Theme", ar: "المظهر" },
+  "settings.themeHelp": {
+    en: "Choose how the app looks. Your choice is saved on this device.",
+    ar: "اختر مظهر التطبيق. يُحفظ اختيارك على هذا الجهاز.",
+  },
+  "settings.themeVellum": { en: "Vellum (warm light)", ar: "رَقّ (فاتح دافئ)" },
+  "settings.themePearl": { en: "Pearl (cool light)", ar: "لؤلؤ (فاتح بارد)" },
+  "settings.themeNight": { en: "Night (deep navy)", ar: "ليل (كحلي غامق)" },
+  "settings.themeSepia": { en: "Sepia (warm dim)", ar: "بنّي (داكن دافئ)" },
+  "settings.themeMihrab": { en: "Mihrab (emerald)", ar: "محراب (أخضر زمردي)" },
+  "settings.onboardingTour": { en: "Show the welcome tour", ar: "عرض جولة الترحيب" },
+  "settings.onboardingTourHelp": {
+    en: "Turn this on to see the short tour of the app again. Turning it off hides it.",
+    ar: "شغّل هذا لرؤية جولة التطبيق القصيرة مرة أخرى. وإيقافه يخفيها.",
+  },
   "settings.language": { en: "Language", ar: "اللغة" },
   "settings.normal": { en: "Normal", ar: "عادي" },
   "settings.large": { en: "Large", ar: "كبير" },
@@ -366,6 +402,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.previous": { en: "Previous verse", ar: "الآية السابقة" },
   "player.next": { en: "Next verse", ar: "الآية التالية" },
   "player.close": { en: "Stop and close player", ar: "إيقاف وإغلاق المشغّل" },
+  "player.hide": { en: "Hide player, keep playing", ar: "إخفاء المشغّل مع استمرار التشغيل" },
   "player.minimize": { en: "Minimize player", ar: "تصغير المشغّل" },
   "player.expand": { en: "Expand player", ar: "توسيع المشغّل" },
   "player.seek": { en: "Seek", ar: "تغيير الموضع" },
@@ -398,6 +435,13 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.selectionSummaryOne": { en: "1 verse selected", ar: "آية واحدة محدّدة" },
   "player.repeatEach": { en: "Repeat each", ar: "تكرار كل آية" },
   "player.loopSelection": { en: "Loop selection", ar: "تكرار التحديد" },
+  "player.revealAsRecited": { en: "Reveal as recited", ar: "الكشف مع التلاوة" },
+  "player.revealAsRecitedOn": { en: "Reveal words as recited", ar: "كشف الكلمات مع التلاوة" },
+  "player.revealAsRecitedOff": { en: "Stop revealing as recited", ar: "إيقاف الكشف مع التلاوة" },
+  "player.revealAsRecitedHint": {
+    en: "Blur the verse and uncover each word as it is recited",
+    ar: "إخفاء الآية وكشف كل كلمة أثناء تلاوتها",
+  },
   "player.gapBetweenVerses": { en: "Gap between verses", ar: "الفاصل بين الآيات" },
   "player.gap0": { en: "0s", ar: "صفر ث" },
   "player.gap1": { en: "1s", ar: "١ ث" },
@@ -413,6 +457,13 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.rangeStart": { en: "From", ar: "من" },
   "player.rangeEnd": { en: "To", ar: "إلى" },
   "player.setRange": { en: "Set range", ar: "تعيين النطاق" },
+  "player.subVerseLoop": { en: "Loop a word range", ar: "تكرار نطاق كلمات" },
+  "player.subVerseFrom": { en: "From word", ar: "من كلمة" },
+  "player.subVerseTo": { en: "To word", ar: "إلى كلمة" },
+  "player.loopWords": { en: "Loop these words", ar: "كرّر هذه الكلمات" },
+  "player.stopLoop": { en: "Stop loop", ar: "إيقاف التكرار" },
+  "player.selectionControls": { en: "Range and repeat", ar: "النطاق والتكرار" },
+  "player.readingDepth": { en: "Translation and tafsir", ar: "الترجمة والتفسير" },
   "player.collapsePlayer": { en: "Collapse player", ar: "طيّ المشغّل" },
   "player.expandPlayer": { en: "Expand player", ar: "توسيع المشغّل" },
   "player.closePlayer": { en: "Close player", ar: "إغلاق المشغّل" },
@@ -485,6 +536,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.verseBookmarks": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
   "mushaf.bookmarkVerse": { en: "Bookmark this verse", ar: "حفظ هذه الآية في المفضّلة" },
   "mushaf.bookmarkVerseRemove": { en: "Remove verse bookmark", ar: "إزالة الآية من المفضّلة" },
+  "mushaf.verseOverlayTitle": { en: "Verse", ar: "الآية" },
   "mushaf.bookmarksViewAll": { en: "View all bookmarks", ar: "عرض كل الآيات المفضّلة" },
   "mushaf.bookmarksTitle": { en: "Bookmarked verses", ar: "الآيات المفضّلة" },
   "mushaf.bookmarksSubtitle": {
@@ -502,6 +554,15 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "mushaf.bookmarksOpenReader": { en: "Open the Mushaf", ar: "افتح المصحف" },
   "mushaf.bookmarksBack": { en: "Back to index", ar: "العودة إلى الفهرس" },
+  "bookmarks.filterLabel": { en: "Filter bookmarks", ar: "تصفية المفضّلة" },
+  "bookmarks.filterPlaceholder": {
+    en: "Filter by tag, surah, or reference…",
+    ar: "تصفية حسب الوسم أو السورة أو الموضع…",
+  },
+  "bookmarks.filterEmpty": {
+    en: "No bookmarks match your filter.",
+    ar: "لا توجد آيات مفضّلة تطابق التصفية.",
+  },
   "mushaf.bookmarkOpenVerse": { en: "Open in reader", ar: "افتح في القارئ" },
   "mushaf.memorizeOn": { en: "Hide memorized verses", ar: "إخفاء الآيات المحفوظة" },
   "mushaf.memorizeOff": { en: "Show memorized verses", ar: "إظهار الآيات المحفوظة" },
@@ -514,8 +575,23 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mushaf.memorizeMark": { en: "Mark verse as memorized", ar: "تحديد الآية كمحفوظة" },
   "mushaf.memorizeUnmark": { en: "Unmark memorized verse", ar: "إلغاء تحديد الآية كمحفوظة" },
   "mushaf.memorizeReveal": { en: "Reveal", ar: "كشف" },
+  "mushaf.followAlong": { en: "Follow along", ar: "تتبّع التلاوة" },
+  "mushaf.followAlongOn": { en: "Highlight the recited word", ar: "تمييز الكلمة المتلوّة" },
+  "mushaf.followAlongOff": { en: "Stop highlighting the recited word", ar: "إيقاف تمييز الكلمة المتلوّة" },
+  "mushaf.followAlongHint": {
+    en: "Light up each word as it is recited",
+    ar: "إضاءة كل كلمة أثناء تلاوتها",
+  },
+  "mushaf.focusMode": { en: "Focus mode", ar: "وضع التركيز" },
+  "mushaf.focusModeOn": { en: "Dim the other verses", ar: "تعتيم الآيات الأخرى" },
+  "mushaf.focusModeOff": { en: "Show all verses", ar: "إظهار جميع الآيات" },
+  "mushaf.focusModeHint": {
+    en: "Dim every verse except the one playing or selected",
+    ar: "تعتيم كل آية عدا الآية المشغّلة أو المحدّدة",
+  },
   "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
   "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
+  "mushaf.legend": { en: "Color legend", ar: "دليل الألوان" },
   "mushaf.quickJump": { en: "Jump to…", ar: "انتقال سريع" },
   "mushaf.quickJumpPlaceholder": { en: "Surah, juz, or page…", ar: "سورة أو جزء أو صفحة…" },
   "mushaf.quickJumpHint": { en: "Type a surah name, juz, or page number.", ar: "اكتب اسم سورة أو رقم جزء أو صفحة." },
@@ -563,6 +639,14 @@ const translations: Record<string, { en: string; ar: string }> = {
   "memorize.reviewEmpty": {
     en: "No memorized verses are due for review right now.",
     ar: "لا توجد آيات محفوظة مستحقّة للمراجعة الآن.",
+  },
+  "memorize.reviewStatsTitle": { en: "Memorized review", ar: "مراجعة المحفوظ" },
+  "memorize.reviewDueNow": { en: "Due now", ar: "مستحق الآن" },
+  "memorize.reviewTotal": { en: "Memorized", ar: "محفوظ" },
+  "memorize.reviewMastered": { en: "Mastered", ar: "متقَن" },
+  "memorize.reviewStatsHelp": {
+    en: "Each memorized verse is scheduled for recall review based on how well you remember it.",
+    ar: "تُجدول كل آية محفوظة للاستذكار بحسب مدى تذكّرك لها.",
   },
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
@@ -664,6 +748,17 @@ const translations: Record<string, { en: string; ar: string }> = {
   "notes.charsLeft": { en: "{n} left", ar: "بقي {n}" },
   "notes.hasNote": { en: "This verse has a note", ar: "لهذه الآية ملاحظة" },
 
+  // Tags: the learner's own short labels for organizing notes and bookmarks
+  "tags.title": { en: "Your tags", ar: "وسومك" },
+  "tags.add": { en: "Add tag", ar: "إضافة وسم" },
+  "tags.placeholder": { en: "Add a label…", ar: "أضف وسمًا…" },
+  "tags.remove": { en: "Remove tag {tag}", ar: "إزالة الوسم {tag}" },
+  "tags.privacy": {
+    en: "Your own labels, private to this device, never uploaded.",
+    ar: "وسومك أنت، خاصة بهذا الجهاز، لا تُرفع أبدًا.",
+  },
+  "tags.empty": { en: "No tags yet", ar: "لا توجد وسوم بعد" },
+
   // Reciter A/B compare: hear the same verse by two reciters back to back
   "recompare.title": { en: "Compare reciters", ar: "مقارنة القرّاء" },
   "recompare.hint": {
@@ -674,6 +769,14 @@ const translations: Record<string, { en: string; ar: string }> = {
   "recompare.reciterB": { en: "Reciter B", ar: "القارئ الثاني" },
   "recompare.playA": { en: "Play A", ar: "تشغيل الأول" },
   "recompare.playB": { en: "Play B", ar: "تشغيل الثاني" },
+
+  // Inline reciter / speed / translation-source controls in the verse overlay.
+  // Chrome labels only (the reciter style and translation names come from the
+  // catalogue); they write the same settings the Settings page does.
+  "inlineControls.title": { en: "Playback", ar: "التشغيل" },
+  "inlineControls.reciter": { en: "Reciter", ar: "القارئ" },
+  "inlineControls.speed": { en: "Speed", ar: "السرعة" },
+  "inlineControls.translation": { en: "Translation", ar: "الترجمة" },
 
   "reading.close": { en: "Close", ar: "إغلاق" },
   "settings.readingDepth": { en: "Reading depth", ar: "عمق القراءة" },
@@ -721,27 +824,83 @@ const translations: Record<string, { en: string; ar: string }> = {
   "khatmah.behindDays": { en: "{n} days behind", ar: "متأخّر بـ {n} يومًا" },
   "khatmah.complete": { en: "Khatmah complete, may Allah accept it", ar: "تمّت الختمة، تقبّل الله" },
 
+  // Milestone certificate. Operational achievement copy only (CONST-01): the
+  // milestone reached, the date, and the app name. It NEVER contains verse or
+  // hadith text. The AR side is a translation of this operational copy.
+  "certificate.title": { en: "Certificate", ar: "شهادة" },
+  "certificate.intro": {
+    en: "Celebrate a milestone with a certificate you can save as an image, made on your device.",
+    ar: "احتفِ بإنجاز بشهادة يمكنك حفظها كصورة، تُصنع على جهازك.",
+  },
+  "certificate.empty": {
+    en: "Complete a juz or a khatmah to unlock a certificate.",
+    ar: "أكمل جزءًا أو ختمة لفتح شهادة.",
+  },
+  "certificate.pick": { en: "Choose a milestone", ar: "اختر إنجازًا" },
+  "certificate.optionJuz": { en: "Juz {n}", ar: "الجزء {n}" },
+  "certificate.optionKhatmah": { en: "The whole Quran", ar: "القرآن كاملًا" },
+  "certificate.save": { en: "Save as image", ar: "احفظ كصورة" },
+  "certificate.canvasLabel": {
+    en: "Milestone certificate, ready to save as an image",
+    ar: "شهادة إنجاز، جاهزة للحفظ كصورة",
+  },
+  // The lines drawn on the canvas itself.
+  "certificate.eyebrow": { en: "Certificate of completion", ar: "شهادة إتمام" },
+  "certificate.juzTitle": { en: "Juz {n}", ar: "الجزء {n}" },
+  "certificate.juzDetail": { en: "Memorized in full", ar: "حُفظ كاملًا" },
+  "certificate.khatmahTitle": { en: "The whole Quran", ar: "القرآن الكريم كاملًا" },
+  "certificate.khatmahDetail": { en: "Recited in full", ar: "تُلِي كاملًا" },
+  "certificate.dateLabel": { en: "Completed {date}", ar: "أُتمّ في {date}" },
+  "certificate.appName": { en: "Tajweed Trainer", ar: "معلّم التجويد" },
+
   // Onboarding
   "onboarding.title": { en: "Welcome to Tajweed Trainer", ar: "مرحباً بك في مدرّب التجويد" },
   "onboarding.skip": { en: "Skip", ar: "تخطّي" },
   "onboarding.back": { en: "Back", ar: "رجوع" },
-  "onboarding.done": { en: "Start", ar: "ابدأ" },
+  "onboarding.done": { en: "Got it", ar: "تمّ" },
   "onboarding.stepOf": { en: "{current} / {total}", ar: "{current} / {total}" },
   "onboarding.step.mushaf.title": { en: "Read and listen", ar: "اقرأ واستمع" },
   "onboarding.step.mushaf.body": {
-    en: "Tap any verse in the mushaf to hear it. A playback surface appears (a side panel on desktop, a bottom sheet on your phone) so you can play one verse, play from a point, or queue several for revision.",
-    ar: "انقر أي آية في المصحف لسماعها. تظهر لوحة تشغيل (جانبية على الحاسوب، وورقة سفلية على الهاتف) لتشغيل آية واحدة، أو المتابعة من موضع، أو ضمّ عدة آيات للمراجعة.",
+    en: "Open the mushaf and tap any verse. A focused panel opens — a side panel on desktop, a bottom sheet on your phone — where you play that verse, play on from there, mark it memorized, bookmark it, add a private note, and read its translation and tafsir.",
+    ar: "افتح المصحف وانقر أي آية. تنفتح لوحة مركّزة — جانبية على الحاسوب، وورقة سفلية على الهاتف — حيث تشغّل تلك الآية، أو تتابع منها، وتحدّدها محفوظة، وتضيف إشارة مرجعية، وتكتب ملاحظة خاصة، وتقرأ ترجمتها وتفسيرها.",
   },
-  "onboarding.step.recall.title": { en: "Test yourself", ar: "اختبر نفسك" },
-  "onboarding.step.recall.body": {
-    en: "Turn on Recall to blur the verses you have memorized, recite them from memory, then reveal each one to check.",
-    ar: "شغّل وضع الاستذكار لإخفاء الآيات التي حفظتها، فتتلوها من ذاكرتك، ثم تكشف كلّ آية للتأكد.",
+  "onboarding.step.themes.title": { en: "Make it yours", ar: "اجعله بأسلوبك" },
+  "onboarding.step.themes.body": {
+    en: "Choose from five curated themes — two light and three dark — in Settings. Your choice is saved on this device.",
+    ar: "اختر من بين خمسة مظاهر منسّقة — اثنان فاتحان وثلاثة داكنة — من الإعدادات. ويُحفظ اختيارك على هذا الجهاز.",
+  },
+  "onboarding.step.followAlong.title": { en: "Follow along", ar: "تابع التلاوة" },
+  "onboarding.step.followAlong.body": {
+    en: "With a reciter that has word timing, each word lights up as it is recited. In recall, reveal-as-recited uncovers a memorized verse word by word as you go.",
+    ar: "مع قارئ لديه توقيت للكلمات، تُضاء كل كلمة وهي تُتلى. وفي الاستذكار، يكشف وضع الكشف-مع-التلاوة الآية المحفوظة كلمةً كلمةً أثناء تقدّمك.",
   },
   "onboarding.step.tracker.title": { en: "Track your hifz", ar: "تابع حفظك" },
   "onboarding.step.tracker.body": {
-    en: "Mark verses, whole surahs, or a juz as memorized. Your progress page shows the share of the Quran you have memorized and what is due for review.",
-    ar: "حدّد آيات أو سورة كاملة أو جزءًا كمحفوظ. تعرض صفحة التقدّم نسبة ما حفظته من القرآن وما حان وقت مراجعته.",
+    en: "Mark verses, whole surahs, or a juz as memorized. Your progress page shows your share of the Quran and what is due for review, and recall blurs memorized verses so you recite from memory.",
+    ar: "حدّد آيات أو سورة كاملة أو جزءًا كمحفوظ. تعرض صفحة التقدّم نصيبك من القرآن وما حان وقت مراجعته، ويُخفي الاستذكار الآيات المحفوظة لتتلوها من ذاكرتك.",
   },
+
+  // Warsh "different narration" surface. Operational copy only (CONST-01): it
+  // states what the app shows and how this entry behaves, and links out to an
+  // external reference. It must never explain what the Warsh narration is or
+  // describe its rules. The AR side is a translation of this operational copy.
+  "warsh.entryTitle": { en: "Listen in another narration (Warsh)", ar: "الاستماع برواية أخرى (ورش)" },
+  "warsh.entrySubtitle": {
+    en: "Per surah only — for this narration, per-verse playback is not available.",
+    ar: "لكل سورة فقط — في هذه الرواية، التشغيل لكل آية غير متاح.",
+  },
+  "warsh.disclaimerTitle": { en: "A different narration", ar: "رواية مختلفة" },
+  "warsh.disclaimerBody": {
+    en: "This is the Warsh narration. The Arabic text and tajweed colouring shown in this app are for Hafs an Asim and do not match this recitation. This app is built for Hafs an Asim. Per-verse playback is not available for this narration.",
+    ar: "هذه رواية ورش. النصّ العربي وتلوين التجويد المعروضان في هذا التطبيق لرواية حفص عن عاصم ولا يطابقان هذه التلاوة. هذا التطبيق مبني على رواية حفص عن عاصم. التشغيل لكل آية غير متاح في هذه الرواية.",
+  },
+  "warsh.referenceLinkLabel": { en: "Learn more about the Qira'at and Warsh", ar: "اعرف المزيد عن القراءات ورواية ورش" },
+  "warsh.acknowledge": { en: "I understand", ar: "فهمت" },
+  "warsh.cancel": { en: "Cancel", ar: "إلغاء" },
+  "warsh.playSurah": { en: "Play surah {surah}", ar: "تشغيل سورة {surah}" },
+  "warsh.pause": { en: "Pause", ar: "إيقاف مؤقت" },
+  "warsh.notAvailable": { en: "This surah is not available in this narration.", ar: "هذه السورة غير متاحة في هذه الرواية." },
+  "warsh.surahSelectLabel": { en: "Choose a surah", ar: "اختر سورة" },
 };
 
 export function t(key: string, lang: Language): string {

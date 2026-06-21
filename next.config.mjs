@@ -1,7 +1,9 @@
 // Content Security Policy assembled once and shared by every response.
 // connect-src whitelists the Quran.com API we call; media-src whitelists the
 // audio CDNs it hands us (verses.quran.com and the quranicaudio.com mirrors)
-// plus everyayah.com, the reviewed per-ayah source for the EveryAyah reciters.
+// plus everyayah.com, the reviewed per-ayah source for the EveryAyah reciters,
+// and server16.mp3quran.net, the reviewed per-surah Warsh source for the
+// walled-off Younes narration (the specific host only, no wildcard).
 // script-src needs 'unsafe-inline' for Next's runtime hydration shims;
 // style-src needs it for inlined critical CSS.
 //
@@ -22,7 +24,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   "img-src 'self' data: blob:",
-  "media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com",
+  "media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com https://server16.mp3quran.net",
   "connect-src 'self' https://api.quran.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -38,14 +40,16 @@ const securityHeaders = [
   // Isolate the browsing context from cross-origin windows. The app opens no
   // popups and uses no window.opener, so same-origin is free defense.
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-  // Deny every powerful feature the app never uses, shrinking the surface a
-  // post-XSS attacker could reach. The app only plays audio, which needs none
-  // of these.
+  // Deny every powerful feature except the microphone. The record-your-own-voice
+  // comparison (RecitationCompare/useRecorder) needs same-origin, user-prompted
+  // mic access; the recorded clip stays a local blob and is never uploaded, so
+  // `self` is the minimal grant. Everything else stays denied, shrinking the
+  // surface a post-XSS attacker could reach.
   {
     key: "Permissions-Policy",
     value: [
       "camera=()",
-      "microphone=()",
+      "microphone=(self)",
       "geolocation=()",
       "interest-cohort=()",
       "payment=()",

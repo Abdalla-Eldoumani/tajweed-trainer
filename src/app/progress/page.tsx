@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MasterySection } from "@/components/progress/MasterySection";
+import { WeakRulesSection } from "@/components/progress/WeakRulesSection";
+import { ResumeListeningCard } from "@/components/progress/ResumeListeningCard";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
@@ -14,11 +17,30 @@ import { KhatmahCard } from "@/components/khatmah/KhatmahCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { useMemorization } from "@/hooks/useMemorization";
+import { useMemorizationReviews } from "@/hooks/useMemorizationReviews";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useTranslation } from "@/lib/i18n";
+import { getMemorizationReviewStats } from "@/lib/memorization-review";
+import { toArabicIndic } from "@/lib/utils";
 import { MODULES } from "@/components/layout/nav-data";
 import learningPath from "@/data/content/learning-path.json";
 import type { LearningModule } from "@/lib/types";
+
+// The milestone certificate draws a 1200x848 canvas and pulls the certificate
+// drawing lib; it is a rare on-completion surface (most loads of /progress show
+// only its calm empty line) and renders nothing before mount. Lazy-loaded so its
+// weight stays off the /progress initial bundle; it splits into its own chunk and
+// loads after mount. The placeholder matches its section footprint and is
+// reduced-motion-safe.
+const MilestoneCertificate = dynamic(
+  () => import("@/components/progress/MilestoneCertificate").then((m) => ({ default: m.MilestoneCertificate })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-24 rounded-xl bg-bg-subtle dark:bg-bg-subtle-dark animate-pulse motion-reduce:animate-none" />
+    ),
+  },
+);
 
 const modules = learningPath.modules as LearningModule[];
 
@@ -28,6 +50,10 @@ export default function ProgressPage() {
   const { stats: reviewStatsFn } = useReviews();
   const reviewStats = reviewStatsFn();
   const { memorized, count: memorizedCount, mounted: memorizedMounted } = useMemorization();
+  // The hook's reviews map (not a storage read) so the due count re-renders
+  // through the change bus when a recall session records a result.
+  const { reviews: memorizationReviews } = useMemorizationReviews();
+  const memorizationReviewStats = getMemorizationReviewStats(memorized, memorizationReviews, new Date());
   const { events: analyticsEvents } = useAnalytics();
   const insights = (() => {
     const routeViews: Record<string, number> = {};
@@ -68,6 +94,8 @@ export default function ProgressPage() {
     return mod ? (isAr ? mod.labelAr : mod.label) : id;
   };
 
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
+
   return (
     <div className="space-y-6">
       <div>
@@ -83,6 +111,12 @@ export default function ProgressPage() {
         </div>
         <ProgressBar value={overall} />
       </Card>
+
+      {/* Resume listening: restarts playback at the last verse the user PLAYED
+          (distinct from resume-reading, the last page read). Sits near the top as
+          a quick "pick up where you were" affordance; the card hides itself when
+          there is no playback to resume and routes through the one player engine. */}
+      <ResumeListeningCard />
 
       {reviewStats.total > 0 && (
         <Card>
@@ -132,6 +166,40 @@ export default function ProgressPage() {
             showTrigger={memorizedCount > 0}
           />
         )}
+        {/* A visible due/total/mastered line above the recall self-test, so the
+            user sees how many memorized verses are due before opening the session.
+            The stats come from getMemorizationReviewStats over the memorized set
+            (its total counts a freshly memorized verse even before it has a review
+            entry) using the hook's reviews map, so it re-renders through the change
+            bus after each graded verse. Mirrors the spaced-review stats Card; gated
+            on mount + count like the rest of the tracker section. */}
+        {memorizedMounted && memorizedCount > 0 && (
+          <Card>
+            <h2 className="font-heading font-semibold text-h3 mb-3">{t("memorize.reviewStatsTitle")}</h2>
+            <div className="flex flex-wrap gap-6 mb-2">
+              <div>
+                <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">
+                  {num(memorizationReviewStats.total)}
+                </div>
+                <p className="text-xs text-text-muted">{t("memorize.reviewTotal")}</p>
+              </div>
+              <div>
+                <div className="text-h2 font-bold text-accent tabular-nums">
+                  {num(memorizationReviewStats.mastered)}
+                </div>
+                <p className="text-xs text-text-muted">{t("memorize.reviewMastered")}</p>
+              </div>
+              <div>
+                <div className="text-h2 font-bold text-red-600 dark:text-red-400 tabular-nums">
+                  {num(memorizationReviewStats.due)}
+                </div>
+                <p className="text-xs text-text-muted">{t("memorize.reviewDueNow")}</p>
+              </div>
+            </div>
+            <p className="text-xs text-text-muted">{t("memorize.reviewStatsHelp")}</p>
+          </Card>
+        )}
+
         {/* Review entry lives inside the tracker section so the user goes from
             "here's what I've memorized" straight into "test me on it" (F1). Shown
             only when something is memorized; the session reuses the Leitner
@@ -145,6 +213,12 @@ export default function ProgressPage() {
           tracker because both are reading-progress motivators; the card owns its
           empty / setup / active branches and gates on its own mounted flag. */}
       <KhatmahCard />
+
+      {/* Milestone certificate: a reading-achievement surface beside the hifz
+          tracker and khatmah. Reachable once a juz is fully memorized or a khatmah
+          is complete; before that it shows a calm, non-nagging line. Owns its own
+          mounted gate and renders/saves the certificate entirely on-device. */}
+      <MilestoneCertificate />
 
       <Card>
         <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.streak")}</h2>
@@ -201,6 +275,12 @@ export default function ProgressPage() {
       </div>
 
       <MasterySection />
+
+      {/* Weak rules: the user's most-missed rule areas (modules) ranked from their
+          own quiz history, each linking to targeted practice. Sits beside mastery
+          since both are practice-history surfaces; owns its mounted gate and shows
+          only modules with misses (honest per-module framing, no authored content). */}
+      <WeakRulesSection />
 
       {/* Quiz History */}
       {Object.values(progress.modules).some((m) => m.quizScores.length > 0) && (

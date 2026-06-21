@@ -7,11 +7,14 @@ import { useTranslation } from "@/lib/i18n";
 import { getColorForClass } from "@/lib/tajweed-colors";
 import { getLessonLinkForClass } from "@/lib/tajweed-rule-links";
 
-// What a tapped letter resolves to: the API class plus the point to anchor at
-// (the tapped letter's bounding rect in viewport coordinates).
+// What a resolved letter gives the popover: the API class, the point to anchor
+// at (the letter's bounding rect in viewport coordinates), and whether the open
+// was deliberate enough to take focus. autoFocus is set only on a long-press (or
+// keyboard-intent) open; a hover open omits it so it does not steal focus.
 export interface RulePopoverTarget {
   cssClass: string;
   rect: { top: number; bottom: number; left: number; right: number };
+  autoFocus?: boolean;
 }
 
 interface TajweedRulePopoverProps {
@@ -73,10 +76,13 @@ export function TajweedRulePopover({ target, onClose }: TajweedRulePopoverProps)
     setPos({ top, left });
   }, [target]);
 
-  // Move focus to the link when the popover opens with one, so a keyboard user
-  // who triggered it can act on it and Escape returns control predictably.
+  // Move focus to the link only on a deliberate open (long-press / keyboard
+  // intent, target.autoFocus), so the link is actionable and Escape returns
+  // control predictably. A hover-opened popover does NOT take focus: stealing
+  // focus on a mere mouse-hover is hostile and would fight the outside-pointer
+  // close.
   useEffect(() => {
-    if (target && link) linkRef.current?.focus({ preventScroll: true });
+    if (target?.autoFocus && link) linkRef.current?.focus({ preventScroll: true });
   }, [target, link]);
 
   // Escape closes; a pointer/tap outside the card closes; scrolling or resizing

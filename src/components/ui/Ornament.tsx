@@ -79,14 +79,14 @@ export function MedallionOrnament({ className }: OrnamentProps) {
           return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
         })}
       </g>
-      {/* Inner 8-pointed star */}
-      <path
-        d="M100 60 L108 85 L135 85 L113 100 L122 125 L100 110 L78 125 L87 100 L65 85 L92 85 Z"
-        fill="currentColor"
-        fillOpacity="0.1"
-        stroke="currentColor"
-        strokeWidth="0.7"
-      />
+      {/* Inner eight-pointed star (Rub el Hizb / khatam): two identical four-point
+          stars, the second rotated 45 degrees, the same star the app icon uses.
+          Static integer coordinates (no trig at render) so the server and client
+          serialize identical strings and never trip a hydration mismatch. */}
+      <g fill="currentColor" fillOpacity="0.12" stroke="currentColor" strokeWidth="0.7">
+        <polygon points="100,62 108,92 138,100 108,108 100,138 92,108 62,100 92,92" />
+        <polygon points="100,62 108,92 138,100 108,108 100,138 92,108 62,100 92,92" transform="rotate(45 100 100)" />
+      </g>
     </svg>
   );
 }

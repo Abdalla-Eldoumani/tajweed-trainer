@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Spectral, JetBrains_Mono, Amiri, Amiri_Quran } from "next/font/google";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { RouteTransition } from "@/components/layout/RouteTransition";
 import { AppProvider } from "@/components/layout/AppProvider";
 import "./globals.css";
 
@@ -78,7 +79,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=JSON.parse(localStorage.getItem('tajweed-trainer-progress'));if(s&&s.settings){if(s.settings.darkMode)document.documentElement.classList.add('dark');if(s.settings.language==='ar'){document.documentElement.lang='ar';document.documentElement.dir='rtl'}}}catch(e){}})()`,
+            __html: `(function(){try{var s=JSON.parse(localStorage.getItem('tajweed-trainer-progress'));var c=s&&s.settings||{};var v=['vellum','pearl','night','sepia','mihrab'];var t=v.indexOf(c.theme)>=0?c.theme:(c.darkMode===true?'night':'vellum');document.documentElement.setAttribute('data-theme',t);if(c.language==='ar'){document.documentElement.lang='ar';document.documentElement.dir='rtl'}}catch(e){}})()`,
           }}
         />
       </head>
@@ -91,7 +92,7 @@ export default function RootLayout({
             <div className="flex-1 min-w-0 md:ms-[260px]">
               <Header />
               <main className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 safe-bottom">
-                {children}
+                <RouteTransition>{children}</RouteTransition>
               </main>
             </div>
           </div>

@@ -4,26 +4,15 @@ import { useState } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { useSettings } from "@/hooks/useSettings";
 import { usePlayer } from "@/hooks/usePlayer";
-import { RECITATIONS, DEFAULT_RECITER_ID, getRecitation, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
-import type { ReciterId, Recitation } from "@/lib/types";
+import { RECITATIONS, DEFAULT_RECITER_ID } from "@/lib/reciters";
+import { ReciterSelect } from "@/components/ui/ReciterSelect";
+import type { ReciterId } from "@/lib/types";
 
 interface ReciterCompareProps {
   surah: number;
   ayah: number;
   surahName: string | null;
 }
-
-// The reciter catalogue grouped into the two display styles (Mujawwad, then
-// Murattal), mirroring the settings selector so both controls read the same way.
-// Derived once at module load from the static catalogue, never per render.
-const RECITER_GROUPS: Array<{ key: ReciterStyleGroup; labelKey: string; list: Recitation[] }> = (() => {
-  const out: Array<{ key: ReciterStyleGroup; labelKey: string; list: Recitation[] }> = [
-    { key: "mujawwad", labelKey: "settings.reciterStyleMujawwad", list: [] },
-    { key: "murattal", labelKey: "settings.reciterStyleMurattal", list: [] },
-  ];
-  for (const r of RECITATIONS) out.find((g) => g.key === styleGroup(r))?.list.push(r);
-  return out.filter((g) => g.list.length > 0);
-})();
 
 const PlayIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -47,46 +36,6 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
     <polyline points="9 18 15 12 9 6" />
   </svg>
 );
-
-// A grouped reciter selector. Declared at module scope (not inside the parent's
-// render) so it keeps a stable component identity and never resets its select
-// state between renders. The selected id is always kept present as an option so
-// a controlled value is never lost.
-function ReciterSelect({
-  value,
-  onChange,
-  label,
-}: {
-  value: ReciterId;
-  onChange: (id: ReciterId) => void;
-  label: string;
-}) {
-  const { t, isAr } = useTranslation();
-  const known = getRecitation(value);
-  const reciterLabel = (r: Recitation): string => {
-    const base = isAr ? r.nameAr : r.nameEn;
-    return r.style ? `${base}, ${r.style}` : base;
-  };
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      aria-label={label}
-      className="w-full text-xs bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
-    >
-      {!known && <option value={value}>{value}</option>}
-      {RECITER_GROUPS.map((group) => (
-        <optgroup key={group.key} label={t(group.labelKey)}>
-          {group.list.map((r) => (
-            <option key={r.id} value={r.id}>
-              {reciterLabel(r)}
-            </option>
-          ))}
-        </optgroup>
-      ))}
-    </select>
-  );
-}
 
 // Pick a sensible default for the second reciter: the catalogue default if it is
 // not already reciter A, otherwise the first reciter that differs. Guarantees A

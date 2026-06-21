@@ -195,12 +195,13 @@ record(
 // Object.prototype unpolluted. ---
 
 // (a) Source wiring: every keyed-map loop (modules, reviews, memorizationReviews,
-// readSections, verseNotes, lastReadBySurah) carries the skip before it copies a key.
+// readSections, verseNotes, entryTags, lastReadBySurah) carries the skip before
+// it copies a key.
 const guardMatches =
   storage.match(/=== "__proto__" \|\| \w+ === "constructor" \|\| \w+ === "prototype"\) continue;/g) || [];
 record(
-  "storage: keyed-map loops skip __proto__/constructor/prototype keys (6 guards)",
-  guardMatches.length === 6,
+  "storage: keyed-map loops skip __proto__/constructor/prototype keys (7 guards)",
+  guardMatches.length === 7,
   String(guardMatches.length),
 );
 
@@ -334,6 +335,125 @@ record(
       ),
     ),
   ).length === NOTE_MAX,
+);
+
+// --- Entry tags (entryTags): the learner's own short labels per verse. A keyed
+// map over attacker-influenceable verseKeys whose values are string arrays, so
+// the sanitizer validates the key, trims/length-caps each tag, dedupes, caps the
+// per-entry count, drops empty entries, guards the prototype keys, and caps the
+// entry count. Two halves like the groups above: (a) regex storage.ts to prove
+// the wiring is in the real source, and (b) re-derive the sanitizer in plain JS
+// and assert each contract point. ---
+
+// (a) Source wiring: the field is sanitized in sanitizeProgress, defaulted in
+// DEFAULT_PROGRESS, and has a get/set helper pair that writes through the funnel.
+record(
+  "storage: sanitizeProgress sanitizes entryTags",
+  /entryTags: sanitizeEntryTags\(input\.entryTags\)/.test(storage),
+);
+record(
+  "storage: DEFAULT_PROGRESS defaults entryTags to {}",
+  /DEFAULT_PROGRESS[\s\S]*?entryTags:\s*\{\}/.test(storage),
+);
+record(
+  "storage: setTags writes through the funnel (setProgress, no raw localStorage)",
+  /export function setTags\([\s\S]*?setProgress\(progress\)/.test(storage) &&
+    !/export function setTags\([\s\S]*?localStorage\./.test(storage),
+);
+record(
+  "storage: setTags validates the verseKey",
+  /export function setTags\([\s\S]*?VERSE_KEY_PATTERN\.test\(verseKey\)/.test(storage),
+);
+
+// (b) Re-derive the entry-tags sanitizer (no import of the TS source) and assert
+// the contract: a valid key + tags survives trimmed/deduped; an over-long tag is
+// capped; per-entry tag count caps; an empty/whitespace-only tag set drops the
+// entry; a non-verseKey is rejected; a non-array value is rejected; the prototype
+// keys create no own-keys; and the entry count caps. Mirrors normalizeTags +
+// sanitizeEntryTags in storage.ts.
+const TAG_LEN = 40;
+const TAGS_PER_ENTRY = 12;
+const TAG_ENTRIES = 2000;
+const normalizeTagsJS = (input) => {
+  const out = [];
+  const seen = new Set();
+  for (const raw of input) {
+    if (typeof raw !== "string") continue;
+    const tag = raw.trim().slice(0, TAG_LEN);
+    if (tag.length === 0) continue;
+    const key = tag.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(tag);
+    if (out.length >= TAGS_PER_ENTRY) break;
+  }
+  return out;
+};
+const sanitizeEntryTagsJS = (input) => {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) return {};
+  const out = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VKEY.test(verseKey)) continue;
+    if (!Array.isArray(value)) continue;
+    const tags = normalizeTagsJS(value);
+    if (tags.length === 0) continue;
+    out[verseKey] = tags;
+    count += 1;
+    if (count >= TAG_ENTRIES) break;
+  }
+  return out;
+};
+record(
+  "EntryTags: a valid key with trimmed, deduped tags survives",
+  JSON.stringify(sanitizeEntryTagsJS({ "2:255": ["  faith  ", "Faith", "tafsir"] })["2:255"]) ===
+    JSON.stringify(["faith", "tafsir"]),
+  JSON.stringify(sanitizeEntryTagsJS({ "2:255": ["  faith  ", "Faith", "tafsir"] })),
+);
+record(
+  "EntryTags: an over-long tag is capped to 40 chars",
+  sanitizeEntryTagsJS({ "1:1": ["x".repeat(200)] })["1:1"][0].length === TAG_LEN,
+  String(sanitizeEntryTagsJS({ "1:1": ["x".repeat(200)] })["1:1"][0].length),
+);
+record(
+  "EntryTags: the per-entry tag count caps at 12",
+  sanitizeEntryTagsJS({ "1:1": Array.from({ length: 30 }, (_, i) => `t${i}`) })["1:1"].length ===
+    TAGS_PER_ENTRY,
+  String(sanitizeEntryTagsJS({ "1:1": Array.from({ length: 30 }, (_, i) => `t${i}`) })["1:1"].length),
+);
+record(
+  "EntryTags: an entry whose tags are all empty/whitespace is dropped",
+  !("1:1" in sanitizeEntryTagsJS({ "1:1": ["  ", ""] })),
+  JSON.stringify(sanitizeEntryTagsJS({ "1:1": ["  ", ""] })),
+);
+record(
+  "EntryTags: a non-verseKey is rejected",
+  !("not-a-key" in sanitizeEntryTagsJS({ "not-a-key": ["hi"] })),
+  JSON.stringify(sanitizeEntryTagsJS({ "not-a-key": ["hi"] })),
+);
+record(
+  "EntryTags: a non-array value is rejected",
+  Object.keys(sanitizeEntryTagsJS({ "1:1": "hi" })).length === 0,
+  JSON.stringify(sanitizeEntryTagsJS({ "1:1": "hi" })),
+);
+record(
+  "EntryTags: prototype keys create no own-keys and leave Object.prototype clean",
+  DANGEROUS_KEYS.every((k) => !Object.prototype.hasOwnProperty.call(sanitizeEntryTagsJS({ [k]: ["x"] }), k)) &&
+    ({}).polluted === undefined,
+  Object.keys(sanitizeEntryTagsJS({ __proto__: { polluted: true } })).join(","),
+);
+record(
+  "EntryTags: the entry count caps at 2000",
+  Object.keys(
+    // 2100 unique, valid (<=3-digit) verseKeys spread across surahs so none are
+    // dropped by the key pattern; the cap is what limits the result to 2000.
+    sanitizeEntryTagsJS(
+      Object.fromEntries(
+        Array.from({ length: 2100 }, (_, i) => [`${Math.floor(i / 900) + 1}:${(i % 900) + 1}`, ["n"]]),
+      ),
+    ),
+  ).length === TAG_ENTRIES,
 );
 
 const failed = results.filter((r) => !r.ok);

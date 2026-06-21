@@ -279,3 +279,68 @@ export function getColorsByGroup(): Record<TajweedGroup, TajweedColor[]> {
   for (const c of TAJWEED_COLORS) out[c.group].push(c);
   return out;
 }
+
+// The five theme grounds. vellum and night are the shipped light/dark palettes;
+// pearl is a cooler light, sepia a warm dim dark, mihrab an emerald dark.
+export type ThemeName = "vellum" | "pearl" | "night" | "sepia" | "mihrab";
+
+export const THEME_NAMES: readonly ThemeName[] = [
+  "vellum",
+  "pearl",
+  "night",
+  "sepia",
+  "mihrab",
+] as const;
+
+// Per-theme rendered value for every tajweed class, keyed by the exact API class
+// name. These are retuned-per-ground renderings of the SAME verified reference
+// hues (.agent/TAJWEED_COLOR_REFERENCE.md): each rule keeps its conceptual hue
+// in every theme; only lightness/saturation move so the color stays legible on
+// that theme's ground. No rule is reclassified, no color is invented, and no two
+// rules collide on any ground. Derivation:
+//   - vellum reuses the active-scheme `light` value verbatim (the shipped warm
+//     light ground); night reuses the active-scheme `dark` lift verbatim (the
+//     shipped navy ground). Those two are fixed and must not drift.
+//   - pearl deepens each hue for the cooler, brighter light ground so it clears
+//     contrast there (the lighter ground washes out the verbatim light values).
+//   - sepia and mihrab brighten/warm each hue for those dark grounds.
+// The recessive grays (ham_wasl, slnt, laam_shamsiyah, idgham_mutajanisayn,
+// idgham_mutaqaribayn) stay neutral and recessive on every ground by design;
+// their cue is the legend's hairline swatch, not contrast.
+// src/app/globals.css mirrors this map under each [data-theme] block (a manual
+// mirror, like the :root/.dark mirror); scripts/verify-tajweed-colors.mjs keeps
+// the :root/.dark parity green and Plan 07 adds the per-ground completeness and
+// contrast gate that reads this structure.
+export const THEME_TAJWEED: Record<string, Record<ThemeName, string>> = {
+  ham_wasl: { vellum: "#AAAAAA", pearl: "#949494", night: "#B7BCC6", sepia: "#B3AEA2", mihrab: "#A8B0A6" },
+  slnt: { vellum: "#AAAAAA", pearl: "#949494", night: "#B7BCC6", sepia: "#B3AEA2", mihrab: "#A8B0A6" },
+  laam_shamsiyah: { vellum: "#AAAAAA", pearl: "#949494", night: "#B7BCC6", sepia: "#B3AEA2", mihrab: "#A8B0A6" },
+  idgham_mutajanisayn: { vellum: "#A1A1A1", pearl: "#8C8C8C", night: "#B0B0B0", sepia: "#ABA69A", mihrab: "#A0A89E" },
+  idgham_mutaqaribayn: { vellum: "#A1A1A1", pearl: "#8C8C8C", night: "#B0B0B0", sepia: "#ABA69A", mihrab: "#A0A89E" },
+  ghunnah: { vellum: "#FF7E1E", pearl: "#E56200", night: "#FF8C36", sepia: "#FF9442", mihrab: "#FF9038" },
+  madda_normal: { vellum: "#537FFF", pearl: "#3A6BFF", night: "#6E92FF", sepia: "#7E9DFF", mihrab: "#7896FF" },
+  madda_permissible: { vellum: "#F38E02", pearl: "#C97500", night: "#FBA53A", sepia: "#FFB04A", mihrab: "#FCAB42" },
+  madda_necessary: { vellum: "#A9045C", pearl: "#A9045C", night: "#E0529A", sepia: "#EA6AAA", mihrab: "#E85FA2" },
+  madda_obligatory: { vellum: "#F2007F", pearl: "#D6006F", night: "#FF4DA6", sepia: "#FF63B0", mihrab: "#FF5AAB" },
+  madda_obligatory_mottasel: { vellum: "#F2007F", pearl: "#D6006F", night: "#FF4DA6", sepia: "#FF63B0", mihrab: "#FF5AAB" },
+  madda_obligatory_monfasel: { vellum: "#F2007F", pearl: "#D6006F", night: "#FF4DA6", sepia: "#FF63B0", mihrab: "#FF5AAB" },
+  qalaqah: { vellum: "#009EE6", pearl: "#0090D2", night: "#38B6F5", sepia: "#4FC0F7", mihrab: "#45BBF6" },
+  ikhafa: { vellum: "#9400A8", pearl: "#9400A8", night: "#C95BDC", sepia: "#D26FE2", mihrab: "#CF66DF" },
+  ikhafa_shafawi: { vellum: "#D500B7", pearl: "#BC00A1", night: "#F45AD8", sepia: "#F86FDE", mihrab: "#F766DC" },
+  iqlab: { vellum: "#26BFFD", pearl: "#0A78A8", night: "#5BD0FF", sepia: "#72D7FF", mihrab: "#68D4FF" },
+  idgham_shafawi: { vellum: "#58B800", pearl: "#4A9C00", night: "#7FD63A", sepia: "#90DB55", mihrab: "#88D94D" },
+  idgham_ghunnah: { vellum: "#169200", pearl: "#169200", night: "#38C21F", sepia: "#4ACC34", mihrab: "#43C92D" },
+  idgham_wo_ghunnah: { vellum: "#169200", pearl: "#169200", night: "#38C21F", sepia: "#4ACC34", mihrab: "#43C92D" },
+  tafkheem: { vellum: "#006994", pearl: "#006994", night: "#3FA6C9", sepia: "#54B2D2", mihrab: "#4BADCE" },
+};
+
+// Resolve one class to its rendered value on a given theme. Resolves legacy
+// aliases the same way getColorForClass does; returns undefined for an unknown
+// class so a caller can fall back to default ink.
+export function getThemeColorForClass(
+  cssClass: string,
+  theme: ThemeName,
+): string | undefined {
+  const key = CLASS_ALIASES[cssClass] ?? cssClass;
+  return THEME_TAJWEED[key]?.[theme];
+}

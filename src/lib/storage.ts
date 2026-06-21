@@ -3,6 +3,7 @@ import type {
   UserSettings,
   ModuleProgress,
   Language,
+  Theme,
   ReviewState,
   ReviewBox,
   AnalyticsEvent,
@@ -10,6 +11,7 @@ import type {
   PlayerResume,
   VerseLocation,
   KhatmahPlan,
+  CertificateRecord,
 } from "./types";
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
@@ -21,6 +23,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   reciter: DEFAULT_RECITER_ID,
   playbackSpeed: 1.0,
   fontSize: "normal",
+  theme: "vellum",
   darkMode: false,
   showTransliteration: true,
   showTranslation: true,
@@ -46,12 +49,15 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   memorizationReviews: {},
   readSections: {},
   verseNotes: {},
+  entryTags: {},
   analytics: [],
   bookmarks: [],
   lastRead: null,
   lastReadBySurah: {},
   khatmah: null,
+  certificates: [],
   seenOnboarding: false,
+  warshNarrationAck: false,
   lastBackupAt: "",
 };
 
@@ -87,6 +93,10 @@ const MAX_REVIEWS = 2000;
 const MAX_MEMORIZED = 6236;
 const MAX_VERSE_BOOKMARKS = 500;
 const MAX_LAST_READ_BY_SURAH = 114;
+// Milestone certificate records: one per juz (30) plus the khatmah is 31 at most,
+// and the kind+ref dedupe holds the total there, so this cap is effectively
+// unreachable headroom against a tampered store, not a real limit reached in use.
+const MAX_CERTIFICATES = 60;
 const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 // Per-verse private notes: a realistic ceiling on how many verses one learner
 // annotates (well under the 6,236-verse maximum) and a per-note length so a
@@ -94,6 +104,13 @@ const VERSE_KEY_PATTERN = /^\d{1,3}:\d{1,3}$/;
 // dropped, so the count only grows with real annotations.
 const MAX_VERSE_NOTES = 2000;
 const MAX_VERSE_NOTE_LENGTH = 1000;
+// The learner's own short labels per verse. Same ceiling on annotated verses as
+// the notes map (MAX_TAG_ENTRIES mirrors MAX_VERSE_NOTES); a per-entry tag count
+// and a per-tag length so a tampered store cannot bloat every read. Tags are
+// trimmed, deduped, and empty ones dropped, so counts only grow with real use.
+const MAX_TAG_ENTRIES = 2000;
+const MAX_TAGS_PER_ENTRY = 12;
+const MAX_TAG_LENGTH = 40;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
 const MAX_ANALYTICS = 1000;
@@ -110,6 +127,7 @@ const VALID_BOXES: readonly ReviewBox[] = [1, 2, 3, 4, 5];
 
 const VALID_LANGUAGES: readonly Language[] = ["en", "ar"];
 const VALID_FONT_SIZES = ["normal", "large", "xlarge"] as const;
+const VALID_THEMES: readonly Theme[] = ["vellum", "pearl", "night", "sepia", "mihrab"];
 
 // Resolves any stored value to a known Quran.com recitation id, migrating legacy
 // alquran.cloud identifiers and replacing anything unknown or tampered with the
@@ -138,6 +156,16 @@ function pickNumber(value: unknown, fallback: number, min?: number, max?: number
   return value;
 }
 
+// Resolve the theme on read/import. An explicit valid theme always wins; when it
+// is absent or unknown, migrate the legacy darkMode flag (true -> night) and fall
+// back to the safe default (vellum) for everything else. The darkMode branch must
+// take precedence over the plain default, so it is consulted here rather than
+// leaning on DEFAULT_SETTINGS.theme.
+function resolveTheme(input: Record<string, unknown>): Theme {
+  if (VALID_THEMES.includes(input.theme as Theme)) return input.theme as Theme;
+  return input.darkMode === true ? "night" : "vellum";
+}
+
 function sanitizeSettings(input: unknown): UserSettings {
   if (!isObject(input)) return DEFAULT_SETTINGS;
   const bookmarks = Array.isArray(input.mushafBookmarks)
@@ -156,6 +184,7 @@ function sanitizeSettings(input: unknown): UserSettings {
       ? (input.playbackSpeed as number)
       : DEFAULT_SETTINGS.playbackSpeed,
     fontSize: pickEnum(input.fontSize, VALID_FONT_SIZES, DEFAULT_SETTINGS.fontSize),
+    theme: resolveTheme(input),
     darkMode: typeof input.darkMode === "boolean" ? input.darkMode : DEFAULT_SETTINGS.darkMode,
     showTransliteration:
       typeof input.showTransliteration === "boolean" ? input.showTransliteration : DEFAULT_SETTINGS.showTransliteration,
@@ -299,6 +328,51 @@ function sanitizeVerseNotes(input: unknown): Record<string, string> {
   return out;
 }
 
+// Normalize one verse's tag list: trim each tag, drop empties, cap each tag's
+// length, dedupe case-insensitively (keeping the first-seen casing so the user's
+// own capitalization is preserved), and cap the count. Shared by the sanitizer
+// and setTags so a stored list and a freshly written list are bounded the same
+// way.
+function normalizeTags(input: unknown[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of input) {
+    if (typeof raw !== "string") continue;
+    const tag = raw.trim().slice(0, MAX_TAG_LENGTH);
+    if (tag.length === 0) continue;
+    const key = tag.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(tag);
+    if (out.length >= MAX_TAGS_PER_ENTRY) break;
+  }
+  return out;
+}
+
+// The learner's own short tags per verse. Keys are verseKeys (validated against
+// VERSE_KEY_PATTERN); values are string arrays of the user's own labels, each
+// trimmed/length-capped, deduped, and capped in count by normalizeTags. An entry
+// with no surviving tags is dropped (an empty tag set is "no tags"), the
+// dangerous prototype keys are skipped like every other keyed-map loop, and the
+// whole map caps at MAX_TAG_ENTRIES. A stored object without this field reads
+// back as {} (lossless migration). Tags are never religious content.
+function sanitizeEntryTags(input: unknown): Record<string, string[]> {
+  if (!isObject(input)) return {};
+  const out: Record<string, string[]> = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    if (!Array.isArray(value)) continue;
+    const tags = normalizeTags(value);
+    if (tags.length === 0) continue;
+    out[verseKey] = tags;
+    count += 1;
+    if (count >= MAX_TAG_ENTRIES) break;
+  }
+  return out;
+}
+
 function sanitizeMemorized(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const out = new Set<string>();
@@ -382,6 +456,49 @@ function sanitizeKhatmah(input: unknown): KhatmahPlan | null {
   return { startDate: input.startDate, targetDate: input.targetDate, startPage: input.startPage };
 }
 
+// The bounded milestone-certificate record list. Each entry must be an object
+// with `kind` in {"juz","khatmah"}, a real ISO `dateIso` (isValidIsoDate), and a
+// `ref` that is an integer 1..30 for a juz or null for a khatmah; malformed
+// entries are dropped. Records are deduped by kind+ref (one per milestone, so the
+// list cannot grow past ~31), then capped at MAX_CERTIFICATES as a final ceiling.
+// The image is NEVER part of this record (EDGE_CASES_V2 line 50), only the fact
+// that the milestone was reached/exported. This is an array, not a keyed map, so
+// it carries no prototype-pollution-key guard (there are no attacker-controlled
+// object keys to rebuild). A stored object without this field reads back as []
+// (lossless migration).
+function sanitizeCertificates(input: unknown): CertificateRecord[] {
+  if (!Array.isArray(input)) return [];
+  const out: CertificateRecord[] = [];
+  const seen = new Set<string>();
+  for (const entry of input) {
+    if (!isObject(entry)) continue;
+    if (entry.kind !== "juz" && entry.kind !== "khatmah") continue;
+    if (!isValidIsoDate(entry.dateIso)) continue;
+    let ref: number | null;
+    if (entry.kind === "juz") {
+      if (
+        typeof entry.ref !== "number" ||
+        !Number.isInteger(entry.ref) ||
+        entry.ref < 1 ||
+        entry.ref > 30
+      ) {
+        continue;
+      }
+      ref = entry.ref;
+    } else {
+      // A khatmah record carries no juz number.
+      if (entry.ref !== null && entry.ref !== undefined) continue;
+      ref = null;
+    }
+    const dedupeKey = `${entry.kind}:${ref ?? ""}`;
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+    out.push({ kind: entry.kind, ref, dateIso: entry.dateIso });
+    if (out.length >= MAX_CERTIFICATES) break;
+  }
+  return out;
+}
+
 // Per-surah last-read map. Keys are surah numbers 1..114 (validated as integers
 // in range); values are VerseLocation records validated like lastRead. Guards
 // the prototype-pollution keys and caps at 114 entries, mirroring the other map
@@ -432,13 +549,16 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     memorizationReviews: sanitizeMemorizationReviews(input.memorizationReviews),
     readSections: sanitizeReadSections(input.readSections),
     verseNotes: sanitizeVerseNotes(input.verseNotes),
+    entryTags: sanitizeEntryTags(input.entryTags),
     analytics: sanitizeAnalytics(input.analytics),
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
     lastRead: sanitizeLastRead(input.lastRead),
     lastReadBySurah: sanitizeLastReadBySurah(input.lastReadBySurah),
     khatmah: sanitizeKhatmah(input.khatmah),
+    certificates: sanitizeCertificates(input.certificates),
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
+    warshNarrationAck: typeof input.warshNarrationAck === "boolean" ? input.warshNarrationAck : false,
     lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
   };
 }
@@ -512,6 +632,21 @@ export function setOnboardingSeen(value: boolean): void {
   setProgress(progress);
 }
 
+// The Warsh "different narration" disclaimer acknowledged flag. Same shape as
+// the onboarding flag: lives on the consolidated progress object (not an ad-hoc
+// key) so export / import / reset cover it; the default-false in DEFAULT_PROGRESS
+// makes resetProgress re-show the disclaimer. The setter writes through
+// setProgress, which fires the change bus.
+export function getWarshDisclaimerAck(): boolean {
+  return getProgress().warshNarrationAck ?? false;
+}
+
+export function setWarshDisclaimerAck(value: boolean): void {
+  const progress = getProgress();
+  progress.warshNarrationAck = value;
+  setProgress(progress);
+}
+
 // The opt-in khatmah plan funnel. Lives on the consolidated progress model
 // (field `khatmah`, not an ad-hoc key) so export / import / reset cover it; the
 // default-null in DEFAULT_PROGRESS makes resetProgress clear any plan. Reads and
@@ -535,6 +670,34 @@ export function clearKhatmah(): void {
   if (!isBrowser()) return;
   const progress = getProgress();
   progress.khatmah = null;
+  setProgress(progress);
+}
+
+// The milestone-certificate record funnel. Lives on the consolidated progress
+// model (field `certificates`, not an ad-hoc key) so export / import / reset cover
+// it; the default-[] in DEFAULT_PROGRESS makes resetProgress clear the records.
+// This records only that a milestone was reached and a certificate generated; it
+// NEVER stores the image (EDGE_CASES_V2 line 50).
+export function getCertificates(): CertificateRecord[] {
+  return getProgress().certificates ?? [];
+}
+
+// Append one milestone record, through the change bus. The record is re-validated
+// the same way the sanitizer validates a stored one (a malformed record is
+// rejected). A record for the same kind+ref already present is a no-op (one
+// certificate per milestone). The cap is a final ceiling: a genuinely new record
+// once already at MAX_CERTIFICATES is a no-op, though the kind+ref dedupe holds
+// the total at ~31 so the cap is effectively unreachable.
+export function recordCertificate(rec: CertificateRecord): void {
+  if (!isBrowser()) return;
+  // Re-validate the single record by running it through the array sanitizer.
+  const [valid] = sanitizeCertificates([rec]);
+  if (!valid) return;
+  const progress = getProgress();
+  const current = progress.certificates ?? [];
+  if (current.some((c) => c.kind === valid.kind && c.ref === valid.ref)) return;
+  if (current.length >= MAX_CERTIFICATES) return;
+  progress.certificates = [...current, valid];
   setProgress(progress);
 }
 
@@ -706,6 +869,36 @@ export function setVerseNote(verseKey: string, text: string): void {
     if (isNew && Object.keys(progress.verseNotes).length >= MAX_VERSE_NOTES) return;
     progress.verseNotes[verseKey] = trimmed;
   }
+  setProgress(progress);
+}
+
+// Read the verse's tags as the user's own labels. Lossless migration: a store
+// written before this field reads back as [] (the map is `?? {}` before lookup).
+export function getTags(verseKey: string): string[] {
+  return getProgress().entryTags?.[verseKey] ?? [];
+}
+
+// Write (or clear) a learner's own tags for one verse, through the change bus.
+// The list is normalized the same way the sanitizer does (trim, length-cap,
+// dedupe, count-cap); an empty result deletes the entry (an empty tag set is "no
+// tags"). A tampered verseKey is rejected. Adding tags to a brand-new verse past
+// the entry cap is a no-op (editing or clearing an existing entry always works,
+// mirroring setVerseNote, so the user is never stuck unable to fix tags).
+export function setTags(verseKey: string, tags: string[]): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  const map = progress.entryTags ?? {};
+  const normalized = normalizeTags(tags);
+  if (normalized.length === 0) {
+    if (!(verseKey in map)) return;
+    delete map[verseKey];
+  } else {
+    const isNew = !(verseKey in map);
+    if (isNew && Object.keys(map).length >= MAX_TAG_ENTRIES) return;
+    map[verseKey] = normalized;
+  }
+  progress.entryTags = map;
   setProgress(progress);
 }
 

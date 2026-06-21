@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Source-level regression guard for the phase-9 accessibility fixes. No browser,
+// Source-level regression guard for the accessibility fixes. No browser,
 // no transpile: plain presence/absence checks on file contents, fast and
-// dependency-free like the sibling verify-* scripts. It validates the outputs of
-// 09-01 (focus rings, motion-reduce, smooth-scroll gating, aria-current,
-// scroll-lock), 09-03 (the mini-player slider dark accent and the
-// contrast-scoped ayah-number pill), and the raw-filled-button dark parity fix
+// dependency-free like the sibling verify-* scripts. It validates the
+// focus rings, motion-reduce, smooth-scroll gating, aria-current and
+// scroll-lock work, the mini-player slider dark accent and the
+// contrast-scoped ayah-number pill, and the raw-filled-button dark parity fix
 // (no `bg-primary text-white` left in src), so none of them can silently regress.
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
@@ -71,10 +71,15 @@ record(
   /prefersReducedMotion\(\)/.test(pageSrc),
   "reduced-motion guard present",
 );
+// The verse-scroll-into-view moved out of the reader into MushafPage/the
+// overlay, so the reader does no scrolling. Require the reduced-motion guard
+// only if the reader actually scrolls (so it stays in force if a scroll ever
+// returns here), and accept it as satisfied when there is no scroll to gate.
+const readerScrolls = /scrollIntoView|scrollTo|window\.scroll/.test(readerSrc);
 record(
-  "MushafReader.tsx calls prefersReducedMotion()",
-  /prefersReducedMotion\(\)/.test(readerSrc),
-  "reduced-motion guard present",
+  "MushafReader.tsx gates any scroll through prefersReducedMotion()",
+  !readerScrolls || /prefersReducedMotion\(\)/.test(readerSrc),
+  readerScrolls ? "reduced-motion guard present where the reader scrolls" : "reader does no scrolling, nothing to gate",
 );
 
 // --- 4. motion-reduce on the cited spinner/pulse animations. ---
@@ -91,19 +96,21 @@ record(
   "loading skeleton honors reduced motion",
 );
 
-// --- 5. scroll-lock on the expanded playback sheet (lock and release), now via
-//        the shared ref-counted source in lib/scroll-lock so stacked overlays
-//        coordinate (the body stays locked until the last one releases). ---
-const surfaceSrc = read("src/components/mushaf/PlaybackSurface.tsx");
+// --- 5. scroll-lock on the verse overlay (lock and release) via the shared
+//        ref-counted source in lib/scroll-lock so stacked overlays coordinate
+//        (the body stays locked until the last one releases). Assert the STRICT
+//        cleanup form (mirroring verify-overlay) so an imported-but-never-called
+//        unlock — an unbalanced lock — fails. ---
+const overlaySrc = read("src/components/mushaf/VerseOverlay.tsx");
 record(
-  "PlaybackSurface.tsx locks body scroll while expanded",
-  /lockBodyScroll\(\)/.test(surfaceSrc),
-  "lockBodyScroll() while expanded",
+  "VerseOverlay.tsx locks body scroll while open",
+  /lockBodyScroll\(\)/.test(overlaySrc),
+  "lockBodyScroll() while open",
 );
 record(
-  "PlaybackSurface.tsx restores body scroll on close",
-  /unlockBodyScroll\(\)/.test(surfaceSrc),
-  "unlockBodyScroll() on collapse/unmount",
+  "VerseOverlay.tsx restores body scroll in a cleanup",
+  /return\s*\(\)\s*=>[^}]*unlockBodyScroll/.test(overlaySrc),
+  "return () => unlockBodyScroll() on close/unmount",
 );
 
 // --- 6. aria-current wiring on both nav surfaces. ---
@@ -123,20 +130,25 @@ record(
 
 // --- 7. the ayah-number pill carries its contrast-scoped gold, not the shared
 //        --gold-dark (which sits at AA-large only on --bg-subtle). The pill is
-//        theme-aware: a deeper gold in light, a brighter gold in dark, each
-//        clearing AA-normal on its own --bg-subtle ground. ---
+//        theme-aware: a deeper gold on the light grounds (the base rule), a
+//        brighter gold on the dark grounds. The dark rule is now scoped to the
+//        three dark themes ([data-theme="night"|"sepia"|"mihrab"]) rather than
+//        the removed .dark class, since the phase replaced the single dark class
+//        with per-ground [data-theme] blocks; the numeral must still be a scoped
+//        contrast-safe hex, not the shared var(--gold-dark). ---
 const css = read("src/app/globals.css");
-const lightEnd = (css.match(/\.tajweed-text \.end\s*\{([\s\S]*?)\n\}/) || [])[1] || "";
-const darkEnd = (css.match(/\.dark \.tajweed-text \.end\s*\{([\s\S]*?)\n\}/) || [])[1] || "";
+const lightEnd = (css.match(/(?<![\]"]\s)\.tajweed-text \.end\s*\{([\s\S]*?)\n\}/) || [])[1] || "";
+const darkEnd =
+  (css.match(/\[data-theme="night"\] \.tajweed-text \.end[\s\S]*?\{([\s\S]*?)\n\}/) || [])[1] || "";
 record(
   "ayah-number pill (light) sets a scoped color, not var(--gold-dark)",
   /color:\s*#[0-9A-Fa-f]{6}/.test(lightEnd) && !/color:\s*var\(--gold-dark\)/.test(lightEnd),
   "AA-normal contrast-scoped numeral color on the ivory pill",
 );
 record(
-  "ayah-number pill (dark) sets a scoped color, not var(--gold-dark)",
+  "ayah-number pill (dark themes) sets a scoped color, not var(--gold-dark)",
   /color:\s*#[0-9A-Fa-f]{6}/.test(darkEnd) && !/color:\s*var\(--gold-dark\)/.test(darkEnd),
-  "AA-normal contrast-scoped numeral color on the navy pill",
+  "AA-normal contrast-scoped numeral color on the dark-ground pills",
 );
 
 // --- 8. no raw `bg-primary text-white` anywhere in src: filled primary buttons

@@ -10,13 +10,14 @@ This app stands on the work of others who have made authenticated Quranic text, 
 ## Recitation audio
 
 - **Quran.com Foundation API v4** for per-ayah audio (`/recitations/{id}/by_ayah/{key}`). The returned paths resolve to the Quran.com audio CDNs (`verses.quran.com` and the `quranicaudio.com` mirrors).
-- **EveryAyah** (`https://everyayah.com`) for seven of the nineteen reciters, served as per-ayah files. Their file paths are built from the folders recorded in `src/lib/reciters.ts`.
+- **EveryAyah** (`https://everyayah.com`) for most of the reciters, served as per-ayah files. Their file paths are built from the folders recorded in `src/lib/reciters.ts`.
+- **Warsh narration (separate)** — one per-surah recitation in the Warsh narration (Younes Souilass), offered behind a disclaimer on the surah index and served from `https://server16.mp3quran.net`. It is kept apart from the Hafs reciter roster and the per-verse player; the app's text and tajweed colouring are Hafs an Asim.
 
 The full reciter roster is in `src/lib/reciters.ts`. The default is Mahmoud Khalil Al-Husary in the mu'allim (teaching) style, chosen for being slow and clear for learning.
 
 ## Tajweed color scheme
 
-The tajweed letter colors are the "new" (mushaf) scheme from the **Quranic Universal Library (QUL)**, the open data project at `github.com/TarteelAI/quranic-universal-library` that also backs the Quran.com tajweed markup. The values are transcribed verbatim from QUL into `src/lib/tajweed-colors.ts` (the single source of truth), with dark-mode variants checked for contrast. Full provenance is in `.agent/TAJWEED_COLOR_REFERENCE.md`.
+The tajweed letter colors are the "new" (mushaf) scheme from the **Quranic Universal Library (QUL)**, the open data project at `github.com/TarteelAI/quranic-universal-library` that also backs the Quran.com tajweed markup. The values are transcribed verbatim from QUL into `src/lib/tajweed-colors.ts` (the single source of truth), with dark-mode variants checked for contrast.
 
 ## Fonts
 

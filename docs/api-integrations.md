@@ -102,7 +102,7 @@ Reciter ids cannot reference an unknown reciter: `normalizeReciterId` maps any v
 The Content Security Policy is assembled once in `next.config.mjs` (the single source for all response headers; `vercel.json` carries only framework + buildCommand). The origins relevant to these integrations:
 
 - `connect-src 'self' https://api.quran.com` — the only cross-origin host the app fetches JSON from.
-- `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com` — the audio hosts that per-ayah and per-word URLs resolve to.
+- `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com https://everyayah.com https://server16.mp3quran.net` — the audio hosts that per-ayah and per-word URLs resolve to (the last serves the per-surah Warsh narration on the surah index, the specific host only — no wildcard).
 - `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR). `style-src`/`font-src` list no Google Fonts origins — all fonts are self-hosted via next/font.
 
 The service worker is served by the `src/app/sw.js/route.ts` route handler (`force-static`), which stamps a unique per-build version into `scripts/sw-template.js` so each deploy gets fresh cache namespaces and the activate step purges the previous build's caches. Its scope is deliberately limited to same-origin requests: HTML navigation (network-first) and same-origin static assets (cache-first). It does **not** intercept cross-origin Quran audio (mp3) or the Quran.com API — those stream/fetch natively, so the worker can never break audio playback. The trade-off is that Quran audio and API content are not available offline.
@@ -137,12 +137,14 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `lastReadBySurah` map | 114 entries | Per-surah last-read location, keyed by surah 1 to 114. Each value is a `{ verseKey, page }` with page 1 to 604. |
 | `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1 to 100 chars. |
 | `verseNotes` map | 2,000 entries | Key validated against `^\d{1,3}:\d{1,3}$`. Each note trimmed and capped at 1,000 chars; empty notes dropped. |
+| `entryTags` map | 2,000 entries | The learner's own short tags per verse, keyed by verseKey (`^\d{1,3}:\d{1,3}$`). Up to 12 tags per entry, each trimmed and capped at 40 chars; empty tags dropped, empty entries removed. Never religious content. |
 | `khatmah` | one plan or null | Both dates must be real ISO calendar dates with `targetDate >= startDate`; `startPage` 1 to 604. A malformed plan stores as null. |
+| `certificates` | 60 records or empty | A small record of milestones a certificate was generated for: `{ kind: "juz"\|"khatmah", ref, dateIso }`. The image blob is never stored (rendered and downloaded on-device only). Deduped per milestone; malformed entries dropped. |
 | `playerResume` | one record or null | Last playback position so the mini-player can resume after a reload. Validated shape; null when none. |
 | `seenOnboarding` | boolean | First-launch onboarding seen-once flag; defaults false so a reset re-shows it. |
 | `lastBackupAt` | ISO string | Stamped by `exportProgress`; empty until the first backup. Drives the backup reminder. |
 | `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
-| `reciter` | one of the 19 `RECITATIONS` ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
+| `reciter` | one of the `RECITATIONS` Hafs reciter ids, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and falls back to the default when unknown. |
 | `language` | `"en" \| "ar"` | Anything else falls back to `en`. |
 | `lastMushafPage` | integer 1–604 | Out-of-range values fall back to 1. |
 
@@ -159,7 +161,9 @@ These fields on `TajweedProgress` never leave the device. They aren't sent to an
 - `bookmarks` and `lastReadBySurah`: verse bookmarks (listed at `/mushaf/bookmarks`) and the per-surah last-read position behind the resume pills on the index.
 - `readSections`: section anchors observed at 40% visibility on each lesson page, used by the floating progress chip.
 - `verseNotes`: the learner's own private note per verse, written and edited in the Mushaf reader's per-verse panel. Never religious content (the user's own words).
+- `entryTags`: the learner's own short organizational labels per verse, added from the per-verse note panel and the bookmark rows and used to filter the bookmarked-verses view. Never religious content (the user's own words).
 - `khatmah` and `playerResume`: the opt-in Quran-completion plan tracked on `/progress`, and the saved playback position the mini-player resumes from.
+- `certificates`: a small bounded record of memorization milestones (a completed juz or khatmah) the learner generated an on-device certificate for. Only the record persists (kind, ref, date); the certificate image is rendered and downloaded on the device and is never stored or transmitted.
 - `analytics`: a 1000-event FIFO ring buffer of route views and quiz events. Used by the Insights card on `/progress`. Removable through Reset Progress or by clearing the JSON backup before re-importing.
 
 Sanitization rejects malformed input (wrong types, oversized strings, unknown enum values) and replaces it with the matching default. A user who edits localStorage directly cannot make the app reference content it doesn't have or store an unbounded payload.

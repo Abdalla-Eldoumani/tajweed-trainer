@@ -16,6 +16,8 @@ const api = read("src", "lib", "quran-api.ts");
 const types = read("src", "lib", "types.ts");
 const storage = read("src", "lib", "sanitize.ts") && read("src", "lib", "storage.ts");
 const sanitize = read("src", "lib", "sanitize.ts");
+const readingDepth = read("src", "components", "learn", "ReadingDepth.tsx");
+const search = read("src", "app", "search", "page.tsx");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -48,6 +50,53 @@ record("Settings default a translationId and tafsirId", /translationId:\s*\d+/.t
 record("sanitizeSettings clamps translationId", /translationId:\s*pickNumber\(/.test(storage));
 record("sanitizeSettings clamps tafsirId", /tafsirId:\s*pickNumber\(/.test(storage));
 record("sanitizeSettings validates showWordByWord boolean", /showWordByWord:\s*[\s\S]*?typeof input\.showWordByWord === "boolean"/.test(storage));
+
+// ReadingDepth: the tafsir fetch is effect-driven and keyed on the source, so
+// switching the tafsir in Settings updates an open panel instead of showing the
+// first source forever. The dep array must carry settings.tafsirId AND
+// tafsirOpen (refetch on source change while open); the effect body reaches
+// getTafsirForVerse.
+record(
+  "Tafsir fetched in an effect reaching getTafsirForVerse",
+  /useEffect\(\(\) => \{[\s\S]*?getTafsirForVerse\([\s\S]*?\}, \[/.test(readingDepth),
+);
+record(
+  "Tafsir effect dep array is keyed on tafsirId and tafsirOpen",
+  /\}, \[[^\]]*settings\.tafsirId[^\]]*tafsirOpen[^\]]*\]/.test(readingDepth),
+);
+// Regression guard: the first-load cache guard that froze the panel on the
+// initial source is gone (mirror the negative model above).
+record(
+  "Tafsir no longer cache-guarded on first load",
+  !/if \(tafsir !== null/.test(readingDepth),
+);
+// The fetch lives in the effect, not the open/close handler, so reopening at the
+// same source does not refetch and switching sources does. Scope the match to
+// the handler body up to its first line-start "}" so a later getTafsirForVerse
+// (e.g. the JSX comment) is not read as living inside the handler.
+const toggleBody = /function toggleTafsir\(\) \{([\s\S]*?)\n {2}\}/.exec(readingDepth);
+record(
+  "Tafsir fetch is not in the toggle handler",
+  !!toggleBody && !/getTafsirForVerse/.test(toggleBody[1]),
+);
+// Both render branches inject only sanitized HTML (sanitized in the API
+// wrapper, asserted above); neither prints raw API text.
+record(
+  "Reading-depth renders both branches as sanitized HTML",
+  (readingDepth.match(/dangerouslySetInnerHTML/g) ?? []).length >= 2,
+);
+
+// Search honors the selected resource so verse snippets render in the same
+// language as the reading-depth panel, not the API's English default: the URL
+// carries translations=<id> and the page threads settings.translationId in.
+record(
+  "Search requests the selected translation resource",
+  /searchVerses[\s\S]*?\/search\?[\s\S]*?translations=/.test(api),
+);
+record(
+  "Search page passes the selected translationId",
+  /searchVerses\([^)]*translationId/.test(search) || /settings\.translationId/.test(search),
+);
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);

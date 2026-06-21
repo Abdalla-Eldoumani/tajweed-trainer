@@ -57,6 +57,13 @@ interface PlayerState {
   // waits between queue items; 0 advances immediately as before.
   loopSelection: boolean;
   interVersePause: number;
+  // Sub-verse word-range loop: play just [startMs..endMs] of the current verse and
+  // seek back to startMs after the inter-verse gap, for `count` passes. Unlike the
+  // ayah-based modes above this ends MID-FILE, so it is not driven by onEnded; the
+  // host applies the pure subVerseLoopDecision in ontimeupdate and reports a
+  // completed pass back here. null when off; subVerseLoopsDone is the pass counter.
+  subVerseLoop: { startMs: number; endMs: number; count: number } | null;
+  subVerseLoopsDone: number;
 
   current: () => QueueItem | null;
   hasNext: () => boolean;
@@ -71,6 +78,14 @@ interface PlayerState {
   playRange: (surah: number, from: number, to: number, opts?: PlayOpts) => void;
   setLoopSelection: (on: boolean) => void;
   setInterVersePause: (seconds: number) => void;
+  // Engage a sub-verse word-range loop: validate, seek to startMs, start playing,
+  // and clear the ayah-based loop modes so the two are mutually exclusive. A
+  // degenerate input (endMs <= startMs or count < 1) clears the loop instead.
+  setSubVerseLoop: (startMs: number, endMs: number, count: number) => void;
+  clearSubVerseLoop: () => void;
+  // The host calls this after a completed loop pass (one reached-endMs -> seek-back
+  // cycle) so the pass counter advances toward `count`.
+  noteSubVerseLoopPass: () => void;
   toggle: () => void;
   pause: () => void;
   resume: () => void;
@@ -126,6 +141,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   sleepDeadline: null,
   loopSelection: false,
   interVersePause: 0,
+  subVerseLoop: null,
+  subVerseLoopsDone: 0,
 
   current: () => get().queue[get().index] ?? null,
   hasNext: () => get().index < get().queue.length - 1,
@@ -150,6 +167,10 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       repeatRange: null,
       rangeLoopsDone: 0,
       loopSelection: false,
+      // A tapped verse must never inherit a sub-verse loop from a prior verse, or
+      // it would loop a stale word range over different audio.
+      subVerseLoop: null,
+      subVerseLoopsDone: 0,
       error: null,
       loadToken: s.loadToken + 1,
     })),
@@ -173,6 +194,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       repeatRange: null,
       rangeLoopsDone: 0,
       loopSelection: false,
+      subVerseLoop: null,
+      subVerseLoopsDone: 0,
       error: null,
       loadToken: s.loadToken + 1,
     })),
@@ -198,6 +221,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         repeatsDone: 0,
         repeatRange: null,
         rangeLoopsDone: 0,
+        subVerseLoop: null,
+        subVerseLoopsDone: 0,
         error: null,
         loadToken: s.loadToken + 1,
       };
@@ -223,6 +248,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         // The whole-range loop is loopSelection's job; clear the ayah-based one.
         repeatRange: null,
         rangeLoopsDone: 0,
+        subVerseLoop: null,
+        subVerseLoopsDone: 0,
         error: null,
         loadToken: s.loadToken + 1,
       };
@@ -245,16 +272,19 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     if (get().queue.length > 0) set({ status: "playing" });
   },
 
+  // Manual transport to another verse drops the sub-verse loop: its ms bounds
+  // belong to the verse that was open, so it must not loop a stale range over the
+  // next/previous verse's audio.
   next: () =>
     set((s) =>
       s.index < s.queue.length - 1
-        ? { index: s.index + 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, error: null, loadToken: s.loadToken + 1 }
+        ? { index: s.index + 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, subVerseLoop: null, subVerseLoopsDone: 0, error: null, loadToken: s.loadToken + 1 }
         : {},
     ),
   prev: () =>
     set((s) =>
       s.index > 0
-        ? { index: s.index - 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, error: null, loadToken: s.loadToken + 1 }
+        ? { index: s.index - 1, status: "loading", currentTime: 0, duration: 0, pendingOffset: 0, repeatsDone: 0, subVerseLoop: null, subVerseLoopsDone: 0, error: null, loadToken: s.loadToken + 1 }
         : { seekTarget: 0, seekToken: s.seekToken + 1, currentTime: 0 },
     ),
 
@@ -274,14 +304,14 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     }),
 
   setRepeatOne: (count) =>
-    set({ repeatOne: Math.max(0, Math.floor(count) || 0), repeatsDone: 0, repeatRange: null }),
+    set({ repeatOne: Math.max(0, Math.floor(count) || 0), repeatsDone: 0, repeatRange: null, subVerseLoop: null, subVerseLoopsDone: 0 }),
   setRepeatRange: (from, to, count) =>
     set((s) => {
       const f = Math.floor(from);
       const tt = Math.floor(to);
       const c = Math.floor(count);
       if (!(f >= 1 && tt >= f && c >= 1) || s.queue.length === 0) {
-        return { repeatRange: null, rangeLoopsDone: 0 };
+        return { repeatRange: null, rangeLoopsDone: 0, subVerseLoop: null, subVerseLoopsDone: 0 };
       }
       // Reposition onto the range start and (re)start playback; onEnded then
       // walks f..to and loops back c times. Assumes the continuous surah queue
@@ -293,6 +323,9 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         rangeLoopsDone: 0,
         repeatsDone: 0,
         repeatOne: 0,
+        // The ayah-based range supersedes any sub-verse word-range loop.
+        subVerseLoop: null,
+        subVerseLoopsDone: 0,
         mode: "continuous",
         index: startIndex,
         status: "loading",
@@ -307,13 +340,45 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   // turning loopSelection on clears repeatRange. It does not restart playback;
   // onEnded picks it up at the next queue boundary.
   setLoopSelection: (on) =>
-    set(on ? { loopSelection: true, repeatRange: null, rangeLoopsDone: 0 } : { loopSelection: false }),
+    set(on ? { loopSelection: true, repeatRange: null, rangeLoopsDone: 0, subVerseLoop: null, subVerseLoopsDone: 0 } : { loopSelection: false }),
   setInterVersePause: (seconds) =>
     set({
       interVersePause: INTER_VERSE_PRESETS.includes(seconds as (typeof INTER_VERSE_PRESETS)[number])
         ? seconds
         : INTER_VERSE_PRESETS.reduce((best, p) => (Math.abs(p - seconds) < Math.abs(best - seconds) ? p : best), 0),
     }),
+  // Engage a sub-verse word-range loop, mirroring setRepeatRange: validate the
+  // bounds, clear the ayah-based loop modes (mutually exclusive), reset the pass
+  // counter, and seek to startMs to (re)start the range on the ONE engine. The
+  // seek writes seekTarget/seekToken directly (the same shape as seek()) so this
+  // is one atomic update; the verse is already loaded when the overlay engages a
+  // loop, so this repositions the live <audio> with no reload. A degenerate input
+  // clears the loop. subVerseLoopDecision (applied by PlayerHost in ontimeupdate)
+  // already guards a degenerate count/range, so the loop can never run forever.
+  setSubVerseLoop: (startMs, endMs, count) =>
+    set((s) => {
+      const c = Math.floor(count);
+      if (!(endMs > startMs && c >= 1) || s.queue.length === 0) {
+        return { subVerseLoop: null, subVerseLoopsDone: 0 };
+      }
+      return {
+        subVerseLoop: { startMs, endMs, count: c },
+        subVerseLoopsDone: 0,
+        // Clear the ayah-based loop modes so the sub-verse loop is the only one.
+        repeatOne: 0,
+        repeatsDone: 0,
+        repeatRange: null,
+        rangeLoopsDone: 0,
+        loopSelection: false,
+        status: "playing",
+        seekTarget: startMs / 1000,
+        seekToken: s.seekToken + 1,
+        currentTime: startMs / 1000,
+        error: null,
+      };
+    }),
+  clearSubVerseLoop: () => set({ subVerseLoop: null, subVerseLoopsDone: 0 }),
+  noteSubVerseLoopPass: () => set((s) => ({ subVerseLoopsDone: s.subVerseLoopsDone + 1 })),
   // Sleep modes are mutually exclusive: choosing one clears the other.
   setSleepEndOfSurah: (on) => set(on ? { sleepEndOfSurah: true, sleepDeadline: null } : { sleepEndOfSurah: false }),
   setSleepTimer: (minutes) =>
@@ -324,7 +389,10 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     ),
 
   stop: () => {
-    set({ status: "idle", currentTime: 0, sleepDeadline: null, error: null });
+    // Clear the sub-verse loop too: a stop must not leave a word range armed to
+    // re-engage on the next play (it is reset on playVerse/playSurah anyway, but
+    // clearing here keeps a stopped player's state clean).
+    set({ status: "idle", currentTime: 0, sleepDeadline: null, error: null, subVerseLoop: null, subVerseLoopsDone: 0 });
     get().persist();
   },
 
