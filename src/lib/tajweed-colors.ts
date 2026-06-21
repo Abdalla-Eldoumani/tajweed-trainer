@@ -327,7 +327,7 @@ export const THEME_TAJWEED: Record<string, Record<ThemeName, string>> = {
   qalaqah: { vellum: "#009EE6", pearl: "#0090D2", night: "#38B6F5", sepia: "#4FC0F7", mihrab: "#45BBF6" },
   ikhafa: { vellum: "#9400A8", pearl: "#9400A8", night: "#C95BDC", sepia: "#D26FE2", mihrab: "#CF66DF" },
   ikhafa_shafawi: { vellum: "#D500B7", pearl: "#BC00A1", night: "#F45AD8", sepia: "#F86FDE", mihrab: "#F766DC" },
-  iqlab: { vellum: "#26BFFD", pearl: "#0093CE", night: "#5BD0FF", sepia: "#72D7FF", mihrab: "#68D4FF" },
+  iqlab: { vellum: "#26BFFD", pearl: "#0A78A8", night: "#5BD0FF", sepia: "#72D7FF", mihrab: "#68D4FF" },
   idgham_shafawi: { vellum: "#58B800", pearl: "#4A9C00", night: "#7FD63A", sepia: "#90DB55", mihrab: "#88D94D" },
   idgham_ghunnah: { vellum: "#169200", pearl: "#169200", night: "#38C21F", sepia: "#4ACC34", mihrab: "#43C92D" },
   idgham_wo_ghunnah: { vellum: "#169200", pearl: "#169200", night: "#38C21F", sepia: "#4ACC34", mihrab: "#43C92D" },
