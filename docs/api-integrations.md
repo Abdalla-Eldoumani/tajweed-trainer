@@ -137,6 +137,7 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `lastReadBySurah` map | 114 entries | Per-surah last-read location, keyed by surah 1 to 114. Each value is a `{ verseKey, page }` with page 1 to 604. |
 | `readSections` map | 50 slugs per module | Slug validated against `^[a-z0-9][a-z0-9-]{0,80}$`. Module-id strings 1 to 100 chars. |
 | `verseNotes` map | 2,000 entries | Key validated against `^\d{1,3}:\d{1,3}$`. Each note trimmed and capped at 1,000 chars; empty notes dropped. |
+| `entryTags` map | 2,000 entries | The learner's own short tags per verse, keyed by verseKey (`^\d{1,3}:\d{1,3}$`). Up to 12 tags per entry, each trimmed and capped at 40 chars; empty tags dropped, empty entries removed. Never religious content. |
 | `khatmah` | one plan or null | Both dates must be real ISO calendar dates with `targetDate >= startDate`; `startPage` 1 to 604. A malformed plan stores as null. |
 | `playerResume` | one record or null | Last playback position so the mini-player can resume after a reload. Validated shape; null when none. |
 | `seenOnboarding` | boolean | First-launch onboarding seen-once flag; defaults false so a reset re-shows it. |
@@ -159,6 +160,7 @@ These fields on `TajweedProgress` never leave the device. They aren't sent to an
 - `bookmarks` and `lastReadBySurah`: verse bookmarks (listed at `/mushaf/bookmarks`) and the per-surah last-read position behind the resume pills on the index.
 - `readSections`: section anchors observed at 40% visibility on each lesson page, used by the floating progress chip.
 - `verseNotes`: the learner's own private note per verse, written and edited in the Mushaf reader's per-verse panel. Never religious content (the user's own words).
+- `entryTags`: the learner's own short organizational labels per verse, added from the per-verse note panel and the bookmark rows and used to filter the bookmarked-verses view. Never religious content (the user's own words).
 - `khatmah` and `playerResume`: the opt-in Quran-completion plan tracked on `/progress`, and the saved playback position the mini-player resumes from.
 - `analytics`: a 1000-event FIFO ring buffer of route views and quiz events. Used by the Insights card on `/progress`. Removable through Reset Progress or by clearing the JSON backup before re-importing.
 
