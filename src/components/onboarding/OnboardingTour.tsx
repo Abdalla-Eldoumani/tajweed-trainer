@@ -4,16 +4,22 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "@/lib/i18n";
 import { getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
+import { subscribeProgressChanged } from "@/lib/progress-events";
 import { cn } from "@/lib/utils";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { Button } from "@/components/ui/Button";
 import { MedallionOrnament } from "@/components/ui/Ornament";
 
-// The three first-launch steps. Copy is i18n keys only (never verse/hadith
-// text); the values live under onboarding.step.* in i18n.ts.
+// The first-launch steps covering the v2 surfaces: the reader + verse overlay,
+// the five themes, follow-along (the recited-word highlight), and the
+// memorization tracker/recall. Copy is i18n keys only (never verse/hadith text);
+// the values live under onboarding.step.* in i18n.ts. The dots, the stepOf
+// counter, isLast, and the Back/Next/Got-it placement all derive from
+// STEPS.length, so changing this array adapts the whole modal.
 const STEPS = [
   { titleKey: "onboarding.step.mushaf.title", bodyKey: "onboarding.step.mushaf.body" },
-  { titleKey: "onboarding.step.recall.title", bodyKey: "onboarding.step.recall.body" },
+  { titleKey: "onboarding.step.themes.title", bodyKey: "onboarding.step.themes.body" },
+  { titleKey: "onboarding.step.followAlong.title", bodyKey: "onboarding.step.followAlong.body" },
   { titleKey: "onboarding.step.tracker.title", bodyKey: "onboarding.step.tracker.body" },
 ] as const;
 
@@ -40,9 +46,18 @@ export function OnboardingTour() {
   const [seen, setSeen] = useState(true);
   const [step, setStep] = useState(0);
 
+  // Seed the seen-once flag post-mount, then subscribe to the progress change
+  // bus so a later write re-evaluates it without a reload: the Settings toggle
+  // writes setOnboardingSeen(false), the flag flips, seen becomes false, and the
+  // derived open turns true — the tour re-shows live. Re-open-loop guard:
+  // opening writes NO flag (only close() writes true on an explicit dismissal,
+  // only the Settings toggle writes false), and re-reading on a bus event is
+  // idempotent (a read emits nothing), so there is no feedback loop. Mirrors the
+  // useVerseNotes seed-and-subscribe shape; the cleanup is the unsubscribe.
   useEffect(() => {
     setMounted(true);
     setSeen(getOnboardingSeen());
+    return subscribeProgressChanged(() => setSeen(getOnboardingSeen()));
   }, []);
 
   const open = mounted && !seen;
