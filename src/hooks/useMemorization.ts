@@ -2,9 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { getProgress, toggleMemorizedVerse, setMemorizedVerses } from "@/lib/storage";
+import { subscribeProgressChanged } from "@/lib/progress-events";
 
 // Tracks which verseKeys ("surah:ayah") the user has marked memorized.
 // Empty initial state for SSR/CSR parity; effect populates on mount.
+//
+// Subscribes to the progress change bus so a write in any instance re-renders
+// them all: the bulk-entry control and the /progress tracker, breakdown, and
+// review entry are different component trees, so the bulk write has to reach the
+// /progress instances through the bus, not an in-instance optimistic update.
 export function useMemorization() {
   const [memorized, setMemorized] = useState<Set<string>>(new Set());
   const [mounted, setMounted] = useState(false);
@@ -12,6 +18,9 @@ export function useMemorization() {
   useEffect(() => {
     setMemorized(new Set(getProgress().memorizedVerses));
     setMounted(true);
+    return subscribeProgressChanged(() =>
+      setMemorized(new Set(getProgress().memorizedVerses)),
+    );
   }, []);
 
   const isMemorized = useCallback(

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { getMemorizationReviews, setMemorizationReview } from "@/lib/storage";
+import { subscribeProgressChanged } from "@/lib/progress-events";
 import { nextStateForAnswer, getDueFromUniverse } from "@/lib/spaced-repetition";
 import type { ReviewState } from "@/lib/types";
 
@@ -15,6 +16,11 @@ export function useMemorizationReviews() {
 
   useEffect(() => {
     setReviews(getMemorizationReviews());
+    // Re-read on every write so a recall grading session (which writes through
+    // setMemorizationReview -> setProgress -> the change bus) refreshes every
+    // mounted consumer live, like useBookmarks/useMemorization. Keeps the
+    // /progress due-count card in sync after each graded verse with no reload.
+    return subscribeProgressChanged(() => setReviews(getMemorizationReviews()));
   }, []);
 
   const refresh = useCallback(() => {

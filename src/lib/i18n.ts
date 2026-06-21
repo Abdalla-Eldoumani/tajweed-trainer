@@ -310,6 +310,27 @@ const translations: Record<string, { en: string; ar: string }> = {
   "mastery.best": { en: "Best", ar: "الأفضل" },
   "mastery.due": { en: "due", ar: "مستحقّ" },
   "mastery.mastered": { en: "mastered", ar: "متقَن" },
+  "weakRules.title": { en: "Where to focus", ar: "أين تركّز" },
+  "weakRules.subtitle": {
+    en: "The rule areas you have missed most often in practice, drawn from your own quiz history.",
+    ar: "أكثر أبواب الأحكام التي أخطأت فيها في التدريب، مأخوذة من سجلّ اختباراتك.",
+  },
+  "weakRules.missedLabel": { en: "{n} missed", ar: "{n} خطأ" },
+  "weakRules.review": { en: "Review", ar: "راجع" },
+  "weakRules.empty": {
+    en: "No weak areas yet. Answer some practice questions and the areas to revisit will show here.",
+    ar: "لا توجد مواطن ضعف بعد. أجب على أسئلة التدريب فتظهر هنا الأبواب التي ينبغي مراجعتها.",
+  },
+  "resume.listenTitle": { en: "Resume listening", ar: "متابعة الاستماع" },
+  "resume.listenSubtitle": {
+    en: "Pick up audio from the last verse you played.",
+    ar: "تابع الصوت من آخر آية شغّلتها.",
+  },
+  "resume.listenButton": { en: "Resume listening", ar: "متابعة الاستماع" },
+  "resume.listenAria": {
+    en: "Resume listening from {surah}, verse {ref}",
+    ar: "متابعة الاستماع من {surah}، الآية {ref}",
+  },
   "progress.quizHistory": { en: "Quiz History", ar: "سجلّ الاختبارات" },
   "progress.resetProgress": { en: "Reset Progress", ar: "إعادة تعيين التقدّم" },
   "progress.resetDescription": {
@@ -528,6 +549,15 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "mushaf.bookmarksOpenReader": { en: "Open the Mushaf", ar: "افتح المصحف" },
   "mushaf.bookmarksBack": { en: "Back to index", ar: "العودة إلى الفهرس" },
+  "bookmarks.filterLabel": { en: "Filter bookmarks", ar: "تصفية المفضّلة" },
+  "bookmarks.filterPlaceholder": {
+    en: "Filter by tag, surah, or reference…",
+    ar: "تصفية حسب الوسم أو السورة أو الموضع…",
+  },
+  "bookmarks.filterEmpty": {
+    en: "No bookmarks match your filter.",
+    ar: "لا توجد آيات مفضّلة تطابق التصفية.",
+  },
   "mushaf.bookmarkOpenVerse": { en: "Open in reader", ar: "افتح في القارئ" },
   "mushaf.memorizeOn": { en: "Hide memorized verses", ar: "إخفاء الآيات المحفوظة" },
   "mushaf.memorizeOff": { en: "Show memorized verses", ar: "إظهار الآيات المحفوظة" },
@@ -604,6 +634,14 @@ const translations: Record<string, { en: string; ar: string }> = {
   "memorize.reviewEmpty": {
     en: "No memorized verses are due for review right now.",
     ar: "لا توجد آيات محفوظة مستحقّة للمراجعة الآن.",
+  },
+  "memorize.reviewStatsTitle": { en: "Memorized review", ar: "مراجعة المحفوظ" },
+  "memorize.reviewDueNow": { en: "Due now", ar: "مستحق الآن" },
+  "memorize.reviewTotal": { en: "Memorized", ar: "محفوظ" },
+  "memorize.reviewMastered": { en: "Mastered", ar: "متقَن" },
+  "memorize.reviewStatsHelp": {
+    en: "Each memorized verse is scheduled for recall review based on how well you remember it.",
+    ar: "تُجدول كل آية محفوظة للاستذكار بحسب مدى تذكّرك لها.",
   },
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
@@ -705,6 +743,17 @@ const translations: Record<string, { en: string; ar: string }> = {
   "notes.charsLeft": { en: "{n} left", ar: "بقي {n}" },
   "notes.hasNote": { en: "This verse has a note", ar: "لهذه الآية ملاحظة" },
 
+  // Tags: the learner's own short labels for organizing notes and bookmarks
+  "tags.title": { en: "Your tags", ar: "وسومك" },
+  "tags.add": { en: "Add tag", ar: "إضافة وسم" },
+  "tags.placeholder": { en: "Add a label…", ar: "أضف وسمًا…" },
+  "tags.remove": { en: "Remove tag {tag}", ar: "إزالة الوسم {tag}" },
+  "tags.privacy": {
+    en: "Your own labels, private to this device, never uploaded.",
+    ar: "وسومك أنت، خاصة بهذا الجهاز، لا تُرفع أبدًا.",
+  },
+  "tags.empty": { en: "No tags yet", ar: "لا توجد وسوم بعد" },
+
   // Reciter A/B compare: hear the same verse by two reciters back to back
   "recompare.title": { en: "Compare reciters", ar: "مقارنة القرّاء" },
   "recompare.hint": {
@@ -769,6 +818,35 @@ const translations: Record<string, { en: string; ar: string }> = {
   "khatmah.aheadDays": { en: "{n} days ahead", ar: "متقدّم بـ {n} يومًا" },
   "khatmah.behindDays": { en: "{n} days behind", ar: "متأخّر بـ {n} يومًا" },
   "khatmah.complete": { en: "Khatmah complete, may Allah accept it", ar: "تمّت الختمة، تقبّل الله" },
+
+  // Milestone certificate. Operational achievement copy only (CONST-01): the
+  // milestone reached, the date, and the app name. It NEVER contains verse or
+  // hadith text. The AR side is a translation of this operational copy.
+  "certificate.title": { en: "Certificate", ar: "شهادة" },
+  "certificate.intro": {
+    en: "Celebrate a milestone with a certificate you can save as an image, made on your device.",
+    ar: "احتفِ بإنجاز بشهادة يمكنك حفظها كصورة، تُصنع على جهازك.",
+  },
+  "certificate.empty": {
+    en: "Complete a juz or a khatmah to unlock a certificate.",
+    ar: "أكمل جزءًا أو ختمة لفتح شهادة.",
+  },
+  "certificate.pick": { en: "Choose a milestone", ar: "اختر إنجازًا" },
+  "certificate.optionJuz": { en: "Juz {n}", ar: "الجزء {n}" },
+  "certificate.optionKhatmah": { en: "The whole Quran", ar: "القرآن كاملًا" },
+  "certificate.save": { en: "Save as image", ar: "احفظ كصورة" },
+  "certificate.canvasLabel": {
+    en: "Milestone certificate, ready to save as an image",
+    ar: "شهادة إنجاز، جاهزة للحفظ كصورة",
+  },
+  // The lines drawn on the canvas itself.
+  "certificate.eyebrow": { en: "Certificate of completion", ar: "شهادة إتمام" },
+  "certificate.juzTitle": { en: "Juz {n}", ar: "الجزء {n}" },
+  "certificate.juzDetail": { en: "Memorized in full", ar: "حُفظ كاملًا" },
+  "certificate.khatmahTitle": { en: "The whole Quran", ar: "القرآن الكريم كاملًا" },
+  "certificate.khatmahDetail": { en: "Recited in full", ar: "تُلِي كاملًا" },
+  "certificate.dateLabel": { en: "Completed {date}", ar: "أُتمّ في {date}" },
+  "certificate.appName": { en: "Tajweed Trainer", ar: "معلّم التجويد" },
 
   // Onboarding
   "onboarding.title": { en: "Welcome to Tajweed Trainer", ar: "مرحباً بك في مدرّب التجويد" },
