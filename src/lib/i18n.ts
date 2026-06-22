@@ -890,6 +890,7 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Per surah only — for this narration, per-verse playback is not available.",
     ar: "لكل سورة فقط — في هذه الرواية، التشغيل لكل آية غير متاح.",
   },
+  "warsh.reciter": { en: "Reciter: Younes Souilass (Warsh ‘an Nāfi‘)", ar: "القارئ: يونس سويلص (ورش عن نافع)" },
   "warsh.disclaimerTitle": { en: "A different narration", ar: "رواية مختلفة" },
   "warsh.disclaimerBody": {
     en: "This is the Warsh narration. The Arabic text and tajweed colouring shown in this app are for Hafs an Asim and do not match this recitation. This app is built for Hafs an Asim. Per-verse playback is not available for this narration.",

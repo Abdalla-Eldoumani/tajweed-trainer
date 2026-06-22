@@ -307,6 +307,8 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
       {open && (
         <div className="mt-3 space-y-3">
           <p className="text-xs text-text-muted">{t("warsh.entrySubtitle")}</p>
+          {/* Name the reciter so it is clear whose Warsh narration this is. */}
+          <p className="text-xs font-medium text-text dark:text-text-dark">{t("warsh.reciter")}</p>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <label className="flex flex-col gap-1.5 sm:flex-1">
