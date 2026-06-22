@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased
+
+Post-2.0.0 reader refinements. No religious content was generated or edited.
+
+### Changed
+
+- Audio resume is now opt-in. The player no longer restores the last position on load (which could start a different surah's verse when you pressed play); a "Resume listening" control on the Mushaf reader and on the progress page picks up the last verse you played instead.
+- The verse overlay now follows the recitation: during continuous playback it advances to the verse being played instead of staying on the verse first tapped.
+
+### Added
+
+- A prominent "Play surah from this point onwards" button in the verse overlay, above the range selection.
+- The Warsh narration panel on the Mushaf page now names its reciter, Younes Souilass.
+
+### Fixed
+
+- The verse overlay now closes on Escape and on a click off the dialog, on both the panel and the bottom sheet, not only the close button.
+- The tajweed rule popover now dismisses when the pointer leaves the letter, so popovers no longer pile up on the page.
+
+### Removed
+
+- The unused glossary content file and several unused exports, for a leaner tree.
+
 ## 2.0.0 — 2026-06-22
 
 A major release. The interface gained five art-directed manuscript themes and a deeper sense of paper and ink; the Mushaf reader's per-verse interaction was rebuilt around a single focused overlay; recitation gained a follow-along layer that highlights the word as it is read; and the progress side gained a forgetting-curve review, a most-missed rule-areas dashboard, and an on-device completion certificate. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
