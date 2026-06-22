@@ -14,6 +14,7 @@ import { setLastRead } from "@/lib/storage";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { ColorLegend } from "@/components/learn/ColorLegend";
 import { MushafPage } from "./MushafPage";
+import { MushafResumeBar } from "./MushafResumeBar";
 import { VerseOverlay } from "./VerseOverlay";
 import { ReaderPalette } from "./ReaderPalette";
 import { VerseSelectionProvider, useVerseSelectionState } from "./useVerseSelection";
@@ -541,6 +542,11 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           </button>
         </div>
       </div>
+
+      {/* Opt-in resume: pick up the last verse you played. The player no longer
+          auto-restores it (that hijacked a play on a different surah), so this is
+          the explicit way back to it; it hides once playback starts. */}
+      <MushafResumeBar />
 
       <p className="text-center text-micro text-text-muted px-2">{t("mushaf.tapToPlayHint")}</p>
 

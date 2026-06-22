@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import type { PlayerMode, PlaybackStatus, ReciterId } from "@/lib/types";
 import { DEFAULT_RECITER_ID } from "@/lib/reciters";
-import { getPlayerResume, setPlayerResume } from "@/lib/storage";
+import { setPlayerResume } from "@/lib/storage";
 import { buildRangeQueue, dedupeQueue, nextAfterEnded } from "@/lib/player-engine";
 
 // The inter-verse gap presets (seconds). A free slider is intentionally avoided
@@ -100,7 +100,6 @@ interface PlayerState {
   setSleepEndOfSurah: (on: boolean) => void;
   setSleepTimer: (minutes: number | null) => void;
   stop: () => void;
-  restore: () => void;
   // The host reports a failed verse load here so the UI can prompt a reciter
   // change; passing null clears it.
   setError: (message: string | null) => void;
@@ -397,23 +396,6 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   },
 
   setError: (message) => set({ error: message }),
-
-  restore: () => {
-    const r = getPlayerResume();
-    if (!r) return;
-    set((s) => ({
-      queue: [{ surah: r.surah, ayah: r.ayah }],
-      index: 0,
-      mode: r.mode,
-      reciter: r.reciter,
-      status: "paused",
-      currentTime: r.offset,
-      duration: 0,
-      pendingOffset: r.offset,
-      surahName: null,
-      loadToken: s.loadToken + 1,
-    }));
-  },
 
   onLoaded: (duration) => set({ duration }),
   onTime: (currentTime, duration) => set((s) => ({ currentTime, duration: duration || s.duration })),

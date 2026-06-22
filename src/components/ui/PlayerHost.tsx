@@ -142,7 +142,11 @@ export function PlayerHost() {
       st.pause();
       st.setError("audio.unavailable");
     };
-    get().restore();
+    // No auto-restore on mount: a saved resume position must NOT silently load
+    // into the play queue, or pressing play on a different surah would resume
+    // that stale verse instead of the one in view. The persisted record
+    // (setPlayerResume) is surfaced as an explicit, opt-in "Resume listening"
+    // affordance instead — the /progress card and the Mushaf reader banner.
     return () => {
       clearGap();
       audio.pause();
