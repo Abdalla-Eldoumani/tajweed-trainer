@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -191,6 +191,31 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       if (usePlayer.getState().loopSelection) usePlayer.getState().setLoopSelection(false);
     };
   }, []);
+
+  // Dynamic overlay: while the overlay is open and a surah is playing, follow the
+  // recitation. When playback auto-advances from the verse the overlay is
+  // currently showing, move the overlay to the new verse so it tracks the audio
+  // instead of staying pinned to the verse first tapped. The follow only fires
+  // when the overlay was already on the verse that just played (so it is "in
+  // sync"); a deliberate tap on a DIFFERENT verse stops the follow (the overlay
+  // shows the tapped verse) until playback catches up to it, so a tap is never
+  // yanked away. The ref tracks the playing verse across renders even while the
+  // overlay is closed, so the first advance after opening is detected correctly.
+  const playingVerse = usePlayer((s) => {
+    const cur = s.queue[s.index];
+    return cur ? `${cur.surah}:${cur.ayah}` : null;
+  });
+  const playerStatus = usePlayer((s) => s.status);
+  const followedVerseRef = useRef<string | null>(null);
+  useEffect(() => {
+    const prev = followedVerseRef.current;
+    followedVerseRef.current = playingVerse;
+    if (!selectedVerse || !playingVerse) return;
+    if (playerStatus !== "playing" && playerStatus !== "loading") return;
+    if (playingVerse !== prev && selectedVerse === prev) {
+      setSelectedVerse(playingVerse);
+    }
+  }, [playingVerse, playerStatus, selectedVerse]);
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get("v");
