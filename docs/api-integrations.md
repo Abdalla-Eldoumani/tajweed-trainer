@@ -140,7 +140,7 @@ The API occasionally introduces new tajweed class names. The `tajweed-colors.ts`
 | `entryTags` map | 2,000 entries | The learner's own short tags per verse, keyed by verseKey (`^\d{1,3}:\d{1,3}$`). Up to 12 tags per entry, each trimmed and capped at 40 chars; empty tags dropped, empty entries removed. Never religious content. |
 | `khatmah` | one plan or null | Both dates must be real ISO calendar dates with `targetDate >= startDate`; `startPage` 1 to 604. A malformed plan stores as null. |
 | `certificates` | 60 records or empty | A small record of milestones a certificate was generated for: `{ kind: "juz"\|"khatmah", ref, dateIso }`. The image blob is never stored (rendered and downloaded on-device only). Deduped per milestone; malformed entries dropped. |
-| `playerResume` | one record or null | Last playback position so the mini-player can resume after a reload. Validated shape; null when none. |
+| `playerResume` | one record or null | Last verse the user played. Surfaced as an explicit, opt-in "Resume listening" control on the Mushaf reader (`MushafResumeBar`) and on `/progress` (`ResumeListeningCard`); never auto-restored into the play queue. Validated shape; null when none. |
 | `seenOnboarding` | boolean | First-launch onboarding seen-once flag; defaults false so a reset re-shows it. |
 | `lastBackupAt` | ISO string | Stamped by `exportProgress`; empty until the first backup. Drives the backup reminder. |
 | `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, optional `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
@@ -154,7 +154,6 @@ Sanitization runs on every `getProgress()` read. Defaults absorb anything malfor
 
 These fields on `TajweedProgress` never leave the device. They aren't sent to any server, aren't shared between devices, and don't appear in any network request:
 
-- `reviews` — Leitner box state per question id, used by `/practice/review` and the spaced-repetition stats card on `/progress`.
 - `reviews`: Leitner box state per question id, used by `/practice/review` and the spaced-repetition stats card on `/progress`.
 - `memorizationReviews`: Leitner state for reviewing memorized verses, keyed by verse key in its own keyspace.
 - `memorizedVerses`: verse keys the user has marked memorized, surfaced in the Mushaf reader and counted on `/progress`.
@@ -162,7 +161,7 @@ These fields on `TajweedProgress` never leave the device. They aren't sent to an
 - `readSections`: section anchors observed at 40% visibility on each lesson page, used by the floating progress chip.
 - `verseNotes`: the learner's own private note per verse, written and edited in the Mushaf reader's per-verse panel. Never religious content (the user's own words).
 - `entryTags`: the learner's own short organizational labels per verse, added from the per-verse note panel and the bookmark rows and used to filter the bookmarked-verses view. Never religious content (the user's own words).
-- `khatmah` and `playerResume`: the opt-in Quran-completion plan tracked on `/progress`, and the saved playback position the mini-player resumes from.
+- `khatmah` and `playerResume`: the opt-in Quran-completion plan tracked on `/progress`, and the last verse the user played, offered as an opt-in "Resume listening" control on the Mushaf reader and `/progress` (never auto-resumed).
 - `certificates`: a small bounded record of memorization milestones (a completed juz or khatmah) the learner generated an on-device certificate for. Only the record persists (kind, ref, date); the certificate image is rendered and downloaded on the device and is never stored or transmitted.
 - `analytics`: a 1000-event FIFO ring buffer of route views and quiz events. Used by the Insights card on `/progress`. Removable through Reset Progress or by clearing the JSON backup before re-importing.
 
