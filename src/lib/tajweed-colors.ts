@@ -247,17 +247,6 @@ export function getColorForClass(cssClass: string): TajweedColor | undefined {
   return def ? resolve(key, def) : undefined;
 }
 
-// Unique by color (light hex), so the legend shows one row per distinct color
-// rather than one per class. Matches the pre-rebuild behavior.
-export function getUniqueColors(): TajweedColor[] {
-  const seen = new Set<string>();
-  return TAJWEED_COLORS.filter((c) => {
-    if (seen.has(c.hex)) return false;
-    seen.add(c.hex);
-    return true;
-  });
-}
-
 export const TAJWEED_GROUP_ORDER: TajweedGroup[] = [
   "ghunnah-idgham",
   "madd",
@@ -283,14 +272,6 @@ export function getColorsByGroup(): Record<TajweedGroup, TajweedColor[]> {
 // The five theme grounds. vellum and night are the shipped light/dark palettes;
 // pearl is a cooler light, sepia a warm dim dark, mihrab an emerald dark.
 export type ThemeName = "vellum" | "pearl" | "night" | "sepia" | "mihrab";
-
-export const THEME_NAMES: readonly ThemeName[] = [
-  "vellum",
-  "pearl",
-  "night",
-  "sepia",
-  "mihrab",
-] as const;
 
 // Per-theme rendered value for every tajweed class, keyed by the exact API class
 // name. These are retuned-per-ground renderings of the SAME verified reference
@@ -333,14 +314,3 @@ export const THEME_TAJWEED: Record<string, Record<ThemeName, string>> = {
   idgham_wo_ghunnah: { vellum: "#169200", pearl: "#169200", night: "#38C21F", sepia: "#4ACC34", mihrab: "#43C92D" },
   tafkheem: { vellum: "#006994", pearl: "#006994", night: "#3FA6C9", sepia: "#54B2D2", mihrab: "#4BADCE" },
 };
-
-// Resolve one class to its rendered value on a given theme. Resolves legacy
-// aliases the same way getColorForClass does; returns undefined for an unknown
-// class so a caller can fall back to default ink.
-export function getThemeColorForClass(
-  cssClass: string,
-  theme: ThemeName,
-): string | undefined {
-  const key = CLASS_ALIASES[cssClass] ?? cssClass;
-  return THEME_TAJWEED[key]?.[theme];
-}

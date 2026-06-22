@@ -137,7 +137,3 @@ export function nextPage(page: number): number {
 export function prevPage(page: number): number {
   return Math.max(1, clampPage(page) - 1);
 }
-
-export function isValidPage(page: unknown): boolean {
-  return typeof page === "number" && Number.isInteger(page) && page >= 1 && page <= TOTAL_MUSHAF_PAGES;
-}

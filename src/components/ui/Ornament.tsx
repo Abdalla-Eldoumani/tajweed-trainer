@@ -9,50 +9,6 @@ interface OrnamentProps {
 // nested diamond chains), derivable shapes, not copies of any specific
 // Mushaf decoration.
 
-export function CornerCartouche({ className }: OrnamentProps) {
-  return (
-    <svg
-      viewBox="0 0 56 56"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className={cn("text-gold-dark dark:text-gold-light", className)}
-    >
-      <rect x="3" y="3" width="50" height="50" rx="6" stroke="currentColor" strokeWidth="1" />
-      <rect x="6" y="6" width="44" height="44" rx="3" stroke="currentColor" strokeWidth="0.6" opacity="0.6" />
-      <path
-        d="M28 12 L33 23 L45 23 L35 30 L39 42 L28 35 L17 42 L21 30 L11 23 L23 23 Z"
-        fill="currentColor"
-        fillOpacity="0.12"
-        stroke="currentColor"
-        strokeWidth="0.7"
-      />
-    </svg>
-  );
-}
-
-export function DividerOrnament({ className }: OrnamentProps) {
-  return (
-    <svg
-      viewBox="0 0 60 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className={cn("text-gold dark:text-gold-light", className)}
-    >
-      <line x1="0" y1="6" x2="22" y2="6" stroke="currentColor" strokeWidth="0.6" />
-      <line x1="38" y1="6" x2="60" y2="6" stroke="currentColor" strokeWidth="0.6" />
-      <path
-        d="M30 1 L33 5 L37 6 L33 7 L30 11 L27 7 L23 6 L27 5 Z"
-        fill="currentColor"
-        fillOpacity="0.4"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      />
-    </svg>
-  );
-}
-
 export function MedallionOrnament({ className }: OrnamentProps) {
   return (
     <svg

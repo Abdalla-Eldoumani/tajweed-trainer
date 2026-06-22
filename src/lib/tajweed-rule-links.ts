@@ -50,8 +50,3 @@ const TAJWEED_RULE_LINKS: Record<string, string> = {
 export function getLessonLinkForClass(cssClass: string): string | null {
   return TAJWEED_RULE_LINKS[cssClass] ?? null;
 }
-
-// Read-only view of the map, for the verify script and any future consumer.
-export function getRuleLinkClasses(): string[] {
-  return Object.keys(TAJWEED_RULE_LINKS);
-}
