@@ -58,8 +58,8 @@ How the app is wired together, top-down.
 |               |    |               |    |                   |
 | /chapters     |    | verses.quran  |    | rule files,       |
 | /verses/      |    |  .com,        |    | surah-index,      |
-|  by_page/N    |    | *.quranic-    |    | glossary,         |
-| /recitations/ |    |  audio.com    |    | learning-path     |
+|  by_page/N    |    | *.quranic-    |    | learning-path     |
+| /recitations/ |    |  audio.com    |    |                   |
 |  {id}/by_ayah |    |               |    |                   |
 +---------------+    +---------------+    +-------------------+
 ```

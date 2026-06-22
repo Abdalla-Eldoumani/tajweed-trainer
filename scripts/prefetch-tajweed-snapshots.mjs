@@ -26,7 +26,7 @@ const API = "https://api.quran.com/api/v4/quran/verses/uthmani_tajweed";
 const SOURCE = "api.quran.com/api/v4 uthmani_tajweed";
 
 // Content files with no Quranic examples to scan.
-const SKIP = new Set(["surah-index.json", "learning-path.json", "glossary.json"]);
+const SKIP = new Set(["surah-index.json", "learning-path.json"]);
 
 // Walk an arbitrary content tree and collect every "<surah>:<ayah>" an example
 // carries, regardless of how deeply rules/subtypes nest it.

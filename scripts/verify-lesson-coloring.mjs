@@ -18,7 +18,7 @@ function record(name, ok, details = "") {
   console.log(`${ok ? "PASS" : "FAIL"}: ${name}${details ? ": " + details : ""}`);
 }
 
-const SKIP = new Set(["surah-index.json", "learning-path.json", "glossary.json"]);
+const SKIP = new Set(["surah-index.json", "learning-path.json"]);
 function collectKeys(node, out) {
   if (Array.isArray(node)) {
     for (const i of node) collectKeys(i, out);

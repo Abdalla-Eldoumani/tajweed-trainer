@@ -133,7 +133,7 @@ src/
     onboarding/              OnboardingTour (first-launch, replayable from Settings)
   hooks/                     usePlayer, useSettings, useProgress, useReviews, useMemorization, useReadSections, useAnalytics, useSpeech, useModuleLock, useBookmarks, useIsDesktop, useTags, useKhatmah, useFollowAlong
   lib/                       types, i18n, quran-api, audio-api, tajweed-colors, storage, utils, question-pool, search, spaced-repetition, khatmah, tajweed-rule-links, reduced-motion, scroll-lock, motion, player-engine, player-position, follow-along, memorization-scope, memorization-review, weak-rules, certificate
-  data/content/              Reviewed tajweed JSON (rule files, glossary, learning-path, surah-index)
+  data/content/              Reviewed tajweed JSON (rule files, learning-path, surah-index)
   app/globals.css            Tajweed colors, Mushaf frame, Islamic patterns
 public/
   icon.svg                   PWA icon (any purpose)
