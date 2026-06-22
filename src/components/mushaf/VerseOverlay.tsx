@@ -1052,6 +1052,25 @@ export function VerseOverlay({
   const playing = status === "playing";
   const loading = status === "loading";
 
+  // In the overlay, pressing play is about THIS verse. If it is already playing,
+  // pause; if THIS verse is the paused current item, resume it; otherwise (idle,
+  // or a different verse is queued) start this verse fresh. This is what keeps a
+  // press from resuming a stale queued verse — the cross-surah bug a saved resume
+  // used to cause — while the transport still pauses/resumes active playback.
+  const onTogglePlay = () => {
+    const st = usePlayer.getState();
+    if (st.status === "playing") {
+      st.pause();
+      return;
+    }
+    const cur = st.current();
+    if (cur && cur.surah === sv && cur.ayah === av) {
+      st.resume();
+      return;
+    }
+    if (valid) playSingleVerse(sv, av);
+  };
+
   // The visible entrance is gated on the width resolving so a phone never flashes
   // the centered panel for one frame: while isDesktop is null (the pre-measure
   // frame) the dialog and scrim stay at the closed/opacity-0 state, painting
@@ -1064,8 +1083,12 @@ export function VerseOverlay({
   const content = (
     <div role="presentation" inert={!open}>
       {/* Scrim: the ink at ~60%, a faint backdrop blur as a focus aid only (not a
-          frosted aesthetic). Identical for both forms. Tap = dismiss. Its visible
-          opacity follows `entered` so it does not flash before the form resolves;
+          frosted aesthetic). Identical for both forms. A tap anywhere off the
+          dialog dismisses: the container above is pointer-events-none so an
+          outside click falls through to this full-screen scrim's onClick (only
+          the dialog re-enables pointer events on itself), which is what makes
+          click-away work for both the panel and the sheet. Its visible opacity
+          follows `entered` so it does not flash before the form resolves;
           pointer-events still key on `open`. Fades at the short motion duration. */}
       <div
         className={cn(
@@ -1078,12 +1101,13 @@ export function VerseOverlay({
       />
 
       {/* Container; Escape + Tab trap live here. Centered for the panel, bottom
-          aligned for the sheet so the dialog rises from the bottom edge. */}
+          aligned for the sheet so the dialog rises from the bottom edge. It is
+          pointer-events-none so a click in the empty area reaches the scrim
+          (dismiss); the dialog re-enables pointer events on itself. */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] flex",
+          "fixed inset-0 z-[60] flex pointer-events-none",
           isSheet ? "items-end justify-center" : "items-center justify-center px-4 py-8",
-          open ? "" : "pointer-events-none",
         )}
         onKeyDown={onKeyDown}
       >
@@ -1104,6 +1128,9 @@ export function VerseOverlay({
               : { boxShadow: "0 8px 24px -12px rgba(16,20,32,0.30)" }
           }
           className={cn(
+            // Re-enable pointer events on the dialog itself (the container is
+            // pointer-events-none so outside clicks reach the dismiss scrim).
+            "pointer-events-auto",
             isSheet
               ? // Bottom sheet: full width, top corners rounded, capped height with
                 // internal scroll so the verse it concerns stays visible above it
