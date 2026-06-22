@@ -20,6 +20,11 @@ export interface RulePopoverTarget {
 interface TajweedRulePopoverProps {
   target: RulePopoverTarget | null;
   onClose: () => void;
+  // Hovering the card keeps it open (so its "Learn more" link is reachable);
+  // leaving it dismisses. Supplied by TajweedText's hover-out close logic so a
+  // pointer that travels from the letter onto the card does not close it mid-move.
+  onPointerEnter?: () => void;
+  onPointerLeave?: () => void;
 }
 
 // Card geometry used to clamp the popover inside the viewport.
@@ -37,7 +42,7 @@ const EST_HEIGHT = 96;
 // not part of the tab order. The same rule information is fully keyboard
 // reachable through the lessons and the color legend; this is a pointer-first
 // shortcut layered on top, never the only path to it.
-export function TajweedRulePopover({ target, onClose }: TajweedRulePopoverProps) {
+export function TajweedRulePopover({ target, onClose, onPointerEnter, onPointerLeave }: TajweedRulePopoverProps) {
   const { t, isAr } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -128,6 +133,8 @@ export function TajweedRulePopover({ target, onClose }: TajweedRulePopoverProps)
       role="dialog"
       aria-label={t("ruleInfo.label")}
       dir={isAr ? "rtl" : "ltr"}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
       style={{
         position: "fixed",
         top: pos?.top ?? -9999,

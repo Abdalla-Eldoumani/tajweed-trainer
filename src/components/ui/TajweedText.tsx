@@ -55,6 +55,12 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressStart = useRef<{ x: number; y: number } | null>(null);
   const suppressNextClick = useRef(false);
+  // A pending hover-out close. The popover dismisses a short grace after the
+  // pointer leaves the colored letters, so it can travel onto the card to use
+  // its link; re-entering the letters or the card cancels it. This is what stops
+  // a verse's popover from lingering once the pointer moves on, so hovering
+  // across the page no longer leaves a trail of stacked popovers.
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearOpenTimer = useCallback(() => {
     if (openTimer.current !== null) {
@@ -62,6 +68,23 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
       openTimer.current = null;
     }
   }, []);
+
+  const cancelClose = useCallback(() => {
+    if (closeTimer.current !== null) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  }, []);
+
+  // Dismiss after a short grace so the pointer can cross the gap onto the card.
+  const CLOSE_DELAY_MS = 160;
+  const scheduleClose = useCallback(() => {
+    cancelClose();
+    closeTimer.current = setTimeout(() => {
+      closeTimer.current = null;
+      setRuleTarget(null);
+    }, CLOSE_DELAY_MS);
+  }, [cancelClose]);
 
   // The reusable core, shared by both triggers: find the nearest <tajweed>
   // ancestor of the event target, resolve a KNOWN rule, and open the popover
@@ -76,13 +99,16 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
       const cssClass = tag.getAttribute("class")?.trim() ?? "";
       if (!cssClass || !getColorForClass(cssClass)) return;
       const rect = tag.getBoundingClientRect();
+      // A fresh open cancels any pending hover-out close so sliding onto a new
+      // colored letter never dismisses the popover mid-move.
+      cancelClose();
       setRuleTarget({
         cssClass,
         rect: { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right },
         autoFocus,
       });
     },
-    [],
+    [cancelClose],
   );
 
   // Hover (mouse/pen): arm a short flicker-guard delay, then open without taking
@@ -95,10 +121,11 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
     (e: React.PointerEvent<HTMLSpanElement>) => {
       if (e.pointerType === "touch") return;
       const target = e.target;
+      cancelClose();
       clearOpenTimer();
       openTimer.current = setTimeout(() => openForEvent(target, false), HOVER_DELAY_MS);
     },
-    [clearOpenTimer, openForEvent],
+    [cancelClose, clearOpenTimer, openForEvent],
   );
 
   // Long-press (touch): arm a deliberate ~500ms timer; cancel it if the finger
@@ -124,10 +151,11 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
       }
       // Mouse/pen: keep the hover target current as the pointer slides.
       const target = e.target;
+      cancelClose();
       clearOpenTimer();
       openTimer.current = setTimeout(() => openForEvent(target, false), HOVER_DELAY_MS);
     },
-    [clearOpenTimer, openForEvent],
+    [cancelClose, clearOpenTimer, openForEvent],
   );
 
   const onPointerDown = useCallback(
@@ -156,6 +184,18 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
     longPressStart.current = null;
   }, [clearOpenTimer]);
 
+  // Leaving the colored text dismisses a hover-opened popover after a short
+  // grace (mouse/pen), so moving the pointer away makes it disappear instead of
+  // lingering. A touch long-press popover is left to its own outside-tap /
+  // Escape / scroll dismissal, so a lifted finger does not yank the card away.
+  const onPointerLeaveText = useCallback(
+    (e: React.PointerEvent<HTMLSpanElement>) => {
+      endGesture();
+      if (e.pointerType !== "touch") scheduleClose();
+    },
+    [endGesture, scheduleClose],
+  );
+
   // Eat exactly one click when a long-press just fired (otherwise it would also
   // open the verse overlay), then reset. A plain tap leaves the flag false and
   // bubbles to the verse button.
@@ -166,9 +206,15 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
     }
   }, []);
 
-  // Clear any pending hover/long-press timer on unmount so it never fires after
-  // the component is gone.
-  useEffect(() => clearOpenTimer, [clearOpenTimer]);
+  // Clear any pending hover/long-press timer and hover-out close on unmount so
+  // neither fires after the component is gone.
+  useEffect(
+    () => () => {
+      clearOpenTimer();
+      cancelClose();
+    },
+    [clearOpenTimer, cancelClose],
+  );
 
   const sizeClasses = cn(
     "font-quran leading-[2] tajweed-text",
@@ -221,14 +267,19 @@ export function TajweedText({ tajweedHtml, size, className, loading = false, exp
         className={sizeClasses}
         onPointerEnter={onPointerEnter}
         onPointerMove={onPointerMove}
-        onPointerLeave={endGesture}
+        onPointerLeave={onPointerLeaveText}
         onPointerDown={onPointerDown}
         onPointerUp={endGesture}
         onPointerCancel={endGesture}
         onClickCapture={onClickCapture}
         dangerouslySetInnerHTML={{ __html: safeHtml }}
       />
-      <TajweedRulePopover target={ruleTarget} onClose={() => setRuleTarget(null)} />
+      <TajweedRulePopover
+        target={ruleTarget}
+        onClose={() => setRuleTarget(null)}
+        onPointerEnter={cancelClose}
+        onPointerLeave={() => setRuleTarget(null)}
+      />
     </span>
   );
 }
