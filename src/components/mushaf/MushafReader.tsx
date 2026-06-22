@@ -201,6 +201,10 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // shows the tapped verse) until playback catches up to it, so a tap is never
   // yanked away. The ref tracks the playing verse across renders even while the
   // overlay is closed, so the first advance after opening is detected correctly.
+  // Returns a PRIMITIVE string (not the queue-item object): zustand bails via
+  // Object.is, so the reader re-renders only when the playing verse key actually
+  // changes (on auto-advance), never on the per-tick currentTime updates. Keep
+  // this returning a string — returning the object would re-render on every tick.
   const playingVerse = usePlayer((s) => {
     const cur = s.queue[s.index];
     return cur ? `${cur.surah}:${cur.ayah}` : null;
