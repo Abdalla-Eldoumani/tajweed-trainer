@@ -177,17 +177,22 @@ const LoadingIcon = () => (
 // reciter and changes it in place, so the link is no longer the way to do it. The
 // ErrorLine below keeps its own settings link as an error-recovery affordance.
 
-// Transport row at 44px targets. Commands store actions only.
+// Transport row at 44px targets. Commands store actions only. The play/pause
+// button delegates to onPlayPause from the overlay so a press is about the OPEN
+// verse (start it when idle or a different verse is queued), not a resume of a
+// stale queued verse; prev/next stay plain queue transport.
 function TransportRow({
   playing,
   loading,
   hasNext,
   hasPrev,
+  onPlayPause,
 }: {
   playing: boolean;
   loading: boolean;
   hasNext: boolean;
   hasPrev: boolean;
+  onPlayPause: () => void;
 }) {
   const { t } = useTranslation();
   const playPauseGlyph = loading ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />;
@@ -205,7 +210,7 @@ function TransportRow({
       </button>
       <button
         type="button"
-        onClick={() => usePlayer.getState().toggle()}
+        onClick={onPlayPause}
         aria-label={playPauseLabel}
         title={playPauseLabel}
         className="inline-flex items-center justify-center w-11 h-11 rounded-lg bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light hover:bg-primary/20"
@@ -1293,7 +1298,21 @@ export function VerseOverlay({
               aria-label={t("player.selectionControls")}
               className="mt-5 space-y-3 border-t border-border pt-4"
             >
-              <TransportRow playing={playing} loading={loading} hasNext={hasNext} hasPrev={hasPrev} />
+              <TransportRow playing={playing} loading={loading} hasNext={hasNext} hasPrev={hasPrev} onPlayPause={onTogglePlay} />
+              {/* Play the whole surah continuously from THIS verse onward: the
+                  clear, labeled form of the action row's compact play-from-here
+                  icon, sat directly on top of the range selection where it is
+                  easy to find. Commands the reader's playFromVerse (one engine). */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (valid) playFromVerse(sv, av);
+                }}
+                className="inline-flex w-full items-center justify-center gap-2 min-h-[44px] px-4 rounded-lg bg-primary text-on-primary hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep text-small font-medium transition-colors motion-reduce:transition-none"
+              >
+                <PlayFromHereIcon />
+                {t("player.playSurahFromHere")}
+              </button>
               <MultiVerseControls data={data} />
               {/* Sub-verse word-range loop: loop a start..end WORD range within
                   this verse on the one engine, reusing the repeat count + gap

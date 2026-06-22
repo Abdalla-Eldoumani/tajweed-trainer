@@ -409,6 +409,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.speed": { en: "Playback speed", ar: "سرعة التشغيل" },
   "player.playVerse": { en: "Play this verse", ar: "تشغيل هذه الآية" },
   "player.playFromHere": { en: "Play from here", ar: "تشغيل من هنا" },
+  "player.playSurahFromHere": { en: "Play surah from this point onwards", ar: "تشغيل السورة من هذه الآية فصاعدًا" },
   "mushaf.playSurah": { en: "Play surah", ar: "تشغيل السورة" },
   "player.modeToContinuous": { en: "Switch to full surah", ar: "التبديل إلى السورة كاملة" },
   "player.modeToSingle": { en: "Switch to single verse", ar: "التبديل إلى آية واحدة" },
