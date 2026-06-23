@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.0 — 2026-06-23
 
 Post-2.0.0 reader refinements. No religious content was generated or edited.
 
