@@ -2,19 +2,16 @@
 
 Contributions are welcome. This project is about Quranic recitation, so accuracy comes before speed; read this guide first.
 
-## Prerequisites
-
-- Node 24, pinned in `.nvmrc` and `engines.node`, so `nvm use` picks it up.
-- npm (bundled with Node).
-
 ## Getting started
+
+Node 24 (pinned in `.nvmrc`), then:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. No accounts, server, or environment variables; state lives in `localStorage`, and the only network calls read from the Quran APIs.
+Open `http://localhost:3000`. No accounts, server, or environment variables; state lives in `localStorage`, and the only network calls read from the Quran APIs. Full setup and scripts: [development.md](development.md).
 
 ## Checks
 
@@ -28,7 +25,7 @@ npm run build             # production build
 npm run verify:ui         # browser tests against a running server
 ```
 
-`npm run verify` wraps the type check, lint, and offline `verify:scripts` suite. `npm run verify:ui` needs a running server and is not in the CI gate; run it for UI changes in EN, AR, light, and dark. See [development.md](development.md) for the full list.
+`npm run verify` wraps the type check, lint, and offline `verify:scripts`. `npm run verify:ui` needs a running server and is not in the CI gate; run it for UI changes in EN, AR, light, and dark. Full list: [development.md](development.md).
 
 ## Conventions
 
@@ -39,15 +36,15 @@ This codebase has one path for each shared concern. Reuse it; do not fork a seco
 - Module unlocking lives in `src/lib/module-unlock.ts`. Never reimplement the gating rule inline.
 - Audio plays through the single player store (`usePlayer` / `PlayerHost`), reusing one audio element.
 
-Render Arabic through the wrappers (`ArabicText` for general Arabic, `TajweedText` for color-coded Quran text), never raw, and use logical Tailwind properties (`ms-*`, `me-*`) so the UI holds under `dir="rtl"`. Branch off `main` with a descriptive name (`fix/iqlab-typo`, `feat/per-page-audio`).
+Render Arabic through the wrappers (`ArabicText`, `TajweedText`), never raw, and use logical Tailwind properties (`ms-*`, `me-*`) so the UI holds under `dir="rtl"`. Branch off `main` with a descriptive name (`fix/iqlab-typo`, `feat/per-page-audio`).
 
 ## Content accuracy
 
-The app renders pre-verified content and never generates, edits, paraphrases, translates, or classifies it. The full rule lives in the [project README](../README.md), with detail in [content-audit.md](content-audit.md) and [CONTENT.md](CONTENT.md): `src/data/` and `src/lib/tajweed-colors.ts` are verified data; do not hand-edit them. When unsure, omit.
+The app renders pre-verified content and never rewrites it. The full rule is in the [project README](../README.md#how-it-stays-accurate), with detail in [content-audit.md](content-audit.md) and [CONTENT.md](CONTENT.md): `src/data/` and `src/lib/tajweed-colors.ts` are verified data; do not hand-edit them. When unsure, omit.
 
 ## How CI gates a pull request
 
-A pull request against `main` runs CI on Node 24: a production dependency audit (`npm audit --omit=dev --audit-level=high`), type check, lint, the offline verify scripts, and a build. It must be green before review; `npm run verify` and `npm run build` mirror most of it locally.
+A pull request against `main` runs CI on Node 24: the production dependency audit, type check, lint, the offline verify scripts, and a build. It must be green before review; `npm run verify` and `npm run build` mirror most of it locally.
 
 ## Ways to contribute
 

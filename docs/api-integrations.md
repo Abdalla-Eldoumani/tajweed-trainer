@@ -10,7 +10,7 @@ The app pulls Quranic text, reading-depth content, and audio from the free, no-a
 
 ### `GET /chapters`
 
-Returns metadata for all 114 surahs. `getChaptersIndex()` in `src/lib/quran-api.ts` fetches it on demand, cached 7 days.
+Returns metadata for all 114 surahs. `getChaptersIndex()` in `src/lib/quran-api.ts` fetches it on demand (cached 7 days; see [Caching](#caching)).
 
 Response (relevant fields):
 
@@ -23,7 +23,7 @@ Response (relevant fields):
       "name_arabic": "الفاتحة",
       "verses_count": 7,
       "pages": [1, 1],
-      "bismillah_pre": false,           // false for Al-Fatihah (own bismillah is verse 1)
+      "bismillah_pre": false,           // false for Al-Fatihah
       "revelation_place": "makkah"      // "makkah" | "madinah"
     }
   ]
@@ -51,7 +51,7 @@ Returns each verse as:
 }
 ```
 
-The `text_uthmani_tajweed` field is structural HTML (`<tajweed class="...">` color markup and `<span class="end">N</span>` verse-end markers), rendered directly by `TajweedText`, never mixed with user input.
+The `text_uthmani_tajweed` field is structural HTML (`<tajweed class="...">` color markup and `<span class="end">N</span>` verse-end markers), rendered directly by `TajweedText`.
 
 ### `GET /verses/by_page/{page}`
 
@@ -85,17 +85,16 @@ The wrapper reads `data.audio_files[0].url`, which may be relative (`"Husary/mp3
 
 - In-memory `Map<string, { data, timestamp }>`.
 - Default TTL: 15 minutes. Long TTL: 7 days, used by `getChaptersIndex`.
-- Lives for the runtime: fresh per server cold start, persisting across in-tab client navigation.
+- Lives for the runtime: fresh per server cold start, persists across in-tab navigation.
 
 `fetchWithRetry`:
 
 - Two retries by default, 1-second base delay with exponential backoff.
-- 4xx fails fast (client errors that won't recover).
-- 5xx and network errors retry.
+- 4xx fails fast (won't recover); 5xx and network errors retry.
 
 ## Network origins and service worker
 
-All response headers and the CSP are assembled once in `next.config.mjs`. Here, `connect-src` allows `https://api.quran.com` (the only cross-origin JSON host) and `media-src` allows the audio hosts `verses.quran.com`, `*.quranicaudio.com`, `audio.qurancdn.com`, `everyayah.com`, and `server16.mp3quran.net` (the last for the per-surah Warsh narration). See [security.md](security.md#content-security-policy) for the directive table and [service-worker behavior](security.md#pwa-service-worker); the worker is same-origin only and never intercepts cross-origin audio or the API (offline Quran content is the trade-off).
+The CSP (assembled once in `next.config.mjs`) allows `https://api.quran.com` for JSON (`connect-src`) and the per-ayah audio hosts plus the per-surah Warsh host for `media-src`; [security.md](security.md#content-security-policy) holds the directive table and the full origin list. The [service worker](security.md#pwa-service-worker) is same-origin only and never intercepts cross-origin audio or the API (offline Quran content is the trade-off).
 
 ## Failure modes
 
@@ -108,7 +107,7 @@ All response headers and the CSP are assembled once in `next.config.mjs`. Here, 
 
 ## Sanity-checking new tajweed classes
 
-The API occasionally adds new tajweed class names; `tajweed-colors.ts` covers the well-known ones. A missing class falls back to default ink, so nothing disappears though the rule is not color-coded. To catch new ones in development, add a temporary console warning to `TajweedText` for any class not in the map (gated by `process.env.NODE_ENV === "development"`), then update the map.
+The API occasionally adds new tajweed class names; `tajweed-colors.ts` covers the well-known ones, and a missing class falls back to default ink (the rule renders uncolored, nothing disappears). To catch new ones in dev, add a temporary `NODE_ENV`-gated console warning in `TajweedText` for any unmapped class, then update the map.
 
 ## Storage caps and validation contract
 
@@ -142,17 +141,10 @@ Sanitization runs on every `getProgress()` read; defaults absorb anything malfor
 
 ## Local-only data fields
 
-These `TajweedProgress` fields never leave the device (never sent to a server, shared between devices, or in any network request):
-
-- `reviews` and `memorizationReviews`: Leitner state for the `/practice/review` queue and for memorized-verse review (own keyspace).
-- `memorizedVerses`, `bookmarks`, `lastReadBySurah`, and `readSections`: memorized verse keys, verse bookmarks, per-surah last-read positions, and observed lesson-section anchors.
-- `verseNotes` and `entryTags`: the learner's own note and short labels per verse. Never religious content (the user's own words).
-- `khatmah` and `playerResume`: the opt-in completion plan and the last verse played, offered as an opt-in "Resume listening" control (never auto-resumed).
-- `certificates`: a bounded record of memorization milestones a certificate was generated for (kind, ref, date), never the rendered image.
-- `analytics`: a 1000-event FIFO ring buffer of route views and quiz events, read by the Insights card. Removable via Reset Progress or by editing the JSON backup.
+These `TajweedProgress` fields never leave the device (never sent to a server, shared between devices, or put in any network request): `reviews` and `memorizationReviews` (Leitner state), `memorizedVerses`, `bookmarks`, `lastReadBySurah`, `readSections`, `verseNotes`, `entryTags`, `khatmah`, `playerResume` (the opt-in "Resume listening" record, never auto-resumed), `certificates` (never the rendered image), and `analytics` (a 1000-event FIFO ring buffer of route views and quiz events read by the Insights card, removable via Reset Progress or by editing the JSON backup). `verseNotes` and `entryTags` are the learner's own words and labels, never religious content. The caps table above owns each field's shape and bounds.
 
 Sanitization replaces any malformed field with its default, so editing localStorage cannot reference missing content or store an unbounded payload.
 
 ## Why this API
 
-The Quran.com Foundation API v4 is run by a reputable Quranic project with broad community use, is CORS-friendly, and serves text, reading-depth content, and per-ayah audio without auth or quotas, so text and audio share one provider (audio was previously from Al Quran Cloud). If it ever shuts down, the fallback is to bundle `text_uthmani_tajweed` for all 6,236 verses (about 3 MB minified) into the build. Components target the data shapes, not the network paths, so the swap stays local to the wrappers.
+The Quran.com Foundation API v4 is a reputable, CORS-friendly project serving text, reading-depth content, and per-ayah audio without auth or quotas, so text and audio share one provider (audio was previously Al Quran Cloud). If it ever shuts down, the fallback is to bundle `text_uthmani_tajweed` for all 6,236 verses (about 3 MB minified) into the build; components target the data shapes, not the network paths, so the swap stays local to the wrappers.

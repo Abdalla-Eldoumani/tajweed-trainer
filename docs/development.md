@@ -4,7 +4,7 @@ How to run, test, and iterate on the project locally.
 
 ## Prerequisites
 
-- Node.js 24, and npm (bundled with it).
+- Node.js 24 and npm.
 - A modern browser; the Mushaf verify script uses Chromium from `playwright-core`.
 
 ## Install and run
@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. Hot reload applies TS, TSX, CSS, and JSON edits on save.
+Open `http://localhost:3000`. Hot reload applies TS, TSX, CSS, and JSON edits.
 
 ## Scripts
 
@@ -25,7 +25,7 @@ Open `http://localhost:3000`. Hot reload applies TS, TSX, CSS, and JSON edits on
 | `npm start` | Serve the production build. |
 | `npm run lint` | ESLint (`eslint .`) via the flat `eslint.config.mjs` (not the deprecated `next lint`). |
 | `npm run verify` | Non-browser gate: `tsc --noEmit`, `eslint .`, then `npm run verify:scripts`. |
-| `npm run verify:scripts` | Headless checks (no browser) across tajweed colors, coloring, navigation, reading, reciters, sanitizer, security, study tools, content accuracy, the player, word segments, mastery, memorization, khatmah pace, and accessibility. |
+| `npm run verify:scripts` | Headless checks (no browser): tajweed colors, coloring, navigation, reading, reciters, sanitizer, security, study tools, content accuracy, player, word segments, mastery, memorization, khatmah, accessibility. |
 | `npm run verify:ui` | Playwright browser suites: module lock, Mushaf, new features, questions, reciters, audio player. |
 | `node scripts/fetch-surah-names.mjs` | One-shot: pulls `/chapters`, patches `surah_name_ar` into rule examples. |
 | `node scripts/prefetch-tajweed-snapshots.mjs` | One-shot: snapshots tajweed HTML for lesson verses into `src/data/verse-snapshots.json`. |
@@ -52,14 +52,13 @@ Strict mode; avoid `any`. New types go in `src/lib/types.ts`. Optional `_ar` fie
 
 ### Styling
 
-- Tailwind only (no CSS modules or styled-components); custom CSS lives in `src/app/globals.css` (tajweed colors, mushaf frame, ornaments).
+- Tailwind only (no CSS modules/styled-components); custom CSS lives in `src/app/globals.css` (tajweed colors, mushaf frame, ornaments).
 - Tailwind logical properties (`ms-*`, `me-*`, `border-s`, `border-e`) so RTL flips correctly.
 - Fonts: `font-quran` (Amiri Quran), `font-arabic` (Amiri), `font-heading` (Spectral), `font-mono` (JetBrains Mono), default body (Inter).
 
 ### State
 
-- localStorage via `useSettings()` (preferences) and `useProgress()` (lesson completion, quiz history), both SSR-safe.
-- Specialized hooks for the newer fields: `useReviews()`, `useMemorization()`, `useReadSections(moduleId, sectionIds)`, and `useAnalytics()`. Each starts empty and populates from `getProgress()` after mount to keep SSR/CSR in sync.
+- localStorage via `useSettings()`, `useProgress()`, and the newer-field hooks `useReviews()`, `useMemorization()`, `useReadSections(moduleId, sectionIds)`, `useAnalytics()`. Each is SSR-safe: starts empty, populates from `getProgress()` after mount.
 - `useSpeech()` wraps the Web Speech API for prompt readout; falls back to `supported: false` when unavailable.
 - Never read `localStorage` directly in components; use the hooks so the `mounted` pattern is enforced and sanitization fires on read.
 
@@ -92,9 +91,7 @@ npm run dev                     # terminal 1
 node scripts/verify-mushaf.mjs  # terminal 2
 ```
 
-Each assertion prints `PASS`, ending in `all checks passed.`; screenshots land in `mushaf-screenshots/` (see [mushaf-reader.md](mushaf-reader.md)).
-
-It uses `playwright-core` and finds Chromium in the standard `playwright` cache directory; install it with `npx playwright install chromium`. Set `PLAYWRIGHT_CHROME=/absolute/path` to point at Chromium elsewhere, or `BASE_URL=https://example.com` to run against a deployment.
+It uses `playwright-core` and finds Chromium in the standard `playwright` cache directory; install it with `npx playwright install chromium`. Set `PLAYWRIGHT_CHROME=/absolute/path` to point at Chromium elsewhere, or `BASE_URL=https://example.com` to run against a deployment. See [mushaf-reader.md](mushaf-reader.md) for what it asserts and the screenshots.
 
 ## Adding a new translation key
 
@@ -106,7 +103,7 @@ See [content-schema.md](content-schema.md): edit the JSON, set `verified: true` 
 
 ## Adding a new feature
 
-Sketch the data flow first. Add types in `src/lib/types.ts` (optional fields optional); build the data layer, putting any API call in `src/lib/quran-api.ts` (or a new wrapper); build components leaves-first with mocked data; then wire the App Router page. Verify in EN, AR, light, and dark, and add a browser test if it's load-bearing (`verify-mushaf.mjs` is the template).
+Sketch the data flow first. Add types in `src/lib/types.ts`; build the data layer (API calls in `src/lib/quran-api.ts` or a new wrapper); build components leaves-first with mocked data; then wire the App Router page. Verify in EN, AR, light, and dark, and add a browser test if load-bearing (`verify-mushaf.mjs` is the template).
 
 ## Debugging
 
@@ -120,17 +117,17 @@ Sketch the data flow first. Add types in `src/lib/types.ts` (optional fields opt
 
 - The Mushaf reader pre-renders 36 SSG pages (page 1, early surah starts, one per juz) and ISRs the rest at 24 hours. Extend coverage via the array in `generateStaticParams` of `src/app/mushaf/page/[page]/page.tsx`.
 - Caches: the chapters list 7 days, audio URLs 1 hour, tajweed pages 15 minutes. Tweak in the respective wrapper.
-- Heavy, non-critical surfaces lazy-load with `next/dynamic`: in the verse overlay the reciter compare, record-and-compare, word-by-word, and reading-depth section each load on first open, while the primary action row and transport stay eager so a tap and play are immediate. The progress certificate's canvas loads only with its card. Load placeholders are reduced-motion-safe.
+- Heavy, non-critical surfaces lazy-load with `next/dynamic`: the verse overlay's reciter compare, record-and-compare, word-by-word, and reading-depth load on first open while the primary action row and transport stay eager; the progress certificate's canvas loads with its card. Load placeholders are reduced-motion-safe.
 - Bundle sizes (gzipped page bundles, excluding shared chunks): home ~5 kB, largest module page ~7 kB, Mushaf reader ~5 kB, all well under 200 kB First-Load JS. These are local figures; measure true Core Web Vitals against the deployed preview.
 
 ## Manual smoke checklist for installable / offline behavior
 
 After a structural change, walk through:
 
-1. `npm run build && npm start` (dev skips service-worker registration, so a production build is needed to exercise it).
-2. In Chromium, DevTools → Application → Manifest: confirm `Tajweed Trainer`, the SVG icons, and `standalone` display mode.
+1. `npm run build && npm start` (dev skips service-worker registration).
+2. DevTools → Application → Manifest: confirm `Tajweed Trainer`, the SVG icons, and `standalone` display mode.
 3. Application → Service Workers: confirm `/sw.js` is registered and active, then reload so the cache populates.
-4. Visit `/learn/qalqalah`, scroll, go offline (Network → Offline), and reload; the page renders, recitation audio does not (by design; see [security.md](security.md) for the worker's scope).
+4. Visit `/learn/qalqalah`, scroll, go offline (Network → Offline), and reload; the page renders, recitation audio does not (by design; see [security.md](security.md)).
 5. Take a quiz (two questions); confirm `progress.reviews` populates and the Review Due tile appears on `/practice` after the third refresh.
 6. Mark a verse memorized, toggle the toolbar eye icon, and confirm it blurs with a Reveal pill.
 7. `/search` "qalqalah" and "Al-Fatihah"; both should surface lesson and surah hits.

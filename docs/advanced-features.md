@@ -58,12 +58,11 @@ unacceptable for this domain.
 
 **Lighter step, now shipped.** A *record-and-self-compare* feature: the user
 records themselves, then plays it back against the reference reciter for the same
-ayah, side by side, with no automated judgement. This is honest (no model claims),
-fits the static app (MediaRecorder + the existing player), and is useful for
-self-correction. It lives in
+ayah, side by side, with no automated judgement. This is honest (no model claims)
+and fits the static app (MediaRecorder + the existing player). It lives in
 `src/components/mushaf/RecitationCompare.tsx` (backed by `useRecorder`), mounted
-in the Mushaf reading-depth panel; the recording stays in memory and is never
-uploaded, stored, or scored.
+in the reading-depth panel; the recording stays in memory, never uploaded, stored,
+or scored.
 
 **Decision.** Automated feedback is its own project, with its own research and
 codebase; do not bolt it onto this app. The record-and-self-compare step is built
@@ -87,9 +86,3 @@ backend. If pursued, it is a distinct architecture decision (a small server or a
 managed backend for the OAuth secret + user store), recorded before any code. The
 existing export/import backup already covers the "move my data to another device"
 need without a server.
-
----
-
-*Of these, only the record-and-self-compare step (feature 2) is implemented; QCF
-V4 page fonts and account sync remain deferred. Each note records the decision so
-the trade-off is clear before anyone picks it up.*

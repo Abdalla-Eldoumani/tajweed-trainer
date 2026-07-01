@@ -35,7 +35,7 @@ Every visible English string has an optional `_ar` counterpart for bilingual sup
 }
 ```
 
-Rendering picks `_ar` when `useTranslation().isAr` is true and the field is non-empty, otherwise English. Don't hardcode Arabic in components; add it to JSON.
+Rendering picks `_ar` when `useTranslation().isAr` and the field is non-empty, else English. Don't hardcode Arabic in components; add it to JSON.
 
 ## TajweedRule
 
@@ -111,7 +111,7 @@ interface ArabicLetter {
 2. Determine the correct `rule_applied`, matching the wording style already in the file (e.g. `Izhar — Noon Sakinah followed by Hamzah (ء)`).
 3. Add the example to the rule's `examples` array. Set `surah_name_en` to the standard Latin name; leave `surah_name_ar` empty.
 4. Run `node scripts/fetch-surah-names.mjs` to patch `surah_name_ar`.
-5. Build and load the lesson page; the example should render with coloring and audio. If audio is missing, re-check the numbers.
+5. Build and load the lesson page; it should render with coloring and audio. If audio is missing, re-check the numbers.
 6. Set `verified: true` only when a reviewer has confirmed accuracy.
 
 ## Adding a new rule

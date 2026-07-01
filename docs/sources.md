@@ -4,16 +4,16 @@ This app stands on the work of others who have made authenticated Quranic text, 
 
 ## Quranic text and tajweed coloring
 
-- **Quran.com Foundation API v4** (`https://api.quran.com/api/v4`). The color-coded tajweed text comes from the `text_uthmani_tajweed` field, which returns the Uthmani verse with `<tajweed class="...">` markup. The app renders this markup as-is, sanitized at the boundary, and never alters the text. Chapter metadata, translations, tafsir, and word-by-word data also come from this API. It is free and needs no key or account.
+- **Quran.com Foundation API v4** (`https://api.quran.com/api/v4`). The color-coded tajweed text comes from the `text_uthmani_tajweed` field (the Uthmani verse with `<tajweed class="...">` markup), rendered as-is and sanitized at the boundary, never altered. Chapter metadata, translations, tafsir, and word-by-word data also come from this API. Free, no key or account.
 - **Bundled snapshots.** The color-coded HTML for the verses used in the lessons is snapshotted from the same API into `src/data/verse-snapshots.json`, so lessons render their coloring offline and the data stays fixed and reviewed.
 
 ## Recitation audio
 
 - **Quran.com Foundation API v4** for per-ayah audio (`/recitations/{id}/by_ayah/{key}`). The returned paths resolve to the Quran.com audio CDNs (`verses.quran.com` and the `quranicaudio.com` mirrors).
 - **EveryAyah** (`https://everyayah.com`) for most of the reciters, served as per-ayah files. Their file paths are built from the folders recorded in `src/lib/reciters.ts`.
-- **Warsh narration (separate):** one per-surah recitation in the Warsh narration (Younes Souilass), offered behind a disclaimer on the surah index and served from `https://server16.mp3quran.net`. It is kept apart from the Hafs reciter roster and the per-verse player; the app's text and tajweed colouring are Hafs an Asim.
+- **Warsh narration (separate):** one per-surah recitation (Younes Souilass), behind a disclaimer on the surah index and served from `https://server16.mp3quran.net`. Kept apart from the Hafs roster and the per-verse player; the app's text and tajweed colouring are Hafs an Asim.
 
-The full reciter roster is in `src/lib/reciters.ts`. The default is Mahmoud Khalil Al-Husary in the mu'allim (teaching) style, chosen for being slow and clear for learning.
+The full roster is in `src/lib/reciters.ts`; the default is Mahmoud Khalil Al-Husary in the mu'allim (teaching) style, slow and clear for learning.
 
 ## Tajweed color scheme
 
@@ -21,7 +21,7 @@ The tajweed letter colors are the "new" (mushaf) scheme from the **Quranic Unive
 
 ## Fonts
 
-Arabic is set in **Amiri** and **Amiri Quran** (the latter for Quranic text with full tashkeel). The interface uses Inter, Spectral, and JetBrains Mono. All fonts are self-hosted through `next/font`.
+Arabic is set in **Amiri** and **Amiri Quran** (the latter for Quranic text with full tashkeel); the interface uses Inter, Spectral, and JetBrains Mono. All are self-hosted through `next/font`.
 
 ## Religious-content integrity
 

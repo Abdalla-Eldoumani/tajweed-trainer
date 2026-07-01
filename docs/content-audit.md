@@ -75,10 +75,9 @@ fragment.
 node scripts/verify-content.mjs
 ```
 
-It is offline and needs no key. A clean run prints `8/8 checks passed`, the
-question-pool size, and the standing warning count. Your change should not raise
-that count or fail a structural check. Run it with the type and lint checks before
-a pull request:
+Offline, no key. A clean run prints `8/8 checks passed`, the question-pool size,
+and the standing warning count; your change should not raise that count or fail a
+structural check. Run it with the type and lint checks before a pull request:
 
 ```
 npx tsc --noEmit

@@ -8,7 +8,7 @@ Religious content is reviewed input the app renders, never produced or rewritten
 
 ## Where the data lives
 
-The reviewed rule files sit in `src/data/content/`; the [Files table in content-schema.md](content-schema.md#files) lists them all. Two more paths back the authoring flow: `src/data/questions/` (authored quiz questions, one TS file per module) and `src/data/verse-snapshots.json` (color-coded tajweed snapshots of the lesson verses; see [Pulling new verses](#pulling-new-verses)).
+The reviewed rule files sit in `src/data/content/` (the [Files table in content-schema.md](content-schema.md#files) lists them all). Two more paths back the authoring flow: `src/data/questions/` (authored quiz questions, one TS file per module) and `src/data/verse-snapshots.json` (color-coded snapshots of the lesson verses; see [Pulling new verses](#pulling-new-verses)).
 
 ## Adding a new practice question
 
@@ -38,7 +38,7 @@ The reviewed rule files sit in `src/data/content/`; the [Files table in content-
      },
      source: {
        surah: 1, ayah: 1,
-       translationEditionId: null,           // null = reused in-repo; else a numbered Quran.com edition (20 = Saheeh International)
+       translationEditionId: null,           // null = reused in-repo; else a numbered Quran.com edition
        provenance: "src/data/content/<module>.json",
      },
    }
@@ -46,7 +46,7 @@ The reviewed rule files sit in `src/data/content/`; the [Files table in content-
 
 4. **Pick the lesson anchor.** `explanation.lessonAnchor` is a slug like `"izhar-halqi"` (no `/learn/` prefix, no `#`). The runtime composes `/learn/<moduleId>#<lessonAnchor>` for the Practice "Open the lesson section" link; it must match an `id` on the lesson page ([Adding a new lesson anchor](#adding-a-new-lesson-anchor)).
 
-5. **Difficulty mix per module: roughly 10 easy / 12 medium / 8 hard**; the pool is 280 across nine modules. Easy = definition recall; medium = identify-the-rule from a fragment; hard = judgment calls, edge cases, or multi-step. Weight it toward easy and medium.
+5. **Difficulty mix per module: roughly 10 easy / 12 medium / 8 hard** (pool: 280 across nine modules). Easy = definition recall; medium = identify-the-rule from a fragment; hard = judgment calls or edge cases. Weight toward easy and medium.
 
 6. **Verify.** With the dev server running, `node scripts/verify-questions.mjs` asserts every module renders with its count, each route works, the feedback panel shows the rule name and a lesson link, and no console errors. 19/19.
 
@@ -96,11 +96,11 @@ The most invasive content change:
 ## Verification checklist before merging content
 
 ```bash
-# Build (fails on type errors)
+# Build
 npm run build
 
 # Pure tests (no browser)
-node scripts/verify-sanitizer.mjs            # all cases pass
+node scripts/verify-sanitizer.mjs
 
 # Browser tests (dev server running)
 node scripts/verify-mushaf.mjs               # 21/21
