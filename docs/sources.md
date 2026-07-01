@@ -11,7 +11,7 @@ This app stands on the work of others who have made authenticated Quranic text, 
 
 - **Quran.com Foundation API v4** for per-ayah audio (`/recitations/{id}/by_ayah/{key}`). The returned paths resolve to the Quran.com audio CDNs (`verses.quran.com` and the `quranicaudio.com` mirrors).
 - **EveryAyah** (`https://everyayah.com`) for most of the reciters, served as per-ayah files. Their file paths are built from the folders recorded in `src/lib/reciters.ts`.
-- **Warsh narration (separate)** — one per-surah recitation in the Warsh narration (Younes Souilass), offered behind a disclaimer on the surah index and served from `https://server16.mp3quran.net`. It is kept apart from the Hafs reciter roster and the per-verse player; the app's text and tajweed colouring are Hafs an Asim.
+- **Warsh narration (separate):** one per-surah recitation in the Warsh narration (Younes Souilass), offered behind a disclaimer on the surah index and served from `https://server16.mp3quran.net`. It is kept apart from the Hafs reciter roster and the per-verse player; the app's text and tajweed colouring are Hafs an Asim.
 
 The full reciter roster is in `src/lib/reciters.ts`. The default is Mahmoud Khalil Al-Husary in the mu'allim (teaching) style, chosen for being slow and clear for learning.
 
@@ -25,13 +25,7 @@ Arabic is set in **Amiri** and **Amiri Quran** (the latter for Quranic text with
 
 ## Religious-content integrity
 
-This project renders pre-verified, human-authored religious content. It never generates, edits, paraphrases, translates, summarizes, or classifies any Quran text, hadith, tajweed rule, or ruling.
-
-- Recitation follows **Hafs 'an 'Asim**, the most widely used qira'ah, with no mixing of qira'aat. Beat counts and letter sets follow Hafs.
-- Tajweed rules, letter classifications, and Quranic examples come only from the pre-verified JSON in `src/data/content/`, each example carrying an exact surah:ayah reference. The accuracy guarantees are in [content-audit.md](content-audit.md).
-- Arabic text is stored in Uthmani script with full tashkeel; a missing diacritic can change meaning, so when a value cannot be confirmed against a primary source it is omitted rather than guessed.
-
-These constraints exist because tajweed is an oral science transmitted through chains of recitation back to the Prophet, peace be upon him. Synthesized content has no chain of transmission. Treating the verified data as immutable input, with the app as the surface around it, is how the project stays honest.
+This project renders pre-verified, human-authored religious content and never generates or alters it. The rule is in [../README.md](../README.md#how-it-stays-accurate); the accuracy guarantees behind the data are in [content-audit.md](content-audit.md).
 
 ## License
 
