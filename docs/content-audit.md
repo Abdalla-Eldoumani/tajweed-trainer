@@ -1,21 +1,20 @@
 # Content accuracy
 
-This file describes the accuracy guarantees behind the tajweed content and how
-to check them. It is the companion to `docs/CONTENT.md` (which covers how to
-author new questions). Read both before touching anything under `src/data/`.
+This file owns the accuracy guarantees behind the tajweed content and how to
+check them; [CONTENT.md](CONTENT.md) covers authoring. Read both before touching
+`src/data/`.
 
 ## What is guaranteed
 
-Two bodies of content carry these guarantees:
+Two bodies of content carry them:
 
-- The nine lesson files in `src/data/content/` (`makharij`, `noon-sakinah-tanween`,
-  `meem-sakinah`, `qalqalah`, `madd-rules`, `laam-raa-rules`, `tafkheem-tarqeeq`,
-  `ghunnah`, `waqf-symbols`).
+- The nine lesson files in `src/data/content/` (listed in the
+  [Files table in content-schema.md](content-schema.md#files)).
 - The practice question pool in `src/data/questions/` (one file per module).
 
-Every rule, letter set, beat count, and mnemonic in the lessons was checked
-against named tajweed authorities and against scholarly consensus for the
-recitation of Hafs 'an 'Asim. The headline facts and their references:
+Every rule, letter set, beat count, and mnemonic was checked against named tajweed
+authorities and scholarly consensus for Hafs 'an 'Asim. Headline facts and
+references:
 
 - Izhar is the six throat letters ء ه ع ح غ خ; Idgham is the six of يرملون,
   split into يَنْمُو (with ghunnah) and ل ر (without); Iqlab is the single letter
@@ -33,47 +32,42 @@ recitation of Hafs 'an 'Asim. The headline facts and their references:
 - The ra heavy/light conditions distinguish an original kasra (light) from the
   temporary kasra on hamzat al-wasl (heavy), as in فِرْعَوْنَ versus ارْجِعُوا.
 
-Every Arabic string is in Uthmani script with full tashkeel. Each lesson example
-and each question carries an exact surah:ayah reference. No verse text is written
-from memory; it is reused from the reviewed content or pulled from the Quran.com
-Foundation API and recorded in `src/data/verse-snapshots.json`.
+Every Arabic string is Uthmani with full tashkeel, each with an exact surah:ayah.
+Verse text is reused from reviewed content or the Quran.com API (recorded in
+`src/data/verse-snapshots.json`), never from memory.
 
 ## The maratib al-ghunnah are grouped, not a 1-to-5 list
 
-The ghunnah lesson presents the ranks of ghunnah as grouped levels, because the
-two contexts that sit at the same level carry the same prominence:
+The ghunnah lesson groups the ranks into levels, because contexts at the same
+level carry the same prominence:
 
 1. Most complete (akmal): Noon/Meem Mushaddad and Idgham with ghunnah.
 2. Complete (kamilah): Ikhfa Haqiqi, Ikhfa Shafawi, and Iqlab.
-3. Incomplete (naqisah): Izhar — only the letter's inherent ghunnah, not prolonged.
+3. Incomplete (naqisah): Izhar, only the letter's inherent ghunnah, not prolonged.
 4. Most incomplete (anqas): a moving (voweled) noon or meem.
 
-Do not flatten these into a strict 1-to-5 order. Iqlab sits with Ikhfa, not above
-it; Idgham with ghunnah sits with the Mushaddad, not below it. See
-`ghunnah_prominence_ranking_note` in `src/data/content/ghunnah.json` for the
-reference.
+Do not flatten these into a strict 1-to-5 order: Iqlab sits with Ikhfa, not above
+it, and Idgham with ghunnah sits with the Mushaddad, not below it. See
+`ghunnah_prominence_ranking_note` in `src/data/content/ghunnah.json`.
 
 ## How question Arabic is checked
 
 `scripts/verify-content.mjs` reads every question and confirms its `arabicText`
-appears in the authenticated text of the verse it cites. The check folds the
-orthographic differences that are not content differences (alif-wasla, the
-superscript dagger alif, shadda, and the quranic pause marks in the Uthmani
-snapshot versus the plain spelling a question may use), so the same Quranic word
-compares equal across the two spellings while a different word or inflection
-still does not match.
+appears in the authenticated text of the cited verse. It folds orthographic
+differences that are not content differences (alif-wasla, the superscript dagger
+alif, shadda, and Uthmani pause marks versus a plainer spelling), so the same word
+compares equal across spellings while a different word or inflection does not.
 
-The structural checks are a hard gate: a question with no valid answer, a
-duplicate id, or the wrong option count fails the run. The verse-membership check
-is reported as a warning rather than a hard failure, because resolving a mismatch
-is an editorial decision about the citation and the immutable verse text, not
-something the script may change on its own.
+Structural checks are a hard gate: a question with no valid answer, a duplicate id,
+or the wrong option count fails the run. Verse-membership is a warning, not a hard
+failure: resolving a mismatch is an editorial decision about the citation and the
+immutable verse text, not something the script may change.
 
-A small set of question fragments raise that warning today. They are real Quran,
-written in the simplified spelling rather than the Uthmani of the snapshot, so the
-fold does not line them up exactly. They are left as warnings for a maintainer to
-reconcile, not silently rewritten. When you add a question, keep the warning count
-flat: cite the surah:ayah whose snapshot actually contains your fragment.
+A few question fragments raise that warning: real Quran in simplified spelling
+rather than the snapshot's Uthmani, so the fold does not line them up. They are
+left for a maintainer to reconcile, not silently rewritten. When adding a question,
+keep the warning count flat: cite the surah:ayah whose snapshot contains your
+fragment.
 
 ## Running the check
 
@@ -81,13 +75,19 @@ flat: cite the surah:ayah whose snapshot actually contains your fragment.
 node scripts/verify-content.mjs
 ```
 
-It is offline and needs no key. A clean run prints `8/8 checks passed`, the size
-of the question pool, and the standing warning count for fragments written in the
-simplified spelling rather than the Uthmani of the snapshot. Your change should not raise that warning count or fail any
-structural check. Run it alongside the type and lint checks before opening a pull
-request:
+It is offline and needs no key. A clean run prints `8/8 checks passed`, the
+question-pool size, and the standing warning count. Your change should not raise
+that count or fail a structural check. Run it with the type and lint checks before
+a pull request:
 
 ```
 npx tsc --noEmit
 npm run lint
 ```
+
+## Why these constraints
+
+Tajweed is an oral science with no chain of transmission for synthesized content,
+so the verified data is immutable input and the app only renders it (the rule is
+in [../README.md](../README.md#how-it-stays-accurate)). That is how the guarantees
+above stay honest.
