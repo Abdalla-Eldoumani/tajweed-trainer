@@ -1,11 +1,11 @@
 # Accessibility
 
-This is a statement of how the app supports assistive technology and varied input, written from the code. It is not a certification. If you find a barrier, open a GitHub issue.
+A statement of how the app supports assistive technology and varied input, written from the code, not a certification. If you find a barrier, open a GitHub issue.
 
 ## Keyboard
 
 - Every interactive control is reachable and operable by keyboard. The Mushaf reader turns pages with `ArrowLeft` and `ArrowRight` (mirrored under RTL), and a Cmd/Ctrl+K palette jumps to any surah, page, or juz from anywhere in the reader.
-- Overlays manage focus. The mobile navigation drawer is an `aria-modal` dialog: it traps Tab inside while open, wraps from the last focusable element back to the first, returns focus to the control that opened it on close, and closes on Escape. The player and the verse panels also close on Escape.
+- Overlays manage focus. The mobile navigation drawer is an `aria-modal` dialog: it traps Tab, wraps from the last focusable element back to the first, returns focus to its opener on close, and closes on Escape. The player and verse panels also close on Escape.
 - Focus is visible. Interactive elements carry a `focus-visible` ring (the search box, the quick-jump palette input, and the shared UI primitives), so keyboard users can always see where they are. The active navigation link is marked with `aria-current="page"` in both the sidebar and the drawer.
 
 ## Names and structure
@@ -33,7 +33,7 @@ This is a statement of how the app supports assistive technology and varied inpu
 
 ## Offline
 
-- After one visit, the app shell and the last Mushaf page you opened stay readable from cache, and a slim connectivity notice appears while you are offline and clears on reconnect. Cross-origin Quran audio and the live API are intentionally not cached, so recitation audio needs a connection.
+- After one visit, the app shell and the last Mushaf page you opened stay readable from cache, and a slim connectivity notice shows while offline and clears on reconnect. Cross-origin Quran audio and the live API are intentionally not cached, so recitation needs a connection.
 
 ## Verification
 
