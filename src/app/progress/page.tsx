@@ -14,6 +14,7 @@ import { MemorizationBreakdown } from "@/components/memorization/MemorizationBre
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
 import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { ChainingDrill } from "@/components/memorization/ChainingDrill";
+import { SegmentDrill } from "@/components/memorization/SegmentDrill";
 import { KhatmahCard } from "@/components/khatmah/KhatmahCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
@@ -213,6 +214,14 @@ export default function ProgressPage() {
             the head — feeding the SAME memorizationReviews SM-2 scheduler through
             recordReview. Gated on mount + count like the rest of the section. */}
         {memorizedMounted && memorizedCount > 0 && <ChainingDrill />}
+
+        {/* Segment drill: the THIRD keyboard drill on /progress. Breaks one
+            memorized verse into word-boundary chunks, drills each, chains them,
+            then records ONE optional whole-verse grade through the same
+            memorizationReviews scheduler. Its grade keys (1-4) are root-scoped so
+            they never cross-fire with the review or chaining drills. Same
+            mount + count gate. */}
+        {memorizedMounted && memorizedCount > 0 && <SegmentDrill />}
       </div>
 
       {/* Khatmah planner: an opt-in Quran-completion goal that tracks the
