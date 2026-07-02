@@ -148,14 +148,17 @@ record(
 
 // --- 3. the no-segment path disables word-sync silently ----------------------
 // canAlign is the exported alignment gate in the pure lib; the layer consults it
-// and renders the plain markup with NO mark when it fails (no throw). Require the
-// export, the layer's use of it, and the early-return/no-highlight fallback shape
-// (`if (!canAlign(...)) return;`). The controller's segment source is
+// and, when it fails, exits without a throw — for follow-along/reveal-as-recited
+// that means plain markup with NO mark; for a reveal window it blurs every word
+// (fail-safe: a mis-detected tier can never leave the hidden answer visible).
+// Require the export, the layer's use of it, and the canAlign-fail branch that
+// exits by return — either the bare `if (!canAlign(...)) return;` or the block
+// form `if (!canAlign(...)) { ... return; }`. The controller's segment source is
 // fetchSegments, which resolves null for a segment-less reciter — the universal
 // "no follow-along" signal — so a segment-less reciter never reaches a mark.
 const exportsCanAlign = /export function canAlign/.test(lib);
 const layerUsesCanAlign = /canAlign\(/.test(followText);
-const silentFallback = /if\s*\(\s*!\s*canAlign\([^)]*\)\s*\)\s*return/.test(followText);
+const silentFallback = /if\s*\(\s*!\s*canAlign\([^)]*\)\s*\)\s*(return|\{[\s\S]*?\breturn\b)/.test(followText);
 const sourceIsFetchSegments = /fetchSegments\(/.test(controller);
 const noSegmentSilent =
   exportsCanAlign && layerUsesCanAlign && silentFallback && sourceIsFetchSegments;
