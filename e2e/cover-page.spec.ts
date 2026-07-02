@@ -48,24 +48,27 @@ test("BLIND-02: cover mode blurs every verse; a covered tap reveals, a revealed 
   await expect(page.locator('[data-verse-key="1:3"] .blur-md')).toBeVisible();
 
   // A covered tap REVEALS the verse in place (blur cleared) and does NOT open the
-  // overlay (the free per-verse reveal).
+  // overlay (the free per-verse reveal). The overlay is always mounted and toggled
+  // by an opacity transition, so opacity 0 is the closed signal (Playwright's
+  // hidden/visible does not react to opacity) — a covered tap must leave it at 0.
   await verse2.click();
   await expect(page.locator('[data-verse-key="1:2"] .blur-md')).toHaveCount(0);
-  await expect(overlay).toBeHidden();
+  await expect(overlay).toHaveCSS("opacity", "0");
   // The still-covered neighbor stays blurred (reveal is per verse, not the page).
   await expect(page.locator('[data-verse-key="1:3"] .blur-md')).toBeVisible();
 
-  // A tap on the now-revealed verse opens the overlay as usual; close it (Escape).
+  // A tap on the now-revealed verse opens the overlay as usual (opacity 1); close
+  // it (Escape) and it animates back to opacity 0.
   await verse2.click();
-  await expect(overlay).toBeVisible();
+  await expect(overlay).toHaveCSS("opacity", "1");
   await page.keyboard.press("Escape");
-  await expect(overlay).toBeHidden();
+  await expect(overlay).toHaveCSS("opacity", "0");
 
   // Turn cover mode off (its on-state aria-label is "Show the page"); a tap on a
   // verse opens the overlay unchanged (today's behavior when cover mode is off).
   await page.getByRole("button", { name: "Show the page" }).click();
   await verse3.click();
-  await expect(overlay).toBeVisible();
+  await expect(overlay).toHaveCSS("opacity", "1");
 
   expectNoConsoleErrors(consoleErrors);
 });
