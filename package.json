@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "e2e": "playwright test",
     "coverage": "vitest run --coverage",
     "verify": "tsc --noEmit && eslint . && vitest run --coverage && npm run verify:audits",
     "verify:audits": "node scripts/verify-player-engine.mjs && node scripts/verify-security.mjs && node scripts/verify-younes.mjs && node scripts/verify-reading.mjs && node scripts/verify-navigation.mjs && node scripts/verify-study-tools.mjs && node scripts/verify-lesson-coloring.mjs && node scripts/verify-tajweed-colors.mjs && node scripts/verify-themes.mjs && node scripts/verify-content.mjs && node scripts/verify-reading-depth.mjs && node scripts/verify-rule-reveal.mjs && node scripts/verify-follow-along.mjs && node scripts/verify-motion.mjs && node scripts/verify-overlay.mjs && node scripts/verify-accessibility.mjs && node scripts/verify-onboarding.mjs",
