@@ -43,6 +43,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   playerMinimized: false,
   reviewIntervalModifier: 1.0,
   peekBudget: 3,
+  newVerseCap: 5,
+  revisionRemindersEnabled: false,
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
@@ -69,6 +71,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   seenOnboarding: false,
   warshNarrationAck: false,
   lastBackupAt: "",
+  dailyNewVersesTracking: { date: "", count: 0 },
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -249,6 +252,18 @@ function sanitizeSettings(input: unknown): UserSettings {
     // Math.round because peeks are whole. A non-number / NaN / absent value falls
     // back to 3. Kept by resetProgress (it preserves settings).
     peekBudget: Math.round(clampNumber(input.peekBudget, 3, 1, 10)),
+    // Daily NEW-verse cap for the murajaah revision queue (REV-01). Clamp to
+    // [1, 10] rather than reject, so a tampered 999 pins to 10 (verbatim the
+    // peekBudget pattern); Math.round because a cap is a whole verse count. A
+    // non-number / NaN / absent value falls back to 5. Kept by resetProgress.
+    newVerseCap: Math.round(clampNumber(input.newVerseCap, 5, 1, 10)),
+    // Opt-in local revision reminder flag (REV-04). Boolean coercion mirroring
+    // showWordByWord / diacriticInsensitive: a tampered non-boolean falls back to
+    // the default false so a restored backup can never carry a non-boolean here.
+    revisionRemindersEnabled:
+      typeof input.revisionRemindersEnabled === "boolean"
+        ? input.revisionRemindersEnabled
+        : (DEFAULT_SETTINGS.revisionRemindersEnabled ?? false),
   };
 }
 
@@ -631,6 +646,19 @@ function sanitizeLastReadBySurah(input: unknown): Record<number, VerseLocation> 
   return out;
 }
 
+// The daily NEW-verse introduction counter (REV-01). A fixed-shape object, NOT a
+// keyed map, so there is NO attacker-controlled key and NO prototype-pollution-key
+// guard is needed. `date` is bounded to a <=10-char string (a YYYY-MM-DD day, or
+// "" when never set); `count` is clamped to [0, 100000] like the other counters.
+// A malformed or absent value reads back as the default { date: "", count: 0 }.
+function sanitizeDailyNewVerses(input: unknown): { date: string; count: number } {
+  if (!isObject(input)) return { date: "", count: 0 };
+  return {
+    date: typeof input.date === "string" && input.date.length <= 10 ? input.date : "",
+    count: pickNumber(input.count, 0, 0, 100000),
+  };
+}
+
 export function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return cloneDefaultProgress();
   const modules: Record<string, ModuleProgress> = {};
@@ -671,6 +699,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     seenOnboarding: typeof input.seenOnboarding === "boolean" ? input.seenOnboarding : false,
     warshNarrationAck: typeof input.warshNarrationAck === "boolean" ? input.warshNarrationAck : false,
     lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
+    dailyNewVersesTracking: sanitizeDailyNewVerses(input.dailyNewVersesTracking),
   };
 }
 

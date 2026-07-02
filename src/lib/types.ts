@@ -418,6 +418,17 @@ export interface UserSettings {
   // so old backups without it still validate. Scoped to the recall review; the
   // cover-page reveal is free and never spends this budget.
   peekBudget?: number;
+  // Daily cap on how many NEW memorized verses the murajaah revision queue
+  // introduces (REV-01). Default 5, clamped by sanitizeSettings to [1, 10]. Caps
+  // only the NEW tail of the daily queue; all due recent/consolidated verses are
+  // always surfaced (REV-02). Additive optional (mirrors peekBudget?) so old
+  // backups without it still validate.
+  newVerseCap?: number;
+  // Opt-in flag for the local revision reminder (REV-04). Default false. When on
+  // and the app is installed as a PWA with notification permission granted, a
+  // best-effort LOCAL notification fires on app open when verses are due; it is
+  // never a server push. Additive optional so old backups still validate.
+  revisionRemindersEnabled?: boolean;
 }
 
 export interface ModuleProgress {
@@ -535,6 +546,13 @@ export interface TajweedProgress {
   // Empty until the first backup. Drives the gentle backup reminder in Settings;
   // cleared by reset so the reminder logic restarts with progress.
   lastBackupAt?: string;
+  // How many NEW memorized verses were introduced to revision today (REV-01), so
+  // the murajaah queue can enforce the daily newVerseCap. `date` is the local
+  // day (YYYY-MM-DD, the toLocaleDateString("en-CA") convention); `count` rolls
+  // to 1 on a new day. A fixed-shape object (NOT a keyed map), so no
+  // prototype-key guard applies. Additive optional for lossless migration;
+  // cleared by reset via the default clone.
+  dailyNewVersesTracking?: { date: string; count: number };
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".
