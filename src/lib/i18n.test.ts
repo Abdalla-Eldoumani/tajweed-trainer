@@ -27,6 +27,28 @@ const ONBOARDING_KEYS = [
   "settings.onboardingTourHelp",
 ];
 
+// The segment-drill keys (Phase 6). Same EN+AR parity assertion, plus a
+// distinctness check below: the segment drill is the THIRD keyboard drill on
+// /progress, so its title / start / reveal labels must differ from the chaining
+// and review drills or three-drill e2e locators collide (RESEARCH Pitfall 4).
+const SEGMENT_KEYS = [
+  "segment.title",
+  "segment.description",
+  "segment.pickVerse",
+  "segment.chunkSize",
+  "segment.noSplit",
+  "segment.startDrill",
+  "segment.reveal",
+  "segment.nextChunk",
+  "segment.beginChain",
+  "segment.finish",
+  "segment.gradePrompt",
+  "segment.skipGrade",
+  "segment.drillProgress",
+  "segment.chainProgress",
+  "segment.empty",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -39,5 +61,31 @@ describe("onboarding i18n keys carry both en and ar", () => {
     // A dropped ar side falls back to en; these keys are genuinely bilingual, so
     // a real ar string must differ from the en one.
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+});
+
+describe("segment-drill i18n keys carry both en and ar", () => {
+  it.each(SEGMENT_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // The three-drill locator guarantee (RESEARCH Pitfall 4): the segment drill's
+  // section title, start control, and reveal control must be textually distinct
+  // from the chaining and review drills' equivalents, in both locales, so a
+  // Playwright role/name locator can address exactly one drill.
+  it("segment.title / startDrill / reveal are distinct from the other drills", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("segment.title", lang)).not.toBe(t("chain.title", lang));
+      expect(t("segment.title", lang)).not.toBe(t("memorize.reviewStart", lang));
+      expect(t("segment.startDrill", lang)).not.toBe(t("chain.startChaining", lang));
+      expect(t("segment.startDrill", lang)).not.toBe(t("review.startReview", lang));
+      expect(t("segment.reveal", lang)).not.toBe(t("mushaf.memorizeReveal", lang));
+    }
   });
 });

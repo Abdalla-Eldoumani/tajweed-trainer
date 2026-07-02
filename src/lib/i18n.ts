@@ -680,6 +680,36 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "لا توجد سلاسل من هذا النوع بعد. احفظ وحدات متجاورة لتكوينها.",
   },
 
+  // Segment drill: break ONE memorized verse into word-boundary chunks, drill each
+  // chunk in isolation, then chain them. Operational UI copy, never Quran/tajweed
+  // content. Distinct from chain.*/memorize.* so the three /progress keyboard
+  // drills never share a title, start, or reveal label. Grade buttons and the
+  // per-chunk play control reuse memorize.grade*/player.playVerse.
+  "segment.title": { en: "Drill a verse in chunks", ar: "تدرّب على آية بالمقاطع" },
+  "segment.description": {
+    en: "Break a memorized verse into small chunks, master each, then chain them together.",
+    ar: "قسّم آية محفوظة إلى مقاطع صغيرة، أتقن كلًّا منها، ثم اربطها معًا.",
+  },
+  "segment.pickVerse": { en: "Pick a memorized verse", ar: "اختر آية محفوظة" },
+  "segment.chunkSize": { en: "Words per chunk", ar: "كلمات لكل مقطع" },
+  "segment.noSplit": {
+    en: "This verse is short — no split needed.",
+    ar: "هذه الآية قصيرة — لا حاجة للتقسيم.",
+  },
+  "segment.startDrill": { en: "Start chunk drill", ar: "ابدأ تدريب المقاطع" },
+  "segment.reveal": { en: "Reveal chunk", ar: "اكشف المقطع" },
+  "segment.nextChunk": { en: "Next chunk", ar: "المقطع التالي" },
+  "segment.beginChain": { en: "Chain the chunks", ar: "اربط المقاطع" },
+  "segment.finish": { en: "Finish", ar: "إنهاء" },
+  "segment.gradePrompt": { en: "Grade the whole verse (optional)", ar: "قيّم الآية كاملة (اختياري)" },
+  "segment.skipGrade": { en: "Skip grading", ar: "تخطَّ التقييم" },
+  "segment.drillProgress": { en: "Drilling chunks", ar: "تدريب المقاطع" },
+  "segment.chainProgress": { en: "Chaining chunks", ar: "ربط المقاطع" },
+  "segment.empty": {
+    en: "Memorize a verse to drill it in chunks.",
+    ar: "احفظ آية لتتدرّب عليها بالمقاطع.",
+  },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
