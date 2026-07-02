@@ -735,6 +735,39 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "احفظ آية لتتدرّب عليها بالمقاطع.",
   },
 
+  // Typing-recall drill: type a memorized verse back word by word, checked
+  // against the real words (diacritic-insensitive when the setting is on).
+  // Operational UI copy, never Quran/tajweed content. This is the FOURTH
+  // keyboard drill on /progress, so its title, start, and reveal-word labels
+  // stay DISTINCT from review.*/chain.*/segment.* (and mushaf.memorizeReveal)
+  // in both locales — a /progress locator must address exactly one drill. Grade
+  // buttons reuse memorize.grade*.
+  "typing.title": { en: "Type the next word from memory", ar: "اكتب الكلمة التالية من الحفظ" },
+  "typing.description": {
+    en: "Recall a memorized verse word by word by typing each one in turn.",
+    ar: "استذكر آية محفوظة كلمةً كلمةً بكتابة كل واحدة بالترتيب.",
+  },
+  "typing.pickVerse": { en: "Pick a memorized verse", ar: "اختر آية محفوظة" },
+  "typing.startDrill": { en: "Start typing recall", ar: "ابدأ استذكار الكتابة" },
+  "typing.prompt": { en: "Type the next word", ar: "اكتب الكلمة التالية" },
+  "typing.inputLabel": { en: "Type the word here", ar: "اكتب الكلمة هنا" },
+  "typing.submit": { en: "Check", ar: "تحقّق" },
+  "typing.correct": { en: "Correct", ar: "صحيح" },
+  "typing.wrong": { en: "Not quite — try again", ar: "ليس تمامًا — حاول مجددًا" },
+  "typing.retry": { en: "Try again", ar: "حاول مجددًا" },
+  "typing.revealWord": { en: "Show this word", ar: "أظهر هذه الكلمة" },
+  "typing.progress": { en: "Word {n} of {total}", ar: "الكلمة {n} من {total}" },
+  "typing.gradePrompt": { en: "Grade this verse (optional)", ar: "قيّم هذه الآية (اختياري)" },
+  "typing.skipGrade": { en: "Skip grading", ar: "تخطَّ التقييم" },
+  "typing.empty": {
+    en: "Memorize a verse first to type it from memory.",
+    ar: "احفظ آية أولًا لتكتبها من ذاكرتك.",
+  },
+  "typing.mistakesNote": {
+    en: "You needed some help — consider a lower grade.",
+    ar: "احتجت بعض المساعدة — ففكّر في تقييم أقل.",
+  },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
@@ -870,6 +903,11 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.translationResource": { en: "Translation", ar: "الترجمة" },
   "settings.tafsirResource": { en: "Tafsir", ar: "التفسير" },
   "settings.showWordByWord": { en: "Word-by-word breakdown", ar: "التحليل كلمة بكلمة" },
+  "settings.diacriticInsensitive": { en: "Ignore diacritics when typing", ar: "تجاهل التشكيل عند الكتابة" },
+  "settings.diacriticInsensitiveHelp": {
+    en: "In the typing-recall drill, match a word even if its tashkeel differs, so a missing haraka is not marked wrong.",
+    ar: "في تدريب الاستذكار بالكتابة، طابق الكلمة حتى لو اختلف تشكيلها، فلا تُحسب حركة ناقصة خطأً.",
+  },
   "settings.resourceOnline": { en: "More options load when online.", ar: "تظهر خيارات أكثر عند الاتصال." },
 
   // Khatmah (Quran-completion) planner
