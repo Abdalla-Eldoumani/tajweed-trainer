@@ -13,6 +13,7 @@ import { MurajaahDashboard } from "@/components/progress/MurajaahDashboard";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { MemorizationHeatmap } from "@/components/memorization/MemorizationHeatmap";
+import { RevisionStreakCounter } from "@/components/memorization/RevisionStreakCounter";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
 import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { ChainingDrill } from "@/components/memorization/ChainingDrill";
@@ -221,6 +222,14 @@ export default function ProgressPage() {
             <p className="text-xs text-text-muted">{t("memorize.reviewStatsHelp")}</p>
           </Card>
         )}
+
+        {/* Revision streak (STAT-03): the memorization revision streak the store
+            now tracks and the recall path updates on every graded verse —
+            consecutive days with at least one revision, plus a 7-day pill row.
+            Reads progress.memorizationStreak with a DISTINCT label so it never
+            reads as (or collides in a locator with) the practice-streak Card lower
+            on the page. Same mount + count gate as the rest of the section. */}
+        {memorizedMounted && memorizedCount > 0 && <RevisionStreakCounter />}
 
         {/* Review entry lives inside the tracker section so the user goes from
             "here's what I've memorized" straight into "test me on it" (F1). Shown
