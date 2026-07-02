@@ -100,7 +100,7 @@ The most invasive content change:
 npm run build
 
 # Pure tests (no browser)
-node scripts/verify-sanitizer.mjs
+npm test
 
 # Browser tests (dev server running)
 node scripts/verify-mushaf.mjs               # 21/21

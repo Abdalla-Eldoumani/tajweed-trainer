@@ -36,8 +36,6 @@ Open `http://localhost:3000`. Hot reload applies TS, TSX, CSS, and JSON edits.
 | `node scripts/verify-module-lock.mjs` | Browser test of module gating. |
 | `node scripts/verify-questions.mjs` | Browser test of the practice hub and authored questions. |
 | `node scripts/verify-reciters.mjs` | Browser test of the reciter selector. |
-| `node scripts/verify-sanitizer.mjs` | Tajweed HTML sanitizer assertions (no browser). |
-| `node scripts/verify-khatmah.mjs` | Khatmah pace-math assertions (no browser). |
 | `node scripts/verify-accessibility.mjs` | Source-level accessibility guards, no browser (see [accessibility.md](accessibility.md)). |
 | `node scripts/verify-newfeatures.mjs` | Browser test: spaced repetition, memorization, search, TTS, PWA endpoints. |
 
