@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  STORAGE_KEY,
   sanitizeProgress,
   importProgress,
   exportProgress,
@@ -26,6 +27,8 @@ import {
   getSessionPeeks,
   recordPeek,
   resetSessionPeeks,
+  getNewVersesIntroducedToday,
+  recordNewVerseIntroduced,
 } from "@/lib/storage";
 
 // Behavioral coverage of the storage funnel against the REAL module under jsdom
@@ -568,6 +571,155 @@ describe("sessionPeekUsed + peekBudget (BLIND-03/BLIND-04)", () => {
 
     expect(getSessionPeeks()).toEqual({}); // cleared with the rest of the learner data
     expect(getSettings().peekBudget).toBe(5); // kept, like reciter / theme / reviewIntervalModifier
+  });
+});
+
+describe("newVerseCap setting: default 5, clamp [1, 10], round (REV-01)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
+  // export). Byte-for-byte the peekBudget clamp precedent, only the band anchor
+  // differs (default 5 instead of 3).
+  const cap = (v: unknown) => sanitizeProgress({ settings: { newVerseCap: v } }).settings.newVerseCap;
+
+  it("defaults to 5 (canonical default and absent value)", () => {
+    expect(DEFAULT_SETTINGS.newVerseCap).toBe(5);
+    expect(sanitizeProgress({}).settings.newVerseCap).toBe(5);
+    expect(cap(undefined)).toBe(5);
+  });
+
+  it("clamps low/high, rounds, keeps an in-band value, defaults a non-number", () => {
+    expect(cap(0)).toBe(1); // clamp low to the band floor
+    expect(cap(999)).toBe(10); // clamp high to the band ceiling
+    expect(cap(7)).toBe(7); // in-band value kept
+    expect(cap(7.6)).toBe(8); // Math.round (a cap is a whole verse count)
+    expect(cap("x")).toBe(5); // non-number -> 5
+  });
+});
+
+describe("revisionRemindersEnabled setting: default false, boolean coercion (REV-04)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
+  // export). Byte-for-byte the showWordByWord / diacriticInsensitive boolean
+  // coercion precedent.
+  const rre = (v: unknown) =>
+    sanitizeProgress({ settings: { revisionRemindersEnabled: v } }).settings.revisionRemindersEnabled;
+
+  it("defaults to false (canonical default and absent value)", () => {
+    expect(DEFAULT_SETTINGS.revisionRemindersEnabled).toBe(false);
+    expect(sanitizeProgress({}).settings.revisionRemindersEnabled).toBe(false);
+    expect(rre(undefined)).toBe(false);
+  });
+
+  it("coerces a non-boolean to false and passes a real boolean through", () => {
+    expect(rre("yes")).toBe(false); // string -> false
+    expect(rre(1)).toBe(false); // number -> false
+    expect(rre(null)).toBe(false); // null -> false
+    expect(rre(true)).toBe(true); // real boolean kept
+    expect(rre(false)).toBe(false); // real boolean kept
+  });
+
+  it("a true value survives an export -> clear -> import round-trip", () => {
+    setSettings({ ...getSettings(), revisionRemindersEnabled: true });
+    const snapshot = exportProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+    expect(getSettings().revisionRemindersEnabled).toBe(true);
+  });
+
+  it("survives resetProgress (it is a preference, kept like reciter / theme)", () => {
+    // resetProgress clears learner data but keeps settings, so a toggled value is
+    // retained across a reset; a fresh store defaults it to false (asserted above).
+    setSettings({ ...getSettings(), revisionRemindersEnabled: true });
+    resetProgress();
+    expect(getSettings().revisionRemindersEnabled).toBe(true);
+  });
+});
+
+describe("dailyNewVersesTracking: fixed-shape sanitizer, default { date: '', count: 0 } (REV-01)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeDailyNewVerses. This is
+  // a fixed-shape object (not a keyed map), so there is no prototype-key vector to
+  // test — only the shape / clamp / date-length bounds.
+  const dnv = (v: unknown) => sanitizeProgress({ dailyNewVersesTracking: v }).dailyNewVersesTracking;
+
+  it("defaults to { date: '', count: 0 } for a fresh or non-object store", () => {
+    expect(sanitizeProgress({}).dailyNewVersesTracking).toEqual({ date: "", count: 0 });
+    expect(dnv(undefined)).toEqual({ date: "", count: 0 });
+    expect(dnv("nope")).toEqual({ date: "", count: 0 });
+    expect(dnv(123)).toEqual({ date: "", count: 0 });
+  });
+
+  it("passes a valid { date, count } through unchanged", () => {
+    expect(dnv({ date: "2026-07-02", count: 3 })).toEqual({ date: "2026-07-02", count: 3 });
+  });
+
+  it("clamps count to [0, 100000] and rejects a date longer than 10 chars", () => {
+    expect(dnv({ date: "2026-07-02", count: -4 })).toEqual({ date: "2026-07-02", count: 0 }); // negative -> 0
+    expect(dnv({ date: "2026-07-02", count: 1e9 })).toEqual({ date: "2026-07-02", count: 0 }); // huge -> 0 (pickNumber reject)
+    expect(dnv({ date: "2026-07-02T00:00:00Z", count: 2 })).toEqual({ date: "", count: 2 }); // > 10 chars -> ""
+    expect(dnv({ date: 5, count: 2 })).toEqual({ date: "", count: 2 }); // non-string date -> ""
+  });
+});
+
+describe("getNewVersesIntroducedToday: same-day count, stale -> 0 with NO write (REV-01)", () => {
+  it("returns the stored count when the stored day is today", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    expect(importProgress(JSON.stringify({ dailyNewVersesTracking: { date: today, count: 4 } }))).toBe(true);
+    expect(getNewVersesIntroducedToday(now)).toBe(4);
+  });
+
+  it("returns 0 for a stale stored day and does NOT write (localStorage byte-identical across the call)", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    expect(importProgress(JSON.stringify({ dailyNewVersesTracking: { date: "2020-01-01", count: 9 } }))).toBe(true);
+    const before = localStorage.getItem(STORAGE_KEY);
+    expect(getNewVersesIntroducedToday(now)).toBe(0);
+    const after = localStorage.getItem(STORAGE_KEY);
+    // The read is side-effect-free: a stale day returns 0 without rewriting the store.
+    expect(after).toBe(before);
+  });
+});
+
+describe("recordNewVerseIntroduced: increments same-day, rolls the day (REV-01)", () => {
+  it("from an empty store sets { date: today, count: 1 }", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    recordNewVerseIntroduced(now);
+    expect(getProgress().dailyNewVersesTracking).toEqual({ date: today, count: 1 });
+  });
+
+  it("a same-day second call increments to 2", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    recordNewVerseIntroduced(now);
+    recordNewVerseIntroduced(now);
+    expect(getProgress().dailyNewVersesTracking).toEqual({ date: today, count: 2 });
+    expect(getNewVersesIntroducedToday(now)).toBe(2);
+  });
+
+  it("a stale stored day rolls to { date: today, count: 1 }", () => {
+    expect(importProgress(JSON.stringify({ dailyNewVersesTracking: { date: "2020-01-01", count: 9 } }))).toBe(true);
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    recordNewVerseIntroduced(now);
+    expect(getProgress().dailyNewVersesTracking).toEqual({ date: today, count: 1 });
+  });
+});
+
+describe("dailyNewVersesTracking persistence: export/import round-trip + reset (REV-01)", () => {
+  it("round-trips through export -> clear -> import", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    recordNewVerseIntroduced(now);
+    recordNewVerseIntroduced(now);
+    const snapshot = exportProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+    expect(getProgress().dailyNewVersesTracking).toEqual({ date: today, count: 2 });
+  });
+
+  it("resetProgress clears it to the { date: '', count: 0 } default (it is learner data, not a setting)", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    recordNewVerseIntroduced(now);
+    resetProgress();
+    expect(getProgress().dailyNewVersesTracking).toEqual({ date: "", count: 0 });
   });
 });
 
