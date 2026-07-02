@@ -377,6 +377,20 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "How many hints you can use per recall session before that verse's rating is capped at hard.",
     ar: "عدد التلميحات التي يمكنك استخدامها في كل جلسة استذكار قبل أن يُقيَّد تقييم تلك الآية عند «صعب».",
   },
+  "settings.newVerseCap": { en: "New verses per day", ar: "الآيات الجديدة يوميًا" },
+  "settings.newVerseCapHelp": {
+    en: "The most new verses to introduce into revision each day. Due reviews of verses you already know are never capped.",
+    ar: "أقصى عدد من الآيات الجديدة يُدخَل في المراجعة كل يوم. أما المراجعات المستحقة لآيات تعرفها فلا يُحدّ عددها أبدًا.",
+  },
+  "settings.revisionReminders": { en: "Revision reminders", ar: "تذكيرات المراجعة" },
+  "settings.revisionRemindersHelp": {
+    en: "Show a local reminder when you open the installed app and verses are due. This is a reminder on this device, not a server push — nothing is sent while the app is closed.",
+    ar: "أظهر تذكيرًا محليًا عند فتح التطبيق المثبَّت ووجود آيات مستحقة. هذا تذكير على هذا الجهاز، وليس إشعارًا من خادم — لا يُرسَل شيء والتطبيق مغلق.",
+  },
+  "settings.revisionRemindersDenied": {
+    en: "Notifications are blocked for this app. Allow them in your browser settings to use reminders.",
+    ar: "الإشعارات محظورة لهذا التطبيق. اسمح بها في إعدادات المتصفح لاستخدام التذكيرات.",
+  },
   "settings.language": { en: "Language", ar: "اللغة" },
   "settings.normal": { en: "Normal", ar: "عادي" },
   "settings.large": { en: "Large", ar: "كبير" },
@@ -767,6 +781,31 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "You needed some help — consider a lower grade.",
     ar: "احتجت بعض المساعدة — ففكّر في تقييم أقل.",
   },
+
+  // Daily revision (murajaah) dashboard, home due-card, and the local reminder
+  // (Phase 9 REV-01/02/03/04). Operational UI copy and counts only — never Quran
+  // or hadith text; the notification body names a count via {n} and nothing more.
+  // The beginRevision CTA stays DISTINCT from the four /progress drill start
+  // labels (review/chain/segment/typing) in BOTH locales so it scrolls to the
+  // existing review card without a locator or keyboard collision. Placeholders
+  // {n} / {cap} are replaced at the call site (Arabic-Indic digits in AR).
+  "murajaah.title": { en: "Today's revision", ar: "مراجعة اليوم" },
+  "murajaah.description": {
+    en: "A balanced plan from your memorized verses and their review schedule.",
+    ar: "خطة متوازنة من آياتك المحفوظة وجدول مراجعتها.",
+  },
+  "murajaah.dueCount": { en: "{n} due for revision", ar: "{n} مستحقة للمراجعة" },
+  "murajaah.newLabel": { en: "New", ar: "جديدة" },
+  "murajaah.recentLabel": { en: "Recent", ar: "حديثة" },
+  "murajaah.consolidatedLabel": { en: "Consolidated", ar: "راسخة" },
+  "murajaah.newCapStatus": { en: "{n} of {cap} new introduced today", ar: "{n} من {cap} جديدة أُدخِلت اليوم" },
+  "murajaah.introducingNew": { en: "Introducing {n} new today", ar: "إدخال {n} جديدة اليوم" },
+  "murajaah.caughtUp": { en: "All caught up — nothing due today.", ar: "أتممت كل شيء — لا مستحقات اليوم." },
+  "murajaah.beginRevision": { en: "Begin today's revision", ar: "ابدأ مراجعة اليوم" },
+  "murajaah.homeDue": { en: "{n} verses due for revision", ar: "{n} آيات مستحقة للمراجعة" },
+  "murajaah.review": { en: "Review", ar: "راجِع" },
+  "murajaah.notifyTitle": { en: "Revision reminder", ar: "تذكير بالمراجعة" },
+  "murajaah.notifyBody": { en: "{n} verses due for revision today", ar: "{n} آيات مستحقة للمراجعة اليوم" },
 
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
