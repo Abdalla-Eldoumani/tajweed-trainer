@@ -429,6 +429,32 @@ export default function SettingsPage() {
         </div>
       </Card>
 
+      {/* Recall hint budget (per-session peek budget). Presets sit inside the
+          storage clamp [1, 10]; the write funnels through updateSettings like
+          every other preference. Mirrors the review-spacing radiogroup. */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.peekBudget")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.peekBudgetHelp")}</p>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("settings.peekBudget")}>
+          {[1, 2, 3, 5, 10].map((n) => {
+            const active = (settings.peekBudget ?? 3) === n;
+            const label = isAr ? toArabicIndic(n) : String(n);
+            return (
+              <button
+                key={n}
+                onClick={() => updateSettings({ peekBudget: n })}
+                className={segChip(active)}
+                role="radio"
+                aria-checked={active}
+                aria-label={label}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
       {/* Backup & Restore */}
       <Card>
         <h2 className="font-heading font-semibold text-sm mb-2">{t("settings.backup.title")}</h2>

@@ -372,6 +372,11 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Higher spacing means longer gaps between memorized-verse reviews.",
     ar: "التباعد الأعلى يعني فترات أطول بين مراجعات الآيات المحفوظة.",
   },
+  "settings.peekBudget": { en: "Recall hint budget", ar: "رصيد تلميحات الاستذكار" },
+  "settings.peekBudgetHelp": {
+    en: "How many hints you can use per recall session before that verse's rating is capped at hard.",
+    ar: "عدد التلميحات التي يمكنك استخدامها في كل جلسة استذكار قبل أن يُقيَّد تقييم تلك الآية عند «صعب».",
+  },
   "settings.language": { en: "Language", ar: "اللغة" },
   "settings.normal": { en: "Normal", ar: "عادي" },
   "settings.large": { en: "Large", ar: "كبير" },
