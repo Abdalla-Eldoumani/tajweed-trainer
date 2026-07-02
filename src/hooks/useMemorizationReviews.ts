@@ -6,6 +6,7 @@ import {
   setMemorizationReview,
   getNewVersesIntroducedToday,
   recordNewVerseIntroduced,
+  updateMemorizationStreak,
 } from "@/lib/storage";
 import { subscribeProgressChanged } from "@/lib/progress-events";
 import { getDueFromUniverse } from "@/lib/spaced-repetition";
@@ -52,6 +53,13 @@ export function useMemorizationReviews() {
       // segment/typing) since they all record through this one hook point; a
       // re-grade never re-counts because `prev` then exists.
       if (!prev) recordNewVerseIntroduced();
+      // Every revision grade (any of the four recall drills route through this
+      // one path) marks today as revised for the memorization revision streak
+      // (STAT-03). Unconditional, not gated on `!prev`: re-grading an
+      // already-introduced verse still counts as revising today. The storage
+      // helper is idempotent per local day, so a second grade the same day is a
+      // no-op. SM-2 grading and the memorizationReviews write above are untouched.
+      updateMemorizationStreak();
       refresh();
     },
     [refresh, modifier],
