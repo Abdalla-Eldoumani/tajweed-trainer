@@ -13,8 +13,11 @@
 //
 // scripts/verify-study-tools.mjs asserts every key here exists in the tajweed
 // map, so a typo or a class that loses its color can never ship a dead link.
+// The map is exported so tajweed-rule-links.test.ts can assert the same parity
+// against the real object (every link class is a color-map key, every route is a
+// /learn route) instead of regex-parsing the source.
 
-const TAJWEED_RULE_LINKS: Record<string, string> = {
+export const TAJWEED_RULE_LINKS: Record<string, string> = {
   // Ghunnah (the nasal sound) has its own module.
   ghunnah: "/learn/ghunnah",
 
