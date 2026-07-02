@@ -37,7 +37,13 @@ test.describe("service worker + PWA", () => {
     // worker and stored in the static cache; only then can the offline reload
     // be served entirely from cache with no failed-resource console noise.
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    // Deterministic post-condition instead of the flaky networkidle wait: the
+    // navigation chrome becoming visible proves the shell's JS/CSS chunks were
+    // fetched THROUGH the controlling worker (and so cache-first stored) — that
+    // is exactly what the offline reload below needs, and it is a web-first
+    // assertion (auto-retries), not a race on network silence.
+    await page.waitForLoadState("load");
+    await expect(page.getByRole("navigation").first()).toBeVisible();
 
     // Fulfill Next's background <Link> RSC prefetches (the "?_rsc=" fetches).
     // The worker deliberately does not cache RSC, so offline these would hit the
