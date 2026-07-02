@@ -99,3 +99,16 @@ self.addEventListener("fetch", (event) => {
   if (isSameOriginStatic(url)) { event.respondWith(cacheFirst(request, STATIC_CACHE)); return; }
   if (isHtmlNavigation(request)) { event.respondWith(networkFirstHtml(request)); return; }
 });
+
+// Tapping the local revision reminder (REV-04) focuses an open window or opens
+// /progress. Purely additive: it touches no fetch/cache path, so the offline
+// scope is unchanged. Without it a tap is harmless (does nothing).
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const all = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    const existing = all.find((c) => "focus" in c);
+    if (existing) return existing.focus();
+    return self.clients.openWindow("/progress");
+  })());
+});
