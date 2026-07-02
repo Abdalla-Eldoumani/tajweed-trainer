@@ -13,6 +13,7 @@ import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah, getBundledChaptersIndex } from "@/lib/quran-api";
 import { toArabicIndic, cn } from "@/lib/utils";
+import type { RecallGrade } from "@/lib/types";
 
 // Surah headers from the bundled index (READ ONLY) so a verse under review can
 // show its surah name without a network round-trip; never edits or generates.
@@ -90,7 +91,7 @@ function VerseUnderReview({ verseKey, blurred }: { verseKey: string; blurred: bo
 export function MemorizedReview() {
   const { t, isAr } = useTranslation();
   const { memorized } = useMemorization();
-  const { dueMemorized, recordReview } = useMemorizationReviews();
+  const { dueMemorized, recordReview, preview } = useMemorizationReviews();
   const { settings } = useSettings();
 
   // The snapshot: due verseKeys captured ONCE at start. Mid-session memorization
@@ -132,10 +133,11 @@ export function MemorizedReview() {
   const finished = started && activeIndex >= queue.length;
 
   const grade = useCallback(
-    (correct: boolean) => {
+    (g: RecallGrade) => {
       if (!currentKey) return;
-      // Persist through the separate keyspace; Leitner promotion/spacing reused.
-      recordReview(currentKey, correct);
+      // Persist the SM-2 result through the separate keyspace; the scheduler
+      // derives the next interval and due date from the rating (again resets it).
+      recordReview(currentKey, g);
       setReviewed((n) => n + 1);
       // Advance past the verse just graded; the next render's reconciliation skips
       // any unmarked verses after it and flips to finished when none remain.
@@ -146,10 +148,35 @@ export function MemorizedReview() {
   );
 
   // Move focus to the grade controls once the verse is revealed so the keyboard
-  // path lands on the next action, not back on Reveal.
+  // path lands on a grade button (the Good/primary one), not back on Reveal.
   useEffect(() => {
     if (revealed) continueRef.current?.focus();
   }, [revealed, activeIndex]);
+
+  // Keys 1-4 grade the revealed verse (again/hard/good/easy), matching the
+  // button order, so a keyboard user never reaches for the mouse. Active only
+  // while revealed; ignores modifier chords and any focused text field (there is
+  // none here, but guard defensively). Torn down when not revealed or on unmount.
+  useEffect(() => {
+    if (!revealed || !currentKey) return;
+    const KEY_TO_GRADE: Record<string, RecallGrade> = {
+      "1": "again",
+      "2": "hard",
+      "3": "good",
+      "4": "easy",
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      const el = e.target as HTMLElement | null;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+      const g = KEY_TO_GRADE[e.key];
+      if (!g) return;
+      e.preventDefault();
+      grade(g);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [revealed, currentKey, grade]);
 
   // Play the verse under review on its own (single mode), through the one player
   // engine, no second audio element is ever constructed here.
@@ -223,6 +250,39 @@ export function MemorizedReview() {
   const surahLabel = header ? (isAr ? header.nameArabic : header.nameSimple) : "";
   const refLabel = isAr ? `${toArabicIndic(s)}:${toArabicIndic(a)}` : `${s}:${a}`;
 
+  // The effective next interval each rating would schedule for this verse, from
+  // the pure lib (SM-2 + the balanced modifier, applied in the hook). Shown under
+  // each button so the learner sees the scheduling feedback before choosing.
+  const intervals = preview(currentKey);
+
+  // Four rating buttons in the fixed order again -> hard -> good -> easy. Colors
+  // convey difficulty through the manuscript tokens (no garish hues): Again red
+  // ochre, Hard neutral outline, Good lapis (primary), Easy gold. Good carries
+  // continueRef so the reveal moves focus onto a grade control, not back on Reveal.
+  const gradeButtons: {
+    grade: RecallGrade;
+    labelKey: string;
+    variant: "primary" | "outline";
+    className: string;
+    ref?: React.Ref<HTMLButtonElement>;
+  }[] = [
+    {
+      grade: "again",
+      labelKey: "memorize.gradeAgain",
+      variant: "primary",
+      className:
+        "bg-accent text-white hover:bg-accent/90 dark:bg-accent dark:text-white dark:hover:bg-accent/90",
+    },
+    { grade: "hard", labelKey: "memorize.gradeHard", variant: "outline", className: "" },
+    { grade: "good", labelKey: "memorize.gradeGood", variant: "primary", className: "", ref: continueRef },
+    {
+      grade: "easy",
+      labelKey: "memorize.gradeEasy",
+      variant: "primary",
+      className: "bg-gold text-ink hover:bg-gold-deep",
+    },
+  ];
+
   return (
     <Card className="space-y-4">
       <ProgressBar value={activeIndex + 1} max={queue.length} showLabel />
@@ -250,18 +310,24 @@ export function MemorizedReview() {
           {t("mushaf.memorizeReveal")}
         </Button>
       ) : (
-        <div className="flex gap-2">
-          <Button
-            ref={continueRef}
-            variant="primary"
-            onClick={() => grade(true)}
-            className="flex-1"
-          >
-            {t("practice.feedback.correct")}
-          </Button>
-          <Button variant="outline" onClick={() => grade(false)} className="flex-1">
-            {t("practice.feedback.incorrect")}
-          </Button>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {gradeButtons.map(({ grade: g, labelKey, variant, className, ref }) => {
+            const label = t(labelKey);
+            const intervalText = t("memorize.gradeIntervalDays").replace("{n}", num(intervals[g]));
+            return (
+              <Button
+                key={g}
+                ref={ref}
+                variant={variant}
+                onClick={() => grade(g)}
+                aria-label={`${label} · ${intervalText}`}
+                className={cn("h-auto min-h-[52px] flex-col gap-0.5 py-2", className)}
+              >
+                <span className="font-medium">{label}</span>
+                <span className="text-xs font-normal opacity-80 tabular-nums">{intervalText}</span>
+              </Button>
+            );
+          })}
         </div>
       )}
     </Card>
