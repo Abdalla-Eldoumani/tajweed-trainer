@@ -23,6 +23,9 @@ import {
   shouldRemindBackup,
   hasMeaningfulProgress,
   resetProgress,
+  getSessionPeeks,
+  recordPeek,
+  resetSessionPeeks,
 } from "@/lib/storage";
 
 // Behavioral coverage of the storage funnel against the REAL module under jsdom
@@ -428,6 +431,106 @@ describe("reviewIntervalModifier setting: default 1.0, clamp [0.5, 2.0] (SCHED-0
     setSettings({ ...getSettings(), reviewIntervalModifier: 0.5 });
     resetProgress();
     expect(getSettings().reviewIntervalModifier).toBe(0.5);
+  });
+});
+
+describe("sessionPeekUsed + peekBudget (BLIND-03/BLIND-04)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeSessionPeeks /
+  // sanitizeSettings and the shipped helpers; nothing here re-derives a sanitizer.
+  const peeks = (v: unknown) => sanitizeProgress({ sessionPeekUsed: v }).sessionPeekUsed ?? {};
+  const budget = (v: unknown) => sanitizeProgress({ settings: { peekBudget: v } }).settings.peekBudget;
+
+  it("importing a tampered peek map drops the dangerous keys and never pollutes Object.prototype", () => {
+    // JSON.parse materializes "__proto__" as an OWN enumerable key (it does not
+    // set the prototype), so the sanitizer's per-map guard is what drops it.
+    const tampered = `{
+      "sessionPeekUsed": {
+        "__proto__": { "polluted": true },
+        "constructor": 5,
+        "prototype": 3,
+        "2:255": 1
+      }
+    }`;
+    expect(importProgress(tampered)).toBe(true);
+
+    // Object.prototype stayed clean after the import.
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+
+    const map = getSessionPeeks();
+    expect(Object.getPrototypeOf(map)).toBe(Object.prototype);
+    expect(Object.keys(map)).not.toContain("__proto__");
+    expect(Object.keys(map)).not.toContain("constructor");
+    expect(Object.keys(map)).not.toContain("prototype");
+    // The one legitimate entry alongside the dangerous keys survives.
+    expect(map).toEqual({ "2:255": 1 });
+  });
+
+  it("rejects a malformed verseKey, keeps a valid one", () => {
+    expect(peeks({ "1:2:3": 2, "x:y": 1, "2:255": 1 })).toEqual({ "2:255": 1 });
+  });
+
+  it("drops a count < 1 (0 / negative / non-number / NaN), clamps a high count to 99, keeps an in-band count", () => {
+    expect(peeks({ "1:1": 0, "1:2": -4, "1:3": "x", "1:4": Number.NaN })).toEqual({});
+    expect(peeks({ "1:5": 500 })).toEqual({ "1:5": 99 }); // clamped to MAX_PEEK_PER_VERSE
+    expect(peeks({ "1:6": 2 })).toEqual({ "1:6": 2 }); // in-band count kept
+  });
+
+  it("caps the map at 500 entries", () => {
+    const map: Record<string, number> = {};
+    for (const k of manyVerseKeys(600)) map[k] = 1;
+    expect(Object.keys(peeks(map)).length).toBe(500);
+  });
+
+  it("peekBudget defaults to 3 and clamps to [1, 10]", () => {
+    expect(DEFAULT_SETTINGS.peekBudget).toBe(3);
+    expect(sanitizeProgress({}).settings.peekBudget).toBe(3); // absent
+    expect(budget(undefined)).toBe(3);
+    expect(budget(0)).toBe(1); // clamp low to the band floor
+    expect(budget(99)).toBe(10); // clamp high to the band ceiling
+    expect(budget(5)).toBe(5); // in-band value kept
+    expect(budget("x")).toBe(3); // non-number -> 3
+    expect(budget(Number.NaN)).toBe(3); // NaN -> 3
+  });
+
+  it("recordPeek increments a verse's count and rejects a bad verseKey", () => {
+    recordPeek("1:1");
+    recordPeek("1:1");
+    expect(getSessionPeeks()["1:1"]).toBe(2);
+    recordPeek("bad-key");
+    expect(getSessionPeeks()["bad-key"]).toBeUndefined();
+  });
+
+  it("resetSessionPeeks clears the map and no-ops when already empty", () => {
+    recordPeek("1:1");
+    expect(Object.keys(getSessionPeeks()).length).toBe(1);
+    resetSessionPeeks();
+    expect(getSessionPeeks()).toEqual({});
+    // A second reset on an already-empty map is a no-op (does not throw).
+    expect(() => resetSessionPeeks()).not.toThrow();
+    expect(getSessionPeeks()).toEqual({});
+  });
+
+  it("sessionPeekUsed survives an export -> clear -> import round-trip (BLIND-04 persistence)", () => {
+    recordPeek("1:1");
+    recordPeek("1:2");
+    setSettings({ ...getSettings(), peekBudget: 7 });
+
+    const snapshot = exportProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+
+    expect(getSessionPeeks()).toEqual({ "1:1": 1, "1:2": 1 });
+    expect(getSettings().peekBudget).toBe(7); // the setting round-trips too
+  });
+
+  it("resetProgress clears sessionPeekUsed but keeps peekBudget (it is a preference)", () => {
+    recordPeek("1:1");
+    setSettings({ ...getSettings(), peekBudget: 5 });
+
+    resetProgress();
+
+    expect(getSessionPeeks()).toEqual({}); // cleared with the rest of the learner data
+    expect(getSettings().peekBudget).toBe(5); // kept, like reciter / theme / reviewIntervalModifier
   });
 });
 
