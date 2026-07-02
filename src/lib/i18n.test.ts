@@ -131,6 +131,19 @@ const STRENGTH_HEATMAP_KEYS = [
   "heatmap.noErrors",
 ];
 
+// The revision-streak keys (Phase 10, STAT-03): the memorization revision-streak
+// counter on /progress. Same EN+AR parity assertion, plus the distinctness check
+// below: its title MUST differ from practice.streak in BOTH locales, because the
+// practice StreakCounter and this revision counter both render streak figures on
+// the /progress family — a colliding title makes an e2e role/name locator
+// address the wrong streak card.
+const REVISION_STREAK_KEYS = [
+  "strength.revisionStreakTitle",
+  "strength.revisionCurrent",
+  "strength.revisionLongest",
+  "strength.revisionStreakHelp",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -251,6 +264,28 @@ describe("memorization-health i18n keys carry both en and ar", () => {
       expect(t("heatmap.byJuz", lang)).not.toBe(t("memorize.byJuz", lang));
       expect(t("heatmap.bySurah", lang)).not.toBe(t("memorize.bySurah", lang));
       expect(t("heatmap.showAll", lang)).not.toBe(t("memorize.showAllSurahs", lang));
+    }
+  });
+});
+
+describe("revision-streak i18n keys carry both en and ar", () => {
+  it.each(REVISION_STREAK_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // STAT-03 locator guarantee: the revision-streak counter and the practice
+  // StreakCounter both render streak figures on the /progress family, so the
+  // revision counter's title MUST be textually distinct from practice.streak in
+  // BOTH locales, or a role/name locator addresses the wrong streak card.
+  it("strength.revisionStreakTitle is distinct from practice.streak", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("strength.revisionStreakTitle", lang)).not.toBe(t("practice.streak", lang));
     }
   });
 });

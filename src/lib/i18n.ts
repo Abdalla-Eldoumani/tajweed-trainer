@@ -832,6 +832,13 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Juz {n}: {status}, {count} memorized",
     ar: "الجزء {n}: {status}، {count} محفوظة",
   },
+  "strength.revisionStreakTitle": { en: "Revision streak", ar: "سلسلة المراجعة" },
+  "strength.revisionCurrent": { en: "Current streak", ar: "السلسلة الحالية" },
+  "strength.revisionLongest": { en: "Longest streak", ar: "أطول سلسلة" },
+  "strength.revisionStreakHelp": {
+    en: "Consecutive days you've done at least one revision.",
+    ar: "الأيام المتتالية التي راجعت فيها آية واحدة على الأقل.",
+  },
   "heatmap.errorTitle": { en: "Recall errors", ar: "أخطاء الاستذكار" },
   "heatmap.errorHelp": {
     en: "Brighter cells are the memorized scopes you've missed most during recall review.",
