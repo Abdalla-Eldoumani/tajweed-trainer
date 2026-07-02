@@ -144,6 +144,9 @@ describe("typing-drill i18n keys carry both en and ar", () => {
       expect(t("typing.startDrill", lang)).not.toBe(t("review.startReview", lang));
       expect(t("typing.revealWord", lang)).not.toBe(t("segment.reveal", lang));
       expect(t("typing.revealWord", lang)).not.toBe(t("mushaf.memorizeReveal", lang));
+      // The verse pickers (segment + typing) are both labelled `<select>`s on the
+      // same /progress; their aria-labels must differ so getByLabel addresses one.
+      expect(t("typing.pickVerse", lang)).not.toBe(t("segment.pickVerse", lang));
     }
   });
 });

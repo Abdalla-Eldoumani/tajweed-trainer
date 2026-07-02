@@ -747,7 +747,7 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Recall a memorized verse word by word by typing each one in turn.",
     ar: "استذكر آية محفوظة كلمةً كلمةً بكتابة كل واحدة بالترتيب.",
   },
-  "typing.pickVerse": { en: "Pick a memorized verse", ar: "اختر آية محفوظة" },
+  "typing.pickVerse": { en: "Pick a verse to type", ar: "اختر آية للكتابة" },
   "typing.startDrill": { en: "Start typing recall", ar: "ابدأ استذكار الكتابة" },
   "typing.prompt": { en: "Type the next word", ar: "اكتب الكلمة التالية" },
   "typing.inputLabel": { en: "Type the word here", ar: "اكتب الكلمة هنا" },
