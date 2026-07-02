@@ -13,6 +13,7 @@ import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah, getBundledChaptersIndex } from "@/lib/quran-api";
 import { toArabicIndic, cn } from "@/lib/utils";
+import { getSessionPeeks, resetSessionPeeks } from "@/lib/storage";
 import type { RecallGrade } from "@/lib/types";
 
 // Surah headers from the bundled index (READ ONLY) so a verse under review can
@@ -101,6 +102,11 @@ export function MemorizedReview() {
   const [started, setStarted] = useState(false);
   const [reviewed, setReviewed] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  // Audio-led (blind) mode: in-session only (never persisted), default OFF so the
+  // text-first flow stays the default. When ON, the verse text stays hidden by the
+  // existing blur and the audio auto-plays on each advance so the learner recalls
+  // from sound, then Reveal shows the text to self-check (BLIND-01).
+  const [audioLed, setAudioLed] = useState(false);
   const continueRef = useRef<HTMLButtonElement | null>(null);
   const revealRef = useRef<HTMLButtonElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -221,6 +227,28 @@ export function MemorizedReview() {
     });
   }, [queue, activeIndex, memorized, settings.reciter, settings.playbackSpeed]);
 
+  // Audio-led auto-play (BLIND-01): while in audio-led mode, play the current
+  // verse whenever a new one becomes active and is still hidden. The first play
+  // rides the Start click and every later one rides the grade-button click that
+  // changed currentKey, so the browser's autoplay policy is satisfied (the shared
+  // <audio> is already unlocked by that gesture chain). playCurrent routes through
+  // the one usePlayer engine; no second audio element is ever constructed.
+  useEffect(() => {
+    if (audioLed && started && !finished && currentKey && !revealed) playCurrent();
+  }, [audioLed, started, finished, currentKey, revealed, playCurrent]);
+
+  // Reset-on-finish is the ONLY peek-budget reset (BLIND-04): clear the session
+  // peek map once the session reaches `finished`, never in start(). A reload
+  // mid-session drops the React session state and returns to Start, but the
+  // persisted map stays, so a reload cannot refill the budget or un-cap a peeked
+  // verse. Read getSessionPeeks() DIRECTLY (not the hook state) and key only on
+  // `finished`, guarded by a non-empty check, so the change-bus re-read after the
+  // clear cannot re-fire this effect into a loop (RESEARCH Pitfall 4): after the
+  // clear the map is empty (guard blocks a repeat) and `finished` does not change.
+  useEffect(() => {
+    if (finished && Object.keys(getSessionPeeks()).length > 0) resetSessionPeeks();
+  }, [finished]);
+
   const dueNow = useMemo(
     () => dueMemorized(memorized).length,
     [dueMemorized, memorized],
@@ -231,9 +259,23 @@ export function MemorizedReview() {
       <Card className="space-y-4 text-center">
         <h3 className="font-heading text-lg font-semibold">{t("memorize.reviewStart")}</h3>
         {dueNow > 0 ? (
-          <Button onClick={start} size="lg">
-            {t("review.startReview")}
-          </Button>
+          <div className="space-y-4">
+            <label
+              className="flex cursor-pointer items-center justify-center gap-2 text-sm"
+              title={t("blind.audioLedHint")}
+            >
+              <input
+                type="checkbox"
+                checked={audioLed}
+                onChange={(e) => setAudioLed(e.target.checked)}
+                className="h-4 w-4 rounded border-border accent-primary"
+              />
+              <span>{t("blind.audioLed")}</span>
+            </label>
+            <Button onClick={start} size="lg">
+              {t("review.startReview")}
+            </Button>
+          </div>
         ) : (
           <p className="text-sm text-text-muted">{t("memorize.reviewEmpty")}</p>
         )}
