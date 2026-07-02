@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSettings } from "@/hooks/useSettings";
 import { useMemorization } from "@/hooks/useMemorization";
 import { useMemorizationReviews } from "@/hooks/useMemorizationReviews";
 import { useTranslation } from "@/lib/i18n";
 import { getMemorizationReviewStats } from "@/lib/memorization-review";
 import { shouldNotify, isInstalled, isNotificationSupported } from "@/lib/notification-gate";
+import { toArabicIndic } from "@/lib/utils";
 
 // The opt-in local revision reminder (REV-04). Mounted once in AppProvider,
 // renders nothing. On app open it fires ONE best-effort local notification when
@@ -24,7 +25,14 @@ export function RevisionReminder() {
   const { settings, mounted: settingsMounted } = useSettings();
   const { memorized, mounted: memorizationMounted } = useMemorization();
   const { reviews } = useMemorizationReviews();
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
+
+  // The opt-in state as it was when the app opened (snapshotted once, below). The
+  // reminder is an ON-OPEN reminder — enabling the toggle mid-session must not fire
+  // it now (the copy promises a reminder shown when you open the app); it takes
+  // effect on the next open. Firing still also requires the toggle to be currently
+  // on (a mid-session disable stops it via shouldNotify's live `enabled`).
+  const enabledAtOpenRef = useRef<boolean | null>(null);
 
   // Honest due count over the memorized universe (a verse never self-tested is
   // due immediately); the notification is gated on this being > 0.
@@ -33,6 +41,13 @@ export function RevisionReminder() {
   useEffect(() => {
     // Both stores must be hydrated before we trust the setting and the due count.
     if (!settingsMounted || !memorizationMounted) return;
+
+    // Snapshot the persisted opt-in on the first settled pass after hydration.
+    if (enabledAtOpenRef.current === null) {
+      enabledAtOpenRef.current = !!settings.revisionRemindersEnabled;
+    }
+    // Only remind for an opt-in that was already on at open (not one toggled on now).
+    if (!enabledAtOpenRef.current) return;
 
     const fire = shouldNotify({
       installed: isInstalled(),
@@ -52,7 +67,7 @@ export function RevisionReminder() {
 
     const title = t("murajaah.notifyTitle");
     const options: NotificationOptions = {
-      body: t("murajaah.notifyBody").replace("{n}", String(due)),
+      body: t("murajaah.notifyBody").replace("{n}", isAr ? toArabicIndic(due) : String(due)),
       // A fixed tag replaces rather than stacks a prior reminder.
       tag: "murajaah-due",
       icon: "/icon.svg",
@@ -74,7 +89,7 @@ export function RevisionReminder() {
         // Some engines throw on the constructor; a failed reminder is harmless.
       }
     }
-  }, [settingsMounted, memorizationMounted, due, settings.revisionRemindersEnabled, t]);
+  }, [settingsMounted, memorizationMounted, due, settings.revisionRemindersEnabled, t, isAr]);
 
   return null;
 }
