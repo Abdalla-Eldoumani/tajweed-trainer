@@ -117,7 +117,7 @@ interface DrillSession {
 }
 
 type Phase = "picker" | "loading" | "error" | "typing" | "grade";
-type Feedback = "none" | "wrong";
+type Feedback = "none" | "wrong" | "correct";
 
 // The typing-recall drill: the FOURTH keyboard drill on /progress. Pick a
 // memorized verse, then type its words one at a time from memory. Each submission
@@ -281,12 +281,18 @@ export function TypingRecall() {
   // storage write, no content rewrite — TYPE-03). A match advances the prefix.
   const check = useCallback(() => {
     if (!session) return;
+    // A stray empty/whitespace submit (e.g. Enter on the auto-focused input) is a
+    // no-op, NOT a mistake — otherwise it would wrongly cap a fully-recalled verse.
+    if (!typed.trim()) return;
     const target = session.realWords[wordIndex]?.textUthmani ?? "";
     const ok = wordsMatch(typed, target, {
       diacriticInsensitive: settings.diacriticInsensitive ?? false,
     });
     if (ok) {
+      // advanceWord resets feedback to "none"; set "correct" after so the aria-live
+      // region announces the match to screen readers (cleared on the next keystroke).
       advanceWord();
+      setFeedback("correct");
     } else {
       setFeedback("wrong");
       setMistakeCount((c) => c + 1);
@@ -497,7 +503,7 @@ export function TypingRecall() {
                   value={typed}
                   onChange={(e) => {
                     setTyped(e.target.value);
-                    if (feedback === "wrong") setFeedback("none");
+                    if (feedback !== "none") setFeedback("none");
                   }}
                   aria-label={t("typing.inputLabel")}
                   placeholder={t("typing.prompt")}
@@ -514,6 +520,9 @@ export function TypingRecall() {
               <div aria-live="polite" className="min-h-[1.5rem] text-center">
                 {feedback === "wrong" && (
                   <p className="text-sm font-medium text-accent">{t("typing.wrong")}</p>
+                )}
+                {feedback === "correct" && (
+                  <p className="text-sm font-medium text-primary">{t("typing.correct")}</p>
                 )}
               </div>
               {feedback === "wrong" && (
