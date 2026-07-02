@@ -29,6 +29,7 @@ import {
   resetSessionPeeks,
   getNewVersesIntroducedToday,
   recordNewVerseIntroduced,
+  updateMemorizationStreak,
 } from "@/lib/storage";
 
 // Behavioral coverage of the storage funnel against the REAL module under jsdom
@@ -720,6 +721,136 @@ describe("dailyNewVersesTracking persistence: export/import round-trip + reset (
     recordNewVerseIntroduced(now);
     resetProgress();
     expect(getProgress().dailyNewVersesTracking).toEqual({ date: "", count: 0 });
+  });
+});
+
+describe("memorizationStreak: fixed-shape sanitizer, default { currentStreak: 0, longestStreak: 0, lastRevisionDate: '' } (STAT-03)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeMemorizationStreak. Like
+  // dailyNewVersesTracking this is a fixed-shape object (not a keyed map), so there
+  // is no prototype-key vector to test — only the shape / clamp / date-length
+  // bounds. It mirrors the practice `streaks` sanitizer but on a SEPARATE field.
+  const mem = (v: unknown) => sanitizeProgress({ memorizationStreak: v }).memorizationStreak;
+  const DEFAULT = { currentStreak: 0, longestStreak: 0, lastRevisionDate: "" };
+
+  it("defaults for a fresh or non-object store", () => {
+    expect(sanitizeProgress({}).memorizationStreak).toEqual(DEFAULT);
+    expect(mem(undefined)).toEqual(DEFAULT);
+    expect(mem("nope")).toEqual(DEFAULT);
+    expect(mem(123)).toEqual(DEFAULT);
+  });
+
+  it("passes a valid streak through unchanged", () => {
+    expect(mem({ currentStreak: 3, longestStreak: 5, lastRevisionDate: "2026-07-02" })).toEqual({
+      currentStreak: 3,
+      longestStreak: 5,
+      lastRevisionDate: "2026-07-02",
+    });
+  });
+
+  it("clamps the counters to [0, 100000] and bounds the date string", () => {
+    // huge / negative counters -> 0 (pickNumber rejects out-of-band to the fallback)
+    expect(mem({ currentStreak: 1e9, longestStreak: 2, lastRevisionDate: "2026-07-02" })).toEqual({
+      currentStreak: 0,
+      longestStreak: 2,
+      lastRevisionDate: "2026-07-02",
+    });
+    expect(mem({ currentStreak: -4, longestStreak: 2, lastRevisionDate: "2026-07-02" })).toEqual({
+      currentStreak: 0,
+      longestStreak: 2,
+      lastRevisionDate: "2026-07-02",
+    });
+    // a date longer than 10 chars, or a non-string date, both read back as ""
+    expect(mem({ currentStreak: 1, longestStreak: 1, lastRevisionDate: "2026-07-02T00:00:00Z" })).toEqual({
+      currentStreak: 1,
+      longestStreak: 1,
+      lastRevisionDate: "",
+    });
+    expect(mem({ currentStreak: 1, longestStreak: 1, lastRevisionDate: 5 })).toEqual({
+      currentStreak: 1,
+      longestStreak: 1,
+      lastRevisionDate: "",
+    });
+  });
+});
+
+describe("updateMemorizationStreak: day/timezone rollover, longest tracked (STAT-03)", () => {
+  // Compute the expected today/yesterday strings from the SAME injected `now` via
+  // toLocaleDateString("en-CA") so the assertions match the app clock in any TZ.
+  it("from a fresh store sets currentStreak 1 / longestStreak 1 / lastRevisionDate today", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    updateMemorizationStreak(now);
+    expect(getProgress().memorizationStreak).toEqual({ currentStreak: 1, longestStreak: 1, lastRevisionDate: today });
+  });
+
+  it("a same-day second call is a no-op (stays 1)", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    updateMemorizationStreak(now);
+    updateMemorizationStreak(now);
+    expect(getProgress().memorizationStreak).toEqual({ currentStreak: 1, longestStreak: 1, lastRevisionDate: today });
+  });
+
+  it("a call one day later increments to 2 and bumps longest", () => {
+    const day1 = new Date("2026-07-02T09:00:00");
+    const day2 = new Date("2026-07-03T09:00:00");
+    const today2 = day2.toLocaleDateString("en-CA");
+    updateMemorizationStreak(day1);
+    updateMemorizationStreak(day2);
+    expect(getProgress().memorizationStreak).toEqual({ currentStreak: 2, longestStreak: 2, lastRevisionDate: today2 });
+  });
+
+  it("a >1-day gap resets currentStreak to 1 while longestStreak keeps its running max", () => {
+    const day1 = new Date("2026-07-02T09:00:00");
+    const day2 = new Date("2026-07-03T09:00:00");
+    const gap = new Date("2026-07-10T09:00:00"); // a week later, not consecutive
+    const gapDay = gap.toLocaleDateString("en-CA");
+    updateMemorizationStreak(day1); // 1 / 1
+    updateMemorizationStreak(day2); // 2 / 2
+    updateMemorizationStreak(gap); // reset current to 1, longest stays at 2
+    expect(getProgress().memorizationStreak).toEqual({ currentStreak: 1, longestStreak: 2, lastRevisionDate: gapDay });
+  });
+});
+
+describe("updateMemorizationStreak never touches the practice streak (STAT-03)", () => {
+  const PRACTICE_DEFAULT = { currentStreak: 0, longestStreak: 0, lastPracticeDate: "" };
+
+  it("leaves the practice streak at its default after a revision-streak advance", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    expect(getProgress().streaks).toEqual(PRACTICE_DEFAULT);
+    updateMemorizationStreak(now);
+    expect(getProgress().streaks).toEqual(PRACTICE_DEFAULT);
+    // and the memorization streak DID advance, so this is not a vacuous pass
+    expect(getProgress().memorizationStreak?.currentStreak).toBe(1);
+  });
+
+  it("leaves a pre-existing practice streak unchanged", () => {
+    // Seed a practice streak via a raw import, then advance only the revision streak.
+    expect(
+      importProgress(JSON.stringify({ streaks: { currentStreak: 7, longestStreak: 9, lastPracticeDate: "2026-06-30" } })),
+    ).toBe(true);
+    updateMemorizationStreak(new Date("2026-07-02T09:00:00"));
+    expect(getProgress().streaks).toEqual({ currentStreak: 7, longestStreak: 9, lastPracticeDate: "2026-06-30" });
+  });
+});
+
+describe("memorizationStreak persistence: export/import round-trip + reset (STAT-03)", () => {
+  it("round-trips through export -> clear -> import", () => {
+    const day1 = new Date("2026-07-02T09:00:00");
+    const day2 = new Date("2026-07-03T09:00:00");
+    const today2 = day2.toLocaleDateString("en-CA");
+    updateMemorizationStreak(day1);
+    updateMemorizationStreak(day2);
+    const snapshot = exportProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+    expect(getProgress().memorizationStreak).toEqual({ currentStreak: 2, longestStreak: 2, lastRevisionDate: today2 });
+  });
+
+  it("resetProgress clears it to the default (it is learner data, not a setting)", () => {
+    updateMemorizationStreak(new Date("2026-07-02T09:00:00"));
+    resetProgress();
+    expect(getProgress().memorizationStreak).toEqual({ currentStreak: 0, longestStreak: 0, lastRevisionDate: "" });
   });
 });
 
