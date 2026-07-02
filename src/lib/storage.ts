@@ -6,6 +6,7 @@ import type {
   Theme,
   ReviewState,
   ReviewBox,
+  Sm2State,
   AnalyticsEvent,
   AnalyticsEventType,
   PlayerResume,
@@ -16,6 +17,11 @@ import type {
 import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
 import { emitProgressChanged } from "./progress-events";
+// The migration function and the SM-2 bounds live with the pure recall curve;
+// storage -> recall-scheduler is one-directional (the lib imports only a type),
+// so there is no cycle. Importing MIN_EF/MAX_EF/MAX_INTERVAL keeps the SM-2
+// bounds single-sourced rather than re-hardcoding them at the trust boundary.
+import { migrateLeitnerToSm2, INITIAL_EF, MIN_EF, MAX_EF, MAX_INTERVAL } from "./recall-scheduler";
 
 export const STORAGE_KEY = "tajweed-trainer-progress";
 
@@ -156,6 +162,18 @@ function pickNumber(value: unknown, fallback: number, min?: number, max?: number
   return value;
 }
 
+// Clamp (do not reject) a numeric field to [min, max]; a non-number or non-finite
+// value falls back. Unlike pickNumber, which rejects an out-of-band value to the
+// fallback, this pins a tampered out-of-band number to the nearest bound. That is
+// what the SM-2 bounds and the interval modifier want: a tampered easeFactor of
+// 1e9 becomes MAX_EF (5.0), not the 2.5 fallback, and a modifier of 5 becomes 2.0.
+function clampNumber(value: unknown, fallback: number, min: number, max: number): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+}
+
 // Resolve the theme on read/import. An explicit valid theme always wins; when it
 // is absent or unknown, migrate the legacy darkMode flag (true -> night) and fall
 // back to the safe default (vellum) for everything else. The darkMode branch must
@@ -250,20 +268,60 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
   return out;
 }
 
-// Memorized-verse review state. Mirrors sanitizeReviews but the key is a
-// verseKey (not a rule-quiz questionId), so it validates against
-// VERSE_KEY_PATTERN and caps at MAX_MEMORIZED, a separate keyspace that can
-// never collide with `reviews`. A stored object without this field reads back
-// as {} (lossless migration).
-function sanitizeMemorizationReviews(input: unknown): Record<string, ReviewState> {
+// Bounds one SM-2 recall state at the trust boundary. Every field is clamped,
+// not rejected wholesale (T-04-04): a tampered easeFactor / intervalDays pins to
+// its nearest bound rather than nuking the whole entry. Mirrors sanitizeReview's
+// style. easeFactor uses the algorithm's [MIN_EF, MAX_EF] band (a non-number ->
+// the neutral INITIAL_EF); intervalDays is a whole day count in [1, MAX_INTERVAL]
+// (a non-number -> 1); repetitions/timesSeen/timesCorrect/lapses match
+// sanitizeReview's [0, 100000] count ceiling. This function is idempotent: a
+// value already in band round-trips to itself, so re-sanitizing never drifts.
+function sanitizeSm2(input: Record<string, unknown>): Sm2State {
+  const nextDueDate =
+    typeof input.nextDueDate === "string" && input.nextDueDate.length <= 32 ? input.nextDueDate : "";
+  const lastReviewedDate =
+    typeof input.lastReviewedDate === "string" && input.lastReviewedDate.length <= 32 ? input.lastReviewedDate : "";
+  return {
+    repetitions: pickNumber(input.repetitions, 0, 0, 100000),
+    easeFactor: clampNumber(input.easeFactor, INITIAL_EF, MIN_EF, MAX_EF),
+    intervalDays: Math.round(clampNumber(input.intervalDays, 1, 1, MAX_INTERVAL)),
+    nextDueDate,
+    lastReviewedDate,
+    timesSeen: pickNumber(input.timesSeen, 0, 0, 100000),
+    timesCorrect: pickNumber(input.timesCorrect, 0, 0, 100000),
+    lapses: pickNumber(input.lapses, 0, 0, 100000),
+  };
+}
+
+// Memorized-verse review state, now SM-2 (see Sm2State). The key is a verseKey
+// (not a rule-quiz questionId), so it validates against VERSE_KEY_PATTERN and
+// caps at MAX_MEMORIZED, a separate keyspace that can never collide with
+// `reviews` (which stays Leitner, untouched). This is the single trust boundary
+// that BOTH bounds the new shape AND migrates legacy box-based entries, so the
+// migration runs on read (getProgress) and on import (importProgress) with no
+// separate code path. Per entry, inside the existing prototype-key skip +
+// verseKey check + cap:
+//   - a numeric easeFactor => already SM-2: pass through sanitizeSm2 (idempotent).
+//   - else a valid Leitner box => bound the preserved fields via sanitizeReview
+//     first (so the migration cannot become a bounds-bypass, T-04-06), then
+//     migrateLeitnerToSm2 (nextDueDate copied verbatim; box-5 does not regress).
+//   - else drop it (a memorized verse with no entry is due anyway, SCHED-03).
+// A tampered entry carrying BOTH easeFactor and box takes the SM-2 branch. A
+// stored object without this field reads back as {} (lossless migration).
+function sanitizeMemorizationReviews(input: unknown): Record<string, Sm2State> {
   if (!isObject(input)) return {};
-  const out: Record<string, ReviewState> = {};
+  const out: Record<string, Sm2State> = {};
   const entries = Object.entries(input).slice(0, MAX_MEMORIZED);
   for (const [verseKey, value] of entries) {
     if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
     if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
-    const review = sanitizeReview(value);
-    if (review) out[verseKey] = review;
+    if (!isObject(value)) continue;
+    if (typeof value.easeFactor === "number") {
+      out[verseKey] = sanitizeSm2(value);
+    } else if (VALID_BOXES.includes(value.box as ReviewBox)) {
+      const review = sanitizeReview(value);
+      if (review) out[verseKey] = migrateLeitnerToSm2(review);
+    }
   }
   return out;
 }
@@ -742,11 +800,11 @@ export function setReview(questionId: string, state: ReviewState): void {
 // separate memorizationReviews map (keyed by verseKey, never colliding with the
 // rule-quiz reviews keyspace). The key is validated so a tampered call can't
 // write a non-verseKey entry.
-export function getMemorizationReviews(): Record<string, ReviewState> {
+export function getMemorizationReviews(): Record<string, Sm2State> {
   return getProgress().memorizationReviews;
 }
 
-export function setMemorizationReview(verseKey: string, state: ReviewState): void {
+export function setMemorizationReview(verseKey: string, state: Sm2State): void {
   if (!isBrowser()) return;
   if (!VERSE_KEY_PATTERN.test(verseKey)) return;
   const progress = getProgress();

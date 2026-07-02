@@ -6,6 +6,7 @@ import {
   getProgress,
   getSettings,
   setSettings,
+  DEFAULT_SETTINGS,
   setMemorizedVerses,
   toggleMemorizedVerse,
   getVerseNote,
@@ -103,11 +104,139 @@ describe("prototype-pollution-key guard (ASVS: tampered backup cannot reach Obje
     // The legitimate entries alongside the dangerous keys survive.
     expect(Object.keys(p.reviews)).toEqual(["1:1"]);
     expect(Object.keys(p.memorizationReviews)).toEqual(["2:255"]);
+    // The surviving memorizationReviews entry migrated from its box-3 Leitner
+    // shape to an SM-2 state (box 3 -> repetitions 3, intervalDays 7, EF 2.5).
+    expect(p.memorizationReviews["2:255"]).toMatchObject({ repetitions: 3, easeFactor: 2.5, intervalDays: 7 });
     expect(Object.keys(p.modules)).toEqual(["makharij"]);
     expect(p.readSections["makharij"]).toEqual(["intro"]);
     expect(p.verseNotes["2:255"]).toBe("a real note");
     expect(p.entryTags?.["2:1"]).toEqual(["tag"]);
     expect(p.lastReadBySurah?.[2]).toMatchObject({ verseKey: "2:255", page: 3 });
+  });
+});
+
+describe("memorizationReviews: lossless Leitner -> SM-2 migration (SCHED-02)", () => {
+  // The migration map from the RESEARCH proof table: box N -> intervalDays.
+  const LEITNER: Record<number, number> = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30 };
+
+  it("migrates each box 1..5 to the exact SM-2 map, preserving nextDueDate / lastSeenDate / counts", () => {
+    for (let box = 1; box <= 5; box++) {
+      const state = sanitizeProgress({
+        memorizationReviews: {
+          "2:255": {
+            box,
+            nextDueDate: "2026-09-01",
+            lastSeenDate: "2026-06-01",
+            timesSeen: 8,
+            timesCorrect: 7,
+          },
+        },
+      }).memorizationReviews["2:255"];
+      expect(state).toEqual({
+        repetitions: box,
+        easeFactor: 2.5,
+        intervalDays: LEITNER[box],
+        nextDueDate: "2026-09-01", // copied verbatim (migration never changes when a verse is next due)
+        lastReviewedDate: "2026-06-01", // old lastSeenDate carried over
+        timesSeen: 8,
+        timesCorrect: 7,
+        lapses: 0,
+      });
+    }
+  });
+
+  it("is idempotent: re-sanitizing a migrated entry is deep-equal", () => {
+    const once = sanitizeProgress({
+      memorizationReviews: {
+        "2:255": { box: 3, nextDueDate: "2026-09-01", lastSeenDate: "2026-06-01", timesSeen: 4, timesCorrect: 3 },
+      },
+    }).memorizationReviews;
+    const twice = sanitizeProgress({ memorizationReviews: once }).memorizationReviews;
+    expect(twice).toEqual(once);
+  });
+
+  it("a box-5 entry keeps its nextDueDate and does not regress to a box-1 interval", () => {
+    const state = sanitizeProgress({
+      memorizationReviews: {
+        "2:255": { box: 5, nextDueDate: "2026-09-01", lastSeenDate: "2026-06-01", timesSeen: 8, timesCorrect: 8 },
+      },
+    }).memorizationReviews["2:255"];
+    expect(state.nextDueDate).toBe("2026-09-01"); // verbatim, not recomputed
+    expect(state.intervalDays).toBe(30); // not 1 -> no regression on a pass
+    expect(state.repetitions).toBe(5);
+  });
+
+  it("an already-SM-2 entry passes through bounded and unchanged", () => {
+    const entry = {
+      repetitions: 5,
+      easeFactor: 2.5,
+      intervalDays: 30,
+      nextDueDate: "2026-09-01",
+      lastReviewedDate: "2026-06-01",
+      timesSeen: 8,
+      timesCorrect: 7,
+      lapses: 0,
+    };
+    expect(sanitizeProgress({ memorizationReviews: { "2:255": entry } }).memorizationReviews["2:255"]).toEqual(entry);
+  });
+
+  it("clamps a tampered SM-2 entry to its bounds (does not reject wholesale)", () => {
+    const state = sanitizeProgress({
+      memorizationReviews: {
+        "2:255": {
+          easeFactor: 1e9,
+          intervalDays: 1e9,
+          repetitions: -5,
+          timesSeen: 3,
+          timesCorrect: 2,
+          lapses: 0,
+          nextDueDate: "",
+          lastReviewedDate: "",
+        },
+      },
+    }).memorizationReviews["2:255"];
+    expect(state.easeFactor).toBe(5.0); // clamped to MAX_EF, not the 2.5 fallback
+    expect(state.intervalDays).toBe(36500); // clamped to MAX_INTERVAL, not the 1 fallback
+    expect(state.repetitions).toBe(0); // clamped up from -5
+  });
+
+  it("a tampered entry with BOTH easeFactor and box takes the SM-2 branch", () => {
+    const state = sanitizeProgress({
+      memorizationReviews: {
+        "2:255": { easeFactor: 2.0, intervalDays: 12, box: 1 },
+      },
+    }).memorizationReviews["2:255"];
+    expect(state.easeFactor).toBe(2.0); // SM-2 branch, not migrated from box 1
+    expect(state.intervalDays).toBe(12); // not the box-1 interval of 1
+  });
+
+  it("drops an entry that is neither SM-2 nor a valid box (a no-entry verse is due anyway)", () => {
+    const out = sanitizeProgress({
+      memorizationReviews: {
+        "2:255": { box: 9, foo: "bar" }, // box out of range, no numeric easeFactor
+        "3:1": { nothing: true },
+      },
+    }).memorizationReviews;
+    expect(out).toEqual({});
+  });
+
+  it("upgrades a pre-2.2 box-based backup on importProgress", () => {
+    const backup = `{
+      "memorizationReviews": {
+        "2:255": { "box": 4, "nextDueDate": "2026-09-01", "lastSeenDate": "2026-06-01", "timesSeen": 5, "timesCorrect": 4 }
+      }
+    }`;
+    expect(importProgress(backup)).toBe(true);
+    expect(getProgress().memorizationReviews["2:255"]).toEqual({
+      repetitions: 4,
+      easeFactor: 2.5,
+      intervalDays: 14,
+      nextDueDate: "2026-09-01",
+      lastReviewedDate: "2026-06-01",
+      timesSeen: 5,
+      timesCorrect: 4,
+      lapses: 0,
+    });
   });
 });
 

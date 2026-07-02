@@ -462,10 +462,12 @@ export interface TajweedProgress {
   reviews: Record<string, ReviewState>;
   // Stable verseKeys ("surah:ayah") the user has marked memorized.
   memorizedVerses: string[];
-  // Per-verseKey Leitner state for memorized-verse review. A separate keyspace
-  // from `reviews` (keyed by rule-quiz questionId) so a verseKey never collides
-  // with a questionId and mixes two unrelated review timelines.
-  memorizationReviews: Record<string, ReviewState>;
+  // Per-verseKey SM-2 recall state for memorized-verse review. A separate
+  // keyspace from `reviews` (keyed by rule-quiz questionId, still Leitner) so a
+  // verseKey never collides with a questionId and mixes two unrelated review
+  // timelines. Legacy box-based entries migrate to Sm2State losslessly in the
+  // storage sanitizer (see sanitizeMemorizationReviews / migrateLeitnerToSm2).
+  memorizationReviews: Record<string, Sm2State>;
   // moduleId -> set of section anchor slugs the user has scrolled past.
   readSections: Record<string, string[]>;
   // verseKey ("surah:ayah") -> the user's own private study note. Local-only,
