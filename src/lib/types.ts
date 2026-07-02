@@ -421,6 +421,23 @@ export interface ReviewState {
   timesCorrect: number;
 }
 
+// SuperMemo SM-2 self-graded recall state for memorized-verse review. The four
+// rating buttons after a reveal map to a quality grade (see recall-scheduler.ts).
+// This is a distinct model from the Leitner `ReviewState` above: `ReviewState`
+// stays for the rule-quiz `reviews` map; only `memorizationReviews` moves to SM-2.
+export type RecallGrade = "again" | "hard" | "good" | "easy";
+
+export interface Sm2State {
+  repetitions: number;      // consecutive successes before this review; reset to 0 on fail
+  easeFactor: number;       // >= 1.3
+  intervalDays: number;     // PURE base interval in days (modifier NOT baked in)
+  nextDueDate: string;      // ISO YYYY-MM-DD; due when today >= this (empty => due)
+  lastReviewedDate: string; // ISO YYYY-MM-DD (was Leitner lastSeenDate)
+  timesSeen: number;
+  timesCorrect: number;
+  lapses: number;           // count of again / q<3 events
+}
+
 export type PlayerMode = "single" | "continuous";
 export type PlaybackStatus = "idle" | "loading" | "playing" | "paused";
 
