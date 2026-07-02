@@ -21,9 +21,36 @@ export default defineConfig({
       // Vitest 4 defaults coverage.all to true, so the include is scoped to the
       // pure-logic tree; a broad include would surface untested UI at 0%.
       include: ["src/lib/**/*.ts"],
-      exclude: ["src/lib/types.ts", "src/lib/quran-api.ts", "**/*.test.ts"],
-      // Thresholds are set in the coverage-gate plan (wave 4) after the migrated
-      // suite is measured; adding an unmet threshold now would fail every run.
+      exclude: [
+        "src/lib/types.ts", // type-only, 0 executable lines
+        "src/lib/quran-api.ts", // thin fetch/cache/retry network wrapper; behavior is Phase 3 e2e
+        "src/lib/motion.ts", // View Transitions API + DOM; behavior is Phase 3 e2e
+        "src/lib/search.ts", // out-of-migration-scope peripheral, no dedicated test
+        "src/lib/question-pool.ts", // out-of-migration-scope peripheral, no dedicated test
+        "src/lib/practice-scores.ts", // out-of-migration-scope peripheral, no dedicated test
+        "src/lib/reading-resources.ts", // out-of-migration-scope peripheral, no dedicated test
+        "**/*.test.ts",
+      ],
+      // Thresholds are set from the measured baseline (npm run coverage), not
+      // aspirational round numbers. The migrated suite measured, over the
+      // src/lib/** set: statements 69.79 / branches 65.04 / functions 72.44 /
+      // lines 73.01. Global floors sit ~2 points below the measured aggregate;
+      // the src/lib/** glob is a stricter floor that stays a point under the
+      // measured lib coverage so it can ratchet up later without breaking CI on
+      // a single added line. Vitest 4 glob thresholds do not inherit the
+      // top-level perFile, so both blocks check their aggregate.
+      thresholds: {
+        statements: 67,
+        branches: 61,
+        functions: 70,
+        lines: 71,
+        "src/lib/**": {
+          statements: 68,
+          branches: 62,
+          functions: 71,
+          lines: 72,
+        },
+      },
     },
   },
 });
