@@ -434,6 +434,43 @@ describe("reviewIntervalModifier setting: default 1.0, clamp [0.5, 2.0] (SCHED-0
   });
 });
 
+describe("diacriticInsensitive setting: default false, boolean coercion (TYPE-02)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeSettings so no new
+  // export is added; sanitizeSettings itself stays module-private. Byte-for-byte
+  // the showTransliteration / showWordByWord boolean-coercion precedent.
+  const di = (v: unknown) => sanitizeProgress({ settings: { diacriticInsensitive: v } }).settings.diacriticInsensitive;
+
+  it("defaults to false (canonical default and absent value = exact match per TYPE-01)", () => {
+    expect(DEFAULT_SETTINGS.diacriticInsensitive).toBe(false);
+    expect(sanitizeProgress({}).settings.diacriticInsensitive).toBe(false);
+    expect(di(undefined)).toBe(false);
+  });
+
+  it("coerces a non-boolean to false and passes a real boolean through", () => {
+    expect(di("yes")).toBe(false); // string -> false
+    expect(di(1)).toBe(false); // number -> false
+    expect(di(null)).toBe(false); // null -> false
+    expect(di(true)).toBe(true); // real boolean kept
+    expect(di(false)).toBe(false); // real boolean kept
+  });
+
+  it("round-trips a true value through export/import", () => {
+    setSettings({ ...getSettings(), diacriticInsensitive: true });
+    const snapshot = exportProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+    expect(getSettings().diacriticInsensitive).toBe(true);
+  });
+
+  it("survives resetProgress (it is a preference, kept like reciter / theme / reviewIntervalModifier)", () => {
+    // resetProgress clears learner data but keeps settings, so a toggled value is
+    // retained across a reset; a fresh store defaults it to false (asserted above).
+    setSettings({ ...getSettings(), diacriticInsensitive: true });
+    resetProgress();
+    expect(getSettings().diacriticInsensitive).toBe(true);
+  });
+});
+
 describe("sessionPeekUsed + peekBudget (BLIND-03/BLIND-04)", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSessionPeeks /
   // sanitizeSettings and the shipped helpers; nothing here re-derives a sanitizer.
