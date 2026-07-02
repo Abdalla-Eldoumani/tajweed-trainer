@@ -41,6 +41,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   showWordByWord: false,
   playerMinimized: false,
   reviewIntervalModifier: 1.0,
+  peekBudget: 3,
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
@@ -57,6 +58,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   readSections: {},
   verseNotes: {},
   entryTags: {},
+  sessionPeekUsed: {},
   analytics: [],
   bookmarks: [],
   lastRead: null,
@@ -119,6 +121,13 @@ const MAX_TAG_ENTRIES = 2000;
 const MAX_TAGS_PER_ENTRY = 12;
 const MAX_TAG_LENGTH = 40;
 const MAX_READ_SECTIONS_PER_MODULE = 50;
+// Per-session peek/hint counts, keyed by verseKey. These are tamper-defense
+// ceilings, not real limits: the peek budget caps real use at <= 10 distinct
+// verses per session, so a legitimate map is tiny. MAX_PEEK_ENTRIES bounds the
+// map against a huge injected object; MAX_PEEK_PER_VERSE bounds a single count
+// (only "> 0" is meaningful — a peeked verse is capped at "hard").
+const MAX_PEEK_ENTRIES = 500;
+const MAX_PEEK_PER_VERSE = 99;
 const SECTION_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,80}$/;
 const MAX_ANALYTICS = 1000;
 const VALID_ANALYTICS_TYPES: readonly AnalyticsEventType[] = [
@@ -227,6 +236,11 @@ function sanitizeSettings(input: unknown): UserSettings {
     // reject, so a tampered 5 becomes 2.0. This scales only the memorized-verse
     // due date, never the SM-2 easeFactor.
     reviewIntervalModifier: clampNumber(input.reviewIntervalModifier, 1.0, 0.5, 2.0),
+    // Per-session recall peek/hint budget (BLIND-03). Clamp to [1, 10] rather
+    // than reject, so a tampered 999 pins to 10 (mirroring reviewIntervalModifier);
+    // Math.round because peeks are whole. A non-number / NaN / absent value falls
+    // back to 3. Kept by resetProgress (it preserves settings).
+    peekBudget: Math.round(clampNumber(input.peekBudget, 3, 1, 10)),
   };
 }
 
@@ -438,6 +452,29 @@ function sanitizeEntryTags(input: unknown): Record<string, string[]> {
   return out;
 }
 
+// Per-session peek/hint counts, keyed by verseKey. Mirrors sanitizeVerseNotes /
+// sanitizeEntryTags exactly, only the value is numeric: the dangerous prototype
+// keys are skipped, keys must match VERSE_KEY_PATTERN, each count is clamped to
+// [0, MAX_PEEK_PER_VERSE] and rounded to a whole peek, a count < 1 is dropped (a
+// zero / NaN / non-number peek is "no peek"), and the whole map caps at
+// MAX_PEEK_ENTRIES. A stored object without this field reads back as {} (lossless
+// migration).
+function sanitizeSessionPeeks(input: unknown): Record<string, number> {
+  if (!isObject(input)) return {};
+  const out: Record<string, number> = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    const n = Math.round(clampNumber(value, 0, 0, MAX_PEEK_PER_VERSE));
+    if (n < 1) continue;
+    out[verseKey] = n;
+    count += 1;
+    if (count >= MAX_PEEK_ENTRIES) break;
+  }
+  return out;
+}
+
 function sanitizeMemorized(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const out = new Set<string>();
@@ -615,6 +652,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     readSections: sanitizeReadSections(input.readSections),
     verseNotes: sanitizeVerseNotes(input.verseNotes),
     entryTags: sanitizeEntryTags(input.entryTags),
+    sessionPeekUsed: sanitizeSessionPeeks(input.sessionPeekUsed),
     analytics: sanitizeAnalytics(input.analytics),
     playerResume: sanitizePlayerResume(input.playerResume),
     bookmarks: sanitizeBookmarks(input.bookmarks),
@@ -964,6 +1002,44 @@ export function setTags(verseKey: string, tags: string[]): void {
     map[verseKey] = normalized;
   }
   progress.entryTags = map;
+  setProgress(progress);
+}
+
+// Per-session peek/hint state funnel. The map lives on the consolidated progress
+// model (field `sessionPeekUsed`, not an ad-hoc key) so export / import / reset
+// cover it; the default-{} in DEFAULT_PROGRESS makes resetProgress clear it while
+// keeping the peekBudget setting. All three helpers write through setProgress, so
+// the change bus fires and every mounted consumer re-reads. Lossless migration: a
+// store written before this field reads back as {} (the field is `?? {}`).
+export function getSessionPeeks(): Record<string, number> {
+  return getProgress().sessionPeekUsed ?? {};
+}
+
+// Record one peek/hint for a verse this session, through the change bus. A
+// tampered verseKey is rejected. A brand-new key past MAX_PEEK_ENTRIES is a no-op
+// (mirrors setVerseNote's cap-on-new); an existing key's count increments, clamped
+// at MAX_PEEK_PER_VERSE.
+export function recordPeek(verseKey: string): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const progress = getProgress();
+  const map = progress.sessionPeekUsed ?? {};
+  const isNew = !(verseKey in map);
+  if (isNew && Object.keys(map).length >= MAX_PEEK_ENTRIES) return;
+  map[verseKey] = Math.min((map[verseKey] ?? 0) + 1, MAX_PEEK_PER_VERSE);
+  progress.sessionPeekUsed = map;
+  setProgress(progress);
+}
+
+// Clear the per-session peek map (the review's finish transition calls this;
+// resetProgress also clears it via the default clone). Early-returns when the map
+// is already empty, so a change-bus re-entry on the finished transition cannot
+// loop (Pitfall 4) and a redundant reset is a no-op.
+export function resetSessionPeeks(): void {
+  if (!isBrowser()) return;
+  if (Object.keys(getSessionPeeks()).length === 0) return;
+  const progress = getProgress();
+  progress.sessionPeekUsed = {};
   setProgress(progress);
 }
 

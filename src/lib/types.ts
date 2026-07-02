@@ -406,6 +406,13 @@ export interface UserSettings {
   // Collapsed state of the mini-player. Minimizing keeps playback running and
   // the pill draggable; only the explicit stop control dismisses the player.
   playerMinimized?: boolean;
+  // Per-session peek/hint budget for the memorized-verse recall review
+  // (BLIND-03): how many "I'm stuck, show me" hints the learner may spend in one
+  // session before the hint control disables. Default 3, clamped by
+  // sanitizeSettings to [1, 10]. Additive optional (mirrors reviewIntervalModifier?)
+  // so old backups without it still validate. Scoped to the recall review; the
+  // cover-page reveal is free and never spends this budget.
+  peekBudget?: number;
 }
 
 export interface ModuleProgress {
@@ -486,6 +493,13 @@ export interface TajweedProgress {
   // set deletes the entry; bounded in count, per-entry tag count, and per-tag
   // length by the storage sanitizer. Additive optional for lossless migration.
   entryTags?: Record<string, string[]>;
+  // verseKey ("surah:ayah") -> the number of peeks/hints spent on that verse in
+  // the current recall-review session. Local-only, never transmitted; cleared on
+  // the review's finish transition and by resetProgress, but survives a reload
+  // mid-session so the budget stays consumed and peeked verses stay capped at
+  // "hard" (BLIND-04). Bounded and prototype-guarded by the storage sanitizer.
+  // Additive optional for lossless migration.
+  sessionPeekUsed?: Record<string, number>;
   analytics: AnalyticsEvent[];
   // Last playback position, so the mini-player can resume after a reload.
   playerResume?: PlayerResume | null;
