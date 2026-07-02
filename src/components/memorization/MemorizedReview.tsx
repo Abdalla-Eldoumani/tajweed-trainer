@@ -102,6 +102,7 @@ export function MemorizedReview() {
   const [reviewed, setReviewed] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const continueRef = useRef<HTMLButtonElement | null>(null);
+  const revealRef = useRef<HTMLButtonElement | null>(null);
 
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
@@ -147,11 +148,16 @@ export function MemorizedReview() {
     [currentKey, recordReview, activeIndex],
   );
 
-  // Move focus to the grade controls once the verse is revealed so the keyboard
-  // path lands on a grade button (the Good/primary one), not back on Reveal.
+  // Keep the keyboard loop closed across the whole session: while a verse is up,
+  // focus lands on Reveal before it is revealed and on the Good grade button after,
+  // so grading (which unmounts the focused grade button and advances to the next
+  // verse) never drops focus to <body>. Skipped on the pre-start and finished
+  // states, which own their own controls (Start / Try Again).
   useEffect(() => {
+    if (!started || finished) return;
     if (revealed) continueRef.current?.focus();
-  }, [revealed, activeIndex]);
+    else revealRef.current?.focus();
+  }, [revealed, activeIndex, started, finished]);
 
   // Keys 1-4 grade the revealed verse (again/hard/good/easy), matching the
   // button order, so a keyboard user never reaches for the mouse. Active only
@@ -306,7 +312,7 @@ export function MemorizedReview() {
       </div>
 
       {!revealed ? (
-        <Button onClick={() => setRevealed(true)} size="lg" className="w-full">
+        <Button ref={revealRef} onClick={() => setRevealed(true)} size="lg" className="w-full">
           {t("mushaf.memorizeReveal")}
         </Button>
       ) : (
