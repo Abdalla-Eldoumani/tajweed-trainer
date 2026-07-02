@@ -47,13 +47,18 @@ function compareVerseKeys(a: string, b: string): number {
   return sa - sb || aa - ab;
 }
 
-// The visual-word count of the tajweed HTML computed the way TajweedFollowText
-// groups it: drop the trailing ayah-number <span class="end">…</span> (which its
-// grouping excludes), strip the remaining <tajweed> tags, and split the resulting
-// text on whitespace. This is READ-ONLY over the SAME sanitized markup — no edit,
-// no recolor — used ONLY to choose the reveal tier: it equals the real-word count
-// (canAlign true) => Tier 1 colored window reveal; a mismatch (rare tokenization
-// divergence) => Tier 2 plain verified-word fallback (per the 06-03 W1 note).
+// A CONSERVATIVE visual-word count of the tajweed HTML: drop the trailing
+// ayah-number <span class="end">…</span>, strip the remaining tags, and split the
+// text on whitespace. This is NOT byte-identical to TajweedFollowText's DOM
+// grouping (which merges adjacent letter-span siblings into one word); this
+// tag-strip over-counts when letter spans are whitespace-separated, so it is
+// always >= the renderer's group count. That direction is deliberate: it is used
+// ONLY to PREFER the safe tier — equal to the real-word count => try Tier 1
+// (colored window reveal); any mismatch => Tier 2 plain verified-word fallback.
+// If this ever picked Tier 1 while the renderer's own grouping disagreed,
+// TajweedFollowText fails safe (revealRange + canAlign-fail blurs EVERY word, so
+// the answer is never shown), so the tier choice can never leak the hidden head.
+// READ-ONLY over the SAME sanitized markup — no edit, no recolor.
 function visualWordCount(tajweedHtml: string): number {
   const safe = sanitizeTajweedHtml(tajweedHtml);
   const withoutEnd = safe.replace(/<span class="end">[\s\S]*?<\/span>/g, " ");

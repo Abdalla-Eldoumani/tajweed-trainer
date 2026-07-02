@@ -228,7 +228,20 @@ export function TajweedFollowText({
     // visual word maps to which segment, so render the plain markup unmarked — no
     // highlight and no per-word blur (the reveal caller falls back to the
     // whole-verse blur). A wrong-word highlight or blur is worse than none.
-    if (!canAlign(segmentCount, groups.length)) return;
+    if (!canAlign(segmentCount, groups.length)) {
+      // Fail-safe for reveal-window mode: revealRange carries a hidden answer, and
+      // on a count mismatch its indices cannot be trusted to map to these visual
+      // groups. Rather than fall through to the plain markup (which would show
+      // EVERY word — including the answer — if the caller mis-detected alignment),
+      // blur every word here. The caller's own text fallback then supplies a
+      // usable chunk. Follow-along / blurUnrevealed carry no answer, so they keep
+      // the plain-markup fallback; this changes only reveal-window mode.
+      if (revealRange) {
+        container.classList.add(REVEAL_ACTIVE_CLASS);
+        for (const group of groups) wrapWord(group, BLURRED_CLASS);
+      }
+      return;
+    }
 
     // Reduced motion is handled entirely in CSS: the wash/underline and the blur
     // are state changes whose transitions the prefers-reduced-motion block drops.
