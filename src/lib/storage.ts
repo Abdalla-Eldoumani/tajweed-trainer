@@ -39,6 +39,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   translationId: 20,
   tafsirId: 169,
   showWordByWord: false,
+  diacriticInsensitive: false,
   playerMinimized: false,
   reviewIntervalModifier: 1.0,
   peekBudget: 3,
@@ -225,6 +226,13 @@ function sanitizeSettings(input: unknown): UserSettings {
     tafsirId: pickNumber(input.tafsirId, DEFAULT_SETTINGS.tafsirId ?? 169, 1, 1_000_000),
     showWordByWord:
       typeof input.showWordByWord === "boolean" ? input.showWordByWord : (DEFAULT_SETTINGS.showWordByWord ?? false),
+    // Comparison-only typing-recall toggle (TYPE-02). Boolean coercion mirroring
+    // showWordByWord: a tampered non-boolean falls back to the default false so a
+    // restored backup can never carry a non-boolean here. Changes nothing stored.
+    diacriticInsensitive:
+      typeof input.diacriticInsensitive === "boolean"
+        ? input.diacriticInsensitive
+        : (DEFAULT_SETTINGS.diacriticInsensitive ?? false),
     // Validated for shape only; the live viewport clamp runs at mount, since
     // storage cannot know the viewport a value was saved on.
     playerPosition: sanitizePlayerPosition(input.playerPosition),

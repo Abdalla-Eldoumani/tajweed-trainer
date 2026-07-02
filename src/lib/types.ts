@@ -393,6 +393,11 @@ export interface UserSettings {
   translationId?: number;
   tafsirId?: number;
   showWordByWord?: boolean;
+  // Comparison-only toggle for the typing-recall drill: when true, the typed word
+  // is checked against the stored verse after stripping diacritics from both
+  // copies. Default false = exact match (per TYPE-01). Additive optional so old
+  // backups still validate. NEVER changes what is stored or rendered.
+  diacriticInsensitive?: boolean;
   // The balanced SM-2 review-interval modifier (SCHED-04): scales the memorized-
   // verse next-due gaps. Default 1.0, clamped by sanitizeSettings to [0.5, 2.0]
   // (higher = longer gaps). Additive optional (mirrors translationId?) so old
