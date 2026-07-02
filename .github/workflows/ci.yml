@@ -32,7 +32,9 @@ jobs:
         run: npx tsc --noEmit
       - name: Lint
         run: npm run lint
-      - name: Verify scripts
-        run: npm run verify:scripts
+      - name: Test (Vitest + coverage)
+        run: npm run coverage
+      - name: Data audits
+        run: npm run verify:audits
       - name: Build
         run: npm run build
