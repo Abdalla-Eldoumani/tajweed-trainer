@@ -72,6 +72,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   warshNarrationAck: false,
   lastBackupAt: "",
   dailyNewVersesTracking: { date: "", count: 0 },
+  memorizationStreak: { currentStreak: 0, longestStreak: 0, lastRevisionDate: "" },
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -659,6 +660,28 @@ function sanitizeDailyNewVerses(input: unknown): { date: string; count: number }
   };
 }
 
+// The memorization REVISION streak (STAT-03). A fixed-shape object, NOT a keyed
+// map, so there is NO attacker-controlled key and NO prototype-pollution-key
+// guard is needed (mirrors sanitizeDailyNewVerses and the `streaks` sanitizer).
+// Both counters are clamped to [0, 100000] like the practice streak; a tampered
+// out-of-band value falls back to 0 via pickNumber. `lastRevisionDate` is bounded
+// to a <=10-char string (a YYYY-MM-DD day, or "" when never set). A malformed or
+// absent value reads back as the default { currentStreak: 0, longestStreak: 0,
+// lastRevisionDate: "" }.
+function sanitizeMemorizationStreak(
+  input: unknown,
+): { currentStreak: number; longestStreak: number; lastRevisionDate: string } {
+  if (!isObject(input)) return { currentStreak: 0, longestStreak: 0, lastRevisionDate: "" };
+  return {
+    currentStreak: pickNumber(input.currentStreak, 0, 0, 100000),
+    longestStreak: pickNumber(input.longestStreak, 0, 0, 100000),
+    lastRevisionDate:
+      typeof input.lastRevisionDate === "string" && input.lastRevisionDate.length <= 10
+        ? input.lastRevisionDate
+        : "",
+  };
+}
+
 export function sanitizeProgress(input: unknown): TajweedProgress {
   if (!isObject(input)) return cloneDefaultProgress();
   const modules: Record<string, ModuleProgress> = {};
@@ -700,6 +723,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     warshNarrationAck: typeof input.warshNarrationAck === "boolean" ? input.warshNarrationAck : false,
     lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
     dailyNewVersesTracking: sanitizeDailyNewVerses(input.dailyNewVersesTracking),
+    memorizationStreak: sanitizeMemorizationStreak(input.memorizationStreak),
   };
 }
 
@@ -1258,5 +1282,40 @@ export function updateStreak(): void {
   }
 
   progress.streaks.lastPracticeDate = today;
+  setProgress(progress);
+}
+
+// The memorization REVISION streak roller (STAT-03). A structural mirror of
+// updateStreak, but over `memorizationStreak` / `lastRevisionDate` — it NEVER
+// reads or writes `progress.streaks`, so grading a recall and finishing a
+// practice quiz keep two independent streaks. Idempotent per local day: the
+// first grade of the day advances the streak, later grades are no-ops. Day
+// boundary is the app-wide toLocaleDateString("en-CA"), so it rolls over
+// correctly across day and timezone boundaries. `now` is injected so tests
+// control the clock (the caller in recordReview uses the default new Date()).
+export function updateMemorizationStreak(now: Date = new Date()): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  const today = now.toLocaleDateString("en-CA");
+  const streak = progress.memorizationStreak ?? { currentStreak: 0, longestStreak: 0, lastRevisionDate: "" };
+
+  if (streak.lastRevisionDate === today) return;
+
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
+
+  if (streak.lastRevisionDate === yesterdayStr) {
+    streak.currentStreak += 1;
+  } else {
+    streak.currentStreak = 1;
+  }
+
+  if (streak.currentStreak > streak.longestStreak) {
+    streak.longestStreak = streak.currentStreak;
+  }
+
+  streak.lastRevisionDate = today;
+  progress.memorizationStreak = streak;
   setProgress(progress);
 }

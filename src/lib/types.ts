@@ -553,6 +553,14 @@ export interface TajweedProgress {
   // prototype-key guard applies. Additive optional for lossless migration;
   // cleared by reset via the default clone.
   dailyNewVersesTracking?: { date: string; count: number };
+  // The memorization REVISION streak (STAT-03): consecutive local days on which
+  // the learner graded at least one memorized-verse recall. SEPARATE from
+  // `streaks` above (the practice-quiz streak) — the two never read or write each
+  // other. `lastRevisionDate` is the local day (YYYY-MM-DD, the
+  // toLocaleDateString("en-CA") convention). A fixed-shape object (NOT a keyed
+  // map), so no prototype-key guard applies. Additive optional for lossless
+  // migration; cleared by reset via the default clone.
+  memorizationStreak?: { currentStreak: number; longestStreak: number; lastRevisionDate: string };
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".
