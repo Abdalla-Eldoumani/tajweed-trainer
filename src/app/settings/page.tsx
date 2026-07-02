@@ -12,7 +12,7 @@ import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
 import type { Recitation, TranslationResource, Theme } from "@/lib/types";
 import { withViewTransition } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import { cn, toArabicIndic } from "@/lib/utils";
 
 // Literal anchor hexes per theme (DESIGN_SYSTEM_V2.md), used only to paint the
 // preview swatch: ground, ink, gold. These cannot be var(--bg)/var(--text)/
@@ -402,6 +402,30 @@ export default function SettingsPage() {
           </label>
 
           <p className="text-xs text-text-muted">{t("settings.resourceOnline")}</p>
+        </div>
+      </Card>
+
+      {/* Review spacing (SM-2 balanced interval modifier) */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.reviewIntervalModifier")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.reviewIntervalModifierHelp")}</p>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("settings.reviewIntervalModifier")}>
+          {[0.5, 0.75, 1.0, 1.5, 2.0].map((mod) => {
+            const active = (settings.reviewIntervalModifier ?? 1.0) === mod;
+            const label = `${isAr ? toArabicIndic(mod) : mod}×`;
+            return (
+              <button
+                key={mod}
+                onClick={() => updateSettings({ reviewIntervalModifier: mod })}
+                className={segChip(active)}
+                role="radio"
+                aria-checked={active}
+                aria-label={label}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
       </Card>
 
