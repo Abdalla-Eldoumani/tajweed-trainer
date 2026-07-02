@@ -38,10 +38,15 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "npm run build && npm run start",
+    // In CI the workflow runs an explicit `npm run build` step first, so the
+    // server only needs to start — rebuilding here would build twice and force
+    // the full 604-page SSG build to finish inside this timeout. Locally, build
+    // then start (reuseExistingServer skips this entirely when a server is up).
+    command: process.env.CI ? "npm run start" : "npm run build && npm run start",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
+    // Generous enough for a cold local production build (start alone is fast).
+    timeout: 300_000,
     stdout: "pipe",
   },
 });
