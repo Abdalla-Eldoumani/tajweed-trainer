@@ -85,3 +85,52 @@ test("keyboard grading is scoped to the focused drill, not both at once", async 
     .toHaveProperty("1:2");
   expect((await readProgress(page)).memorizationReviews).not.toHaveProperty("1:1");
 });
+
+// Regression (T-06-02): /progress now renders THREE keyboard drills at once — the
+// memorized-verse review, the chaining drill, and the segment drill. Each binds
+// keys 1-4 while its grade buttons are live; a keypress must grade ONLY the focused
+// drill. Seeding two memorized verses makes the three drills grade THREE distinct
+// keys — the review shows 1:1, the chaining head is 1:2 (seam tail 1:1), and the
+// segment drill is pointed at 1:4 — so a single grade key with focus in the segment
+// drill must record 1:4 alone and leave the review verse and chaining head
+// ungraded. Without the root-scoped keydown guard, one keypress would grade all
+// three. Locators are region-scoped because the shared grade labels now appear
+// three times (the '.last()' trick above breaks with three drills).
+test("keyboard grading with three drills stays scoped to the focused drill", async ({
+  page,
+  context,
+}) => {
+  await seedProgress(context, { seenOnboarding: true, memorizedVerses: ["1:1", "1:4"] });
+  await page.goto("/progress");
+
+  // Start + reveal the memorized-verse review (its shown verse is 1:1). It is the
+  // only "Reveal" on the page until the chaining drill starts.
+  await page.getByRole("button", { name: "Start Review" }).click();
+  await page.getByRole("button", { name: "Reveal" }).click();
+
+  // Start + reveal the chaining drill (grades the seam HEAD 1:2). The review now
+  // shows its grade buttons, so the only remaining "Reveal" is the chaining drill's.
+  await page.getByRole("button", { name: "Start chaining" }).click();
+  await page.getByRole("button", { name: "Reveal" }).click();
+
+  // Point the segment drill at a DISTINCT short verse (1:4 — two-plus words but a
+  // single chunk at the default size), so starting it lands straight on the
+  // optional whole-verse grade where its keys 1-4 are live. Its picker/start labels
+  // are distinct from the other drills, so locating them before the region exists
+  // is unambiguous.
+  await page.getByLabel("Pick a memorized verse").selectOption("1:4");
+  await page.getByRole("button", { name: "Start chunk drill" }).click();
+
+  // The segment drill's reveal focus-loop lands on its Good button. Region-scope so
+  // the three drills' identical grade labels never collide, and wait for the focus
+  // before the keypress so the test asserts the guard, not a focus race.
+  const segment = page.getByRole("region", { name: "Drill a verse in chunks" });
+  await expect(segment.getByRole("button", { name: /^Good\b/ })).toBeFocused();
+
+  // One keypress, focus in the segment drill: only its verse (1:4) is graded.
+  await page.keyboard.press("3");
+
+  await expect
+    .poll(async () => Object.keys((await readProgress(page)).memorizationReviews || {}))
+    .toEqual(["1:4"]);
+});
