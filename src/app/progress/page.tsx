@@ -13,6 +13,7 @@ import { MemorizationTracker } from "@/components/memorization/MemorizationTrack
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
 import { MemorizedReview } from "@/components/memorization/MemorizedReview";
+import { ChainingDrill } from "@/components/memorization/ChainingDrill";
 import { KhatmahCard } from "@/components/khatmah/KhatmahCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
@@ -206,6 +207,12 @@ export default function ProgressPage() {
             machinery over the separate memorizationReviews keyspace and opens in
             place. The component owns its own due-vs-empty branch. */}
         {memorizedMounted && memorizedCount > 0 && <MemorizedReview />}
+
+        {/* Chaining drill: sits beside the recall self-test and drills the seams
+            between memorized units (verse / page / juz) — cue the tail, recall
+            the head — feeding the SAME memorizationReviews SM-2 scheduler through
+            recordReview. Gated on mount + count like the rest of the section. */}
+        {memorizedMounted && memorizedCount > 0 && <ChainingDrill />}
       </div>
 
       {/* Khatmah planner: an opt-in Quran-completion goal that tracks the
