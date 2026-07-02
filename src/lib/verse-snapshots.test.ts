@@ -1,39 +1,26 @@
 import { describe, it, expect } from "vitest";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { getVerseSnapshot, getVerseSnapshotByKey } from "@/lib/verse-snapshots";
-import ghunnah from "@/data/content/ghunnah.json";
-import laamRaa from "@/data/content/laam-raa-rules.json";
-import madd from "@/data/content/madd-rules.json";
-import makharij from "@/data/content/makharij.json";
-import meemSakinah from "@/data/content/meem-sakinah.json";
-import noonSakinah from "@/data/content/noon-sakinah-tanween.json";
-import qalqalah from "@/data/content/qalqalah.json";
-import tafkheem from "@/data/content/tafkheem-tarqeeq.json";
-import waqf from "@/data/content/waqf-symbols.json";
 
 // Ported data half of scripts/verify-lesson-coloring.mjs: every surah:ayah cited
 // by the lesson content has a non-empty tajweed snapshot that carries real
 // <tajweed> markup, so lesson coloring can render offline. This imports the REAL
-// snapshot reader and the SAME content JSON the source script walks. It asserts
-// snapshot PRESENCE and MARKUP only — never the verse text itself (content is
-// immutable; real-verse membership stays a WARN in the .mjs and is not promoted
-// to a hard fail here). The component-source halves (ExampleCard renders
-// TajweedText; ColorLegend reads the map) stay in the kept .mjs.
+// snapshot reader and walks the SAME content dir the source script walks. It
+// asserts snapshot PRESENCE and MARKUP only — never the verse text itself
+// (content is immutable; real-verse membership stays a WARN in the .mjs and is
+// not promoted to a hard fail here). The component-source halves (ExampleCard
+// renders TajweedText; ColorLegend reads the map) stay in the kept .mjs.
 //
-// This is the every-example-bearing content file (the script reads the content
-// dir minus surah-index.json and learning-path.json, which cite no example
-// verses). Keep this list in step with src/data/content when a lesson file is
-// added.
-const CONTENT: unknown[] = [
-  ghunnah,
-  laamRaa,
-  madd,
-  makharij,
-  meemSakinah,
-  noonSakinah,
-  qalqalah,
-  tafkheem,
-  waqf,
-];
+// The dir is read dynamically (minus surah-index.json and learning-path.json,
+// which cite no example verses), so a newly added lesson file is covered
+// automatically and cannot silently escape snapshot coverage.
+// Vitest runs from the repo root, so resolve the content dir from cwd (import.meta.url
+// is not a file:// scheme under Vitest's transform).
+const CONTENT_DIR = join(process.cwd(), "src", "data", "content");
+const CONTENT: unknown[] = readdirSync(CONTENT_DIR)
+  .filter((f) => f.endsWith(".json") && f !== "surah-index.json" && f !== "learning-path.json")
+  .map((f) => JSON.parse(readFileSync(`${CONTENT_DIR}/${f}`, "utf8")) as unknown);
 
 function collectKeys(node: unknown, out: Set<string>): void {
   if (Array.isArray(node)) {
