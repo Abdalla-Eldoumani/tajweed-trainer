@@ -72,9 +72,14 @@ export function getDueQuestionIds(
 // point for review over a set that grows outside the Leitner map: memorizing a
 // verse adds it to the memorized set but writes no review entry, so
 // getDueQuestionIds (which walks the map) would never surface it.
+//
+// The reviews param reads ONLY `nextDueDate`, so it is typed to the minimal
+// { nextDueDate?: string } shape. Both the Leitner `ReviewState` (rule-quiz) and
+// the SM-2 `Sm2State` (memorized-verse review) satisfy it, so this stays the ONE
+// shared due-selection function for both keyspaces — never forked.
 export function getDueFromUniverse(
   universe: Iterable<string>,
-  reviews: Record<string, ReviewState>,
+  reviews: Record<string, { nextDueDate?: string }>,
   now: Date = new Date(),
 ): string[] {
   const today = toIsoDate(now);
