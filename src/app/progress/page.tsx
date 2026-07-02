@@ -12,6 +12,7 @@ import { ResumeListeningCard } from "@/components/progress/ResumeListeningCard";
 import { MurajaahDashboard } from "@/components/progress/MurajaahDashboard";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
+import { MemorizationHeatmap } from "@/components/memorization/MemorizationHeatmap";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
 import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { ChainingDrill } from "@/components/memorization/ChainingDrill";
@@ -168,6 +169,16 @@ export default function ProgressPage() {
         {memorizedMounted && memorizedCount > 0 && (
           <Card>
             <MemorizationBreakdown memorized={memorized} />
+          </Card>
+        )}
+        {/* Memorization health: the STAT-01 freshness facet (per-juz aging bars)
+            and the STAT-02 error heatmap by juz / surah / page. Reads the pure
+            memorization-strength lib over the memorized set and the reviews map;
+            renders only scope names, counts, and manuscript-palette colors — no
+            verse text. Sits between "what I've memorized" and "how due it is". */}
+        {memorizedMounted && memorizedCount > 0 && (
+          <Card>
+            <MemorizationHeatmap />
           </Card>
         )}
         {memorizedMounted && (
