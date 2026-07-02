@@ -355,6 +355,21 @@ export default function SettingsPage() {
               aria-label={t("settings.showTranslation")}
             />
           </label>
+
+          {/* Diacritic-insensitive typing recall (TYPE-02): a comparison-only
+              toggle the /progress typing drill reads. It NEVER changes stored or
+              rendered verse text — only how a typed word is matched. */}
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">{t("settings.diacriticInsensitive")}</span>
+            <input
+              type="checkbox"
+              checked={settings.diacriticInsensitive ?? false}
+              onChange={(e) => updateSettings({ diacriticInsensitive: e.target.checked })}
+              className="accent-primary dark:accent-gold w-4 h-4"
+              aria-label={t("settings.diacriticInsensitive")}
+            />
+          </label>
+          <p className="text-xs text-text-muted">{t("settings.diacriticInsensitiveHelp")}</p>
         </div>
       </Card>
 
