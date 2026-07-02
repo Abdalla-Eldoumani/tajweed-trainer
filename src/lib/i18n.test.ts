@@ -28,9 +28,10 @@ const ONBOARDING_KEYS = [
 ];
 
 // The segment-drill keys (Phase 6). Same EN+AR parity assertion, plus a
-// distinctness check below: the segment drill is the THIRD keyboard drill on
-// /progress, so its title / start / reveal labels must differ from the chaining
-// and review drills or three-drill e2e locators collide (RESEARCH Pitfall 4).
+// distinctness check below. /progress now hosts FOUR keyboard drills (review,
+// chaining, segment, and the typing drill added in Phase 8), so the segment
+// drill's title / start / reveal labels must differ from the chaining and
+// review drills or the four-drill e2e locators collide (RESEARCH Pitfall 4).
 const SEGMENT_KEYS = [
   "segment.title",
   "segment.description",
@@ -47,6 +48,33 @@ const SEGMENT_KEYS = [
   "segment.drillProgress",
   "segment.chainProgress",
   "segment.empty",
+];
+
+// The typing-recall keys (Phase 8). Same EN+AR parity assertion, plus the
+// four-drill distinctness check below: the typing drill is the FOURTH keyboard
+// drill on /progress, so its title / start / reveal-word labels must differ
+// from the segment, chaining, and review drills (and mushaf.memorizeReveal) or
+// a /progress locator addresses the wrong drill (RESEARCH Pitfall 4). The two
+// settings.diacriticInsensitive* keys are the paired toggle copy.
+const TYPING_KEYS = [
+  "typing.title",
+  "typing.description",
+  "typing.pickVerse",
+  "typing.startDrill",
+  "typing.prompt",
+  "typing.inputLabel",
+  "typing.submit",
+  "typing.correct",
+  "typing.wrong",
+  "typing.retry",
+  "typing.revealWord",
+  "typing.progress",
+  "typing.gradePrompt",
+  "typing.skipGrade",
+  "typing.empty",
+  "typing.mistakesNote",
+  "settings.diacriticInsensitive",
+  "settings.diacriticInsensitiveHelp",
 ];
 
 describe("onboarding i18n keys carry both en and ar", () => {
@@ -86,6 +114,36 @@ describe("segment-drill i18n keys carry both en and ar", () => {
       expect(t("segment.startDrill", lang)).not.toBe(t("chain.startChaining", lang));
       expect(t("segment.startDrill", lang)).not.toBe(t("review.startReview", lang));
       expect(t("segment.reveal", lang)).not.toBe(t("mushaf.memorizeReveal", lang));
+    }
+  });
+});
+
+describe("typing-drill i18n keys carry both en and ar", () => {
+  it.each(TYPING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // The four-drill locator guarantee (RESEARCH Pitfall 4): the typing drill's
+  // section title, start control, and reveal-word control must be textually
+  // distinct from the segment, chaining, and review drills' equivalents (and the
+  // free mushaf.memorizeReveal), in both locales, so a Playwright role/name
+  // locator addresses exactly one of the four /progress keyboard drills.
+  it("typing.title / startDrill / revealWord are distinct from the other three drills", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("typing.title", lang)).not.toBe(t("segment.title", lang));
+      expect(t("typing.title", lang)).not.toBe(t("chain.title", lang));
+      expect(t("typing.title", lang)).not.toBe(t("memorize.reviewStart", lang));
+      expect(t("typing.startDrill", lang)).not.toBe(t("segment.startDrill", lang));
+      expect(t("typing.startDrill", lang)).not.toBe(t("chain.startChaining", lang));
+      expect(t("typing.startDrill", lang)).not.toBe(t("review.startReview", lang));
+      expect(t("typing.revealWord", lang)).not.toBe(t("segment.reveal", lang));
+      expect(t("typing.revealWord", lang)).not.toBe(t("mushaf.memorizeReveal", lang));
     }
   });
 });
