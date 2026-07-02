@@ -278,7 +278,7 @@ export function ChainingDrill() {
         <div className="text-center">
           {availableSeams.length > 0 ? (
             <Button onClick={start} size="lg">
-              {t("review.startReview")}
+              {t("chain.startChaining")}
             </Button>
           ) : (
             <p className="text-sm text-text-muted">{t("chain.empty")}</p>

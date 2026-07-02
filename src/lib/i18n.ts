@@ -674,6 +674,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "chain.cuePrompt": { en: "What comes next?", ar: "ما الذي يأتي بعدها؟" },
   "chain.tailLabel": { en: "Current", ar: "الحالية" },
   "chain.headLabel": { en: "Next", ar: "التالية" },
+  "chain.startChaining": { en: "Start chaining", ar: "ابدأ التسلسل" },
   "chain.empty": {
     en: "No chains available for this type yet. Memorize adjacent units to build them.",
     ar: "لا توجد سلاسل من هذا النوع بعد. احفظ وحدات متجاورة لتكوينها.",
