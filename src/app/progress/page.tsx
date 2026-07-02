@@ -15,6 +15,7 @@ import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizatio
 import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { ChainingDrill } from "@/components/memorization/ChainingDrill";
 import { SegmentDrill } from "@/components/memorization/SegmentDrill";
+import { TypingRecall } from "@/components/memorization/TypingRecall";
 import { KhatmahCard } from "@/components/khatmah/KhatmahCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
@@ -222,6 +223,15 @@ export default function ProgressPage() {
             they never cross-fire with the review or chaining drills. Same
             mount + count gate. */}
         {memorizedMounted && memorizedCount > 0 && <SegmentDrill />}
+
+        {/* Typing recall: the FOURTH keyboard drill on /progress. Type the next
+            word of a memorized verse from memory (checked by wordsMatch against
+            the stored textUthmani, exact or diacritic-insensitive per the
+            Settings toggle), then record ONE whole-verse grade through the same
+            memorizationReviews scheduler. Its grade keys (1-4) are root-scoped
+            and its typing input is INPUT-guarded, so it never cross-fires with
+            the review, chaining, or segment drills. Same mount + count gate. */}
+        {memorizedMounted && memorizedCount > 0 && <TypingRecall />}
       </div>
 
       {/* Khatmah planner: an opt-in Quran-completion goal that tracks the
