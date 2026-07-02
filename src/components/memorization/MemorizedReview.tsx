@@ -94,7 +94,7 @@ function VerseUnderReview({ verseKey, blurred }: { verseKey: string; blurred: bo
 export function MemorizedReview() {
   const { t, isAr } = useTranslation();
   const { memorized } = useMemorization();
-  const { dueMemorized, recordReview, preview } = useMemorizationReviews();
+  const { composeToday, recordReview, preview } = useMemorizationReviews();
   const { settings } = useSettings();
   // Bus-subscribed peek/hint state; the budget math is the pure peek-budget lib.
   const { peeks, record } = useSessionPeeks();
@@ -122,11 +122,14 @@ export function MemorizedReview() {
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
   const start = useCallback(() => {
-    // Snapshot the due memorized verses at the instant of start, then freeze it.
-    // dueMemorized draws from the memorized Set as the universe and treats a
-    // verse with no review entry as due, so newly memorized verses appear
-    // immediately.
-    const due = dueMemorized(memorized);
+    // Snapshot the composed daily-revision queue at the instant of start, then
+    // freeze it. composeToday draws the full due set from the memorized Set as
+    // the universe (a verse with no review entry is due, so newly memorized
+    // verses appear immediately), then caps only the NEW tail at the daily
+    // newVerseCap — so the session the learner runs IS the capped queue.
+    // `.order` is a verseKey string[], so setQueue and the reconciliation below
+    // are unchanged.
+    const due = composeToday(memorized).order;
     if (due.length === 0) return;
     setQueue(due);
     setIndex(0);
@@ -134,7 +137,7 @@ export function MemorizedReview() {
     setRevealed(false);
     setEnded(false);
     setStarted(true);
-  }, [dueMemorized, memorized]);
+  }, [composeToday, memorized]);
 
   // Reconciliation (T-07-13 / AC-16): derive the active step by skipping, in
   // render, any queued verse no longer in the memorized Set (e.g. a bulk-unmark
@@ -280,9 +283,12 @@ export function MemorizedReview() {
     if (finished && Object.keys(getSessionPeeks()).length > 0) resetSessionPeeks();
   }, [finished]);
 
+  // The pre-start "N due" label reflects the composed session it will actually
+  // run (the capped order length), not the raw uncapped due total, so the label
+  // never promises "12 due" then runs a 5-verse capped session.
   const dueNow = useMemo(
-    () => dueMemorized(memorized).length,
-    [dueMemorized, memorized],
+    () => composeToday(memorized).order.length,
+    [composeToday, memorized],
   );
 
   if (!started) {
