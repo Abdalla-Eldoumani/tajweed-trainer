@@ -9,11 +9,13 @@ import { useMemorization } from "@/hooks/useMemorization";
 import { useMemorizationReviews } from "@/hooks/useMemorizationReviews";
 import { useSettings } from "@/hooks/useSettings";
 import { usePlayer } from "@/hooks/usePlayer";
+import { useSessionPeeks } from "@/hooks/useSessionPeeks";
 import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah, getBundledChaptersIndex } from "@/lib/quran-api";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { getSessionPeeks, resetSessionPeeks } from "@/lib/storage";
+import { peekRemaining, wasPeeked } from "@/lib/peek-budget";
 import type { RecallGrade } from "@/lib/types";
 
 // Surah headers from the bundled index (READ ONLY) so a verse under review can
@@ -94,6 +96,8 @@ export function MemorizedReview() {
   const { memorized } = useMemorization();
   const { dueMemorized, recordReview, preview } = useMemorizationReviews();
   const { settings } = useSettings();
+  // Bus-subscribed peek/hint state; the budget math is the pure peek-budget lib.
+  const { peeks, record } = useSessionPeeks();
 
   // The snapshot: due verseKeys captured ONCE at start. Mid-session memorization
   // changes never re-seed it; reconciliation (below) skips removed keys.
@@ -139,6 +143,13 @@ export function MemorizedReview() {
   }, [index, queue, memorized]);
   const currentKey: string | undefined = queue[activeIndex];
   const finished = started && activeIndex >= queue.length;
+
+  // Peek/hint budget for this session (BLIND-03). `remaining` counts DISTINCT
+  // peeked verses against the budget; `peeked` marks THIS verse as capped at hard.
+  // Computed here, above the keyboard effect, so the keys-1-4 handler honors the
+  // cap too (a keyboard user must not bypass the disabled good/easy buttons).
+  const remaining = peekRemaining(peeks, settings.peekBudget ?? 3);
+  const peeked = currentKey ? wasPeeked(peeks, currentKey) : false;
 
   const grade = useCallback(
     (g: RecallGrade) => {
@@ -189,12 +200,16 @@ export function MemorizedReview() {
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       const g = KEY_TO_GRADE[e.key];
       if (!g) return;
+      // Grade cap (BLIND-03): a verse peeked this session is capped at hard, so
+      // keys 3/4 (good/easy) are a no-op for it, matching the disabled buttons.
+      // Without this gate a keyboard user would bypass the visual cap.
+      if (peeked && (g === "good" || g === "easy")) return;
       e.preventDefault();
       grade(g);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [revealed, currentKey, grade]);
+  }, [revealed, currentKey, grade, peeked]);
 
   // Play the verse under review on its own (single mode), through the one player
   // engine, no second audio element is ever constructed here.
@@ -311,14 +326,15 @@ export function MemorizedReview() {
 
   // Four rating buttons in the fixed order again -> hard -> good -> easy. Colors
   // convey difficulty through the manuscript tokens (no garish hues): Again red
-  // ochre, Hard neutral outline, Good lapis (primary), Easy gold. Good carries
-  // continueRef so the reveal moves focus onto a grade control, not back on Reveal.
+  // ochre, Hard neutral outline, Good lapis (primary), Easy gold. The post-reveal
+  // focus target (continueRef) is placed in the map below: on good normally, on
+  // hard when the verse is peeked (good is disabled then), so the focus loop never
+  // lands on a disabled control.
   const gradeButtons: {
     grade: RecallGrade;
     labelKey: string;
     variant: "primary" | "outline";
     className: string;
-    ref?: React.Ref<HTMLButtonElement>;
   }[] = [
     {
       grade: "again",
@@ -328,7 +344,7 @@ export function MemorizedReview() {
         "bg-accent text-white hover:bg-accent/90 dark:bg-accent dark:text-white dark:hover:bg-accent/90",
     },
     { grade: "hard", labelKey: "memorize.gradeHard", variant: "outline", className: "" },
-    { grade: "good", labelKey: "memorize.gradeGood", variant: "primary", className: "", ref: continueRef },
+    { grade: "good", labelKey: "memorize.gradeGood", variant: "primary", className: "" },
     {
       grade: "easy",
       labelKey: "memorize.gradeEasy",
@@ -360,19 +376,46 @@ export function MemorizedReview() {
       </div>
 
       {!revealed ? (
-        <Button ref={revealRef} onClick={() => setRevealed(true)} size="lg" className="w-full">
-          {t("mushaf.memorizeReveal")}
-        </Button>
+        <div className="grid gap-2">
+          <Button ref={revealRef} onClick={() => setRevealed(true)} size="lg" className="w-full">
+            {t("mushaf.memorizeReveal")}
+          </Button>
+          {/* The costed hint: reveals the text early as an assist, spends one of the
+              per-session budget, and caps this verse at hard. Disabled at 0 left.
+              Distinct label from the free "Reveal" so e2e locators never collide. */}
+          <Button
+            variant="outline"
+            disabled={remaining === 0}
+            onClick={() => {
+              record(currentKey);
+              setRevealed(true);
+            }}
+            aria-label={t("peek.hint")}
+            title={
+              remaining === 0
+                ? t("peek.exhausted")
+                : t("peek.remaining").replace("{n}", num(remaining))
+            }
+            className="w-full"
+          >
+            {t("peek.hint")} · {num(remaining)}
+          </Button>
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {gradeButtons.map(({ grade: g, labelKey, variant, className, ref }) => {
+          {gradeButtons.map(({ grade: g, labelKey, variant, className }) => {
             const label = t(labelKey);
             const intervalText = t("memorize.gradeIntervalDays").replace("{n}", num(intervals[g]));
+            // Grade cap (BLIND-03): a peeked verse can only be rated again/hard.
+            // Disable good/easy, and attach the post-reveal focus (continueRef) to
+            // hard instead of the disabled good so focus never falls to <body>.
+            const capped = peeked && (g === "good" || g === "easy");
             return (
               <Button
                 key={g}
-                ref={ref}
+                ref={g === (peeked ? "hard" : "good") ? continueRef : undefined}
                 variant={variant}
+                disabled={capped}
                 onClick={() => grade(g)}
                 aria-label={`${label} · ${intervalText}`}
                 className={cn("h-auto min-h-[52px] flex-col gap-0.5 py-2", className)}
