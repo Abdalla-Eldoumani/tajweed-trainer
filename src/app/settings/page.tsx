@@ -7,6 +7,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { exportProgress, importProgress, getProgress, shouldRemindBackup, getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
 import { subscribeProgressChanged } from "@/lib/progress-events";
+import { isNotificationSupported, isInstalled } from "@/lib/notification-gate";
 import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
@@ -51,6 +52,12 @@ export default function SettingsPage() {
   // onboardingMounted) to avoid a hydration flash, mirroring showBackupReminder.
   const [showTour, setShowTour] = useState(false);
   const [onboardingMounted, setOnboardingMounted] = useState(false);
+  // The revision-reminder toggle reads the Notification API and the installed
+  // display-mode, both client-only, so gate its render behind a post-mount flag
+  // to avoid a hydration flash (mirrors onboardingMounted). revisionDenied shows
+  // the honest "blocked" copy when a permission request is refused.
+  const [notifyMounted, setNotifyMounted] = useState(false);
+  const [revisionDenied, setRevisionDenied] = useState(false);
   const [reciterQuery, setReciterQuery] = useState("");
   const [translations, setTranslations] = useState<TranslationResource[]>(CURATED_TRANSLATIONS);
   const [tafsirs, setTafsirs] = useState<TranslationResource[]>(CURATED_TAFSIRS);
@@ -62,6 +69,7 @@ export default function SettingsPage() {
     setShowBackupReminder(shouldRemindBackup(getProgress(), new Date()));
     setShowTour(!getOnboardingSeen());
     setOnboardingMounted(true);
+    setNotifyMounted(true);
     // Keep the toggle in lockstep with the flag through the change bus: if the
     // tour self-dismisses (writes seenOnboarding=true) while Settings is open,
     // the checkbox reflects it without needing a revisit.
@@ -126,6 +134,28 @@ export default function SettingsPage() {
     const show = e.target.checked;
     setOnboardingSeen(!show);
     setShowTour(show);
+  };
+
+  // Enabling reminders must request permission from this user gesture (browsers
+  // reject Notification.requestPermission outside one). The toggle only flips on
+  // when the grant succeeds; a denial keeps it off and surfaces the honest
+  // blocked copy. Disabling is a plain write. Read e.target.checked before the
+  // await so the pooled event is not consumed after suspension.
+  const handleReminderToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const enable = e.target.checked;
+    if (!enable) {
+      updateSettings({ revisionRemindersEnabled: false });
+      setRevisionDenied(false);
+      return;
+    }
+    const result = typeof Notification !== "undefined" ? await Notification.requestPermission() : "denied";
+    if (result === "granted") {
+      updateSettings({ revisionRemindersEnabled: true });
+      setRevisionDenied(false);
+    } else {
+      updateSettings({ revisionRemindersEnabled: false });
+      setRevisionDenied(true);
+    }
   };
 
   // Reciters grouped into the two display styles (Mujawwad, then Murattal),
@@ -469,6 +499,58 @@ export default function SettingsPage() {
           })}
         </div>
       </Card>
+
+      {/* New verses per day (murajaah daily NEW cap, REV-01). Presets sit inside
+          the storage clamp [1, 10]; the write funnels through updateSettings.
+          Mirrors the recall-hint-budget radiogroup. Due reviews of known verses
+          are never capped — only the new tail is. */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.newVerseCap")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.newVerseCapHelp")}</p>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("settings.newVerseCap")}>
+          {[3, 5, 7, 10].map((n) => {
+            const active = (settings.newVerseCap ?? 5) === n;
+            const label = isAr ? toArabicIndic(n) : String(n);
+            return (
+              <button
+                key={n}
+                onClick={() => updateSettings({ newVerseCap: n })}
+                className={segChip(active)}
+                role="radio"
+                aria-checked={active}
+                aria-label={label}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Revision reminders (REV-04). Rendered ONLY when the Notification API is
+          supported AND the app is installed (an uninstalled tab cannot show a
+          reliable local reminder). Enabling requests permission from the toggle
+          gesture; a denial keeps it off with honest copy. This is a LOCAL
+          on-open reminder, never a server push — nothing fires while closed. */}
+      {notifyMounted && isNotificationSupported() && isInstalled() && (
+        <Card>
+          <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.revisionReminders")}</h2>
+          <p className="text-xs text-text-muted mb-3">{t("settings.revisionRemindersHelp")}</p>
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">{t("settings.revisionReminders")}</span>
+            <input
+              type="checkbox"
+              checked={settings.revisionRemindersEnabled ?? false}
+              onChange={handleReminderToggle}
+              className="accent-primary dark:accent-gold w-4 h-4"
+              aria-label={t("settings.revisionReminders")}
+            />
+          </label>
+          {revisionDenied && (
+            <p className="text-xs text-red-600 dark:text-red-400 mt-2">{t("settings.revisionRemindersDenied")}</p>
+          )}
+        </Card>
+      )}
 
       {/* Backup & Restore */}
       <Card>
