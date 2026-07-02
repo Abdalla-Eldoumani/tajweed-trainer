@@ -1,18 +1,21 @@
 #!/usr/bin/env node
-// Network-free security checks: CSP origins, input validation at the URL
-// boundary, and absence of third-party trackers.
+// Network-free CSP / config-parity guard: the Content-Security-Policy origins,
+// the tracker-free allowlist, and that the reading-depth API wrapper routes
+// through the validators and the tafsir sanitizer. The behavioral URL-safety and
+// validator logic (the audio-URL allowlist, the clamps, the id/key validators,
+// the search-query sanitizer) is now owned by the real-import tests
+// src/lib/media-url.test.ts and src/lib/validate.test.ts, which import the
+// shipped functions and fail on a regression.
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { toSafeAudioUrl } from "../src/lib/media-url.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
 const csp = read("next.config.mjs");
 const api = read("src", "lib", "quran-api.ts");
-const validate = read("src", "lib", "validate.ts");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -36,26 +39,9 @@ record(
   !/google-analytics|googletagmanager|doubleclick|facebook|hotjar|segment|mixpanel/i.test(csp),
 );
 
-record(
-  "validate.ts defines division clamps",
-  /export const clampSurah/.test(validate) && /export const clampPage/.test(validate) && /export const clampJuz/.test(validate),
-);
-record(
-  "validate.ts validates resource ids and verse keys",
-  /export function isValidResourceId/.test(validate) && /export function isValidVerseKey/.test(validate),
-);
-record("validate.ts sanitizes the search query", /export function sanitizeSearchQuery/.test(validate));
-
 record("API imports the validators", /from "\.\/validate"/.test(api));
 record("Reading-depth wrappers clamp the surah", /clampSurah\(/.test(api));
 record("Reading-depth wrappers validate resource ids", /isValidResourceId\(/.test(api));
-
-// Audio URL allowlist (defense-in-depth against a tampered upstream response).
-record("Audio: relative path is pinned to the trusted CDN", toSafeAudioUrl("Alafasy/mp3/001001.mp3", "https://verses.quran.com/") === "https://verses.quran.com/Alafasy/mp3/001001.mp3");
-record("Audio: protocol-relative mirror is upgraded to https", toSafeAudioUrl("//mirrors.quranicaudio.com/x.mp3", "https://verses.quran.com/") === "https://mirrors.quranicaudio.com/x.mp3");
-record("Audio: plaintext http on an allowed host is upgraded", toSafeAudioUrl("http://verses.quran.com/x.mp3", "https://verses.quran.com/") === "https://verses.quran.com/x.mp3");
-record("Audio: an unexpected host is rejected", toSafeAudioUrl("https://evil.example.com/x.mp3", "https://verses.quran.com/") === null);
-record("Audio: empty path is rejected", toSafeAudioUrl("", "https://verses.quran.com/") === null && toSafeAudioUrl(null, "https://verses.quran.com/") === null);
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);
