@@ -23,6 +23,16 @@ interface TajweedFollowTextProps {
   // here (the caller falls back to the whole-verse blur). Default false keeps the
   // plain highlight behavior untouched.
   blurUnrevealed?: boolean;
+  // Additive reveal window: an inclusive, 0-based visual-word range. When set,
+  // every word OUTSIDE [start..end] is blurred (via the same read-only word
+  // grouping) and the activeIdx highlight is skipped — so this drives BOTH the
+  // per-chunk window ({start: chunk.start, end: chunk.end}) and the growing-prefix
+  // chaining cue ({start: 0, end}). Alignment is still gated on
+  // canAlign(segmentCount, groups.length): the caller passes the REAL visual-word
+  // count as segmentCount, so this never touches audio segments and works with
+  // segments === null. Omit it to leave the follow-along/blurUnrevealed paths
+  // byte-for-byte unchanged.
+  revealRange?: { start: number; end: number };
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }
@@ -59,7 +69,11 @@ const WRAP_TAG = "mushaf-word";
 // splitting on whitespace text nodes, and wraps the active word in a class-bearing
 // element. With blurUnrevealed on it ALSO wraps every word ahead of the active one
 // in a blurred wrapper (reveal-as-recited): the same grouping drives both, so the
-// reveal and the highlight stay in lockstep. It NEVER edits the markup string,
+// reveal and the highlight stay in lockstep. With revealRange set it instead blurs
+// every word OUTSIDE the given [start..end] window (a chunk window, or a
+// growing-prefix cue with start pinned to 0) and skips the activeIdx highlight —
+// the additive reveal primitive the segment drill uses over the same grouping. It
+// NEVER edits the markup string,
 // recolors a <tajweed> span, or re-tokenizes the text (CONST-01) — the letter
 // colors come entirely from the untouched spans underneath. On any alignment
 // mismatch it shows the plain markup with no highlight and no blur (silent
@@ -72,6 +86,7 @@ export function TajweedFollowText({
   activeIdx,
   segmentCount,
   blurUnrevealed = false,
+  revealRange,
   size,
   className,
 }: TajweedFollowTextProps) {
@@ -142,10 +157,12 @@ export function TajweedFollowText({
     // and stale wrappers from the previous tick are gone.
     clearWraps();
 
-    // Nothing to do when there is no active word AND reveal mode is off: the plain
-    // markup shows. In reveal mode a negative activeIdx (paused before the first
-    // word, between words) still blurs every word, so do not early-return there.
-    if (activeIdx < 0 && !blurUnrevealed) return;
+    // Nothing to do when there is no active word AND both reveal modes are off:
+    // the plain markup shows. In reveal-as-recited a negative activeIdx (paused
+    // before the first word, between words) still blurs every word, and a
+    // revealRange window blurs off its own indices (no activeIdx), so do not
+    // early-return when either is set.
+    if (activeIdx < 0 && !blurUnrevealed && !revealRange) return;
 
     // Group the container's content into visual words read-only. The API
     // separates words with a space, but those spaces sit INSIDE text nodes (one
@@ -224,7 +241,23 @@ export function TajweedFollowText({
     // marker tells globals.css to drop the caller's whole-verse blur now that the
     // per-word wrappers are the blur source; without it the caller's blur stands as
     // the fallback (reached only when canAlign fails, above).
-    if (blurUnrevealed) {
+    // Reveal-window mode: blur every word OUTSIDE [start..end] and skip the
+    // activeIdx highlight. The same additive grouping/wrap machinery — only the
+    // predicate differs (outside a window vs ahead of the active word). One
+    // primitive serves both drills: a chunk window ({start, end}) and a
+    // growing-prefix chaining cue (start pinned to 0). The marker tells globals.css
+    // to drop the caller's whole-verse blur so the per-word wrappers are the single
+    // blur source; when canAlign fails above it is absent and the caller's blur
+    // stands. This branch precedes blurUnrevealed so revealRange wins when both are
+    // set.
+    if (revealRange) {
+      container.classList.add(REVEAL_ACTIVE_CLASS);
+      for (let i = 0; i < groups.length; i++) {
+        if (i < revealRange.start || i > revealRange.end) {
+          wrapWord(groups[i], BLURRED_CLASS);
+        }
+      }
+    } else if (blurUnrevealed) {
       container.classList.add(REVEAL_ACTIVE_CLASS);
       for (let i = 0; i < groups.length; i++) {
         if (i > activeIdx) wrapWord(groups[i], BLURRED_CLASS);
@@ -232,11 +265,11 @@ export function TajweedFollowText({
     }
 
     // The active word's highlight wrapper (only when there is a real active word
-    // in range).
-    if (activeIdx >= 0 && activeIdx < groups.length) {
+    // in range). Skipped in reveal-window mode, which ignores activeIdx.
+    if (!revealRange && activeIdx >= 0 && activeIdx < groups.length) {
       wrapWord(groups[activeIdx], ACTIVE_CLASS);
     }
-  }, [safeHtml, activeIdx, segmentCount, blurUnrevealed, clearWraps, wrapWord]);
+  }, [safeHtml, activeIdx, segmentCount, blurUnrevealed, revealRange, clearWraps, wrapWord]);
 
   // Remove every wrapper on unmount so a closed page leaves no orphan node. Runs
   // once (clearWraps reads the ref), independent of the per-tick effect above.
