@@ -27,6 +27,18 @@ const eslintConfig = [
       "react-hooks/set-state-in-effect": "warn",
     },
   },
+  {
+    // The Playwright e2e suite is not React: a fixture destructures a `use`
+    // callback (`await use(page)`) that eslint-plugin-react-hooks v7 misreads as
+    // the React `use` hook, erroring on rules-of-hooks. The react-hooks rules
+    // have no meaning outside the React tree, so turn them off for e2e (the specs
+    // stay linted for everything else). Same spirit as the scripts/ ignore above.
+    files: ["e2e/**"],
+    rules: {
+      "react-hooks/rules-of-hooks": "off",
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
