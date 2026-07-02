@@ -659,6 +659,26 @@ const translations: Record<string, { en: string; ar: string }> = {
   "memorize.gradeGood": { en: "Good", ar: "جيد" },
   "memorize.gradeEasy": { en: "Easy", ar: "سهل" },
   "memorize.gradeIntervalDays": { en: "{n}d", ar: "{n} يوم" },
+
+  // Verse-chaining drill: recall the head of the next unit from the tail of the
+  // current one, at three seam types (verse / page / juz). Operational UI copy,
+  // never Quran/tajweed content. Grade buttons reuse the memorize.grade* keys.
+  "chain.title": { en: "Chain memorized verses", ar: "تسلسل الآيات المحفوظة" },
+  "chain.description": {
+    en: "Recall the start of the next unit from the end of the current one.",
+    ar: "استذكر بداية الوحدة التالية انطلاقًا من نهاية الوحدة الحالية.",
+  },
+  "chain.seamVerse": { en: "Verse to verse", ar: "آية إلى آية" },
+  "chain.seamPage": { en: "Across pages", ar: "عبر الصفحات" },
+  "chain.seamJuz": { en: "Across juz", ar: "عبر الأجزاء" },
+  "chain.cuePrompt": { en: "What comes next?", ar: "ما الذي يأتي بعدها؟" },
+  "chain.tailLabel": { en: "Current", ar: "الحالية" },
+  "chain.headLabel": { en: "Next", ar: "التالية" },
+  "chain.empty": {
+    en: "No chains available for this type yet. Memorize adjacent units to build them.",
+    ar: "لا توجد سلاسل من هذا النوع بعد. احفظ وحدات متجاورة لتكوينها.",
+  },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
