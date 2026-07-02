@@ -32,12 +32,16 @@ test("a seeded memorized verse is due in the progress review and can be revealed
   await expect(reveal).toBeVisible();
   await reveal.click();
 
-  // The grade controls appear; "Correct" needs exact matching because the
-  // default substring match would also hit "Incorrect".
-  const correct = page.getByRole("button", { name: "Correct", exact: true });
-  await expect(correct).toBeVisible();
-  await expect(page.getByRole("button", { name: "Incorrect", exact: true })).toBeVisible();
-  await correct.click();
+  // The four SM-2 rating buttons appear (again / hard / good / easy), each
+  // labelled with the next interval it would schedule (e.g. "Good · 6d"). Match
+  // on the leading grade word so the interval-preview number never makes the
+  // selector brittle.
+  await expect(page.getByRole("button", { name: /^Again\b/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Hard\b/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Easy\b/ })).toBeVisible();
+  const good = page.getByRole("button", { name: /^Good\b/ });
+  await expect(good).toBeVisible();
+  await good.click();
 
   // Grading the only due verse advances the queue to the finished state.
   await expect(page.getByRole("heading", { name: "Quiz Complete" })).toBeVisible();
