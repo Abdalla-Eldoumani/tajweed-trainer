@@ -105,6 +105,32 @@ const MURAJAAH_KEYS = [
   "settings.revisionRemindersDenied",
 ];
 
+// The memorization-health keys (Phase 10): the freshness facet (STAT-01) and the
+// error heatmap (STAT-02) on /progress. Same EN+AR parity assertion, plus the
+// distinctness check below: the heatmap's dimension labels (byJuz / bySurah) and
+// its show-all toggle must NOT collide with the MemorizationBreakdown's own
+// memorize.byJuz / memorize.bySurah / memorize.showAllSurahs — both render on the
+// same /progress, so a colliding label makes an e2e locator ambiguous.
+const STRENGTH_HEATMAP_KEYS = [
+  "strength.healthTitle",
+  "strength.freshnessTitle",
+  "strength.freshnessHelp",
+  "strength.fresh",
+  "strength.aging",
+  "strength.overdue",
+  "strength.unseen",
+  "strength.freshnessScope",
+  "heatmap.errorTitle",
+  "heatmap.errorHelp",
+  "heatmap.byJuz",
+  "heatmap.bySurah",
+  "heatmap.byPage",
+  "heatmap.scopeLabel",
+  "heatmap.pageShare",
+  "heatmap.showAll",
+  "heatmap.noErrors",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -201,6 +227,30 @@ describe("murajaah dashboard + settings i18n keys carry both en and ar", () => {
       expect(t("murajaah.beginRevision", lang)).not.toBe(t("chain.startChaining", lang));
       expect(t("murajaah.beginRevision", lang)).not.toBe(t("segment.startDrill", lang));
       expect(t("murajaah.beginRevision", lang)).not.toBe(t("typing.startDrill", lang));
+    }
+  });
+});
+
+describe("memorization-health i18n keys carry both en and ar", () => {
+  it.each(STRENGTH_HEATMAP_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // The heatmap's dimension labels and its show-all toggle sit on the same
+  // /progress as the MemorizationBreakdown's own by-juz / by-surah / show-all
+  // labels, so they must be textually distinct in BOTH locales — otherwise a
+  // Playwright role/name locator addresses the wrong section (RESEARCH Pitfall 4).
+  it("heatmap.byJuz / bySurah / showAll are distinct from the breakdown's labels", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("heatmap.byJuz", lang)).not.toBe(t("memorize.byJuz", lang));
+      expect(t("heatmap.bySurah", lang)).not.toBe(t("memorize.bySurah", lang));
+      expect(t("heatmap.showAll", lang)).not.toBe(t("memorize.showAllSurahs", lang));
     }
   });
 });

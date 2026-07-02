@@ -811,6 +811,49 @@ const translations: Record<string, { en: string; ar: string }> = {
   "murajaah.notifyTitle": { en: "Revision reminder", ar: "تذكير بالمراجعة" },
   "murajaah.notifyBody": { en: "{n} verses due for revision today", ar: "{n} آيات مستحقة للمراجعة اليوم" },
 
+  // Memorization health: the freshness facet (STAT-01) and the error heatmap
+  // (STAT-02) on /progress. Operational UI copy and counts only — never Quran
+  // text; scope names come from the bundled index. The `heatmap.by*` dimension
+  // labels are deliberately DISTINCT from the `memorize.by*` breakdown labels in
+  // BOTH locales so an e2e locator addresses the right section. Placeholders
+  // ({n}/{x}/{y}/{status}/{name}/{errors}/{count}) are replaced at the call site
+  // (Arabic-Indic digits in AR).
+  "strength.healthTitle": { en: "Memorization health", ar: "صحة الحفظ" },
+  "strength.freshnessTitle": { en: "Freshness", ar: "نضارة المحفوظ" },
+  "strength.freshnessHelp": {
+    en: "Each juz ages toward red as time passes since your last successful recall.",
+    ar: "يميل كل جزء نحو الأحمر كلما مضى الوقت منذ آخر استذكار ناجح.",
+  },
+  "strength.fresh": { en: "Fresh", ar: "نضِرة" },
+  "strength.aging": { en: "Aging", ar: "تتقادم" },
+  "strength.overdue": { en: "Overdue", ar: "فات موعدها" },
+  "strength.unseen": { en: "Not yet recalled", ar: "لم تُستذكر بعد" },
+  "strength.freshnessScope": {
+    en: "Juz {n}: {status}, {count} memorized",
+    ar: "الجزء {n}: {status}، {count} محفوظة",
+  },
+  "heatmap.errorTitle": { en: "Recall errors", ar: "أخطاء الاستذكار" },
+  "heatmap.errorHelp": {
+    en: "Brighter cells are the memorized scopes you've missed most during recall review.",
+    ar: "الخلايا الأكثر إشراقًا هي المواضع المحفوظة التي أخطأت فيها أكثر أثناء الاستذكار.",
+  },
+  "heatmap.byJuz": { en: "Errors by juz", ar: "الأخطاء حسب الجزء" },
+  "heatmap.bySurah": { en: "Errors by surah", ar: "الأخطاء حسب السورة" },
+  "heatmap.byPage": { en: "Errors by page", ar: "الأخطاء حسب الصفحة" },
+  "heatmap.scopeLabel": {
+    en: "{name}: {errors} recall errors across {count} memorized verses",
+    ar: "{name}: {errors} أخطاء استذكار في {count} آية محفوظة",
+  },
+  "heatmap.pageShare": {
+    en: "Page {n}: {x} recall errors across {y} memorized verses",
+    ar: "الصفحة {n}: {x} أخطاء استذكار في {y} آية محفوظة",
+  },
+  "heatmap.showAll": { en: "Show all memorized surahs", ar: "إظهار كل السور المحفوظة" },
+  "heatmap.noErrors": {
+    en: "No recall errors recorded yet — keep reviewing.",
+    ar: "لا أخطاء استذكار مُسجّلة بعد — واصل المراجعة.",
+  },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
