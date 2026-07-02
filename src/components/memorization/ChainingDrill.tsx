@@ -130,6 +130,7 @@ export function ChainingDrill() {
   const [revealed, setRevealed] = useState(false);
   const continueRef = useRef<HTMLButtonElement | null>(null);
   const revealRef = useRef<HTMLButtonElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
@@ -226,6 +227,11 @@ export function ChainingDrill() {
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      // Scope 1-4 to the focused drill: /progress can show this drill AND the
+      // memorized-verse review at once, both revealed, each with a document
+      // keydown listener. Without this guard one keypress would grade BOTH and
+      // corrupt the shared schedule. The reveal focus-loop keeps focus inside.
+      if (!rootRef.current?.contains(document.activeElement)) return;
       const el = e.target as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       const g = KEY_TO_GRADE[e.key];
@@ -340,7 +346,7 @@ export function ChainingDrill() {
   ];
 
   return (
-    <Card className="space-y-4">
+    <Card ref={rootRef} role="region" aria-label={t("chain.title")} className="space-y-4">
       <ProgressBar value={activeIndex + 1} max={queue.length} showLabel />
 
       {/* The TAIL cue — always visible: the prompt the learner reads from. */}

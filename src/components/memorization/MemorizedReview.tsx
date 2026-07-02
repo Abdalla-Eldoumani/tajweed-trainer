@@ -103,6 +103,7 @@ export function MemorizedReview() {
   const [revealed, setRevealed] = useState(false);
   const continueRef = useRef<HTMLButtonElement | null>(null);
   const revealRef = useRef<HTMLButtonElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
@@ -173,6 +174,11 @@ export function MemorizedReview() {
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      // Scope 1-4 to the focused drill: /progress can show this review AND the
+      // chaining drill at once, both revealed, each with a document keydown
+      // listener. Without this guard one keypress would grade BOTH and corrupt
+      // the shared schedule. The reveal focus-loop keeps focus inside this card.
+      if (!rootRef.current?.contains(document.activeElement)) return;
       const el = e.target as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       const g = KEY_TO_GRADE[e.key];
@@ -290,7 +296,7 @@ export function MemorizedReview() {
   ];
 
   return (
-    <Card className="space-y-4">
+    <Card ref={rootRef} role="region" aria-label={t("memorize.reviewStart")} className="space-y-4">
       <ProgressBar value={activeIndex + 1} max={queue.length} showLabel />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
