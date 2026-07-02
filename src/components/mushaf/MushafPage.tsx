@@ -38,6 +38,11 @@ interface MushafPageProps {
   // When true, verses the user has marked memorized are blurred so the user
   // can recall the text. Tap-to-reveal temporarily un-blurs a single verse.
   memorizationMode?: boolean;
+  // Cover-page recall: when true, EVERY verse on the page is blurred (not only
+  // the memorized ones) and a tap reveals verses one at a time. This is a FREE
+  // reveal — it never touches the peek budget (that stays the review's concern).
+  // In-session reader state threaded from the toolbar toggle; not persisted.
+  coverPageMode?: boolean;
   // "surah:ayah" to scroll into view on mount (a lesson "open in reader" link).
   targetVerseKey?: string | null;
   // A plain tap on a verse opens the focused verse overlay for it; it does not
@@ -71,7 +76,7 @@ interface MushafPageProps {
   focusMode?: boolean;
 }
 
-export function MushafPage({ data, memorizationMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true, revealAsRecited = false, focusMode = false }: MushafPageProps) {
+export function MushafPage({ data, memorizationMode = false, coverPageMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true, revealAsRecited = false, focusMode = false }: MushafPageProps) {
   const { t } = useTranslation();
   const { isMemorized, mounted } = useMemorization();
   const { hasNote, mounted: notesMounted } = useVerseNotes();
@@ -147,7 +152,11 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
             }
 
             const memorized = mounted && isMemorized(v.verseKey);
-            const hideText = memorizationMode && memorized && !revealed.has(v.verseKey);
+            // Cover mode blurs EVERY verse (the whole page), recall mode blurs
+            // only the memorized ones; either engages the blur until the verse
+            // is revealed for this session (the OR-gate). The Reveal pill and
+            // the tap-reveal branch below both clear it per verse.
+            const hideText = ((memorizationMode && memorized) || coverPageMode) && !revealed.has(v.verseKey);
             const isPlaying = v.verseKey === playingKey;
             const selected = isSelected(v.verseKey);
             // Focus mode dims every verse except the active one. Verse-level and
@@ -188,7 +197,17 @@ export function MushafPage({ data, memorizationMode = false, targetVerseKey = nu
                 >
                   <button
                     type="button"
-                    onClick={() => onPlayVerse?.(v.verseKey)}
+                    onClick={() => {
+                      // Cover-page mode: a tap on a not-yet-revealed verse
+                      // reveals it in place (a free reveal, NOT the overlay).
+                      // A revealed verse, or cover mode off, falls through to
+                      // the overlay exactly as today.
+                      if (coverPageMode && !revealed.has(v.verseKey)) {
+                        setRevealed((prev) => new Set(prev).add(v.verseKey));
+                        return;
+                      }
+                      onPlayVerse?.(v.verseKey);
+                    }}
                     aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
                     aria-current={isPlaying ? "true" : undefined}
                     className={cn(

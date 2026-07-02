@@ -595,6 +595,13 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Dim every verse except the one playing or selected",
     ar: "تعتيم كل آية عدا الآية المشغّلة أو المحدّدة",
   },
+  "mushaf.coverPage": { en: "Cover page", ar: "تغطية الصفحة" },
+  "mushaf.coverPageOn": { en: "Cover the page to recall", ar: "غطّ الصفحة للاستذكار" },
+  "mushaf.coverPageOff": { en: "Show the page", ar: "إظهار الصفحة" },
+  "mushaf.coverPageHint": {
+    en: "Blurs every verse; tap a verse to reveal it.",
+    ar: "يعتّم كل آية؛ انقر آية لكشفها.",
+  },
   "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
   "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
   "mushaf.legend": { en: "Color legend", ar: "دليل الألوان" },
