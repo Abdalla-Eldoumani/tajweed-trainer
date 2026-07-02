@@ -801,6 +801,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   "murajaah.newCapStatus": { en: "{n} of {cap} new introduced today", ar: "{n} من {cap} جديدة أُدخِلت اليوم" },
   "murajaah.introducingNew": { en: "Introducing {n} new today", ar: "إدخال {n} جديدة اليوم" },
   "murajaah.caughtUp": { en: "All caught up — nothing due today.", ar: "أتممت كل شيء — لا مستحقات اليوم." },
+  "murajaah.capReached": {
+    en: "Today's new verses are done — {n} more will be introduced over the coming days.",
+    ar: "انتهت آيات اليوم الجديدة — سيُدخَل {n} على مدى الأيام القادمة.",
+  },
   "murajaah.beginRevision": { en: "Begin today's revision", ar: "ابدأ مراجعة اليوم" },
   "murajaah.homeDue": { en: "{n} verses due for revision", ar: "{n} آيات مستحقة للمراجعة" },
   "murajaah.review": { en: "Review", ar: "راجِع" },

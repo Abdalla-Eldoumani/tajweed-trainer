@@ -102,10 +102,18 @@ export function MurajaahDashboard() {
       <p className="mt-4 text-xs text-text-muted tabular-nums">{capStatus}</p>
 
       {/* Begin scrolls to the one recall-review card via the id anchor — no second
-          review instance. When nothing is due, a calm caught-up line replaces it. */}
+          review instance. The CTA gates on the ACTIONABLE session (order.length),
+          not the uncapped dueTotal: when the daily new cap is spent and only
+          new-capped verses remain due, the session would be empty, so an honest
+          "held for the coming days" line replaces the CTA (never a dead-end).
+          When nothing is due at all, the calm caught-up line shows instead. */}
       <div className="mt-5">
-        {q.dueTotal > 0 ? (
+        {q.order.length > 0 ? (
           <Button onClick={handleBegin}>{t("murajaah.beginRevision")}</Button>
+        ) : q.dueTotal > 0 ? (
+          <p className="text-sm text-text-muted">
+            {t("murajaah.capReached").replace("{n}", num(q.dueTotal))}
+          </p>
         ) : (
           <p className="text-sm text-text-muted">{t("murajaah.caughtUp")}</p>
         )}
