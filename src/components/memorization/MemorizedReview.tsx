@@ -111,6 +111,10 @@ export function MemorizedReview() {
   // existing blur and the audio auto-plays on each advance so the learner recalls
   // from sound, then Reveal shows the text to self-check (BLIND-01).
   const [audioLed, setAudioLed] = useState(false);
+  // Latched end-of-session flag: set once the started queue exhausts, cleared only
+  // by start(). Keeps a finished session from reverting (and refilling the hint
+  // budget) if the memorized set grows mid-session. See the `finished` note below.
+  const [ended, setEnded] = useState(false);
   const continueRef = useRef<HTMLButtonElement | null>(null);
   const revealRef = useRef<HTMLButtonElement | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -128,6 +132,7 @@ export function MemorizedReview() {
     setIndex(0);
     setReviewed(0);
     setRevealed(false);
+    setEnded(false);
     setStarted(true);
   }, [dueMemorized, memorized]);
 
@@ -142,7 +147,18 @@ export function MemorizedReview() {
     return i;
   }, [index, queue, memorized]);
   const currentKey: string | undefined = queue[activeIndex];
-  const finished = started && activeIndex >= queue.length;
+  // `finished` is LATCHED via `ended`: once a started session exhausts its snapshot
+  // queue it stays finished until the next start(). Deriving it purely from the live
+  // queue let a session that ended by unmarking its last verses "un-finish" when the
+  // learner re-marked one via the bulk surface on the same page — which refilled the
+  // hint budget and un-capped peeked verses (reset-on-finish had already cleared
+  // them). Latching keeps the finished screen and the spent budget put.
+  const finished = started && (ended || activeIndex >= queue.length);
+
+  // Latch the ended flag the moment the started queue exhausts; start() clears it.
+  useEffect(() => {
+    if (started && activeIndex >= queue.length) setEnded(true);
+  }, [started, activeIndex, queue.length]);
 
   // Peek/hint budget for this session (BLIND-03). `remaining` counts DISTINCT
   // peeked verses against the budget; `peeked` marks THIS verse as capped at hard.
