@@ -8,6 +8,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ColorLegend } from "@/components/learn/ColorLegend";
 import { ResumeReading } from "@/components/home/ResumeReading";
+import { RevisionDueCard } from "@/components/home/RevisionDueCard";
 import { StreakCounter } from "@/components/practice/StreakCounter";
 
 // The daily verse pulls in the 53 KB verse-snapshot set and the 23 KB surah
@@ -87,6 +88,9 @@ export default function HomePage() {
       <StreakCounter />
 
       <ResumeReading />
+      {/* Honest on-open due card: shows only when there are memorized verses due
+          for revision, linking to the full dashboard on /progress. */}
+      <RevisionDueCard />
       <DailyVerse />
 
       {/* Feature Cards. Each lifts off the page through the shared elevation
