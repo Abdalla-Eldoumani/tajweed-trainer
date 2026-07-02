@@ -187,6 +187,41 @@ test("REV-01: the NEW tail caps at the default 5 in the composed recall session"
   expectNoConsoleErrors(consoleErrors);
 });
 
+test("REV-01: when the daily new cap is spent, the CTA does not dead-end on an empty session", async ({
+  page,
+  context,
+  consoleErrors,
+}) => {
+  // Eight NEW verses, but the day's new-verse quota is already spent
+  // (introducedToday = the default cap of 5), so newAllowed = 0 and today's
+  // composed session is empty even though 8 are due. The dashboard must show the
+  // honest uncapped count (8) but NOT the "Begin today's revision" CTA (it would
+  // scroll to an empty recall session) — instead the honest "held for the coming
+  // days" line — and the recall session shows no Start Review.
+  const newVerses = ["1:1", "1:2", "1:3", "1:4", "1:5", "1:6", "1:7", "2:1"];
+  await seedProgress(context, { seenOnboarding: true, memorizedVerses: newVerses });
+  await seedReviewDates(context, { introducedToday: 5 });
+
+  await page.goto("/progress");
+
+  const panel = dashboard(page);
+  // The honest due total is still uncapped (REV-02) ...
+  await expect(panel.locator("span.text-red-600")).toHaveText("8");
+  // ... but nothing new is admitted today, so there is no actionable session ...
+  await expect(panel.getByText("Introducing 0 new today")).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Begin today's revision" })).toHaveCount(0);
+  await expect(panel.getByText(/Today's new verses are done/)).toBeVisible();
+
+  // ... and the recall session is empty (no Start Review to dead-end into).
+  await expect(page.getByRole("button", { name: "Start Review" })).toHaveCount(0);
+
+  // The home card also stops nagging when nothing is actionable today.
+  await page.goto("/");
+  await expect(page.getByText(/verses due for revision/)).toHaveCount(0);
+
+  expectNoConsoleErrors(consoleErrors);
+});
+
 test("REV-04: the due count and dashboard work with notification permission never granted", async ({
   page,
   context,
