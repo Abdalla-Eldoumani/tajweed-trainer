@@ -660,6 +660,19 @@ const translations: Record<string, { en: string; ar: string }> = {
   "memorize.gradeEasy": { en: "Easy", ar: "سهل" },
   "memorize.gradeIntervalDays": { en: "{n}d", ar: "{n} يوم" },
 
+  // Audio-led (blind) recall + the per-session peek/hint budget (BLIND-01/03).
+  // Operational UI copy, never Quran/tajweed content. The peek labels stay
+  // DISTINCT from the free mushaf.memorizeReveal ("Reveal") so e2e locators for
+  // the costed hint and the free self-check never collide.
+  "blind.audioLed": { en: "Audio-led (blind) mode", ar: "الوضع الصوتي (استذكار بلا نص)" },
+  "blind.audioLedHint": {
+    en: "Play the verse with the text hidden, then reveal to check.",
+    ar: "شغّل الآية والنص مخفيّ، ثم اكشفه للتحقّق.",
+  },
+  "peek.hint": { en: "Hint", ar: "تلميح" },
+  "peek.remaining": { en: "{n} hints left", ar: "بقي {n} تلميح" },
+  "peek.exhausted": { en: "No hints left", ar: "لا تلميحات متبقّية" },
+
   // Verse-chaining drill: recall the head of the next unit from the tail of the
   // current one, at three seam types (verse / page / juz). Operational UI copy,
   // never Quran/tajweed content. Grade buttons reuse the memorize.grade* keys.
