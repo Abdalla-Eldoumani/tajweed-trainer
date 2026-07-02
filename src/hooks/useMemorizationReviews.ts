@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getMemorizationReviews, setMemorizationReview } from "@/lib/storage";
+import {
+  getMemorizationReviews,
+  setMemorizationReview,
+  getNewVersesIntroducedToday,
+  recordNewVerseIntroduced,
+} from "@/lib/storage";
 import { subscribeProgressChanged } from "@/lib/progress-events";
 import { getDueFromUniverse } from "@/lib/spaced-repetition";
 import { gradeRecall, previewIntervals } from "@/lib/recall-scheduler";
+import { composeDailyQueue } from "@/lib/murajaah-queue";
 import { useSettings } from "@/hooks/useSettings";
 import type { RecallGrade, Sm2State } from "@/lib/types";
 
@@ -40,6 +46,12 @@ export function useMemorizationReviews() {
     (verseKey: string, grade: RecallGrade) => {
       const prev = getMemorizationReviews()[verseKey];
       setMemorizationReview(verseKey, gradeRecall(prev, grade, new Date(), modifier));
+      // First-ever grade of this verse (no prior entry) counts as new material
+      // entering revision today, capped globally by composeToday's newVerseCap.
+      // Fires once per verse across ALL four recall drills (review/chaining/
+      // segment/typing) since they all record through this one hook point; a
+      // re-grade never re-counts because `prev` then exists.
+      if (!prev) recordNewVerseIntroduced();
       refresh();
     },
     [refresh, modifier],
@@ -66,10 +78,32 @@ export function useMemorizationReviews() {
     [reviews],
   );
 
+  // Today's composed daily-revision queue: the single source that shapes both
+  // the dashboard overview and the recall session, so they can never diverge.
+  // Computes the full (uncapped) due set via the same getDueFromUniverse, then
+  // hands it to the pure composeDailyQueue with the introduced-today counter and
+  // the newVerseCap so only the NEW tail is capped (recent + consolidated stay
+  // uncapped, REV-02). Recomputes through the change bus because `reviews` is a
+  // dep and every recordReview write bumps the bus; the tracking counter is read
+  // fresh (side-effect-free) each time so it reflects today's introductions.
+  const composeToday = useCallback(
+    (memorized: Iterable<string>, now?: Date) => {
+      const dueKeys = getDueFromUniverse(memorized, reviews, now);
+      return composeDailyQueue({
+        dueKeys,
+        reviews,
+        newVersesIntroducedToday: getNewVersesIntroducedToday(now),
+        newVerseCap: settings.newVerseCap ?? 5,
+      });
+    },
+    [reviews, settings.newVerseCap],
+  );
+
   return {
     reviews,
     recordReview,
     dueMemorized,
+    composeToday,
     preview,
     refresh,
   };
