@@ -9,6 +9,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MasterySection } from "@/components/progress/MasterySection";
 import { WeakRulesSection } from "@/components/progress/WeakRulesSection";
 import { ResumeListeningCard } from "@/components/progress/ResumeListeningCard";
+import { MurajaahDashboard } from "@/components/progress/MurajaahDashboard";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
@@ -156,6 +157,13 @@ export default function ProgressPage() {
           state the tracker's own CTA opens the same disclosure, so the surface
           hides its duplicate trigger there. */}
       <div className="space-y-6">
+        {/* Today's revision dashboard: the honest due count, the balanced
+            new/recent/consolidated breakdown, the daily-new cap status, and a CTA
+            that scrolls to the one recall-review card below (via the id anchor). It
+            reads the SAME composeToday the recall session snapshots, so overview
+            and session never diverge. Gated like the rest of the memorization
+            section so it never flashes before hydration. */}
+        {memorizedMounted && memorizedCount > 0 && <MurajaahDashboard />}
         <MemorizationTracker onOpenBulk={() => setBulkOpen(true)} />
         {memorizedMounted && memorizedCount > 0 && (
           <Card>
@@ -208,7 +216,12 @@ export default function ProgressPage() {
             only when something is memorized; the session reuses the Leitner
             machinery over the separate memorizationReviews keyspace and opens in
             place. The component owns its own due-vs-empty branch. */}
-        {memorizedMounted && memorizedCount > 0 && <MemorizedReview />}
+        {/* The one recall-review instance. The id anchor is the scroll target
+            for the dashboard's "Begin today's revision" CTA — do NOT mount a
+            second review (locator/keyboard collision with the four drills). */}
+        <div id="murajaah-review-anchor" className="scroll-mt-20">
+          {memorizedMounted && memorizedCount > 0 && <MemorizedReview />}
+        </div>
 
         {/* Chaining drill: sits beside the recall self-test and drills the seams
             between memorized units (verse / page / juz) — cue the tail, recall
