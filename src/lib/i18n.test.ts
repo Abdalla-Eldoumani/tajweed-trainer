@@ -77,6 +77,34 @@ const TYPING_KEYS = [
   "settings.diacriticInsensitiveHelp",
 ];
 
+// The daily-revision (murajaah) dashboard, home due-card, local-reminder, and
+// paired settings keys (Phase 9). Same EN+AR parity assertion, plus the
+// distinctness check below: the dashboard's "begin revision" CTA is a fifth
+// start-like control on the /progress family, so it must read differently from
+// the four keyboard drills' start labels (review/chain/segment/typing) in BOTH
+// locales, or a Playwright role/name locator collides with a drill.
+const MURAJAAH_KEYS = [
+  "murajaah.title",
+  "murajaah.description",
+  "murajaah.dueCount",
+  "murajaah.newLabel",
+  "murajaah.recentLabel",
+  "murajaah.consolidatedLabel",
+  "murajaah.newCapStatus",
+  "murajaah.introducingNew",
+  "murajaah.caughtUp",
+  "murajaah.beginRevision",
+  "murajaah.homeDue",
+  "murajaah.review",
+  "murajaah.notifyTitle",
+  "murajaah.notifyBody",
+  "settings.newVerseCap",
+  "settings.newVerseCapHelp",
+  "settings.revisionReminders",
+  "settings.revisionRemindersHelp",
+  "settings.revisionRemindersDenied",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -147,6 +175,32 @@ describe("typing-drill i18n keys carry both en and ar", () => {
       // The verse pickers (segment + typing) are both labelled `<select>`s on the
       // same /progress; their aria-labels must differ so getByLabel addresses one.
       expect(t("typing.pickVerse", lang)).not.toBe(t("segment.pickVerse", lang));
+    }
+  });
+});
+
+describe("murajaah dashboard + settings i18n keys carry both en and ar", () => {
+  it.each(MURAJAAH_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // The dashboard CTA scrolls to the existing MemorizedReview card rather than
+  // spawning a second review instance, so it sits on /progress alongside all
+  // four keyboard drills. Its label must be textually distinct from every
+  // drill's start label in BOTH locales, or a role/name locator addresses the
+  // wrong control (RESEARCH Pitfall 4).
+  it("murajaah.beginRevision is distinct from all four drill start labels", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("murajaah.beginRevision", lang)).not.toBe(t("review.startReview", lang));
+      expect(t("murajaah.beginRevision", lang)).not.toBe(t("chain.startChaining", lang));
+      expect(t("murajaah.beginRevision", lang)).not.toBe(t("segment.startDrill", lang));
+      expect(t("murajaah.beginRevision", lang)).not.toBe(t("typing.startDrill", lang));
     }
   });
 });
