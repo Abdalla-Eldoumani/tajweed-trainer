@@ -17,6 +17,13 @@ export default defineConfig({
   testDir: "e2e",
   testMatch: "**/*.spec.ts",
   fullyParallel: true,
+  // One worker for the whole suite. Every spec runs against a SINGLE prod server
+  // (locally a reused `npm start`, in CI one `npm run build && npm run start`);
+  // fanning the specs across the default 4 workers saturates that single server
+  // and page.goto times out (verified in 03-03 — all specs pass at --workers=1).
+  // A single worker keeps the full `npm run e2e` deterministic in both places;
+  // the suite is small enough that serial execution stays fast.
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["html", { open: "never" }], ["list"]] : "list",
