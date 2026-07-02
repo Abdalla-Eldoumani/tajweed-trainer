@@ -220,16 +220,24 @@ export async function getTafsirForVerse(verseKey: string, tafsirId: number): Pro
   return typeof text === "string" ? sanitizeTafsirHtml(text) : "";
 }
 
+// One raw word from the by_chapter (words=true) response. char_type_name is
+// "word" for a real word and "end" for the trailing ayah-number pseudo-word the
+// API appends to every verse (e.g. 112:1 returns 4 real words + a fifth "end"
+// word whose text is the Arabic-Indic ayah number). That marker is dropped
+// before mapping to VerseWord.
+interface RawVerseWord {
+  position?: number;
+  text_uthmani?: string;
+  transliteration?: { text?: string | null } | null;
+  translation?: { text?: string | null } | null;
+  audio_url?: string | null;
+  char_type_name?: string | null;
+}
+
 interface WordsApiResponse {
   verses: Array<{
     verse_key: string;
-    words?: Array<{
-      position?: number;
-      text_uthmani?: string;
-      transliteration?: { text?: string | null } | null;
-      translation?: { text?: string | null } | null;
-      audio_url?: string | null;
-    }>;
+    words?: RawVerseWord[];
   }>;
 }
 
@@ -237,19 +245,35 @@ function toWordAudioUrl(path: string | null | undefined): string | null {
   return toSafeAudioUrl(path, WORD_AUDIO_CDN);
 }
 
-// verse_key -> ordered words with per-word transliteration, gloss and audio URL.
-export async function getWordsForChapter(surah: number): Promise<Record<string, VerseWord[]>> {
-  const url = `${BASE_URL}/verses/by_chapter/${clampSurah(surah)}?words=true&word_fields=text_uthmani,transliteration&per_page=286`;
-  const data = await fetchWithCache<WordsApiResponse>(url);
-  const out: Record<string, VerseWord[]> = {};
-  for (const v of data.verses ?? []) {
-    out[v.verse_key] = (v.words ?? []).map((w, i) => ({
-      position: typeof w.position === "number" ? w.position : i + 1,
+// Map one verse's raw words to VerseWord[], dropping the trailing ayah-number
+// pseudo-word (char_type_name === "end") the API appends so only REAL words
+// remain. Positions are re-indexed 1..N over the survivors so the real-word
+// count aligns with the tajweed visual-word grouping and the reciter's word
+// segments (without this, canAlign is always false and the segment drill loses
+// its color). Pure: no fetch, no storage — the network wrapper is coverage-
+// excluded and tests this half by direct import. It never edits, reorders, or
+// generates word text; it only removes a non-Quran marker the API added.
+export function toRealVerseWords(rawWords: RawVerseWord[]): VerseWord[] {
+  return rawWords
+    .filter((w) => w.char_type_name !== "end")
+    .map((w, i) => ({
+      position: i + 1,
       textUthmani: typeof w.text_uthmani === "string" ? w.text_uthmani : "",
       transliteration: w.transliteration?.text ?? null,
       translation: w.translation?.text ?? null,
       audioUrl: toWordAudioUrl(w.audio_url),
     }));
+}
+
+// verse_key -> ordered REAL words with per-word transliteration, gloss and audio
+// URL. The ayah-number "end" marker the API appends is filtered out by
+// toRealVerseWords so the word count matches the visual grouping.
+export async function getWordsForChapter(surah: number): Promise<Record<string, VerseWord[]>> {
+  const url = `${BASE_URL}/verses/by_chapter/${clampSurah(surah)}?words=true&word_fields=text_uthmani,transliteration,char_type_name&per_page=286`;
+  const data = await fetchWithCache<WordsApiResponse>(url);
+  const out: Record<string, VerseWord[]> = {};
+  for (const v of data.verses ?? []) {
+    out[v.verse_key] = toRealVerseWords(v.words ?? []);
   }
   return out;
 }
