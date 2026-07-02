@@ -393,6 +393,11 @@ export interface UserSettings {
   translationId?: number;
   tafsirId?: number;
   showWordByWord?: boolean;
+  // The balanced SM-2 review-interval modifier (SCHED-04): scales the memorized-
+  // verse next-due gaps. Default 1.0, clamped by sanitizeSettings to [0.5, 2.0]
+  // (higher = longer gaps). Additive optional (mirrors translationId?) so old
+  // backups without it still validate. Never touches the SM-2 easeFactor.
+  reviewIntervalModifier?: number;
   // Top-left corner of the dragged mini-player in viewport pixels. Absent means
   // the player sits at its default dock. Re-clamped to the live viewport on
   // load, so a value saved on a larger screen can never strand the player

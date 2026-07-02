@@ -397,6 +397,40 @@ describe("shouldRemindBackup / hasMeaningfulProgress", () => {
   });
 });
 
+describe("reviewIntervalModifier setting: default 1.0, clamp [0.5, 2.0] (SCHED-04)", () => {
+  // Exercised through the real sanitizeProgress -> sanitizeSettings so no new
+  // export is added; sanitizeSettings itself stays module-private.
+  const mod = (v: unknown) => sanitizeProgress({ settings: { reviewIntervalModifier: v } }).settings.reviewIntervalModifier;
+
+  it("defaults to 1.0 (canonical default and absent value)", () => {
+    expect(DEFAULT_SETTINGS.reviewIntervalModifier).toBe(1.0);
+    expect(sanitizeProgress({}).settings.reviewIntervalModifier).toBe(1.0);
+    expect(mod(undefined)).toBe(1.0);
+  });
+
+  it("clamps low/high, keeps an in-band value, defaults a non-number / NaN to 1.0", () => {
+    expect(mod(0.1)).toBe(0.5); // clamp low to the band floor
+    expect(mod(5)).toBe(2.0); // clamp high to the band ceiling
+    expect(mod(1.5)).toBe(1.5); // in-band value kept as-is
+    expect(mod("x")).toBe(1.0); // non-number -> 1.0
+    expect(mod(Number.NaN)).toBe(1.0); // NaN -> 1.0
+  });
+
+  it("round-trips a non-default modifier through export/import", () => {
+    setSettings({ ...getSettings(), reviewIntervalModifier: 1.5 });
+    const snapshot = exportProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+    expect(getSettings().reviewIntervalModifier).toBe(1.5);
+  });
+
+  it("survives resetProgress (it is a preference, kept like reciter / theme)", () => {
+    setSettings({ ...getSettings(), reviewIntervalModifier: 0.5 });
+    resetProgress();
+    expect(getSettings().reviewIntervalModifier).toBe(0.5);
+  });
+});
+
 describe("export/import round-trip and resetProgress", () => {
   it("export then import round-trips losslessly", () => {
     setMemorizedVerses(["1:1", "1:2"], true);

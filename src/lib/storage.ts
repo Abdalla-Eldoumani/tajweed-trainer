@@ -40,6 +40,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   tafsirId: 169,
   showWordByWord: false,
   playerMinimized: false,
+  reviewIntervalModifier: 1.0,
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
@@ -220,6 +221,12 @@ function sanitizeSettings(input: unknown): UserSettings {
     playerPosition: sanitizePlayerPosition(input.playerPosition),
     playerMinimized:
       typeof input.playerMinimized === "boolean" ? input.playerMinimized : false,
+    // Balanced SM-2 review-interval modifier: clamp to the [0.5, 2.0] band (0.5
+    // halves the gaps between reviews, 2.0 doubles them); a non-number / NaN /
+    // absent value falls back to 1.0. Clamp to the nearest bound rather than
+    // reject, so a tampered 5 becomes 2.0. This scales only the memorized-verse
+    // due date, never the SM-2 easeFactor.
+    reviewIntervalModifier: clampNumber(input.reviewIntervalModifier, 1.0, 0.5, 2.0),
   };
 }
 
