@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig, configDefaults } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 
@@ -15,6 +15,10 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
+    // Defensive: the include already scopes to src/**/*.test, and the e2e specs
+    // are .spec.ts, so they are outside it. Excluding e2e/** as well keeps the
+    // Playwright tree unambiguously out of the unit run.
+    exclude: [...configDefaults.exclude, "e2e/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json-summary"],
