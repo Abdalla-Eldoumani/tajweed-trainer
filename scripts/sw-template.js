@@ -100,15 +100,23 @@ self.addEventListener("fetch", (event) => {
   if (isHtmlNavigation(request)) { event.respondWith(networkFirstHtml(request)); return; }
 });
 
-// Tapping the local revision reminder (REV-04) focuses an open window or opens
-// /progress. Purely additive: it touches no fetch/cache path, so the offline
-// scope is unchanged. Without it a tap is harmless (does nothing).
+// Tapping the local revision reminder (REV-04) takes the user to /progress
+// (where the revision dashboard and recall session live): it focuses an open
+// window and navigates it there, or opens a new window at /progress. Purely
+// additive: it touches no fetch/cache path, so the offline scope is unchanged.
+// Without it a tap is harmless (does nothing).
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil((async () => {
+    const target = "/progress";
     const all = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
     const existing = all.find((c) => "focus" in c);
-    if (existing) return existing.focus();
-    return self.clients.openWindow("/progress");
+    if (existing) {
+      if ("navigate" in existing) {
+        try { await existing.navigate(target); } catch { /* cross-origin/again: focus is enough */ }
+      }
+      return existing.focus();
+    }
+    return self.clients.openWindow(target);
   })());
 });
