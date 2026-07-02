@@ -894,6 +894,33 @@ export function setMemorizationReview(verseKey: string, state: Sm2State): void {
   setProgress(progress);
 }
 
+// How many NEW memorized verses were introduced to revision today (REV-01), for
+// the murajaah queue's daily cap. SIDE-EFFECT-FREE by design: when the stored
+// day is stale it returns 0 WITHOUT writing or emitting the change bus, so a pure
+// render read never triggers a re-render loop. Do NOT "helpfully" add a reset
+// write here — the day roll happens on the next recordNewVerseIntroduced. `now`
+// is injected so tests control the clock; the day boundary is the app-wide
+// toLocaleDateString("en-CA") convention (see updateStreak / recall-scheduler).
+export function getNewVersesIntroducedToday(now: Date = new Date()): number {
+  const t = getProgress().dailyNewVersesTracking;
+  if (!t) return 0;
+  return t.date === now.toLocaleDateString("en-CA") ? t.count : 0;
+}
+
+// Record that one NEW memorized verse entered revision today (REV-01). One write,
+// one emitProgressChanged(): a same-day call increments the count, a stale (or
+// empty) stored day rolls to { date: today, count: 1 }. `now` is injected so
+// tests control the clock. Day boundary is the app-wide en-CA local date.
+export function recordNewVerseIntroduced(now: Date = new Date()): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  const today = now.toLocaleDateString("en-CA");
+  const t = progress.dailyNewVersesTracking;
+  progress.dailyNewVersesTracking =
+    t && t.date === today ? { date: today, count: t.count + 1 } : { date: today, count: 1 };
+  setProgress(progress);
+}
+
 export function getAnalytics(): AnalyticsEvent[] {
   return getProgress().analytics;
 }
