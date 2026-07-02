@@ -24,8 +24,11 @@ Open `http://localhost:3000`. Hot reload applies TS, TSX, CSS, and JSON edits.
 | `npm run build` | Production build (Turbopack, Next 16); validates types and SSG into `.next/`. |
 | `npm start` | Serve the production build. |
 | `npm run lint` | ESLint (`eslint .`) via the flat `eslint.config.mjs` (not the deprecated `next lint`). |
-| `npm run verify` | Non-browser gate: `tsc --noEmit`, `eslint .`, then `npm run verify:scripts`. |
-| `npm run verify:scripts` | Headless checks (no browser): tajweed colors, coloring, navigation, reading, reciters, sanitizer, security, study tools, content accuracy, player, word segments, mastery, memorization, khatmah, accessibility. |
+| `npm test` | Vitest single pass (`vitest run`): the unit and integration suite that imports the shipped `src/lib` modules under jsdom. |
+| `npm run test:watch` | Vitest in watch mode (`vitest`) for local iteration. |
+| `npm run coverage` | `vitest run --coverage`: the suite plus v8 coverage, gated by the thresholds in `vitest.config.ts`. |
+| `npm run verify` | Non-browser gate: `tsc --noEmit`, `eslint .`, `vitest run --coverage` (thresholds enforced), then `npm run verify:audits`. |
+| `npm run verify:audits` | Headless data and source-parity audits (no browser): tajweed color and theme parity, content accuracy, lesson coloring, navigation and reading wiring, security config, and the component-structure guards (overlay, rule reveal, follow-along, motion, accessibility, onboarding). |
 | `npm run verify:ui` | Playwright browser suites: module lock, Mushaf, new features, questions, reciters, audio player. |
 | `node scripts/fetch-surah-names.mjs` | One-shot: pulls `/chapters`, patches `surah_name_ar` into rule examples. |
 | `node scripts/prefetch-tajweed-snapshots.mjs` | One-shot: snapshots tajweed HTML for lesson verses into `src/data/verse-snapshots.json`. |
@@ -77,10 +80,11 @@ Strict mode; avoid `any`. New types go in `src/lib/types.ts`. Optional `_ar` fie
 
 1. Make a small, focused change.
 2. Run `npx tsc --noEmit` to catch type issues fast.
-3. For a UI-visible change, open the route in EN, AR, light, and dark.
-4. For Mushaf changes, run `node scripts/verify-mushaf.mjs` (dev server in another terminal).
-5. Run `npm run build` before committing significant work (catches SSG-time issues).
-6. Commit each logical change separately with a brief, lowercase message explaining why.
+3. Run `npm test` for the unit gate, or `npm run coverage` to also check the enforced thresholds.
+4. For a UI-visible change, open the route in EN, AR, light, and dark.
+5. For Mushaf changes, run `node scripts/verify-mushaf.mjs` (dev server in another terminal).
+6. Run `npm run build` before committing significant work (catches SSG-time issues).
+7. Commit each logical change separately with a brief, lowercase message explaining why.
 
 ## Verifying the Mushaf
 
