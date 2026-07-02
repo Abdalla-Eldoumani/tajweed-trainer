@@ -49,3 +49,39 @@ test("the chaining drill cues the tail, reveals the head, and grades it into the
 
   expectNoConsoleErrors(consoleErrors);
 });
+
+// Regression: /progress renders BOTH the memorized-verse review and the chaining
+// drill when there are memorized verses. Each binds keys 1-4 while revealed; a
+// keypress must grade ONLY the focused drill, not both (a cross-fire would record
+// a grade the learner never gave into the shared SM-2 schedule). With both drills
+// revealed and focus in the chaining drill, pressing "3" (Good) must record the
+// chaining HEAD (1:2) and leave the review verse (1:1) ungraded.
+test("keyboard grading is scoped to the focused drill, not both at once", async ({
+  page,
+  context,
+}) => {
+  await seedProgress(context, { seenOnboarding: true, memorizedVerses: ["1:1"] });
+  await page.goto("/progress");
+
+  // Start + reveal the memorized-verse review (grades verse 1:1 itself).
+  await page.getByRole("button", { name: "Start Review" }).click();
+  await page.getByRole("button", { name: "Reveal" }).click();
+
+  // Start + reveal the chaining drill (grades the seam HEAD 1:2). Now both are
+  // revealed; the chaining reveal focus-loop leaves focus inside the chaining card.
+  await page.getByRole("button", { name: "Start chaining" }).click();
+  await page.getByRole("button", { name: "Reveal" }).click();
+
+  // The chaining reveal focus-loop lands on its Good button (last in DOM, since the
+  // drill mounts after the review). Wait for that focus before the keypress so the
+  // test asserts the guard, not a focus race.
+  await expect(page.getByRole("button", { name: /^Good\b/ }).last()).toBeFocused();
+
+  // One keypress, focus in the chaining drill: only the chaining head is graded.
+  await page.keyboard.press("3");
+
+  await expect
+    .poll(async () => (await readProgress(page)).memorizationReviews || {})
+    .toHaveProperty("1:2");
+  expect((await readProgress(page)).memorizationReviews).not.toHaveProperty("1:1");
+});
