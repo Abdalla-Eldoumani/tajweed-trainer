@@ -103,10 +103,10 @@ npm run build
 npm test
 
 # Browser tests (dev server running)
-node scripts/verify-mushaf.mjs               # 21/21
-node scripts/verify-module-lock.mjs          # 11/11
+node scripts/verify-mushaf.mjs               # 23/23
+node scripts/verify-module-lock.mjs          # 14/14
 node scripts/verify-questions.mjs            # 19/19
-node scripts/verify-reciters.mjs             # 9/9
+node scripts/verify-reciters.mjs             # 14/14 hard (live-resolution probes non-fatal)
 ```
 
 ## Why these constraints

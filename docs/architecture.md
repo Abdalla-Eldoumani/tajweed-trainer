@@ -40,7 +40,7 @@ Routes: `/`, `/learn`, `/learn/[module]`, `/mushaf`, `/mushaf/page/[page]`, `/mu
 - **Next 15+ async APIs:** dynamic route `params` is a Promise (see routes below); `export const revalidate` uses a literal seconds value (e.g. `86400`, `604800`).
 - **Fonts:** self-hosted via `next/font` (Inter, Spectral, JetBrains Mono, Amiri, Amiri Quran); no Google Fonts `<link>`. Tailwind `fontFamily` tokens map to the `next/font` variables.
 - **Headers / CSP:** all response headers and the CSP are assembled once in `next.config.mjs` (`headers()` applies them to every path); see [security.md](security.md#content-security-policy) for the directive table and origins.
-- Project version is **2.0.0**.
+- Project version is **2.2.0**.
 
 ## Layers
 
@@ -53,7 +53,7 @@ Routes: `/`, `/learn`, `/learn/[module]`, `/mushaf`, `/mushaf/page/[page]`, `/mu
 - **storage.ts**: SSR-safe localStorage wrapper and the only write funnel; reads run `sanitizeProgress`, writes emit through `progress-events.ts`. `getSettings`, `setSettings`, `getProgress`, `setProgress`. Beyond the core lesson/quiz/settings state, `TajweedProgress` carries the memorization, review, notes, bookmark, resume, khatmah, onboarding, and analytics fields, each sanitized and capped ([api-integrations.md](api-integrations.md#storage-caps-and-validation-contract) holds the full field list and caps). Keyed maps reject `__proto__`, `constructor`, `prototype`. Helpers: `getReviews/setReview`, `toggleMemorizedVerse/setMemorizedVerses`, `getReadSections/markSectionRead`, `getVerseNote/setVerseNote`, `getLastRead/getLastReadForSurah/setLastRead`, `getKhatmah/setKhatmah/clearKhatmah`, `getOnboardingSeen/setOnboardingSeen`, `getAnalytics/recordAnalyticsEvent`, `exportProgress/importProgress`, `getLastBackupAt/shouldRemindBackup`.
 - **i18n.ts**: flat `key -> { en, ar }` dictionary, `t(key, lang)`, and `useTranslation()` -> `{ t, lang, isAr, dir }`.
 - **utils.ts**: `cn()`, `formatSurahReference(name | { en, ar }, surah, ayah, locale)`, `toArabicIndic(n)`.
-- **question-pool.ts**: flattens rule-file examples into a pool, builds `RULE_AR_MAP`, exposes `getRandomQuestions` with parallel `options` / `optionsAr`. Authored `src/data/questions/<module>.ts` take precedence. `getModuleLastScore(progress, moduleId)` and `getDueQuestions(dueIds, count)` feed the hub and review route.
+- **question-pool.ts**: flattens rule-file examples into a pool, builds `RULE_AR_MAP`, exposes `getRandomQuestions` with parallel `options` / `optionsAr`. Authored `src/data/questions/<module>.ts` take precedence. `getDueQuestions(dueIds, count)` feeds the review route; the practice hub reads last-quiz scores via `getModuleLastScore` in `practice-scores.ts`, kept out of `question-pool.ts` so the hub does not pull the content pool into the client bundle.
 - **spaced-repetition.ts**: pure Leitner. `LEITNER_INTERVALS` (1/3/7/14/30 days); `nextStateForAnswer(prev, correct)` promotes one box (clamp `MASTERY_BOX = 5`) or resets to 1; `recordReview(questionId, correct)` writes through; `getDueQuestionIds` and `getReviewStats` are read-only.
 - **search.ts**: builds and caches the global search index (surahs, modules, rules with subtypes, tafkheem subsections, makharij regions, waqf symbols). `search(query, limit)` tokenized substring match with score ranking; minimum length 2.
 - **khatmah.ts**: pure pace math. `computeKhatmahPace(plan, currentPage, today)` (clamped snapshot) and `targetDateForDuration(startDate, days)`. Linear by mushaf page, no React/storage/next.

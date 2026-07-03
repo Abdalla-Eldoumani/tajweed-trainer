@@ -58,6 +58,8 @@ The saved-verse list behind `/mushaf/bookmarks`. The route resolves surah header
 
 ### `TajweedRulePopover`
 
+Lives in `src/components/ui/TajweedRulePopover.tsx` (the exception to the `src/components/mushaf/` grouping above).
+
 Opened by `TajweedText` when `explainRules` is on (reader and lesson examples): on hover for pointers, on a deliberate long-press for touch. It names the rule from the verified map (never in its own words) and shows its color from `tajweed-colors.ts`, with a "Learn more" link via `getLessonLinkForClass`; classes with no single owning module show name and color without a link. A pointer popover dismisses shortly after the pointer leaves (a brief grace reaches the link, and hovering the card holds it open) so popovers never stack; a touch popover dismisses on an outside tap, Escape, or scroll.
 
 ### `VerseOverlay`
@@ -70,14 +72,10 @@ In order: the verse reference and its Arabic (read-only `TajweedText`); a primar
 
 `VerseNotes` is the private per-verse note, read and written through `getVerseNote` / `setVerseNote`, with a `TagEditor` for the learner's own short tags; both stay on-device, never transmitted, never religious content. `ReciterCompare` plays the verse by two reciters in turn on the one `usePlayer` engine, no second audio element. `RecitationCompare` records the learner into an in-memory clip to replay next to the reciter (the lone allowed extra audio, never uploaded or scored); the clip is an object URL revoked on re-record or close, and the control hides when recording is unsupported or the microphone is blocked.
 
-### `VerseEndMarker`
-
-Currently unused: the API embeds verse-end markers as `<span class="end">N</span>` inside `text_uthmani_tajweed` (styled in CSS). The component remains as a manual-render fallback.
-
 ## Routes
 
 - `src/app/mushaf/page.tsx`: server component; calls `getChaptersIndex()` and renders `<MushafIndex/>`.
-- `src/app/mushaf/page/[page]/page.tsx`: server component; `params` is an awaited Promise (Next 16). `generateStaticParams()` pre-renders page 1 and one page per juz, the rest via ISR (`export const revalidate = 86400`). Calls `getTajweedPage` and `getChaptersIndex`, passing both to `<MushafReader/>`.
+- `src/app/mushaf/page/[page]/page.tsx`: server component; `params` is an awaited Promise (Next 16). `generateStaticParams()` pre-renders 36 entry-point pages (the first few pages, one page near each juz start, and page 604), the rest via ISR (`export const revalidate = 86400`). Calls `getTajweedPage` and `getChaptersIndex`, passing both to `<MushafReader/>`.
 - `src/app/mushaf/surah/[surah]/page.tsx`: server component; looks up the surah's start page from the bundled index and `redirect`s. No client JS.
 - `src/app/mushaf/bookmarks/page.tsx`: server component; resolves the surah headers and renders `<MushafBookmarks/>`.
 - `src/app/mushaf/loading.tsx` and `src/app/mushaf/page/[page]/loading.tsx`: route loading skeletons.
@@ -99,7 +97,7 @@ The server route (`page/[page]/page.tsx`) fetches `getTajweedPage` + `getChapter
 
 ## Verification
 
-`scripts/verify-mushaf.mjs` drives a real Chromium against the dev server and runs 21 assertions after any Mushaf change (see [development.md](development.md) for the invocation). It prints `21/21 checks passed.`; a failing assertion lists the file path and actual vs. expected. Screenshots land in `mushaf-screenshots/` covering Al-Fatihah, Al-Baqarah's start, At-Tawbah's start, page 604, and the Arabic and dark variants; skim them after a structural change.
+`scripts/verify-mushaf.mjs` drives a real Chromium against the dev server and runs 23 assertions after any Mushaf change (see [development.md](development.md) for the invocation). It prints `23/23 checks passed.`; a failing assertion lists the file path and actual vs. expected. Screenshots land in `mushaf-screenshots/` covering Al-Fatihah, Al-Baqarah's start, At-Tawbah's start, page 604, and the Arabic and dark variants; skim them after a structural change.
 
 ## What's intentionally not here
 

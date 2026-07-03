@@ -55,7 +55,7 @@ The `text_uthmani_tajweed` field is structural HTML (`<tajweed class="...">` col
 
 ### `GET /verses/by_page/{page}`
 
-Used by `getTajweedPage(pageNumber)` for the Mushaf reader. Same fields plus `page_number`, `juz_number`, `hizb_number`, `ruku_number`, `manzil_number`, and `sajdah_number`. A Madinan page runs 7 to 15 verses; the wrapper passes `per_page=50` to cover edge cases, and the API returns only what is on the page.
+Used by `getTajweedPage(pageNumber)` for the Mushaf reader. Requests `page_number` and `juz_number` alongside `text_uthmani_tajweed`; only `juz_number` is mapped into the reader. A Madinan page runs 7 to 15 verses; the wrapper passes `per_page=50` to cover edge cases, and the API returns only what is on the page.
 
 ## Per-ayah audio (Quran.com + EveryAyah)
 
@@ -77,7 +77,7 @@ Response (relevant fields):
 }
 ```
 
-The wrapper reads `data.audio_files[0].url`, which may be relative (`"Husary/mp3/001001.mp3"`), protocol-relative (`"//mirrors.quranicaudio.com/..."`), or absolute; `toAudioFileUrl` normalizes it to https, prefixing relative paths with the CDN base `https://verses.quran.com/`. The resolved file lands on `verses.quran.com` or a `*.quranicaudio.com` mirror. Because `normalizeReciterId` runs first, the URL-path id is always one the API knows.
+The wrapper reads `data.audio_files[0].url`, which may be relative (`"Husary/mp3/001001.mp3"`), protocol-relative (`"//mirrors.quranicaudio.com/..."`), or absolute; `toSafeAudioUrl` normalizes it to https, prefixing relative paths with the CDN base `https://verses.quran.com/`. The resolved file lands on `verses.quran.com` or a `*.quranicaudio.com` mirror. Because `normalizeReciterId` runs first, the URL-path id is always one the API knows.
 
 ## Caching
 
@@ -120,8 +120,14 @@ The API occasionally adds new tajweed class names; `tajweed-colors.ts` covers th
 | `quizScores` per module | 500 entries | Each `{ lessonId, score, date }`. |
 | `modules` map | 100 keys | Module-id strings 1–100 chars. |
 | `reviews` map | 2000 entries | Headroom over the ~280 authored pool. Per entry: `box` clamped 1 to 5, dates ≤ 32 chars, counters ≤ 100,000. |
-| `memorizationReviews` map | 6,236 entries | Leitner state for memorized-verse review, keyed by verseKey (separate keyspace from `reviews`). Key `^\d{1,3}:\d{1,3}$`; per-entry shape as `reviews`. |
+| `memorizationReviews` map | 6,236 entries | SM-2 spaced-repetition state (`Sm2State`: `repetitions`, `easeFactor`, `intervalDays`, `nextDueDate`, `lastReviewedDate`, `timesSeen`, `timesCorrect`, `lapses`) for memorized-verse review, keyed by verseKey in a separate keyspace from `reviews` (which stays Leitner). Key `^\d{1,3}:\d{1,3}$`; legacy box-based entries migrate to SM-2 on read via `migrateLeitnerToSm2`. |
 | `memorizedVerses` | 6,236 entries | One per ayah. Each validated `^\d{1,3}:\d{1,3}$`; deduped on read. |
+| `sessionPeekUsed` map | 500 entries | Per-session recall peek/hint counts, keyed by verseKey (`^\d{1,3}:\d{1,3}$`); each count clamped, `MAX_PEEK_ENTRIES`. Cleared on review finish. |
+| `tikrarLog` map | 6,236 entries | Cumulative tikrar (repetition) counts per verse, keyed by verseKey. Per-entry reps ≤ 100,000; `MAX_MEMORIZED`. |
+| `examLog` | 100 records | Most-recent-first timed no-peek exam attempts `{ scope, dateIso, percent, total }`; `MAX_EXAM_LOG`, oldest trimmed. |
+| `sessionJournal` map | 366 days | Per-day journal keyed by ISO date, value `{ memorizeGoal, reviseGoal, memorized, revised }`; `MAX_JOURNAL_DAYS`, oldest evicted. |
+| `dailyNewVersesTracking` | fixed shape | `{ date, count }` daily NEW-verse counter for the revision cap; `date` ≤ 10 chars, `count` clamped 0 to 100,000. |
+| `memorizationStreak` | fixed shape | `{ currentStreak, longestStreak, lastRevisionDate }`; counters clamped 0 to 100,000, date ≤ 10 chars. |
 | `bookmarks` | 500 entries | Verse bookmarks (distinct from page `mushafBookmarks`). Each `^\d{1,3}:\d{1,3}$`; deduped on read. |
 | `lastReadBySurah` map | 114 entries | Per-surah last-read, keyed by surah 1 to 114. Value `{ verseKey, page }`, page 1 to 604. |
 | `readSections` map | 50 slugs per module | Slug `^[a-z0-9][a-z0-9-]{0,80}$`; module ids 1 to 100 chars. |
@@ -131,6 +137,7 @@ The API occasionally adds new tajweed class names; `tajweed-colors.ts` covers th
 | `certificates` | 60 records or empty | Per milestone `{ kind: "juz"\|"khatmah", ref, dateIso }`; image blob never stored (rendered and downloaded on-device only). Deduped; malformed dropped. |
 | `playerResume` | one record or null | Last verse played, surfaced as the opt-in "Resume listening" control (`MushafResumeBar`, `ResumeListeningCard`); never auto-restored into the queue. Validated shape; null when none. |
 | `seenOnboarding` | boolean | First-launch seen-once flag; defaults false so a reset re-shows it. |
+| `warshNarrationAck` | boolean | Seen-once acknowledgement for the per-surah Warsh narration disclaimer; defaults false. |
 | `lastBackupAt` | ISO string | Stamped by `exportProgress`; empty until first backup. Drives the backup reminder. |
 | `analytics` ring buffer | 1000 events | FIFO; older events evicted on append. Each: `type` from a fixed enum, `meta` ≤ 200 chars, `ts` ≤ 32 chars. |
 | `reciter` | one `RECITATIONS` Hafs id, or `DEFAULT_RECITER_ID` fallback | `normalizeReciterId` migrates legacy alquran.cloud ids and defaults when unknown. |
@@ -141,7 +148,7 @@ Sanitization runs on every `getProgress()` read; defaults absorb anything malfor
 
 ## Local-only data fields
 
-These `TajweedProgress` fields never leave the device (never sent to a server, shared between devices, or put in any network request): `reviews` and `memorizationReviews` (Leitner state), `memorizedVerses`, `bookmarks`, `lastReadBySurah`, `readSections`, `verseNotes`, `entryTags`, `khatmah`, `playerResume` (the opt-in "Resume listening" record, never auto-resumed), `certificates` (never the rendered image), and `analytics` (a 1000-event FIFO ring buffer of route views and quiz events read by the Insights card, removable via Reset Progress or by editing the JSON backup). `verseNotes` and `entryTags` are the learner's own words and labels, never religious content. The caps table above owns each field's shape and bounds.
+These `TajweedProgress` fields never leave the device (never sent to a server, shared between devices, or put in any network request): `reviews` (Leitner state) and `memorizationReviews` (SM-2 state), `memorizedVerses`, `bookmarks`, `lastReadBySurah`, `readSections`, `verseNotes`, `entryTags`, `khatmah`, `playerResume` (the opt-in "Resume listening" record, never auto-resumed), `certificates` (never the rendered image), `sessionPeekUsed`, `tikrarLog`, `examLog`, `sessionJournal`, `dailyNewVersesTracking`, `memorizationStreak`, and `analytics` (a 1000-event FIFO ring buffer of route views and quiz events read by the Insights card, removable via Reset Progress or by editing the JSON backup). `verseNotes` and `entryTags` are the learner's own words and labels, never religious content. The caps table above owns each field's shape and bounds.
 
 Sanitization replaces any malformed field with its default, so editing localStorage cannot reference missing content or store an unbounded payload.
 

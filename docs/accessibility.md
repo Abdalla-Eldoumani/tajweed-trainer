@@ -5,7 +5,7 @@ A statement of how the app supports assistive technology and varied input, writt
 ## Keyboard
 
 - Every interactive control is reachable and operable by keyboard. The Mushaf reader turns pages with `ArrowLeft` / `ArrowRight` (mirrored under RTL), and a Cmd/Ctrl+K palette jumps to any surah, page, or juz.
-- Overlays manage focus. The mobile navigation drawer is an `aria-modal` dialog: it traps Tab, wraps from the last focusable element back to the first, returns focus to its opener on close, and closes on Escape. The player and verse panels also close on Escape.
+- Overlays manage focus. The mobile navigation drawer is an `aria-modal` dialog: it traps Tab, wraps from the last focusable element back to the first, returns focus to its opener on close, and closes on Escape. The verse overlay closes on Escape; in the player, Escape collapses the expanded study-options panel and returns focus to its toggle.
 - Focus is visible. Interactive elements carry a `focus-visible` ring (the search box, the quick-jump palette input, and the shared UI primitives), so keyboard users can always see where they are. The active navigation link is marked with `aria-current="page"` in both the sidebar and the drawer.
 
 ## Names and structure
