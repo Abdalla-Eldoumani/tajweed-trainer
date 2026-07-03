@@ -19,14 +19,17 @@ import type { Sm2State } from "./types";
 import { MASTERED_INTERVAL_DAYS } from "./recall-scheduler";
 
 // Whole local-day count between two dates, measured at LOCAL midnight (each date
-// with hours/minutes/seconds/ms zeroed). Floored so a partial day never rounds up.
-// Local — not a UTC round-trip — on purpose: UTC drifts off-by-one near local
-// midnight, and the whole app keys days off the en-CA local date (see
+// with hours/minutes/seconds/ms zeroed). Both operands are re-anchored to local
+// midnight here, so the epoch delta is always a whole number of days EXCEPT across
+// a DST transition, where it is off by one hour; ROUNDED (not floored) so that
+// hour never miscounts the span (a 10-day span crossing spring-forward is
+// 10*24-1 hours -> round gives 10, floor wrongly gave 9). Local — not a UTC
+// round-trip — on purpose: the whole app keys days off the en-CA local date (see
 // recall-scheduler toIsoDate). Negative when b precedes a; callers guard as needed.
 function daysBetween(a: Date, b: Date): number {
   const aMidnight = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
   const bMidnight = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
-  return Math.floor((bMidnight - aMidnight) / 86_400_000);
+  return Math.round((bMidnight - aMidnight) / 86_400_000);
 }
 
 // STAT-01. Freshness in [0, 1]: 1 right after a successful recall, decaying
@@ -44,6 +47,12 @@ export function freshness(state: Sm2State | undefined, now: Date): number {
   if (!state || !state.lastReviewedDate) return 0;
   const last = new Date(state.lastReviewedDate + "T00:00:00");
   const due = new Date((state.nextDueDate || state.lastReviewedDate) + "T00:00:00");
+  // Defense-in-depth: a tampered/corrupt stored date parses to an Invalid Date, and
+  // an unguarded NaN here would propagate through scopeStrength's freshness sum and
+  // render a `width: NaN%` bar for the whole scope. Treat it as never-recalled (0),
+  // matching the app's "sanitize away tampered values" posture. Normal writes are
+  // always valid en-CA dates from recall-scheduler.
+  if (Number.isNaN(last.getTime()) || Number.isNaN(due.getTime())) return 0;
   const window = Math.max(1, daysBetween(last, due));
   const elapsed = daysBetween(last, now);
   return Math.min(1, Math.max(0, 1 - elapsed / window));

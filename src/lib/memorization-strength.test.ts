@@ -90,6 +90,15 @@ describe("freshness - STAT-01 decay from the last recall to nextDueDate", () => 
     const dueNow = sm2({ lastReviewedDate: "2026-07-01", nextDueDate: "" });
     expect(freshness(dueNow, NOW)).toBe(0);
   });
+
+  it("returns 0 (never NaN) for a corrupt/unparseable stored date", () => {
+    // Defense-in-depth: a tampered date must not produce NaN, which would poison
+    // the scope's freshness sum and render a `width: NaN%` bar.
+    const corrupt = sm2({ lastReviewedDate: "not-a-date", nextDueDate: "2026-07-13" });
+    const value = freshness(corrupt, NOW);
+    expect(Number.isNaN(value)).toBe(false);
+    expect(value).toBe(0);
+  });
 });
 
 describe("hasBeenRecalled - unseen vs aged-to-red", () => {
