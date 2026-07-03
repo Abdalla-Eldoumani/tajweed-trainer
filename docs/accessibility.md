@@ -37,4 +37,4 @@ A statement of how the app supports assistive technology and varied input, writt
 
 ## Verification
 
-`scripts/verify-accessibility.mjs` is a source-level guard (no browser) for the focus rings, the reduced-motion gating, the scroll-lock coordination, the `aria-current` wiring, and the contrast-scoped numeral color, so these cannot silently regress. It runs as part of `npm run verify:scripts`. Visual and screen-reader checks are still done by hand in English, Arabic, light, and dark.
+`scripts/verify-accessibility.mjs` is a source-level guard (no browser) for the focus rings, the reduced-motion gating, the scroll-lock coordination, the `aria-current` wiring, and the contrast-scoped numeral color, so these cannot silently regress. It runs as part of `npm run verify:audits` (itself part of the `npm run verify` gate). Visual and screen-reader checks are still done by hand in English, Arabic, light, and dark.
