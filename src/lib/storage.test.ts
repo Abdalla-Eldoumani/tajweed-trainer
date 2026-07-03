@@ -921,11 +921,13 @@ describe("sanitizeTikrarLog + logTikrarReps: cumulative across days, cap-on-new 
     expect(getProgress().tikrarLog?.["2:255"]).toEqual({ reps: 25, lastRepDate: today });
   });
 
-  it("clamps a per-call value over 100 to 100, no-ops a call that rounds to 0, rejects a bad key", () => {
+  it("logs a large real session in full, clamps only an absurd per-call value, no-ops 0, rejects a bad key", () => {
     logTikrarReps("2:255", 500);
-    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(100); // clamped to MAX_TIKRAR_PER_CALL
+    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(500); // a real long session is NOT truncated (WR-02)
+    logTikrarReps("2:255", 1500);
+    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(1500); // 500 + min(1500, MAX_TIKRAR_PER_CALL 1000)
     logTikrarReps("2:255", 0);
-    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(100); // 0 is a no-op, unchanged
+    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(1500); // 0 is a no-op, unchanged
     logTikrarReps("bad-key", 5);
     expect(getProgress().tikrarLog?.["bad-key"]).toBeUndefined(); // rejected verseKey
   });
@@ -1023,14 +1025,44 @@ describe("sanitizeSessionJournal + journal helpers + memorize-add tally (EXAM-03
     expect(out["2026-07-03"]).toEqual({ memorizeGoal: 0, reviseGoal: 0, memorized: 5, revised: 2 }); // 1e9 / -4 rejected to 0
   });
 
-  it("caps the map at 366 days", () => {
+  it("is a rolling window: keeps the most-recent 366 days and drops the OLDEST, never the newest (WR-03)", () => {
     const map: Record<string, unknown> = {};
+    const days: string[] = [];
     const d = new Date("2024-01-01T00:00:00Z"); // start of a leap year, plenty of days ahead
     for (let i = 0; i < 400; i++) {
-      map[d.toISOString().slice(0, 10)] = { memorizeGoal: 0, reviseGoal: 0, memorized: 1, revised: 0 };
+      const iso = d.toISOString().slice(0, 10);
+      days.push(iso);
+      map[iso] = { memorizeGoal: 0, reviseGoal: 0, memorized: 1, revised: 0 };
       d.setUTCDate(d.getUTCDate() + 1);
     }
-    expect(Object.keys(journal(map)).length).toBe(366);
+    const out = journal(map);
+    expect(Object.keys(out).length).toBe(366);
+    expect(out[days[399]]).toBeDefined(); // the newest day is kept
+    expect(out[days[0]]).toBeUndefined(); // the oldest 34 days aged off
+    expect(out[days[33]]).toBeUndefined();
+    expect(out[days[34]]).toBeDefined(); // the 35th day is the oldest survivor (400 - 366)
+  });
+
+  it("the write path evicts the oldest day so a full journal never refuses a new day (WR-03)", () => {
+    // Seed a full journal of 366 consecutive OLD days, then set goals for today.
+    const seed: Record<string, unknown> = {};
+    const seedDays: string[] = [];
+    const d = new Date("2024-01-01T00:00:00Z");
+    for (let i = 0; i < 366; i++) {
+      const iso = d.toISOString().slice(0, 10);
+      seedDays.push(iso);
+      seed[iso] = { memorizeGoal: 1, reviseGoal: 1, memorized: 1, revised: 1 };
+      d.setUTCDate(d.getUTCDate() + 1);
+    }
+    expect(importProgress(JSON.stringify({ sessionJournal: seed }))).toBe(true);
+    expect(Object.keys(getProgress().sessionJournal ?? {}).length).toBe(366);
+
+    const today = new Date().toLocaleDateString("en-CA");
+    setJournalGoals(today, { memorizeGoal: 5, reviseGoal: 10 });
+    const after = getProgress().sessionJournal ?? {};
+    expect(Object.keys(after).length).toBe(366); // still capped
+    expect(after[today]).toEqual({ memorizeGoal: 5, reviseGoal: 10, memorized: 0, revised: 0 }); // today recorded
+    expect(after[seedDays[0]]).toBeUndefined(); // the oldest seeded day was evicted, not the new one refused
   });
 
   it("setJournalGoals upserts SET goals (a second call overwrites, not adds) and rejects a bad date", () => {

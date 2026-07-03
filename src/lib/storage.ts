@@ -112,15 +112,18 @@ const MAX_MEMORIZED = 6236;
 // Per-call ceiling on tikrar reps: a single logTikrarReps call can add at most
 // this many reps to a verse's running total (the total itself caps at
 // MAX_MEMORIZED entries and 100000 reps per entry). A tamper/typo guard, not a
-// real session length.
-const MAX_TIKRAR_PER_CALL = 100;
+// real session length — one commit logs a whole focused session's reps at once
+// (many replays of a target), so this is set well above any realistic session so
+// a legitimate long session is never silently truncated.
+const MAX_TIKRAR_PER_CALL = 1000;
 // The timed-exam attempt log is a capped, most-recent-first ring: a tampered
 // store cannot bloat every read past this many attempts, and legitimate use keeps
 // only the recent history (older attempts age off the tail).
 const MAX_EXAM_LOG = 100;
 // The session journal holds one entry per day; a leap year of daily entries is
-// 366, so this ceiling bounds a tampered store while never clipping a real
-// year-long streak of daily use (cap-on-new keeps existing days editable).
+// 366, so this ceiling bounds a tampered store while covering a year of daily
+// use. It is a ROLLING WINDOW keyed by date: when full, the OLDEST day is evicted
+// so today is always recorded (a daily user must never silently stop logging).
 const MAX_JOURNAL_DAYS = 366;
 const MAX_VERSE_BOOKMARKS = 500;
 const MAX_LAST_READ_BY_SURAH = 114;
@@ -549,29 +552,35 @@ function sanitizeTikrarLog(input: unknown): Record<string, { reps: number; lastR
 // The per-day session journal (EXAM-03), a keyed map like sanitizeSessionPeeks so
 // the dangerous prototype keys are skipped — but the KEY here must be a real
 // YYYY-MM-DD day (isValidIsoDate), not a verseKey. Each value's four counters are
-// clamped to [0, 100000]; a non-object value is dropped; the map caps at
-// MAX_JOURNAL_DAYS (cap-on-new). Separate from the SM-2 memorizationReviews
-// schedule. A stored object without this field reads back as {} (lossless
-// migration).
+// clamped to [0, 100000]; a non-object value is dropped; the map is a rolling
+// window that keeps the MOST-RECENT MAX_JOURNAL_DAYS by date (a tampered store
+// with more entries drops the OLDEST days, never the newest). Separate from the
+// SM-2 memorizationReviews schedule. A stored object without this field reads
+// back as {} (lossless migration).
 function sanitizeSessionJournal(
   input: unknown,
 ): Record<string, { memorizeGoal: number; reviseGoal: number; memorized: number; revised: number }> {
   if (!isObject(input)) return {};
-  const out: Record<string, { memorizeGoal: number; reviseGoal: number; memorized: number; revised: number }> = {};
-  let count = 0;
+  const entries: [string, { memorizeGoal: number; reviseGoal: number; memorized: number; revised: number }][] = [];
   for (const [dateIso, value] of Object.entries(input)) {
     if (dateIso === "__proto__" || dateIso === "constructor" || dateIso === "prototype") continue;
     if (!isValidIsoDate(dateIso)) continue;
     if (!isObject(value)) continue;
-    out[dateIso] = {
-      memorizeGoal: pickNumber(value.memorizeGoal, 0, 0, 100000),
-      reviseGoal: pickNumber(value.reviseGoal, 0, 0, 100000),
-      memorized: pickNumber(value.memorized, 0, 0, 100000),
-      revised: pickNumber(value.revised, 0, 0, 100000),
-    };
-    count += 1;
-    if (count >= MAX_JOURNAL_DAYS) break;
+    entries.push([
+      dateIso,
+      {
+        memorizeGoal: pickNumber(value.memorizeGoal, 0, 0, 100000),
+        reviseGoal: pickNumber(value.reviseGoal, 0, 0, 100000),
+        memorized: pickNumber(value.memorized, 0, 0, 100000),
+        revised: pickNumber(value.revised, 0, 0, 100000),
+      },
+    ]);
   }
+  // Keep the most-recent MAX_JOURNAL_DAYS (ISO YYYY-MM-DD sorts chronologically):
+  // sort descending and take the head, so the oldest days age off, not the newest.
+  entries.sort((a, b) => (a[0] < b[0] ? 1 : a[0] > b[0] ? -1 : 0));
+  const out: Record<string, { memorizeGoal: number; reviseGoal: number; memorized: number; revised: number }> = {};
+  for (const [dateIso, value] of entries.slice(0, MAX_JOURNAL_DAYS)) out[dateIso] = value;
   return out;
 }
 
@@ -1480,22 +1489,22 @@ export function logExamResult({ scope, percent, total }: { scope: string; percen
   setProgress(progress);
 }
 
-// Read-or-create a day's journal entry (all-zero default, honoring the
-// MAX_JOURNAL_DAYS cap-on-new for a brand-new day) and apply a partial: the two
-// goal fields are SET (the UI overwrites them), the two tally fields are ADDED
-// (memorize/revise activity accumulates). Writes back onto progress.sessionJournal
-// WITHOUT calling setProgress, so a caller can fold this bump into its own single
-// write + emit (mirrors setLastRead mutating two sub-objects before one write).
-// Private: every exported journal helper and the memorize-add tally route through
-// it so a day's shape and the cap are enforced in exactly one place.
+// Read-or-create a day's journal entry (all-zero default) and apply a partial: the
+// two goal fields are SET (the UI overwrites them), the two tally fields are ADDED
+// (memorize/revise activity accumulates). The journal is a ROLLING WINDOW: after
+// the upsert, if it exceeds MAX_JOURNAL_DAYS the OLDEST day(s) are evicted (ISO
+// dates sort chronologically) so today is always recorded — a daily user never
+// silently stops logging. Writes back onto progress.sessionJournal WITHOUT calling
+// setProgress, so a caller can fold this bump into its own single write + emit
+// (mirrors setLastRead mutating two sub-objects before one write). Private: every
+// exported journal helper and the memorize-add tally route through it so a day's
+// shape and the window are enforced in exactly one place.
 function bumpJournalEntry(
   progress: TajweedProgress,
   dateIso: string,
   patch: { memorizeGoal?: number; reviseGoal?: number; memorized?: number; revised?: number },
 ): void {
   const map = progress.sessionJournal ?? {};
-  const isNew = !(dateIso in map);
-  if (isNew && Object.keys(map).length >= MAX_JOURNAL_DAYS) return;
   const prev = map[dateIso] ?? { memorizeGoal: 0, reviseGoal: 0, memorized: 0, revised: 0 };
   map[dateIso] = {
     memorizeGoal: patch.memorizeGoal ?? prev.memorizeGoal,
@@ -1503,6 +1512,11 @@ function bumpJournalEntry(
     memorized: prev.memorized + (patch.memorized ?? 0),
     revised: prev.revised + (patch.revised ?? 0),
   };
+  const keys = Object.keys(map);
+  if (keys.length > MAX_JOURNAL_DAYS) {
+    keys.sort(); // ISO YYYY-MM-DD sorts chronologically (oldest first)
+    for (let i = 0; i < keys.length - MAX_JOURNAL_DAYS; i++) delete map[keys[i]];
+  }
   progress.sessionJournal = map;
 }
 
