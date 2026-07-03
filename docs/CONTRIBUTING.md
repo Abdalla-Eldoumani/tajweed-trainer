@@ -20,12 +20,12 @@ Run these before opening a pull request:
 ```bash
 npx tsc --noEmit          # type check
 npm run lint              # eslint .
-npm run verify            # tsc + eslint + verify:scripts
+npm run verify            # tsc + eslint + vitest --coverage + verify:audits
 npm run build             # production build
 npm run verify:ui         # browser tests against a running server
 ```
 
-`npm run verify` wraps the type check, lint, and offline `verify:scripts`. `npm run verify:ui` needs a running server and is not in the CI gate; run it for UI changes in EN, AR, light, and dark. Full list: [development.md](development.md).
+`npm run verify` wraps the type check, lint, the Vitest suite with coverage, and the offline data audits (`verify:audits`). `npm run verify:ui` needs a running server and is not in the CI gate; run it for UI changes in EN, AR, light, and dark. Full list: [development.md](development.md).
 
 ## Conventions
 
@@ -44,7 +44,7 @@ The app renders pre-verified content and never rewrites it. The full rule is in 
 
 ## How CI gates a pull request
 
-A pull request against `main` runs CI on Node 24: the production dependency audit, type check, lint, the offline verify scripts, and a build. It must be green before review; `npm run verify` and `npm run build` mirror most of it locally.
+A pull request against `main` runs CI on Node 24 in two parallel jobs: a verify job (the production dependency audit, type check, lint, the Vitest suite with coverage, the offline data audits, and a build) and a Playwright end-to-end job. Both must be green before review; `npm run verify` and `npm run build` mirror the verify job locally.
 
 ## Ways to contribute
 
