@@ -861,6 +861,32 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "لا أخطاء استذكار مُسجّلة بعد — واصل المراجعة.",
   },
 
+  // Tikrar (repetition) rep counter on /progress (EXAM-01). Operational UI copy
+  // and counts only — never Quran text (the verse renders through TajweedText).
+  // It is the SIXTH drill-like surface on /progress, so its title / startDrill /
+  // pickVerse labels are deliberately DISTINCT from the other five (review /
+  // chain / segment / typing / murajaah) in BOTH locales so an e2e locator
+  // addresses exactly this drill. Placeholders {done} / {target} / {n} are
+  // replaced at the call site (Arabic-Indic digits in AR).
+  "tikrar.title": { en: "Repeat a verse", ar: "كرّر آية" },
+  "tikrar.description": {
+    en: "Loop a memorized verse and count your repetitions toward a session target.",
+    ar: "كرّر آية محفوظة واعدد تكراراتك نحو هدف الجلسة.",
+  },
+  "tikrar.pickVerse": { en: "Pick a verse to repeat", ar: "اختر آية للتكرار" },
+  "tikrar.target": { en: "Repetition target", ar: "هدف التكرار" },
+  "tikrar.decreaseTarget": { en: "Fewer repetitions", ar: "تكرارات أقل" },
+  "tikrar.increaseTarget": { en: "More repetitions", ar: "تكرارات أكثر" },
+  "tikrar.startDrill": { en: "Start repeating", ar: "ابدأ التكرار" },
+  "tikrar.countRep": { en: "Count a repetition", ar: "احسب تكرارًا" },
+  "tikrar.sessionProgress": { en: "{done} of {target} this session", ar: "{done} من {target} في هذه الجلسة" },
+  "tikrar.runningTotal": { en: "Total for this verse: {n}", ar: "الإجمالي لهذه الآية: {n}" },
+  "tikrar.finish": { en: "Finish session", ar: "أنهِ الجلسة" },
+  "tikrar.empty": {
+    en: "Memorize a verse first, then repeat it here to reinforce it.",
+    ar: "احفظ آية أولًا، ثم كرّرها هنا لترسيخها.",
+  },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },

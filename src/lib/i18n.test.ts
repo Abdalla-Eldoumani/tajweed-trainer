@@ -144,6 +144,27 @@ const REVISION_STREAK_KEYS = [
   "strength.revisionStreakHelp",
 ];
 
+// The tikrar (repetition) rep-counter keys (Phase 11, EXAM-01). Same EN+AR
+// parity assertion, plus the six-surface distinctness check below: tikrar is the
+// SIXTH drill-like surface on /progress (review, chaining, segment, typing, the
+// murajaah dashboard CTA, and now tikrar), so its title / start / pickVerse
+// labels must differ from all five others in BOTH locales or a /progress
+// role/name locator addresses the wrong surface (RESEARCH Pitfall 4).
+const TIKRAR_KEYS = [
+  "tikrar.title",
+  "tikrar.description",
+  "tikrar.pickVerse",
+  "tikrar.target",
+  "tikrar.decreaseTarget",
+  "tikrar.increaseTarget",
+  "tikrar.startDrill",
+  "tikrar.countRep",
+  "tikrar.sessionProgress",
+  "tikrar.runningTotal",
+  "tikrar.finish",
+  "tikrar.empty",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -286,6 +307,40 @@ describe("revision-streak i18n keys carry both en and ar", () => {
   it("strength.revisionStreakTitle is distinct from practice.streak", () => {
     for (const lang of ["en", "ar"] as const) {
       expect(t("strength.revisionStreakTitle", lang)).not.toBe(t("practice.streak", lang));
+    }
+  });
+});
+
+describe("tikrar rep-counter i18n keys carry both en and ar", () => {
+  it.each(TIKRAR_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // The six-surface locator guarantee (RESEARCH Pitfall 4): the tikrar drill's
+  // section title, start control, and verse picker must be textually distinct
+  // from the five other drill-like /progress surfaces — the review
+  // (memorize.reviewStart / review.startReview), chaining, segment, and typing
+  // drills, and the murajaah dashboard CTA — in BOTH locales, so a Playwright
+  // role/name locator addresses exactly this drill.
+  it("tikrar.title / startDrill / pickVerse are distinct from the other five surfaces", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("tikrar.title", lang)).not.toBe(t("memorize.reviewStart", lang));
+      expect(t("tikrar.title", lang)).not.toBe(t("chain.title", lang));
+      expect(t("tikrar.title", lang)).not.toBe(t("segment.title", lang));
+      expect(t("tikrar.title", lang)).not.toBe(t("typing.title", lang));
+      expect(t("tikrar.startDrill", lang)).not.toBe(t("review.startReview", lang));
+      expect(t("tikrar.startDrill", lang)).not.toBe(t("chain.startChaining", lang));
+      expect(t("tikrar.startDrill", lang)).not.toBe(t("segment.startDrill", lang));
+      expect(t("tikrar.startDrill", lang)).not.toBe(t("typing.startDrill", lang));
+      expect(t("tikrar.startDrill", lang)).not.toBe(t("murajaah.beginRevision", lang));
+      expect(t("tikrar.pickVerse", lang)).not.toBe(t("segment.pickVerse", lang));
+      expect(t("tikrar.pickVerse", lang)).not.toBe(t("typing.pickVerse", lang));
     }
   });
 });

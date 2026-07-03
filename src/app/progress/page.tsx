@@ -19,6 +19,7 @@ import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { ChainingDrill } from "@/components/memorization/ChainingDrill";
 import { SegmentDrill } from "@/components/memorization/SegmentDrill";
 import { TypingRecall } from "@/components/memorization/TypingRecall";
+import { TikrarDrill } from "@/components/memorization/TikrarDrill";
 import { KhatmahCard } from "@/components/khatmah/KhatmahCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
@@ -265,6 +266,14 @@ export default function ProgressPage() {
             and its typing input is INPUT-guarded, so it never cross-fires with
             the review, chaining, or segment drills. Same mount + count gate. */}
         {memorizedMounted && memorizedCount > 0 && <TypingRecall />}
+
+        {/* Tikrar rep counter (EXAM-01): pick a memorized verse and loop it via
+            the one player engine, counting reps toward a session target that add
+            to the verse's cumulative cross-day total. It is a COUNTER, not a
+            graded drill — no SM-2 grade and no document-level key handler (buttons
+            only), so it can never cross-fire the five drills' grade keys. Same
+            mount + count gate. */}
+        {memorizedMounted && memorizedCount > 0 && <TikrarDrill />}
       </div>
 
       {/* Khatmah planner: an opt-in Quran-completion goal that tracks the
