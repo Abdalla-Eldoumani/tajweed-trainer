@@ -14,6 +14,7 @@ import { MemorizationTracker } from "@/components/memorization/MemorizationTrack
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
 import { MemorizationHeatmap } from "@/components/memorization/MemorizationHeatmap";
 import { RevisionStreakCounter } from "@/components/memorization/RevisionStreakCounter";
+import { SessionJournal } from "@/components/memorization/SessionJournal";
 import { BulkMemorizationEntry } from "@/components/memorization/BulkMemorizationEntry";
 import { MemorizedReview } from "@/components/memorization/MemorizedReview";
 import { ChainingDrill } from "@/components/memorization/ChainingDrill";
@@ -232,6 +233,15 @@ export default function ProgressPage() {
             reads as (or collides in a locator with) the practice-streak Card lower
             on the page. Same mount + count gate as the rest of the section. */}
         {memorizedMounted && memorizedCount > 0 && <RevisionStreakCounter />}
+
+        {/* Session journal (EXAM-03): set today's memorize/revise goals and watch
+            today's tallies climb toward them with a summary line. Reads today's
+            sessionJournal entry through the useProgress change bus so the counts
+            move live as memorize/revise activity accrues; rides the exported
+            backup by living on TajweedProgress. Same mount + count gate as the
+            rest of the section; sits beside the revision streak as a companion
+            goals/summary card. */}
+        {memorizedMounted && memorizedCount > 0 && <SessionJournal />}
 
         {/* Review entry lives inside the tracker section so the user goes from
             "here's what I've memorized" straight into "test me on it" (F1). Shown
