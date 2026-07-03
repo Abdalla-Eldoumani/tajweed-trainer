@@ -217,6 +217,20 @@ const JOURNAL_KEYS = [
   "journal.noGoals",
 ];
 
+// The hizb & rub' coverage-ring keys (Phase 12, PROG-01). Same EN+AR parity
+// assertion, plus the distinctness check below: the rings render on /progress in
+// the memorization section, so `hizb.title` (its region's accessible name) must
+// differ from every neighbouring section/drill title in BOTH locales, or a
+// getByRole("region", { name }) locator addresses the wrong card.
+const HIZB_KEYS = [
+  "hizb.title",
+  "hizb.help",
+  "hizb.ringLabel",
+  "hizb.rubRingLabel",
+  "hizb.showRub",
+  "hizb.hideRub",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -464,6 +478,40 @@ describe("session-journal i18n keys carry both en and ar", () => {
       expect(t("journal.title", lang)).not.toBe(t("tikrar.title", lang));
       expect(t("journal.title", lang)).not.toBe(t("exam.title", lang));
       expect(t("journal.title", lang)).not.toBe(t("khatmah.title", lang));
+    }
+  });
+});
+
+describe("hizb coverage-ring i18n keys carry both en and ar", () => {
+  it.each(HIZB_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // Region locator guarantee (RESEARCH Pitfall 4): the coverage-rings section
+  // renders on /progress in the memorization block. Its title is the region's
+  // accessible name, so it must be textually distinct from every neighbouring
+  // section/drill title in BOTH locales — the breakdown/review, the six other
+  // drill-like surfaces, the memorization-health facet, the session journal, and
+  // the khatmah card — or a getByRole("region", { name }) locator collides.
+  it("hizb.title is distinct from the neighbouring section titles", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("hizb.title", lang)).not.toBe(t("memorize.reviewStart", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("memorize.statsTitle", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("chain.title", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("segment.title", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("typing.title", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("tikrar.title", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("exam.title", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("strength.healthTitle", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("strength.revisionStreakTitle", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("journal.title", lang));
+      expect(t("hizb.title", lang)).not.toBe(t("khatmah.title", lang));
     }
   });
 });
