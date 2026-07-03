@@ -199,6 +199,24 @@ const EXAM_KEYS = [
   "exam.recentEmpty",
 ];
 
+// The per-day session-journal keys (Phase 11, EXAM-03). Same EN+AR parity
+// assertion, plus the distinctness check below: the journal card renders on
+// /progress beside the revision-streak, memorization-health, tikrar, exam, and
+// khatmah sections, so its title must differ from every one of those section
+// titles in BOTH locales or its region locator (getByRole("region", { name }))
+// addresses the wrong card.
+const JOURNAL_KEYS = [
+  "journal.title",
+  "journal.description",
+  "journal.memorizeGoal",
+  "journal.reviseGoal",
+  "journal.save",
+  "journal.memorizedLabel",
+  "journal.revisedLabel",
+  "journal.summary",
+  "journal.noGoals",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -419,6 +437,33 @@ describe("timed exam i18n keys carry both en and ar", () => {
       expect(t("exam.reveal", lang)).not.toBe(t("segment.reveal", lang));
       expect(t("exam.reveal", lang)).not.toBe(t("typing.revealWord", lang));
       expect(t("exam.reveal", lang)).not.toBe(t("mushaf.memorizeReveal", lang));
+    }
+  });
+});
+
+describe("session-journal i18n keys carry both en and ar", () => {
+  it.each(JOURNAL_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // Region locator guarantee (RESEARCH Pitfall 4): the session journal renders on
+  // /progress alongside the revision-streak, memorization-health, tikrar, exam,
+  // and khatmah sections. Its title must be textually distinct from each of those
+  // section titles in BOTH locales, or a role/name region locator addresses the
+  // wrong card.
+  it("journal.title is distinct from the neighbouring section titles", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("journal.title", lang)).not.toBe(t("strength.revisionStreakTitle", lang));
+      expect(t("journal.title", lang)).not.toBe(t("strength.healthTitle", lang));
+      expect(t("journal.title", lang)).not.toBe(t("tikrar.title", lang));
+      expect(t("journal.title", lang)).not.toBe(t("exam.title", lang));
+      expect(t("journal.title", lang)).not.toBe(t("khatmah.title", lang));
     }
   });
 });

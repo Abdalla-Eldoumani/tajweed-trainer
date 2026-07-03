@@ -930,6 +930,33 @@ const translations: Record<string, { en: string; ar: string }> = {
   "exam.recentTitle": { en: "Recent attempts", ar: "المحاولات الأخيرة" },
   "exam.recentEmpty": { en: "No attempts logged yet.", ar: "لا محاولات مُسجّلة بعد." },
 
+  // Per-day session journal on /progress (EXAM-03): set today's memorize/revise
+  // goals and watch today's tallies climb toward them. Operational copy and the
+  // learner's own counts only — never Quran text. Its title is deliberately
+  // DISTINCT from the neighbouring section titles it renders beside (the revision
+  // streak, memorization health, tikrar, exam, and khatmah) in BOTH locales so an
+  // e2e region locator addresses exactly this card. The {memorized} /
+  // {memorizeGoal} / {revised} / {reviseGoal} placeholders are filled at the call
+  // site (Arabic-Indic digits in AR).
+  "journal.title": { en: "Session journal", ar: "دفتر الجلسة" },
+  "journal.description": {
+    en: "Set today's goals, then watch your memorized and revised counts climb toward them.",
+    ar: "حدّد أهداف اليوم، ثم تابع تقدّم ما حفظته وراجعته نحوها.",
+  },
+  "journal.memorizeGoal": { en: "Memorize goal", ar: "هدف الحفظ" },
+  "journal.reviseGoal": { en: "Revise goal", ar: "هدف المراجعة" },
+  "journal.save": { en: "Save goals", ar: "احفظ الأهداف" },
+  "journal.memorizedLabel": { en: "Memorized", ar: "المحفوظة" },
+  "journal.revisedLabel": { en: "Revised", ar: "المراجَعة" },
+  "journal.summary": {
+    en: "Today: {memorized}/{memorizeGoal} memorized, {revised}/{reviseGoal} revised",
+    ar: "اليوم: {memorized}/{memorizeGoal} محفوظة، {revised}/{reviseGoal} مراجَعة",
+  },
+  "journal.noGoals": {
+    en: "Set a memorize or revise goal above to track today's progress.",
+    ar: "حدّد هدفًا للحفظ أو المراجعة أعلاه لتتبع تقدّم اليوم.",
+  },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
