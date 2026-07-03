@@ -31,6 +31,7 @@ import {
   recordNewVerseIntroduced,
   updateMemorizationStreak,
   logTikrarReps,
+  logExamResult,
 } from "@/lib/storage";
 
 // Behavioral coverage of the storage funnel against the REAL module under jsdom
@@ -940,6 +941,60 @@ describe("sanitizeTikrarLog + logTikrarReps: cumulative across days, cap-on-new 
     // Editing an existing entry always works (never stuck by the cap).
     logTikrarReps(keys[0], 4);
     expect(getProgress().tikrarLog?.[keys[0]].reps).toBe(5); // 1 + 4
+  });
+});
+
+describe("sanitizeExamLog + logExamResult: cap 100, most-recent-first, percent clamp (EXAM-02)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeExamLog and the shipped
+  // logExamResult helper; nothing here re-derives a sanitizer.
+  const exam = (v: unknown) => sanitizeProgress({ examLog: v }).examLog ?? [];
+
+  it("returns [] for a non-array and drops a non-object entry", () => {
+    expect(exam("nope")).toEqual([]);
+    expect(exam(undefined)).toEqual([]);
+    expect(exam([null, 5, "x", { scope: "Al-Fatihah", dateIso: "2026-07-02", percent: 90, total: 7 }])).toEqual([
+      { scope: "Al-Fatihah", dateIso: "2026-07-02", percent: 90, total: 7 },
+    ]);
+  });
+
+  it("trims/caps scope, rounds+clamps percent to [0,100], rejects an out-of-range total, coerces a bad dateIso", () => {
+    expect(exam([{ scope: "  " + "z".repeat(200), dateIso: "not-a-date", percent: 130, total: 9999 }])).toEqual([
+      { scope: "z".repeat(80), dateIso: "", percent: 100, total: 0 }, // scope trimmed+capped, date "", percent clamped, total rejected to 0
+    ]);
+    expect(exam([{ scope: "s", dateIso: "2026-07-02", percent: 66.6, total: 286 }])[0]).toEqual({
+      scope: "s",
+      dateIso: "2026-07-02",
+      percent: 67, // Math.round
+      total: 286,
+    });
+    expect(exam([{ scope: "s", dateIso: "2026-07-02", percent: -5, total: 3 }])[0].percent).toBe(0); // clamp low
+  });
+
+  it("caps the array at 100, keeping the first 100", () => {
+    const many = Array.from({ length: 150 }, (_, i) => ({ scope: `s${i}`, dateIso: "2026-07-02", percent: 50, total: 1 }));
+    const out = exam(many);
+    expect(out.length).toBe(100);
+    expect(out[0].scope).toBe("s0"); // first kept
+    expect(out[99].scope).toBe("s99"); // last kept
+  });
+
+  it("logExamResult prepends the newest attempt (most-recent-first) and clamps percent both ways", () => {
+    logExamResult({ scope: "Al-Fatihah", percent: 80, total: 7 });
+    logExamResult({ scope: "Juz 30", percent: 130, total: 200 }); // percent over 100 -> 100
+    const log = getProgress().examLog ?? [];
+    const today = new Date().toLocaleDateString("en-CA");
+    expect(log[0]).toEqual({ scope: "Juz 30", dateIso: today, percent: 100, total: 200 }); // newest first
+    expect(log[1]).toEqual({ scope: "Al-Fatihah", dateIso: today, percent: 80, total: 7 });
+    logExamResult({ scope: "neg", percent: -5, total: 1 });
+    expect((getProgress().examLog ?? [])[0].percent).toBe(0); // percent below 0 -> 0
+  });
+
+  it("trims a 101st attempt off the tail (cap holds the length at 100)", () => {
+    for (let i = 0; i < 101; i++) logExamResult({ scope: `s${i}`, percent: 50, total: 1 });
+    const log = getProgress().examLog ?? [];
+    expect(log.length).toBe(100);
+    expect(log[0].scope).toBe("s100"); // the newest sits at the head
+    expect(log.some((e) => e.scope === "s0")).toBe(false); // the oldest aged off the tail
   });
 });
 

@@ -573,6 +573,13 @@ export interface TajweedProgress {
   // storage sanitizer. Separate from the SM-2 `memorizationReviews` schedule.
   // Additive optional for lossless migration; cleared by reset via the default clone.
   tikrarLog?: Record<string, { reps: number; lastRepDate: string }>;
+  // A capped, most-recent-first log of timed no-peek exam attempts (EXAM-02):
+  // each attempt's scope label, en-CA date, percent recalled, and total verses.
+  // Never SM-2 (a measurement, not a revision — it touches neither the schedule
+  // nor the streak). Coerced, malformed-dropped, and capped by the storage
+  // sanitizer. Additive optional for lossless migration; cleared by reset via the
+  // default clone.
+  examLog?: { scope: string; dateIso: string; percent: number; total: number }[];
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".

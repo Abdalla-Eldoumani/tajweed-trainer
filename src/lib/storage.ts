@@ -75,6 +75,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   dailyNewVersesTracking: { date: "", count: 0 },
   memorizationStreak: { currentStreak: 0, longestStreak: 0, lastRevisionDate: "" },
   tikrarLog: {},
+  examLog: [],
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -112,6 +113,10 @@ const MAX_MEMORIZED = 6236;
 // MAX_MEMORIZED entries and 100000 reps per entry). A tamper/typo guard, not a
 // real session length.
 const MAX_TIKRAR_PER_CALL = 100;
+// The timed-exam attempt log is a capped, most-recent-first ring: a tampered
+// store cannot bloat every read past this many attempts, and legitimate use keeps
+// only the recent history (older attempts age off the tail).
+const MAX_EXAM_LOG = 100;
 const MAX_VERSE_BOOKMARKS = 500;
 const MAX_LAST_READ_BY_SURAH = 114;
 // Milestone certificate records: one per juz (30) plus the khatmah is 31 at most,
@@ -662,6 +667,29 @@ function sanitizeCertificates(input: unknown): CertificateRecord[] {
   return out;
 }
 
+// The timed no-peek exam attempt log (EXAM-02). Mirrors sanitizeCertificates
+// (the capped-object-array precedent): each entry must be an object; its fields
+// are coerced (scope trimmed and <=80 chars, dateIso a real ISO date else "",
+// percent rounded and clamped to [0,100], total clamped to [0,6236]); a non-object
+// entry is dropped; the array caps at MAX_EXAM_LOG. This is an array, not a keyed
+// map, so it carries no prototype-pollution-key guard and no dedupe (repeat
+// attempts on the same scope are legitimate history). Never SM-2. A stored object
+// without this field reads back as [] (lossless migration).
+function sanitizeExamLog(input: unknown): { scope: string; dateIso: string; percent: number; total: number }[] {
+  if (!Array.isArray(input)) return [];
+  const out: { scope: string; dateIso: string; percent: number; total: number }[] = [];
+  for (const entry of input) {
+    if (!isObject(entry)) continue;
+    const scope = String(entry.scope ?? "").trim().slice(0, 80);
+    const dateIso = isValidIsoDate(entry.dateIso) ? entry.dateIso : "";
+    const percent = Math.round(clampNumber(entry.percent, 0, 0, 100));
+    const total = pickNumber(entry.total, 0, 0, 6236);
+    out.push({ scope, dateIso, percent, total });
+    if (out.length >= MAX_EXAM_LOG) break;
+  }
+  return out;
+}
+
 // Per-surah last-read map. Keys are surah numbers 1..114 (validated as integers
 // in range); values are VerseLocation records validated like lastRead. Guards
 // the prototype-pollution keys and caps at 114 entries, mirroring the other map
@@ -762,6 +790,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     dailyNewVersesTracking: sanitizeDailyNewVerses(input.dailyNewVersesTracking),
     memorizationStreak: sanitizeMemorizationStreak(input.memorizationStreak),
     tikrarLog: sanitizeTikrarLog(input.tikrarLog),
+    examLog: sanitizeExamLog(input.examLog),
   };
 }
 
@@ -1378,5 +1407,25 @@ export function logTikrarReps(verseKey: string, reps: number): void {
   const today = new Date().toLocaleDateString("en-CA");
   map[verseKey] = { reps: Math.min(prev.reps + addedReps, 100000), lastRepDate: today };
   progress.tikrarLog = map;
+  setProgress(progress);
+}
+
+// Log one timed no-peek exam attempt (EXAM-02). The new entry is PREPENDED so the
+// log stays most-recent-first, then trimmed to MAX_EXAM_LOG (the oldest attempt
+// ages off the tail). scope is trimmed and <=80 chars; dateIso is today's en-CA
+// date; percent is rounded and clamped to [0,100]; total is clamped to [0,6236].
+// One write, one emit. A measurement only — it never touches the SM-2
+// memorizationReviews schedule or the revision streak.
+export function logExamResult({ scope, percent, total }: { scope: string; percent: number; total: number }): void {
+  if (!isBrowser()) return;
+  const today = new Date().toLocaleDateString("en-CA");
+  const newEntry = {
+    scope: String(scope).trim().slice(0, 80),
+    dateIso: today,
+    percent: Math.round(clampNumber(percent, 0, 0, 100)),
+    total: pickNumber(total, 0, 0, 6236),
+  };
+  const progress = getProgress();
+  progress.examLog = [newEntry, ...(progress.examLog ?? [])].slice(0, MAX_EXAM_LOG);
   setProgress(progress);
 }
