@@ -130,6 +130,20 @@ export function TikrarDrill() {
   // Count each newly completed listen once: add only the positive delta since the
   // value we last observed. Active only in the session phase, so a global playback
   // elsewhere never bumps the counter.
+  //
+  // Known limitation (WR-01): the audio-observed count under-reports a full target-N
+  // loop by one, so a purely-listened session tops out at N-1. The shared
+  // player-engine's repeatOne loops while `repeatsDone + 1 < repeatOne`, so
+  // repeatsDone counts loop-BACKS and stops at N-1 (the last listen ends by stopping,
+  // not by looping), and the store resets repeatsDone to 0 on that terminal stop — so
+  // the final listen leaves no delta to observe here (and target 1 produces no delta
+  // at all). Counting the terminal listen cleanly would need either a change to the
+  // frozen player-engine (forbidden — other surfaces depend on its onEnded
+  // precedence) or a status-transition heuristic that cannot distinguish a natural
+  // finish from a manual mini-player pause and would over-count the no-audio path
+  // (where the manual tap is the intended counter). So the manual `countRep` tap is
+  // the ACCURATE path and this audio delta is left as-is; it never over-counts or
+  // double-counts against the tap.
   useEffect(() => {
     if (phase !== "session") return;
     if (repeatsDone > lastRepeatsRef.current) {
