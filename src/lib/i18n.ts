@@ -887,6 +887,49 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "احفظ آية أولًا، ثم كرّرها هنا لترسيخها.",
   },
 
+  // Timed, no-peek, self-graded exam on /progress (EXAM-02). A MEASUREMENT, not a
+  // teaching drill: operational copy and counts only — never Quran text (the verse
+  // renders through TajweedText). It is the SEVENTH drill-like surface on
+  // /progress, so its title / start / pickScope (and reveal) labels are
+  // deliberately DISTINCT from the other six (review / chain / segment / typing /
+  // tikrar / the murajaah dashboard CTA) in BOTH locales so an e2e locator
+  // addresses exactly this surface. Placeholders {n} / {total} / {percent} /
+  // {recalled} / {time} are replaced at the call site (Arabic-Indic digits in AR).
+  "exam.title": { en: "Timed recall exam", ar: "اختبار الاستذكار الموقوت" },
+  "exam.description": {
+    en: "Pick a scope, then recall each memorized verse from memory before revealing it. Your score and time are logged.",
+    ar: "اختر نطاقًا، ثم استذكر كل آية محفوظة من ذاكرتك قبل كشفها. تُسجَّل نتيجتك ووقتك.",
+  },
+  "exam.pickScope": { en: "Choose a scope", ar: "اختر النطاق" },
+  "exam.scopeSurah": { en: "By surah", ar: "حسب السورة" },
+  "exam.scopeJuz": { en: "By juz", ar: "حسب الجزء" },
+  "exam.scopeRange": { en: "By range", ar: "حسب المدى" },
+  "exam.chooseSurah": { en: "Choose a surah", ar: "اختر سورة" },
+  "exam.chooseJuz": { en: "Choose a juz", ar: "اختر جزءًا" },
+  "exam.juzLabel": { en: "Juz {n}", ar: "الجزء {n}" },
+  "exam.rangeStart": { en: "From ayah", ar: "من الآية" },
+  "exam.rangeEnd": { en: "To ayah", ar: "إلى الآية" },
+  "exam.inScope": { en: "{n} memorized verses in this scope", ar: "{n} آية محفوظة في هذا النطاق" },
+  "exam.emptyScope": {
+    en: "No memorized verses in this scope yet.",
+    ar: "لا آيات محفوظة في هذا النطاق بعد.",
+  },
+  "exam.noPeekNote": {
+    en: "The verse stays hidden until you mark it — recall it from memory first.",
+    ar: "تبقى الآية مخفية حتى تُقيّمها — استذكرها من ذاكرتك أولًا.",
+  },
+  "exam.start": { en: "Start the exam", ar: "ابدأ الاختبار" },
+  "exam.progress": { en: "Verse {n} of {total}", ar: "الآية {n} من {total}" },
+  "exam.markRecalled": { en: "I recalled it", ar: "استذكرتها" },
+  "exam.markMissed": { en: "I missed it", ar: "فاتتني" },
+  "exam.reveal": { en: "Reveal the verse", ar: "اكشف الآية" },
+  "exam.restart": { en: "Start over", ar: "ابدأ من جديد" },
+  "exam.score": { en: "You recalled {percent}%", ar: "استذكرت {percent}%" },
+  "exam.scoreDetail": { en: "{recalled} of {total} recalled", ar: "{recalled} من {total} مستذكرة" },
+  "exam.elapsed": { en: "Time: {time}", ar: "الوقت: {time}" },
+  "exam.recentTitle": { en: "Recent attempts", ar: "المحاولات الأخيرة" },
+  "exam.recentEmpty": { en: "No attempts logged yet.", ar: "لا محاولات مُسجّلة بعد." },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },

@@ -20,6 +20,7 @@ import { ChainingDrill } from "@/components/memorization/ChainingDrill";
 import { SegmentDrill } from "@/components/memorization/SegmentDrill";
 import { TypingRecall } from "@/components/memorization/TypingRecall";
 import { TikrarDrill } from "@/components/memorization/TikrarDrill";
+import { ExamMode } from "@/components/memorization/ExamMode";
 import { KhatmahCard } from "@/components/khatmah/KhatmahCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
@@ -274,6 +275,14 @@ export default function ProgressPage() {
             only), so it can never cross-fire the five drills' grade keys. Same
             mount + count gate. */}
         {memorizedMounted && memorizedCount > 0 && <TikrarDrill />}
+
+        {/* Timed exam (EXAM-02): pick a scope, run a timed no-peek session over
+            its memorized verses (verse hidden until self-marked), and log a
+            percent-recalled score. It is a self-graded MEASUREMENT — no SM-2
+            write, no streak touch, and no document-level grade keys (buttons
+            only), so it cannot cross-fire the other drills. Same mount + count
+            gate. */}
+        {memorizedMounted && memorizedCount > 0 && <ExamMode />}
       </div>
 
       {/* Khatmah planner: an opt-in Quran-completion goal that tracks the

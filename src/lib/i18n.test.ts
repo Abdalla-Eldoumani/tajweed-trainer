@@ -165,6 +165,40 @@ const TIKRAR_KEYS = [
   "tikrar.empty",
 ];
 
+// The timed no-peek exam keys (Phase 11, EXAM-02). Same EN+AR parity assertion,
+// plus the seven-surface distinctness check below: the exam is the SEVENTH
+// drill-like surface on /progress (review, chaining, segment, typing, tikrar, the
+// murajaah dashboard CTA, and now the exam), so its title / start / pickScope
+// (and reveal) labels must differ from all six others in BOTH locales or a
+// /progress role/name locator addresses the wrong surface (RESEARCH Pitfall 4).
+const EXAM_KEYS = [
+  "exam.title",
+  "exam.description",
+  "exam.pickScope",
+  "exam.scopeSurah",
+  "exam.scopeJuz",
+  "exam.scopeRange",
+  "exam.chooseSurah",
+  "exam.chooseJuz",
+  "exam.juzLabel",
+  "exam.rangeStart",
+  "exam.rangeEnd",
+  "exam.inScope",
+  "exam.emptyScope",
+  "exam.noPeekNote",
+  "exam.start",
+  "exam.progress",
+  "exam.markRecalled",
+  "exam.markMissed",
+  "exam.reveal",
+  "exam.restart",
+  "exam.score",
+  "exam.scoreDetail",
+  "exam.elapsed",
+  "exam.recentTitle",
+  "exam.recentEmpty",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -341,6 +375,50 @@ describe("tikrar rep-counter i18n keys carry both en and ar", () => {
       expect(t("tikrar.startDrill", lang)).not.toBe(t("murajaah.beginRevision", lang));
       expect(t("tikrar.pickVerse", lang)).not.toBe(t("segment.pickVerse", lang));
       expect(t("tikrar.pickVerse", lang)).not.toBe(t("typing.pickVerse", lang));
+    }
+  });
+});
+
+describe("timed exam i18n keys carry both en and ar", () => {
+  it.each(EXAM_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // The seven-surface locator guarantee (RESEARCH Pitfall 4): the exam's section
+  // title, start control, scope picker, and reveal control must be textually
+  // distinct from the six other drill-like /progress surfaces — the review
+  // (memorize.reviewStart / review.startReview), chaining, segment, typing, and
+  // tikrar drills, and the murajaah dashboard CTA — in BOTH locales, so a
+  // Playwright role/name locator addresses exactly this surface.
+  it("exam.title / start / pickScope / reveal are distinct from the other six surfaces", () => {
+    for (const lang of ["en", "ar"] as const) {
+      // Titles.
+      expect(t("exam.title", lang)).not.toBe(t("memorize.reviewStart", lang));
+      expect(t("exam.title", lang)).not.toBe(t("chain.title", lang));
+      expect(t("exam.title", lang)).not.toBe(t("segment.title", lang));
+      expect(t("exam.title", lang)).not.toBe(t("typing.title", lang));
+      expect(t("exam.title", lang)).not.toBe(t("tikrar.title", lang));
+      // Start controls.
+      expect(t("exam.start", lang)).not.toBe(t("review.startReview", lang));
+      expect(t("exam.start", lang)).not.toBe(t("chain.startChaining", lang));
+      expect(t("exam.start", lang)).not.toBe(t("segment.startDrill", lang));
+      expect(t("exam.start", lang)).not.toBe(t("typing.startDrill", lang));
+      expect(t("exam.start", lang)).not.toBe(t("tikrar.startDrill", lang));
+      expect(t("exam.start", lang)).not.toBe(t("murajaah.beginRevision", lang));
+      // Scope picker vs the three verse pickers.
+      expect(t("exam.pickScope", lang)).not.toBe(t("segment.pickVerse", lang));
+      expect(t("exam.pickScope", lang)).not.toBe(t("typing.pickVerse", lang));
+      expect(t("exam.pickScope", lang)).not.toBe(t("tikrar.pickVerse", lang));
+      // Reveal control vs the other reveal labels.
+      expect(t("exam.reveal", lang)).not.toBe(t("segment.reveal", lang));
+      expect(t("exam.reveal", lang)).not.toBe(t("typing.revealWord", lang));
+      expect(t("exam.reveal", lang)).not.toBe(t("mushaf.memorizeReveal", lang));
     }
   });
 });
