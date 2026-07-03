@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
@@ -10,11 +11,24 @@ export function StreakCounter() {
   const { t } = useTranslation();
   const { currentStreak, longestStreak, lastPracticeDate } = progress.streaks;
 
+  // The 7-day weekday row derives from new Date(). A prerendered / or /progress is
+  // built in whatever week the build ran, so computing the row before hydration
+  // paints the build's week and mismatches the first client render once the week
+  // rolls over (React #418). Defer it behind a mounted flag, mirroring
+  // RevisionStreakCounter; until mounted, render 7 neutral pills so the layout is
+  // stable and the server HTML equals the first client paint. The current/longest
+  // figures come from the useSyncExternalStore-backed progress (hydration-safe),
+  // so they render immediately.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   // Streak dates are stored as local day strings (toLocaleDateString("en-CA")),
   // so the calendar computes and compares in local days end to end, otherwise a
   // user near local midnight could see "today" highlighted on the wrong pill.
-  const todayStr = new Date().toLocaleDateString("en-CA");
+  const todayStr = mounted ? new Date().toLocaleDateString("en-CA") : "";
   const days = Array.from({ length: 7 }).map((_, i) => {
+    if (!mounted) return { isToday: false, isPracticed: false, dayLabel: "" };
+
     const date = new Date();
     date.setDate(date.getDate() - (6 - i));
     const dateStr = date.toLocaleDateString("en-CA");
@@ -28,7 +42,7 @@ export function StreakCounter() {
       isPracticed = dateStr >= streakStartStr && dateStr <= lastPracticeDate;
     }
 
-    return { dateStr, isToday, isPracticed, dayLabel: t(`weekday.short.${date.getDay()}`) };
+    return { isToday, isPracticed, dayLabel: t(`weekday.short.${date.getDay()}`) };
   });
 
   return (
