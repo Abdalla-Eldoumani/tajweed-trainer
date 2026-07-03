@@ -957,6 +957,28 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "حدّد هدفًا للحفظ أو المراجعة أعلاه لتتبع تقدّم اليوم.",
   },
 
+  // Hizb & rub' al-hizb coverage rings on /progress (PROG-01). Operational copy
+  // and derived counts only — never Quran text (the rings render only scope
+  // numbers and percentages). The title stays DISTINCT from the neighbouring
+  // memorization section titles in BOTH locales so its region locator addresses
+  // exactly this surface. The {n} / {pct} / {count} / {total} placeholders are
+  // filled at the call site (Arabic-Indic digits in AR).
+  "hizb.title": { en: "Hizb & rub' coverage", ar: "تغطية الحزب والربع" },
+  "hizb.help": {
+    en: "How much of each hizb and rub' al-hizb you've memorized.",
+    ar: "مقدار ما حفظته من كل حزب وربع الحزب.",
+  },
+  "hizb.ringLabel": {
+    en: "Hizb {n}: {pct}% memorized ({count} of {total} verses)",
+    ar: "الحزب {n}: {pct}% محفوظ ({count} من {total} آية)",
+  },
+  "hizb.rubRingLabel": {
+    en: "Rub' {n}: {pct}% memorized ({count} of {total} verses)",
+    ar: "الربع {n}: {pct}% محفوظ ({count} من {total} آية)",
+  },
+  "hizb.showRub": { en: "Show rub' al-hizb rings", ar: "أظهر حلقات ربع الحزب" },
+  "hizb.hideRub": { en: "Hide rub' al-hizb rings", ar: "أخفِ حلقات ربع الحزب" },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
