@@ -1,10 +1,17 @@
 # Changelog
 
-## Unreleased
+## 2.2.1 — 2026-07-03
+
+A small polish release: accessibility, a playback performance fix, and a documentation-accuracy pass. No religious content was generated or edited.
 
 ### Fixed
 
 - **The remaining small gold badges meet AA.** The home learning-path step numbers, the learn-dashboard module tiles (icon and order numeral), and the progress-page mastery badge used a gold that sat below 4.5:1 on the light grounds; they now use the same contrast-scoped gold as the surah-index badges, clearing AA on every light theme. Purely a color-token change — no layout, wording, or content moved — and a source guard now holds it in place.
+- **Audio controls no longer re-render on every playback tick.** Each per-verse play button tracked the playback clock even when it was not the verse being played, so a lesson page with many examples re-rendered every button several times a second during playback. They now derive their state so only the active control updates; behavior is unchanged.
+
+### Changed
+
+- **Documentation and dependency housekeeping.** The reference documentation was brought back in line with the current code, and an unused test dependency was removed.
 
 ## 2.2.0 — 2026-07-03
 
