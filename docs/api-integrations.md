@@ -61,7 +61,7 @@ Used by `getTajweedPage(pageNumber)` for the Mushaf reader. Same fields plus `pa
 
 Per-ayah audio comes from Quran.com v4 (numeric reciter ids) and EveryAyah (`ea-*` reciters), wrapped in `src/lib/audio-api.ts`.
 
-`src/lib/reciters.ts` holds a static list of 19 recitations (`RECITATIONS`): 12 Quran.com reciters from `GET /resources/recitations` (ids and styles are the API's own) plus 7 EveryAyah reciters (`ea-*`) resolving to a deterministic file URL with no API round-trip. `DEFAULT_RECITER_ID` is `"12"`, Al-Husary in the mu'allim (teaching) style, the slow, clear default. There is no runtime editions fetch and no `useReciters` hook.
+`src/lib/reciters.ts` holds a static list of 42 Hafs reciters (`RECITATIONS`): 12 Quran.com reciters from `GET /resources/recitations` (ids and styles are the API's own) plus 30 EveryAyah reciters (`ea-*`) resolving to a deterministic file URL with no API round-trip. `DEFAULT_RECITER_ID` is `"12"`, Al-Husary in the mu'allim (teaching) style, the slow, clear default. There is no runtime editions fetch and no `useReciters` hook.
 
 ### `GET /recitations/{id}/by_ayah/{surah}:{ayah}`
 
