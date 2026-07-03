@@ -76,6 +76,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   memorizationStreak: { currentStreak: 0, longestStreak: 0, lastRevisionDate: "" },
   tikrarLog: {},
   examLog: [],
+  sessionJournal: {},
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -117,6 +118,10 @@ const MAX_TIKRAR_PER_CALL = 100;
 // store cannot bloat every read past this many attempts, and legitimate use keeps
 // only the recent history (older attempts age off the tail).
 const MAX_EXAM_LOG = 100;
+// The session journal holds one entry per day; a leap year of daily entries is
+// 366, so this ceiling bounds a tampered store while never clipping a real
+// year-long streak of daily use (cap-on-new keeps existing days editable).
+const MAX_JOURNAL_DAYS = 366;
 const MAX_VERSE_BOOKMARKS = 500;
 const MAX_LAST_READ_BY_SURAH = 114;
 // Milestone certificate records: one per juz (30) plus the khatmah is 31 at most,
@@ -541,6 +546,35 @@ function sanitizeTikrarLog(input: unknown): Record<string, { reps: number; lastR
   return out;
 }
 
+// The per-day session journal (EXAM-03), a keyed map like sanitizeSessionPeeks so
+// the dangerous prototype keys are skipped — but the KEY here must be a real
+// YYYY-MM-DD day (isValidIsoDate), not a verseKey. Each value's four counters are
+// clamped to [0, 100000]; a non-object value is dropped; the map caps at
+// MAX_JOURNAL_DAYS (cap-on-new). Separate from the SM-2 memorizationReviews
+// schedule. A stored object without this field reads back as {} (lossless
+// migration).
+function sanitizeSessionJournal(
+  input: unknown,
+): Record<string, { memorizeGoal: number; reviseGoal: number; memorized: number; revised: number }> {
+  if (!isObject(input)) return {};
+  const out: Record<string, { memorizeGoal: number; reviseGoal: number; memorized: number; revised: number }> = {};
+  let count = 0;
+  for (const [dateIso, value] of Object.entries(input)) {
+    if (dateIso === "__proto__" || dateIso === "constructor" || dateIso === "prototype") continue;
+    if (!isValidIsoDate(dateIso)) continue;
+    if (!isObject(value)) continue;
+    out[dateIso] = {
+      memorizeGoal: pickNumber(value.memorizeGoal, 0, 0, 100000),
+      reviseGoal: pickNumber(value.reviseGoal, 0, 0, 100000),
+      memorized: pickNumber(value.memorized, 0, 0, 100000),
+      revised: pickNumber(value.revised, 0, 0, 100000),
+    };
+    count += 1;
+    if (count >= MAX_JOURNAL_DAYS) break;
+  }
+  return out;
+}
+
 function sanitizeMemorized(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const out = new Set<string>();
@@ -791,6 +825,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     memorizationStreak: sanitizeMemorizationStreak(input.memorizationStreak),
     tikrarLog: sanitizeTikrarLog(input.tikrarLog),
     examLog: sanitizeExamLog(input.examLog),
+    sessionJournal: sanitizeSessionJournal(input.sessionJournal),
   };
 }
 
@@ -1215,6 +1250,11 @@ export function toggleMemorizedVerse(verseKey: string): boolean {
     nowMemorized = true;
   }
   progress.memorizedVerses = Array.from(set);
+  // Count a real ADD toward today's journal `memorized` tally (EXAM-03), never an
+  // unmark, folded into this same single write + emit.
+  if (nowMemorized) {
+    bumpJournalEntry(progress, new Date().toLocaleDateString("en-CA"), { memorized: 1 });
+  }
   setProgress(progress);
   return nowMemorized;
 }
@@ -1231,6 +1271,7 @@ export function setMemorizedVerses(verseKeys: string[], memorize: boolean): numb
   if (!isBrowser()) return 0;
   const progress = getProgress();
   const set = new Set(progress.memorizedVerses);
+  const beforeSize = set.size;
   for (const key of verseKeys) {
     if (!VERSE_KEY_PATTERN.test(key)) continue;
     if (memorize) {
@@ -1241,6 +1282,15 @@ export function setMemorizedVerses(verseKeys: string[], memorize: boolean): numb
     }
   }
   progress.memorizedVerses = Array.from(set);
+  // On the mark path only, count the net-added verses toward today's journal
+  // `memorized` tally (EXAM-03): re-marking an already-memorized verse adds 0, and
+  // the unmark path never touches the journal. Folded into this same single write.
+  if (memorize) {
+    const netAdded = progress.memorizedVerses.length - beforeSize;
+    if (netAdded > 0) {
+      bumpJournalEntry(progress, new Date().toLocaleDateString("en-CA"), { memorized: netAdded });
+    }
+  }
   setProgress(progress);
   return progress.memorizedVerses.length;
 }
@@ -1427,5 +1477,72 @@ export function logExamResult({ scope, percent, total }: { scope: string; percen
   };
   const progress = getProgress();
   progress.examLog = [newEntry, ...(progress.examLog ?? [])].slice(0, MAX_EXAM_LOG);
+  setProgress(progress);
+}
+
+// Read-or-create a day's journal entry (all-zero default, honoring the
+// MAX_JOURNAL_DAYS cap-on-new for a brand-new day) and apply a partial: the two
+// goal fields are SET (the UI overwrites them), the two tally fields are ADDED
+// (memorize/revise activity accumulates). Writes back onto progress.sessionJournal
+// WITHOUT calling setProgress, so a caller can fold this bump into its own single
+// write + emit (mirrors setLastRead mutating two sub-objects before one write).
+// Private: every exported journal helper and the memorize-add tally route through
+// it so a day's shape and the cap are enforced in exactly one place.
+function bumpJournalEntry(
+  progress: TajweedProgress,
+  dateIso: string,
+  patch: { memorizeGoal?: number; reviseGoal?: number; memorized?: number; revised?: number },
+): void {
+  const map = progress.sessionJournal ?? {};
+  const isNew = !(dateIso in map);
+  if (isNew && Object.keys(map).length >= MAX_JOURNAL_DAYS) return;
+  const prev = map[dateIso] ?? { memorizeGoal: 0, reviseGoal: 0, memorized: 0, revised: 0 };
+  map[dateIso] = {
+    memorizeGoal: patch.memorizeGoal ?? prev.memorizeGoal,
+    reviseGoal: patch.reviseGoal ?? prev.reviseGoal,
+    memorized: prev.memorized + (patch.memorized ?? 0),
+    revised: prev.revised + (patch.revised ?? 0),
+  };
+  progress.sessionJournal = map;
+}
+
+// Set (upsert) a day's memorize/revise goals (EXAM-03). Goals are SET, not added
+// (a second call overwrites), rounded and clamped to [0, 100000]. A tampered /
+// non-ISO dateIso is rejected. One write, one emit. Never SM-2.
+export function setJournalGoals(
+  dateIso: string,
+  { memorizeGoal, reviseGoal }: { memorizeGoal: number; reviseGoal: number },
+): void {
+  if (!isBrowser()) return;
+  if (!isValidIsoDate(dateIso)) return;
+  const progress = getProgress();
+  bumpJournalEntry(progress, dateIso, {
+    memorizeGoal: Math.round(clampNumber(memorizeGoal, 0, 0, 100000)),
+    reviseGoal: Math.round(clampNumber(reviseGoal, 0, 0, 100000)),
+  });
+  setProgress(progress);
+}
+
+// Increment today's `revised` tally by one (one recall grade). `now` is injected
+// so tests control the clock; the day boundary is the app-wide en-CA local date.
+// One write, one emit. Never SM-2.
+export function recordJournalRevision(now: Date = new Date()): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  const today = now.toLocaleDateString("en-CA");
+  bumpJournalEntry(progress, today, { revised: 1 });
+  setProgress(progress);
+}
+
+// Add `n` newly memorized verses to today's `memorized` tally. `n` is floored at 0
+// and rounded to a whole verse count. `now` is injected so tests control the clock;
+// the day boundary is the app-wide en-CA local date. One write, one emit. Never
+// SM-2. (The storage memorize-ADD path bumps the tally directly; this is the
+// explicit entry point for callers that count adds themselves.)
+export function recordJournalMemorization(n: number, now: Date = new Date()): void {
+  if (!isBrowser()) return;
+  const progress = getProgress();
+  const today = now.toLocaleDateString("en-CA");
+  bumpJournalEntry(progress, today, { memorized: Math.max(0, Math.round(n)) });
   setProgress(progress);
 }

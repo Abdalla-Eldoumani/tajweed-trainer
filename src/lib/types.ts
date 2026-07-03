@@ -580,6 +580,13 @@ export interface TajweedProgress {
   // sanitizer. Additive optional for lossless migration; cleared by reset via the
   // default clone.
   examLog?: { scope: string; dateIso: string; percent: number; total: number }[];
+  // The per-day session journal (EXAM-03), keyed by en-CA ISO day: the day's
+  // memorize/revise goals plus the memorized/revised tallies. "Rides the backup"
+  // by living here (exportProgress serializes it, importProgress re-sanitizes it —
+  // no separate export path). Date-keyed map; prototype-guarded, date-key-validated,
+  // four-number-clamped, and capped by the storage sanitizer. Never SM-2. Additive
+  // optional for lossless migration; cleared by reset via the default clone.
+  sessionJournal?: Record<string, { memorizeGoal: number; reviseGoal: number; memorized: number; revised: number }>;
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".

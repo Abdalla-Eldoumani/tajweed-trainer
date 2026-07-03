@@ -32,6 +32,10 @@ import {
   updateMemorizationStreak,
   logTikrarReps,
   logExamResult,
+  setJournalGoals,
+  recordJournalRevision,
+  recordJournalMemorization,
+  getMemorizationReviews,
 } from "@/lib/storage";
 
 // Behavioral coverage of the storage funnel against the REAL module under jsdom
@@ -995,6 +999,133 @@ describe("sanitizeExamLog + logExamResult: cap 100, most-recent-first, percent c
     expect(log.length).toBe(100);
     expect(log[0].scope).toBe("s100"); // the newest sits at the head
     expect(log.some((e) => e.scope === "s0")).toBe(false); // the oldest aged off the tail
+  });
+});
+
+describe("sanitizeSessionJournal + journal helpers + memorize-add tally (EXAM-03)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeSessionJournal and the
+  // shipped helpers; nothing here re-derives a sanitizer.
+  const journal = (v: unknown) => sanitizeProgress({ sessionJournal: v }).sessionJournal ?? {};
+
+  it("proto-guards, rejects a non-ISO date key, clamps the four numbers, drops a non-object", () => {
+    const out = journal({
+      __proto__: { memorizeGoal: 1, reviseGoal: 1, memorized: 1, revised: 1 },
+      constructor: { memorizeGoal: 1, reviseGoal: 1, memorized: 1, revised: 1 },
+      prototype: { memorizeGoal: 1, reviseGoal: 1, memorized: 1, revised: 1 },
+      "not-a-date": { memorizeGoal: 1, reviseGoal: 1, memorized: 1, revised: 1 }, // non-ISO key -> rejected
+      "2026-02-31": { memorizeGoal: 1, reviseGoal: 1, memorized: 1, revised: 1 }, // impossible day -> rejected
+      "2026-07-02": "nope", // non-object value -> dropped
+      "2026-07-03": { memorizeGoal: 1e9, reviseGoal: -4, memorized: 5, revised: 2 }, // out-of-band goals -> 0
+    });
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+    expect(Object.keys(out)).toEqual(["2026-07-03"]);
+    expect(out["2026-07-03"]).toEqual({ memorizeGoal: 0, reviseGoal: 0, memorized: 5, revised: 2 }); // 1e9 / -4 rejected to 0
+  });
+
+  it("caps the map at 366 days", () => {
+    const map: Record<string, unknown> = {};
+    const d = new Date("2024-01-01T00:00:00Z"); // start of a leap year, plenty of days ahead
+    for (let i = 0; i < 400; i++) {
+      map[d.toISOString().slice(0, 10)] = { memorizeGoal: 0, reviseGoal: 0, memorized: 1, revised: 0 };
+      d.setUTCDate(d.getUTCDate() + 1);
+    }
+    expect(Object.keys(journal(map)).length).toBe(366);
+  });
+
+  it("setJournalGoals upserts SET goals (a second call overwrites, not adds) and rejects a bad date", () => {
+    const today = new Date().toLocaleDateString("en-CA");
+    setJournalGoals(today, { memorizeGoal: 3, reviseGoal: 5 });
+    expect(getProgress().sessionJournal?.[today]).toEqual({ memorizeGoal: 3, reviseGoal: 5, memorized: 0, revised: 0 });
+    setJournalGoals(today, { memorizeGoal: 10, reviseGoal: 2 });
+    // Goals are SET, not added: the second call overwrites.
+    expect(getProgress().sessionJournal?.[today]).toEqual({ memorizeGoal: 10, reviseGoal: 2, memorized: 0, revised: 0 });
+    setJournalGoals("not-a-date", { memorizeGoal: 9, reviseGoal: 9 });
+    expect(getProgress().sessionJournal?.["not-a-date"]).toBeUndefined(); // rejected key
+  });
+
+  it("recordJournalRevision and recordJournalMemorization ADD to today's tallies across calls", () => {
+    const now = new Date("2026-07-02T09:00:00");
+    const today = now.toLocaleDateString("en-CA");
+    recordJournalRevision(now);
+    recordJournalRevision(now);
+    recordJournalMemorization(3, now);
+    recordJournalMemorization(2, now);
+    expect(getProgress().sessionJournal?.[today]).toEqual({ memorizeGoal: 0, reviseGoal: 0, memorized: 5, revised: 2 });
+  });
+
+  it("toggleMemorizedVerse bumps today's memorized by 1 on ADD and does NOT decrement on unmark", () => {
+    const today = new Date().toLocaleDateString("en-CA");
+    toggleMemorizedVerse("5:5"); // add
+    expect(getProgress().sessionJournal?.[today]?.memorized).toBe(1);
+    toggleMemorizedVerse("5:5"); // unmark
+    expect(getProgress().sessionJournal?.[today]?.memorized).toBe(1); // NOT decremented — adds only
+  });
+
+  it("setMemorizedVerses bumps by the net-added delta only; re-marking adds 0; unmark leaves it unchanged", () => {
+    const today = new Date().toLocaleDateString("en-CA");
+    setMemorizedVerses(["1:1", "1:2"], true); // net-added 2
+    expect(getProgress().sessionJournal?.[today]?.memorized).toBe(2);
+    setMemorizedVerses(["1:2", "1:3"], true); // only 1:3 is new -> net-added 1
+    expect(getProgress().sessionJournal?.[today]?.memorized).toBe(3);
+    setMemorizedVerses(["1:1", "1:2"], true); // already memorized -> net-added 0, no bump
+    expect(getProgress().sessionJournal?.[today]?.memorized).toBe(3);
+    setMemorizedVerses(["1:1", "1:2"], false); // unmark path never touches the journal
+    expect(getProgress().sessionJournal?.[today]?.memorized).toBe(3);
+  });
+
+  it("the new journal helpers + memorize tally never touch the SM-2 memorizationReviews keyspace", () => {
+    const sm2 = {
+      repetitions: 5,
+      easeFactor: 2.5,
+      intervalDays: 30,
+      nextDueDate: "2026-09-01",
+      lastReviewedDate: "2026-06-01",
+      timesSeen: 8,
+      timesCorrect: 7,
+      lapses: 0,
+    };
+    expect(importProgress(JSON.stringify({ memorizationReviews: { "2:255": sm2 } }))).toBe(true);
+    const before = JSON.stringify(getMemorizationReviews());
+
+    const today = new Date().toLocaleDateString("en-CA");
+    setJournalGoals(today, { memorizeGoal: 3, reviseGoal: 5 });
+    recordJournalRevision();
+    recordJournalMemorization(2);
+    logTikrarReps("1:1", 4);
+    logExamResult({ scope: "Al-Fatihah", percent: 90, total: 7 });
+    toggleMemorizedVerse("1:1");
+    setMemorizedVerses(["1:2", "1:3"], true);
+
+    // The SM-2 keyspace is byte-for-byte what it was before any of the new writes.
+    expect(JSON.stringify(getMemorizationReviews())).toBe(before);
+    expect(getMemorizationReviews()["2:255"]).toEqual(sm2);
+  });
+
+  it("exportProgress round-trips tikrarLog + examLog + sessionJournal; resetProgress clears all three, keeps settings", () => {
+    const today = new Date().toLocaleDateString("en-CA");
+    logTikrarReps("2:255", 7);
+    logExamResult({ scope: "Juz 30", percent: 88, total: 200 });
+    setJournalGoals(today, { memorizeGoal: 4, reviseGoal: 6 });
+    recordJournalMemorization(2);
+    setSettings({ ...getSettings(), tikrarTarget: 12 });
+
+    const snapshot = exportProgress();
+    const afterExport = getProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+    // All three fields survive export -> clear -> import losslessly.
+    expect(getProgress().tikrarLog).toEqual(afterExport.tikrarLog);
+    expect(getProgress().examLog).toEqual(afterExport.examLog);
+    expect(getProgress().sessionJournal).toEqual(afterExport.sessionJournal);
+    expect(getProgress().tikrarLog?.["2:255"]?.reps).toBe(7);
+
+    resetProgress();
+    // Learner data cleared to defaults, the tikrarTarget setting kept.
+    expect(getProgress().tikrarLog).toEqual({});
+    expect(getProgress().examLog).toEqual([]);
+    expect(getProgress().sessionJournal).toEqual({});
+    expect(getSettings().tikrarTarget).toBe(12);
   });
 });
 
