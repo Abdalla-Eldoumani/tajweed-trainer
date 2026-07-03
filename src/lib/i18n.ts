@@ -404,6 +404,12 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Reciters come from the Quran.com recitations, grouped by style. Al-Husary (muallim) is the default for teaching-style learning.",
     ar: "القرّاء من تسجيلات Quran.com، مرتّبون حسب النمط. والحصري (المعلّم) هو الافتراضي للتعلّم على نمط المعلّم.",
   },
+  "settings.revisionReciter": { en: "Revision reciter", ar: "قارئ المراجعة" },
+  "settings.revisionReciterHelp": {
+    en: "The reciter used for memorization revision and recall playback only. Leave it as your reading reciter, or pick a different one just for revision.",
+    ar: "القارئ المستخدم لتشغيل مراجعة الحفظ والاستذكار فقط. اتركه كقارئ القراءة، أو اختر قارئًا مختلفًا للمراجعة وحدها.",
+  },
+  "settings.revisionReciterSame": { en: "Same as reading reciter", ar: "نفس قارئ القراءة" },
 
   // Common
   "common.progress": { en: "Progress", ar: "التقدّم" },

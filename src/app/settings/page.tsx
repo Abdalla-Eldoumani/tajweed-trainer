@@ -8,7 +8,7 @@ import { useTranslation } from "@/lib/i18n";
 import { exportProgress, importProgress, getProgress, shouldRemindBackup, getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
 import { subscribeProgressChanged } from "@/lib/progress-events";
 import { isNotificationSupported, isInstalled } from "@/lib/notification-gate";
-import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
+import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, normalizeReciterId, type ReciterStyleGroup } from "@/lib/reciters";
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
 import type { Recitation, TranslationResource, Theme } from "@/lib/types";
@@ -184,6 +184,24 @@ export default function SettingsPage() {
     return r.id === DEFAULT_RECITER_ID ? `${styled} (${t("settings.recitersDefault")})` : styled;
   };
 
+  // Revision reciter (PROG-02): the recall / revision surfaces resolve their
+  // reciter through resolveRevisionReciter, which falls back to the browse reciter
+  // when this override is unset (undefined). Its selector mirrors the browse
+  // reciter's grouped-by-style shape (no search box — the grouped list is short
+  // enough) and prepends a "same as reading reciter" option (value "") that writes
+  // undefined to clear the override. The grouping is static, so it memoizes once.
+  const revisionReciterGroups = useMemo(() => {
+    const groups: Array<{ key: ReciterStyleGroup; labelKey: string; list: Recitation[] }> = [
+      { key: "mujawwad", labelKey: "settings.reciterStyleMujawwad", list: [] },
+      { key: "murattal", labelKey: "settings.reciterStyleMurattal", list: [] },
+    ];
+    for (const r of RECITATIONS) groups.find((x) => x.key === styleGroup(r))?.list.push(r);
+    return groups.filter((g) => g.list.length > 0);
+  }, []);
+  // normalizeReciterId keeps a legacy stored id selectable; an unset override maps
+  // to "" so the "same as reading reciter" default option shows.
+  const revisionReciterValue = settings.revisionReciter ? normalizeReciterId(settings.revisionReciter) : "";
+
   // Keep the saved id selectable even if it is not in the loaded catalogue.
   const ensurePresent = (list: TranslationResource[], id: number): TranslationResource[] =>
     list.some((r) => r.id === id) ? list : [{ id, name: `#${id}`, authorName: "", languageName: "" }, ...list];
@@ -271,6 +289,34 @@ export default function SettingsPage() {
         <p className="text-xs text-text-muted mt-2">
           {t("settings.recitersHelp")}
         </p>
+      </Card>
+
+      {/* Revision reciter (PROG-02): a selector distinct from the browse reciter,
+          honored ONLY by the memorization revision / recall playback surfaces. The
+          first "same as reading reciter" option writes undefined so the shared
+          resolveRevisionReciter falls back to the browse reciter. */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.revisionReciter")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.revisionReciterHelp")}</p>
+        <select
+          value={revisionReciterValue}
+          onChange={(e) =>
+            updateSettings({ revisionReciter: e.target.value === "" ? undefined : e.target.value })
+          }
+          aria-label={t("settings.revisionReciter")}
+          className="w-full px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
+        >
+          <option value="">{t("settings.revisionReciterSame")}</option>
+          {revisionReciterGroups.map((group) => (
+            <optgroup key={group.key} label={t(group.labelKey)}>
+              {group.list.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {reciterLabel(r)}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
       </Card>
 
       {/* Playback Speed */}
