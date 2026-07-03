@@ -49,13 +49,13 @@ export const ModuleCard = memo(function ModuleCard({ module, completedLessons, l
       )}
 
       <div className="flex items-start gap-4">
-        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gold-light/20 text-gold-dark dark:bg-gold-dark/20 dark:text-gold-light text-lg font-bold font-arabic shrink-0 border border-gold-light/30 dark:border-gold-dark/30">
+        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gold-light/20 text-[#7A5E15] dark:bg-gold-dark/20 dark:text-gold-light text-lg font-bold font-arabic shrink-0 border border-gold-light/30 dark:border-gold-dark/30">
           {MODULE_ICONS[module.icon] ?? module.order}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-micro text-gold-dark dark:text-gold-light font-medium">
+            <span className="text-micro text-[#7A5E15] dark:text-gold-light font-medium">
               {module.order}
             </span>
           </div>

@@ -164,7 +164,7 @@ export default function HomePage() {
                   entrance as the cards above, so the whole page settles in
                   together; the existing hover tint is unchanged. */}
               <div className="enter-settle flex items-center gap-3 p-3 min-h-[44px] rounded-lg hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors">
-                <span className="w-8 h-8 rounded-full bg-gold-light/30 text-gold-dark dark:bg-gold-dark/20 dark:text-gold-light flex items-center justify-center text-micro font-bold border border-gold-light/40 dark:border-gold-dark/30">
+                <span className="w-8 h-8 rounded-full bg-gold-light/30 text-[#7A5E15] dark:bg-gold-dark/20 dark:text-gold-light flex items-center justify-center text-micro font-bold border border-gold-light/40 dark:border-gold-dark/30">
                   {module.order}
                 </span>
                 <div className="flex-1 min-w-0">
