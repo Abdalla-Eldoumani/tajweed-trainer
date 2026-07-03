@@ -45,6 +45,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   peekBudget: 3,
   newVerseCap: 5,
   revisionRemindersEnabled: false,
+  tikrarTarget: 5,
 };
 
 const DEFAULT_PROGRESS: TajweedProgress = {
@@ -73,6 +74,7 @@ const DEFAULT_PROGRESS: TajweedProgress = {
   lastBackupAt: "",
   dailyNewVersesTracking: { date: "", count: 0 },
   memorizationStreak: { currentStreak: 0, longestStreak: 0, lastRevisionDate: "" },
+  tikrarLog: {},
 };
 
 // Callers mutate what getProgress() returns before writing it back, so every
@@ -105,6 +107,11 @@ const MAX_QUIZ_SCORES_PER_MODULE = 500;
 const MAX_MODULES = 100;
 const MAX_REVIEWS = 2000;
 const MAX_MEMORIZED = 6236;
+// Per-call ceiling on tikrar reps: a single logTikrarReps call can add at most
+// this many reps to a verse's running total (the total itself caps at
+// MAX_MEMORIZED entries and 100000 reps per entry). A tamper/typo guard, not a
+// real session length.
+const MAX_TIKRAR_PER_CALL = 100;
 const MAX_VERSE_BOOKMARKS = 500;
 const MAX_LAST_READ_BY_SURAH = 114;
 // Milestone certificate records: one per juz (30) plus the khatmah is 31 at most,
@@ -265,6 +272,11 @@ function sanitizeSettings(input: unknown): UserSettings {
       typeof input.revisionRemindersEnabled === "boolean"
         ? input.revisionRemindersEnabled
         : (DEFAULT_SETTINGS.revisionRemindersEnabled ?? false),
+    // Default per-session tikrar rep target (EXAM-01). Clamp to [1, 20] rather
+    // than reject, so a tampered 999 pins to 20 (verbatim the peekBudget /
+    // newVerseCap pattern); Math.round because a rep target is whole. A
+    // non-number / NaN / absent value falls back to 5. Kept by resetProgress.
+    tikrarTarget: Math.round(clampNumber(input.tikrarTarget, 5, 1, 20)),
   };
 }
 
@@ -499,6 +511,31 @@ function sanitizeSessionPeeks(input: unknown): Record<string, number> {
   return out;
 }
 
+// Cumulative tikrar (repetition) rep log, keyed by verseKey. Mirrors
+// sanitizeSessionPeeks structurally, only the value is an object: the dangerous
+// prototype keys are skipped, keys must match VERSE_KEY_PATTERN, `reps` is clamped
+// to [0, 100000] and `lastRepDate` must be a real ISO date (else ""). A non-object
+// value is dropped, and the whole map caps at MAX_MEMORIZED (cap-on-new). Separate
+// from the SM-2 memorizationReviews schedule. A stored object without this field
+// reads back as {} (lossless migration).
+function sanitizeTikrarLog(input: unknown): Record<string, { reps: number; lastRepDate: string }> {
+  if (!isObject(input)) return {};
+  const out: Record<string, { reps: number; lastRepDate: string }> = {};
+  let count = 0;
+  for (const [verseKey, value] of Object.entries(input)) {
+    if (verseKey === "__proto__" || verseKey === "constructor" || verseKey === "prototype") continue;
+    if (!VERSE_KEY_PATTERN.test(verseKey)) continue;
+    if (!isObject(value)) continue;
+    out[verseKey] = {
+      reps: pickNumber(value.reps, 0, 0, 100000),
+      lastRepDate: isValidIsoDate(value.lastRepDate) ? value.lastRepDate : "",
+    };
+    count += 1;
+    if (count >= MAX_MEMORIZED) break;
+  }
+  return out;
+}
+
 function sanitizeMemorized(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const out = new Set<string>();
@@ -724,6 +761,7 @@ export function sanitizeProgress(input: unknown): TajweedProgress {
     lastBackupAt: typeof input.lastBackupAt === "string" && input.lastBackupAt.length <= 32 ? input.lastBackupAt : "",
     dailyNewVersesTracking: sanitizeDailyNewVerses(input.dailyNewVersesTracking),
     memorizationStreak: sanitizeMemorizationStreak(input.memorizationStreak),
+    tikrarLog: sanitizeTikrarLog(input.tikrarLog),
   };
 }
 
@@ -1317,5 +1355,28 @@ export function updateMemorizationStreak(now: Date = new Date()): void {
 
   streak.lastRevisionDate = today;
   progress.memorizationStreak = streak;
+  setProgress(progress);
+}
+
+// Log tikrar (repetition) reps for a verse (EXAM-01), ADDING to the cumulative
+// running total and stamping today's en-CA date. The per-call reps is clamped to
+// [0, MAX_TIKRAR_PER_CALL] and a call that rounds to 0 is a no-op. A brand-new
+// verseKey once the map is already at MAX_MEMORIZED is a no-op (mirrors
+// setVerseNote's cap-on-new); an existing entry always accumulates. One write,
+// one emit. This is the ONLY place reps accumulate; the total persists and grows
+// across days and it never reads or writes the SM-2 memorizationReviews schedule.
+export function logTikrarReps(verseKey: string, reps: number): void {
+  if (!isBrowser()) return;
+  if (!VERSE_KEY_PATTERN.test(verseKey)) return;
+  const addedReps = Math.round(clampNumber(reps, 0, 0, MAX_TIKRAR_PER_CALL));
+  if (addedReps === 0) return;
+  const progress = getProgress();
+  const map = progress.tikrarLog ?? {};
+  const isNew = !(verseKey in map);
+  if (isNew && Object.keys(map).length >= MAX_MEMORIZED) return;
+  const prev = map[verseKey] ?? { reps: 0, lastRepDate: "" };
+  const today = new Date().toLocaleDateString("en-CA");
+  map[verseKey] = { reps: Math.min(prev.reps + addedReps, 100000), lastRepDate: today };
+  progress.tikrarLog = map;
   setProgress(progress);
 }

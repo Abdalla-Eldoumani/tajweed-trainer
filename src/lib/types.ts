@@ -429,6 +429,11 @@ export interface UserSettings {
   // best-effort LOCAL notification fires on app open when verses are due; it is
   // never a server push. Additive optional so old backups still validate.
   revisionRemindersEnabled?: boolean;
+  // Default per-session rep target for the tikrar drill (EXAM-01). Default 5,
+  // clamped by sanitizeSettings to [1, 20]. Additive optional (mirrors newVerseCap?)
+  // so old backups without it still validate. A UI-only default; the drill can
+  // still override it per session.
+  tikrarTarget?: number;
 }
 
 export interface ModuleProgress {
@@ -561,6 +566,13 @@ export interface TajweedProgress {
   // map), so no prototype-key guard applies. Additive optional for lossless
   // migration; cleared by reset via the default clone.
   memorizationStreak?: { currentStreak: number; longestStreak: number; lastRevisionDate: string };
+  // Cumulative tikrar (repetition) rep log per verse (EXAM-01): the running total
+  // of reps logged for a verseKey plus the last rep's en-CA date, so the total
+  // persists and GROWS ACROSS DAYS (a new day never resets it). Keyed map;
+  // prototype-guarded, verseKey-validated, reps/date-clamped, and capped by the
+  // storage sanitizer. Separate from the SM-2 `memorizationReviews` schedule.
+  // Additive optional for lossless migration; cleared by reset via the default clone.
+  tikrarLog?: Record<string, { reps: number; lastRepDate: string }>;
 }
 
 // Where the reader last was, so the home screen can offer "continue reading".

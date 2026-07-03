@@ -30,6 +30,7 @@ import {
   getNewVersesIntroducedToday,
   recordNewVerseIntroduced,
   updateMemorizationStreak,
+  logTikrarReps,
 } from "@/lib/storage";
 
 // Behavioral coverage of the storage funnel against the REAL module under jsdom
@@ -851,6 +852,94 @@ describe("memorizationStreak persistence: export/import round-trip + reset (STAT
     updateMemorizationStreak(new Date("2026-07-02T09:00:00"));
     resetProgress();
     expect(getProgress().memorizationStreak).toEqual({ currentStreak: 0, longestStreak: 0, lastRevisionDate: "" });
+  });
+});
+
+describe("tikrarTarget setting: default 5, clamp [1, 20], round (EXAM-01)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
+  // export). Byte-for-byte the peekBudget / newVerseCap clamp precedent, only the
+  // band ceiling differs (20 instead of 10) and the default anchor is 5.
+  const tt = (v: unknown) => sanitizeProgress({ settings: { tikrarTarget: v } }).settings.tikrarTarget;
+
+  it("defaults to 5, clamps low/high, rounds, keeps in-band, defaults a non-number", () => {
+    expect(DEFAULT_SETTINGS.tikrarTarget).toBe(5);
+    expect(sanitizeProgress({}).settings.tikrarTarget).toBe(5); // absent
+    expect(tt(undefined)).toBe(5);
+    expect(tt(0)).toBe(1); // clamp low to the band floor
+    expect(tt(99)).toBe(20); // clamp high to the band ceiling
+    expect(tt(8)).toBe(8); // in-band value kept
+    expect(tt(8.6)).toBe(9); // Math.round (a rep target is a whole count)
+    expect(tt("x")).toBe(5); // non-number -> 5
+    expect(tt(Number.NaN)).toBe(5); // NaN -> 5
+  });
+});
+
+describe("sanitizeTikrarLog + logTikrarReps: cumulative across days, cap-on-new (EXAM-01)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeTikrarLog and the
+  // shipped logTikrarReps helper; nothing here re-derives a sanitizer.
+  const tik = (v: unknown) => sanitizeProgress({ tikrarLog: v }).tikrarLog ?? {};
+
+  it("proto-guards, rejects a non-verseKey key, clamps reps, coerces a bad lastRepDate to '', drops a non-object", () => {
+    const out = tik({
+      __proto__: { reps: 5, lastRepDate: "2026-07-02" },
+      constructor: { reps: 5, lastRepDate: "2026-07-02" },
+      prototype: { reps: 5, lastRepDate: "2026-07-02" },
+      "x:y": { reps: 5, lastRepDate: "2026-07-02" }, // non-verseKey -> rejected
+      "1:2:3": { reps: 5, lastRepDate: "2026-07-02" }, // non-verseKey -> rejected
+      "3:4": "nope", // non-object value -> dropped
+      "2:255": { reps: 1e9, lastRepDate: "not-a-date" }, // reps out of band -> 0, bad date -> ""
+      "1:1": { reps: 12, lastRepDate: "2026-07-02" }, // valid entry survives
+    });
+    // Object.prototype stayed clean and the dangerous keys never became own keys.
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+    expect(Object.keys(out).sort()).toEqual(["1:1", "2:255"]);
+    expect(out["2:255"]).toEqual({ reps: 0, lastRepDate: "" }); // pickNumber rejects 1e9 -> 0
+    expect(out["1:1"]).toEqual({ reps: 12, lastRepDate: "2026-07-02" });
+  });
+
+  it("logTikrarReps creates an entry on a fresh store, then accumulates same-day (cumulative)", () => {
+    const today = new Date().toLocaleDateString("en-CA");
+    logTikrarReps("2:255", 3);
+    expect(getProgress().tikrarLog?.["2:255"]).toEqual({ reps: 3, lastRepDate: today });
+    logTikrarReps("2:255", 4);
+    expect(getProgress().tikrarLog?.["2:255"]).toEqual({ reps: 7, lastRepDate: today }); // 3 + 4, same day
+  });
+
+  it("adds onto a seeded prior-day total and moves lastRepDate to today (across-days growth)", () => {
+    expect(importProgress(JSON.stringify({ tikrarLog: { "2:255": { reps: 20, lastRepDate: "2020-01-01" } } }))).toBe(
+      true,
+    );
+    const today = new Date().toLocaleDateString("en-CA");
+    logTikrarReps("2:255", 5);
+    // The total grows across days (20 + 5) and the date rolls to today, never reset.
+    expect(getProgress().tikrarLog?.["2:255"]).toEqual({ reps: 25, lastRepDate: today });
+  });
+
+  it("clamps a per-call value over 100 to 100, no-ops a call that rounds to 0, rejects a bad key", () => {
+    logTikrarReps("2:255", 500);
+    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(100); // clamped to MAX_TIKRAR_PER_CALL
+    logTikrarReps("2:255", 0);
+    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(100); // 0 is a no-op, unchanged
+    logTikrarReps("bad-key", 5);
+    expect(getProgress().tikrarLog?.["bad-key"]).toBeUndefined(); // rejected verseKey
+  });
+
+  it("a brand-new key once the map is at 6236 is a no-op, but an existing key still accumulates", () => {
+    const keys = manyVerseKeys(6237);
+    const seed: Record<string, { reps: number; lastRepDate: string }> = {};
+    for (const k of keys.slice(0, 6236)) seed[k] = { reps: 1, lastRepDate: "2020-01-01" };
+    expect(importProgress(JSON.stringify({ tikrarLog: seed }))).toBe(true);
+    expect(Object.keys(getProgress().tikrarLog ?? {}).length).toBe(6236);
+
+    const newKey = keys[6236]; // the 6237th, absent from the seeded map
+    logTikrarReps(newKey, 5);
+    expect(getProgress().tikrarLog?.[newKey]).toBeUndefined(); // cap-on-new no-op
+    expect(Object.keys(getProgress().tikrarLog ?? {}).length).toBe(6236);
+
+    // Editing an existing entry always works (never stuck by the cap).
+    logTikrarReps(keys[0], 4);
+    expect(getProgress().tikrarLog?.[keys[0]].reps).toBe(5); // 1 + 4
   });
 });
 
