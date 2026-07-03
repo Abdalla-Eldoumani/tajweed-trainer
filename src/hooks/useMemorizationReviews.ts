@@ -7,6 +7,7 @@ import {
   getNewVersesIntroducedToday,
   recordNewVerseIntroduced,
   updateMemorizationStreak,
+  recordJournalRevision,
 } from "@/lib/storage";
 import { subscribeProgressChanged } from "@/lib/progress-events";
 import { getDueFromUniverse } from "@/lib/spaced-repetition";
@@ -60,6 +61,13 @@ export function useMemorizationReviews() {
       // helper is idempotent per local day, so a second grade the same day is a
       // no-op. SM-2 grading and the memorizationReviews write above are untouched.
       updateMemorizationStreak();
+      // The session-journal revision tally rides here beside the streak
+      // (EXAM-03): a separate `sessionJournal` side effect that increments
+      // today's `revised` count. Also unconditional and once per grade, so any
+      // of the four recall drills tallies the day's revision. Independent of the
+      // streak (neither reads the other) and, like the streak, leaves the SM-2
+      // write and recall-scheduler.ts untouched.
+      recordJournalRevision();
       refresh();
     },
     [refresh, modifier],
