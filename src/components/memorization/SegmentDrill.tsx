@@ -15,6 +15,7 @@ import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah, getBundledChaptersIndex, getWordsForChapter } from "@/lib/quran-api";
 import { fetchSegments, type WordSegment } from "@/lib/audio-api";
+import { resolveRevisionReciter } from "@/lib/revision-reciter";
 import { canAlign, rangeBounds } from "@/lib/follow-along";
 import { sanitizeTajweedHtml } from "@/lib/sanitize";
 import {
@@ -181,6 +182,13 @@ export function SegmentDrill() {
     ? selectedKey
     : memorizedList[0] ?? "";
 
+  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // settings.revisionReciter when set, else the browse settings.reciter. It feeds
+  // BOTH fetchSegments (so the word-level timings come from the reciter that will
+  // actually play) and playChunk's opts.reciter, so the segment drill can never
+  // diverge from the other revision surfaces; the browse reader keeps settings.reciter.
+  const revisionReciter = resolveRevisionReciter(settings);
+
   // Return to the pre-start picker; invalidates any in-flight load so a late
   // resolve cannot revive a stale session.
   const reset = useCallback(() => {
@@ -213,7 +221,7 @@ export function SegmentDrill() {
           : getTajweedSurah(surah).then(
               (verses) => verses.find((v) => v.verseKey === key)?.tajweedHtml ?? null,
             ),
-        fetchSegments(surah, ayah, settings.reciter),
+        fetchSegments(surah, ayah, revisionReciter),
       ]);
       if (seq !== loadSeq.current) return;
       const realWords = wordsByKey[key] ?? [];
@@ -248,7 +256,7 @@ export function SegmentDrill() {
     } catch {
       if (seq === loadSeq.current) setPhase("error");
     }
-  }, [effectiveKey, chunkSize, settings.reciter, verseMeta]);
+  }, [effectiveKey, chunkSize, revisionReciter, verseMeta]);
 
   // Per-chunk audio: play the verse (loading it as the queue head — Pitfall 6) and,
   // when the segments align, loop just the chunk's [startMs..endMs] once via the
@@ -263,13 +271,13 @@ export function SegmentDrill() {
           ? rangeBounds(session.segments, startWordIdx, endWordIdx)
           : null;
       usePlayer.getState().playVerse(session.surah, session.ayah, {
-        reciter: settings.reciter,
+        reciter: revisionReciter,
         speed: settings.playbackSpeed,
         surahName: session.surahLabel || null,
       });
       if (bounds) usePlayer.getState().setSubVerseLoop(bounds.startMs, bounds.endMs, 1);
     },
-    [session, settings.reciter, settings.playbackSpeed],
+    [session, revisionReciter, settings.playbackSpeed],
   );
 
   // The single optional whole-verse grade (Phase C). Records ONCE through the

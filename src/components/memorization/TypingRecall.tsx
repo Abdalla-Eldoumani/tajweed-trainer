@@ -15,6 +15,7 @@ import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah, getBundledChaptersIndex, getWordsForChapter } from "@/lib/quran-api";
 import { canAlign } from "@/lib/follow-along";
+import { resolveRevisionReciter } from "@/lib/revision-reciter";
 import { sanitizeTajweedHtml } from "@/lib/sanitize";
 import { wordsMatch } from "@/lib/word-compare";
 import { toArabicIndic, cn } from "@/lib/utils";
@@ -250,17 +251,23 @@ export function TypingRecall() {
     }
   }, [effectiveKey, verseMeta]);
 
+  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // settings.revisionReciter when set, else the browse settings.reciter. Passed as
+  // opts.reciter so the typing drill's optional assist-play matches the other
+  // revision surfaces; the browse reader keeps settings.reciter.
+  const revisionReciter = resolveRevisionReciter(settings);
+
   // Play the whole verse (optional assist), through the ONE player engine — no
   // second <audio> element, and no sub-verse loop (typing is word-by-word from
   // memory, not audio-timed).
   const playVerse = useCallback(() => {
     if (!session) return;
     usePlayer.getState().playVerse(session.surah, session.ayah, {
-      reciter: settings.reciter,
+      reciter: revisionReciter,
       speed: settings.playbackSpeed,
       surahName: session.surahLabel || null,
     });
-  }, [session, settings.reciter, settings.playbackSpeed]);
+  }, [session, revisionReciter, settings.playbackSpeed]);
 
   // Advance to the next word after a match or a reveal: clear the input and the
   // per-word feedback/reveal state, then either move to the next word or, once the

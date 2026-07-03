@@ -12,6 +12,7 @@ import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah, getBundledChaptersIndex } from "@/lib/quran-api";
+import { resolveRevisionReciter } from "@/lib/revision-reciter";
 import { toArabicIndic, cn } from "@/lib/utils";
 import {
   verseSeamsForMemorized,
@@ -243,6 +244,12 @@ export function ChainingDrill() {
     return () => document.removeEventListener("keydown", onKey);
   }, [revealed, currentSeam, grade]);
 
+  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // settings.revisionReciter when set, else the browse settings.reciter. Passed as
+  // opts.reciter so the chaining drill's audio-tail matches the other revision
+  // surfaces; the browse reader keeps settings.reciter.
+  const revisionReciter = resolveRevisionReciter(settings);
+
   // Audio-tail (CHAIN-04): play the TAIL verse on its own (single mode), through
   // the one player engine — no second audio element, no fabricated audio. The
   // full tail verse is the baseline; the last-words sub-verse loop is deferred.
@@ -251,11 +258,11 @@ export function ChainingDrill() {
     const [s, a] = currentSeam.tail.split(":").map(Number);
     const header = SURAH_BY_NUMBER.get(s);
     usePlayer.getState().playVerse(s, a, {
-      reciter: settings.reciter,
+      reciter: revisionReciter,
       speed: settings.playbackSpeed,
       surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
     });
-  }, [currentSeam, settings.reciter, settings.playbackSpeed, isAr]);
+  }, [currentSeam, revisionReciter, settings.playbackSpeed, isAr]);
 
   // Gate the whole surface on the memorization mounted flag so the server and
   // first client paint agree (the /progress page also gates on mount + count).

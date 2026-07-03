@@ -16,6 +16,7 @@ import { getTajweedSurah, getBundledChaptersIndex } from "@/lib/quran-api";
 import { toArabicIndic, cn } from "@/lib/utils";
 import { getSessionPeeks, resetSessionPeeks } from "@/lib/storage";
 import { peekRemaining, wasPeeked } from "@/lib/peek-budget";
+import { resolveRevisionReciter } from "@/lib/revision-reciter";
 import type { RecallGrade } from "@/lib/types";
 
 // Surah headers from the bundled index (READ ONLY) so a verse under review can
@@ -230,6 +231,12 @@ export function MemorizedReview() {
     return () => document.removeEventListener("keydown", onKey);
   }, [revealed, currentKey, grade, peeked]);
 
+  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // settings.revisionReciter when set, else the browse settings.reciter. Passed as
+  // opts.reciter below so this recall review can never diverge from the other
+  // revision surfaces; the browse reader keeps settings.reciter.
+  const revisionReciter = resolveRevisionReciter(settings);
+
   // Play the verse under review on its own (single mode), through the one player
   // engine, no second audio element is ever constructed here.
   const playCurrent = useCallback(() => {
@@ -237,11 +244,11 @@ export function MemorizedReview() {
     const [s, a] = currentKey.split(":").map(Number);
     const header = SURAH_BY_NUMBER.get(s);
     usePlayer.getState().playVerse(s, a, {
-      reciter: settings.reciter,
+      reciter: revisionReciter,
       speed: settings.playbackSpeed,
       surahName: header ? (isAr ? header.nameArabic : header.nameSimple) : null,
     });
-  }, [currentKey, settings.reciter, settings.playbackSpeed, isAr]);
+  }, [currentKey, revisionReciter, settings.playbackSpeed, isAr]);
 
   // Play the remaining queue as a hand-picked set (multi-verse playback), again
   // through usePlayer, the same engine the reader uses for selections.
@@ -255,11 +262,11 @@ export function MemorizedReview() {
       });
     if (items.length === 0) return;
     usePlayer.getState().playSet(items, {
-      reciter: settings.reciter,
+      reciter: revisionReciter,
       speed: settings.playbackSpeed,
       surahName: null,
     });
-  }, [queue, activeIndex, memorized, settings.reciter, settings.playbackSpeed]);
+  }, [queue, activeIndex, memorized, revisionReciter, settings.playbackSpeed]);
 
   // Audio-led auto-play (BLIND-01): while in audio-led mode, play the current
   // verse whenever a new one becomes active and is still hidden. The first play

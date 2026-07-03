@@ -12,6 +12,7 @@ import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah, getBundledChaptersIndex } from "@/lib/quran-api";
+import { resolveRevisionReciter } from "@/lib/revision-reciter";
 import { logTikrarReps } from "@/lib/storage";
 import { toArabicIndic } from "@/lib/utils";
 
@@ -168,6 +169,12 @@ export function TikrarDrill() {
     pendingRef.current = { verseKey: "", reps: 0 };
   }, []);
 
+  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // settings.revisionReciter when set, else the browse settings.reciter. Passed as
+  // opts.reciter so the tikrar loop matches the other revision surfaces; the
+  // browse reader keeps settings.reciter.
+  const revisionReciter = resolveRevisionReciter(settings);
+
   // Arm the loop on the ONE engine: playVerse loads the queue head, then
   // setRepeatOne(target) makes it repeat the ayah `target` times via the engine's
   // nextAfterEnded precedence. Order matters — playVerse resets repeatOne, so
@@ -175,14 +182,14 @@ export function TikrarDrill() {
   const armLoop = useCallback(
     (s: DrillSession) => {
       usePlayer.getState().playVerse(s.surah, s.ayah, {
-        reciter: settings.reciter,
+        reciter: revisionReciter,
         speed: settings.playbackSpeed,
         surahName: s.surahLabel || null,
       });
       usePlayer.getState().setRepeatOne(target);
       lastRepeatsRef.current = 0;
     },
-    [settings.reciter, settings.playbackSpeed, target],
+    [revisionReciter, settings.playbackSpeed, target],
   );
 
   // Resolve the chosen verse's tajweed HTML (snapshot-first, else the cached surah
