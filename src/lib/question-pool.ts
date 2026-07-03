@@ -263,11 +263,6 @@ export function getDueQuestions(dueIds: string[], count: number): PracticeQuesti
   return shuffle(matched).slice(0, count).map(questionToPractice);
 }
 
-// getModuleLastScore and ModuleScoreSummary moved to ./practice-scores so the
-// practice hub can read scores without importing this whole content-heavy
-// module. Re-exported here for any caller that still reaches for them.
-export { getModuleLastScore, type ModuleScoreSummary } from "./practice-scores";
-
 export function getAvailableModules(): { id: string; name: string; count: number }[] {
   const counts = new Map<string, number>();
   // Authored counts win when present.
