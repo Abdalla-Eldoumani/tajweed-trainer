@@ -1,7 +1,7 @@
 // Pure pace math for the opt-in khatmah (Quran-completion) plan. No React, no
-// storage, no next imports: the progress page and scripts/verify-khatmah.mjs
-// import this directly, the same way mastery.ts and memorization-scope.ts stay
-// unit-testable. Every output is clamped and every division is guarded, so a
+// storage, no next imports: the progress page imports it directly and
+// khatmah.test.ts exercises it, the same way mastery.ts and memorization-scope.ts
+// stay unit-testable. Every output is clamped and every division is guarded, so a
 // same-day plan or a reader past the end can never produce NaN/Infinity.
 //
 // Model, linear by mushaf page. The whole Quran is 604 pages; being on page N
