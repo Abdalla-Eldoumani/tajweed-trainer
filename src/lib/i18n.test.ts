@@ -231,6 +231,18 @@ const HIZB_KEYS = [
   "hizb.hideRub",
 ];
 
+// The revision-reciter settings keys (Phase 12, PROG-02): the revision-only
+// reciter selector distinct from the browse reciter. Same EN+AR parity assertion,
+// plus the distinctness check below: settings.revisionReciter is a SECOND reciter
+// control on the same /settings page as settings.reciter, so its heading must
+// differ from the browse reciter's in BOTH locales, or the two controls read as
+// the same label and a getByLabel locator addresses the wrong <select>.
+const REVISION_RECITER_KEYS = [
+  "settings.revisionReciter",
+  "settings.revisionReciterHelp",
+  "settings.revisionReciterSame",
+];
+
 describe("onboarding i18n keys carry both en and ar", () => {
   it.each(ONBOARDING_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
     const en = t(key, "en");
@@ -512,6 +524,28 @@ describe("hizb coverage-ring i18n keys carry both en and ar", () => {
       expect(t("hizb.title", lang)).not.toBe(t("strength.revisionStreakTitle", lang));
       expect(t("hizb.title", lang)).not.toBe(t("journal.title", lang));
       expect(t("hizb.title", lang)).not.toBe(t("khatmah.title", lang));
+    }
+  });
+});
+
+describe("revision-reciter settings i18n keys carry both en and ar", () => {
+  it.each(REVISION_RECITER_KEYS)("%s resolves to a non-empty en and a distinct non-empty ar", (key) => {
+    const en = t(key, "en");
+    const ar = t(key, "ar");
+    expect(en, `${key} en`).not.toBe(key);
+    expect(ar, `${key} ar`).not.toBe(key);
+    expect(en.length, `${key} en`).toBeGreaterThan(0);
+    expect(ar.length, `${key} ar`).toBeGreaterThan(0);
+    expect(ar, `${key} ar fell back to en`).not.toBe(en);
+  });
+
+  // Two-reciter-control locator guarantee: the revision reciter and the browse
+  // reciter are separate <select>s on the same /settings page, so their headings
+  // must be textually distinct in BOTH locales — otherwise the two controls read
+  // as the same label and a getByLabel role/name locator addresses the wrong one.
+  it("settings.revisionReciter is distinct from settings.reciter", () => {
+    for (const lang of ["en", "ar"] as const) {
+      expect(t("settings.revisionReciter", lang)).not.toBe(t("settings.reciter", lang));
     }
   });
 });
