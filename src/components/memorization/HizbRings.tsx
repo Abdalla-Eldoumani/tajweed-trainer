@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useTranslation } from "@/lib/i18n";
 import { useMemorization } from "@/hooks/useMemorization";
-import { countInScope, versesForHizb, versesForRub } from "@/lib/memorization-scope";
+import { countInScope, memorizedPercent, versesForHizb, versesForRub } from "@/lib/memorization-scope";
 import { TOTAL_HIZB, TOTAL_RUB } from "@/lib/navigation";
 import { toArabicIndic } from "@/lib/utils";
 
@@ -89,14 +89,17 @@ export function HizbRings() {
       const verses = versesForHizb(n);
       const count = countInScope(memorized, verses);
       const total = verses.length;
-      return { n, count, total, pct: Math.round((count / total) * 100) };
+      // Honest edges (memorization-scope precedent): a single memorized verse in a
+      // large hizb (juz 29-30 run 225-288 verses) never rounds down to 0%, and
+      // all-but-one never rounds up to a "completed" 100% — only a full scope is 100%.
+      return { n, count, total, pct: memorizedPercent(count, total) };
     });
     const rub: RingDatum[] = Array.from({ length: TOTAL_RUB }, (_, i) => {
       const n = i + 1;
       const verses = versesForRub(n);
       const count = countInScope(memorized, verses);
       const total = verses.length;
-      return { n, count, total, pct: Math.round((count / total) * 100) };
+      return { n, count, total, pct: memorizedPercent(count, total) };
     });
     return { hizbRings: hizb, rubRings: rub };
   }, [memorized]);
