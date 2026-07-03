@@ -12,6 +12,7 @@ import { ResumeListeningCard } from "@/components/progress/ResumeListeningCard";
 import { MurajaahDashboard } from "@/components/progress/MurajaahDashboard";
 import { MemorizationTracker } from "@/components/memorization/MemorizationTracker";
 import { MemorizationBreakdown } from "@/components/memorization/MemorizationBreakdown";
+import { HizbRings } from "@/components/memorization/HizbRings";
 import { MemorizationHeatmap } from "@/components/memorization/MemorizationHeatmap";
 import { RevisionStreakCounter } from "@/components/memorization/RevisionStreakCounter";
 import { SessionJournal } from "@/components/memorization/SessionJournal";
@@ -170,6 +171,13 @@ export default function ProgressPage() {
             section so it never flashes before hydration. */}
         {memorizedMounted && memorizedCount > 0 && <MurajaahDashboard />}
         <MemorizationTracker onOpenBulk={() => setBulkOpen(true)} />
+        {/* Hizb & rub' coverage rings (PROG-01): the ONE memorization surface
+            that renders at ZERO. Gated on `memorizedMounted` ONLY (never
+            `memorizedCount > 0`) so a brand-new learner still sees the empty
+            rings — the component derives coverage from the memorized set and is
+            crash-free at zero. Do NOT fold it into the count>0 guard the other
+            surfaces use. */}
+        {memorizedMounted && <HizbRings />}
         {memorizedMounted && memorizedCount > 0 && (
           <Card>
             <MemorizationBreakdown memorized={memorized} />
