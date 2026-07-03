@@ -88,8 +88,8 @@ Next.js App Router (Next 16). Most pages are server components that hydrate into
 
 ### `scripts/`
 
-- **fetch-surah-names.mjs**: one-shot dev script. Pulls `/chapters`, writes `src/data/content/surah-index.json` (114 entries: `name_arabic`, `pages`, `bismillah_pre`, `revelation_place`), and patches `surah_name_ar` into every example. Re-run when an example references a new surah; not a build step.
-- **verify-mushaf.mjs**: drives a real Chromium against `npm run dev` for 21 assertions on the Mushaf flow. See [development.md](development.md).
+- **fetch-surah-names.mjs**: one-shot dev script. Pulls `/chapters`, writes `src/data/content/surah-index.json` (114 entries: `nameArabic`, `pages`, `bismillahPre`, `revelationPlace`), and patches `surah_name_ar` into every example. Re-run when an example references a new surah; not a build step.
+- **verify-mushaf.mjs**: drives a real Chromium against `npm run dev` for 23 assertions on the Mushaf flow. See [development.md](development.md).
 - **verify-newfeatures.mjs**: smoke-tests spaced repetition, memorization tracker / mode, global search, the TTS button, and the PWA endpoint against `npm run dev`.
 
 ## Data flow
