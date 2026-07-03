@@ -4,7 +4,7 @@ import { create } from "zustand";
 import type { PlayerMode, PlaybackStatus, ReciterId } from "@/lib/types";
 import { DEFAULT_RECITER_ID } from "@/lib/reciters";
 import { setPlayerResume } from "@/lib/storage";
-import { buildRangeQueue, dedupeQueue, nextAfterEnded } from "@/lib/player-engine";
+import { buildRangeQueue, dedupeQueue, nextAfterEnded, repeatOneJustCompleted, type EndedSnapshot } from "@/lib/player-engine";
 
 // The inter-verse gap presets (seconds). A free slider is intentionally avoided
 // (UI-SPEC section 7); setInterVersePause clamps to the nearest preset.
@@ -46,6 +46,10 @@ interface PlayerState {
   // stop-at-end-of-surah sleep flag. repeatsDone / rangeLoopsDone are counters.
   repeatOne: number;
   repeatsDone: number;
+  // Monotonic count of repeat-one loops that ran to their terminal listen. Read
+  // only by the tikrar rep counter so it can count the final listen (repeatsDone
+  // counts loop-backs, topping out at N-1); never affects playback.
+  repeatOneCompletions: number;
   repeatRange: { from: number; to: number; count: number } | null;
   rangeLoopsDone: number;
   sleepEndOfSurah: boolean;
@@ -134,6 +138,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   seekTarget: 0,
   repeatOne: 0,
   repeatsDone: 0,
+  repeatOneCompletions: 0,
   repeatRange: null,
   rangeLoopsDone: 0,
   sleepEndOfSurah: false,
@@ -407,7 +412,7 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     // range walk/loop, continuous advance, stop) are byte-for-byte equivalent.
     // The inter-verse gap is scheduled by PlayerHost off this same advance; at
     // interVersePause 0 the host advances immediately, unchanged from today.
-    const decision = nextAfterEnded({
+    const snapshot: EndedSnapshot = {
       repeatOne: s.repeatOne,
       repeatsDone: s.repeatsDone,
       repeatRange: s.repeatRange,
@@ -418,7 +423,8 @@ export const usePlayer = create<PlayerState>((set, get) => ({
       queueLength: s.queue.length,
       currentAyah: cur ? cur.ayah : 0,
       sleepEndOfSurah: s.sleepEndOfSurah,
-    });
+    };
+    const decision = nextAfterEnded(snapshot);
 
     switch (decision.kind) {
       case "repeat-one":
@@ -470,7 +476,14 @@ export const usePlayer = create<PlayerState>((set, get) => ({
         if (s.repeatRange) {
           set({ repeatsDone: 0, rangeLoopsDone: 0, repeatRange: null, status: decision.status, currentTime: 0 });
         } else {
-          set({ repeatsDone: 0, status: decision.status, currentTime: 0 });
+          // A repeat-one loop that just finished its terminal listen bumps the
+          // completion counter (tikrar reads it to count that final listen).
+          set({
+            repeatsDone: 0,
+            status: decision.status,
+            currentTime: 0,
+            repeatOneCompletions: s.repeatOneCompletions + (repeatOneJustCompleted(snapshot, decision) ? 1 : 0),
+          });
         }
         get().persist();
         return;

@@ -117,3 +117,16 @@ export function nextAfterEnded(s: EndedSnapshot): EndedDecision {
   // 5. End of queue: single returns to paused, continuous goes idle.
   return { kind: "stop", status: s.mode === "single" ? "paused" : "idle" };
 }
+
+// True when the item that just ended was the LAST play of a repeat-one loop: the
+// decision is a terminal stop AND a repeat-one count was armed (setRepeatOne
+// clears repeatRange, and a still-looping repeat-one returns "repeat-one" not
+// "stop", so stop + repeatOne>0 uniquely means the loop finished its final play).
+// The store increments a completion counter on this so a purely-listened rep
+// counter (TikrarDrill) counts the terminal listen too: repeatsDone counts only
+// loop-BACKS (0..N-1), so the last listen ends by stopping and leaves no
+// repeatsDone delta of its own. Pure, so the store and player-engine.test.ts read
+// the same rule.
+export function repeatOneJustCompleted(s: EndedSnapshot, d: EndedDecision): boolean {
+  return d.kind === "stop" && s.repeatOne > 0;
+}

@@ -95,6 +95,9 @@ export function TikrarDrill() {
   // The last repeatsDone value we counted, so each completed listen is counted
   // exactly once (the store resets repeatsDone to 0 on each re-arm).
   const lastRepeatsRef = useRef(0);
+  // The last repeatOneCompletions value counted, baselined on each arm so a
+  // played-through loop adds exactly its terminal listen once.
+  const lastCompletionsRef = useRef(0);
   // The uncommitted reps + their verseKey, mirrored so finish and the unmount
   // cleanup can log them once without losing a session left mid-way.
   const pendingRef = useRef<{ verseKey: string; reps: number }>({ verseKey: "", reps: 0 });
@@ -104,6 +107,10 @@ export function TikrarDrill() {
   // Observe completed listens from the ONE engine via a primitive selector (per
   // the usePlayer note on avoiding per-tick re-renders).
   const repeatsDone = usePlayer((s) => s.repeatsDone);
+  // The terminal-listen signal from the same engine: repeatsDone counts loop-backs
+  // and tops at target-1, so the final listen is counted from this monotonic
+  // completion counter instead (the store bumps it once per loop that plays through).
+  const repeatOneCompletions = usePlayer((s) => s.repeatOneCompletions);
 
   const verseMeta = useCallback(
     (key: string) => {
@@ -131,19 +138,9 @@ export function TikrarDrill() {
   // value we last observed. Active only in the session phase, so a global playback
   // elsewhere never bumps the counter.
   //
-  // Known limitation (WR-01): the audio-observed count under-reports a full target-N
-  // loop by one, so a purely-listened session tops out at N-1. The shared
-  // player-engine's repeatOne loops while `repeatsDone + 1 < repeatOne`, so
-  // repeatsDone counts loop-BACKS and stops at N-1 (the last listen ends by stopping,
-  // not by looping), and the store resets repeatsDone to 0 on that terminal stop — so
-  // the final listen leaves no delta to observe here (and target 1 produces no delta
-  // at all). Counting the terminal listen cleanly would need either a change to the
-  // frozen player-engine (forbidden — other surfaces depend on its onEnded
-  // precedence) or a status-transition heuristic that cannot distinguish a natural
-  // finish from a manual mini-player pause and would over-count the no-audio path
-  // (where the manual tap is the intended counter). So the manual `countRep` tap is
-  // the ACCURATE path and this audio delta is left as-is; it never over-counts or
-  // double-counts against the tap.
+  // repeatsDone counts loop-BACKS, so it tops out at target-1 (the last listen ends
+  // by stopping, not by looping). The final listen is counted separately from the
+  // store's repeatOneCompletions signal below, so the two together total the true N.
   useEffect(() => {
     if (phase !== "session") return;
     if (repeatsDone > lastRepeatsRef.current) {
@@ -152,6 +149,20 @@ export function TikrarDrill() {
       setDone((d) => d + delta);
     }
   }, [repeatsDone, phase]);
+
+  // Count the terminal listen of each played-through loop — the one repeatsDone
+  // can't see (the loop ends by stopping, resetting repeatsDone to 0 with no final
+  // delta). The store bumps repeatOneCompletions once per loop that reaches its last
+  // listen (see repeatOneJustCompleted); a no-audio session fires neither signal, so
+  // the manual countRep tap stays the counter there with no over-count.
+  useEffect(() => {
+    if (phase !== "session") return;
+    if (repeatOneCompletions > lastCompletionsRef.current) {
+      const delta = repeatOneCompletions - lastCompletionsRef.current;
+      lastCompletionsRef.current = repeatOneCompletions;
+      setDone((d) => d + delta);
+    }
+  }, [repeatOneCompletions, phase]);
 
   // Log any uncommitted reps once. Idempotent: it zeroes the pending count after,
   // so a later finish/unmount call is a no-op (logTikrarReps also no-ops on 0).
@@ -180,6 +191,7 @@ export function TikrarDrill() {
     setSession(null);
     setDone(0);
     lastRepeatsRef.current = 0;
+    lastCompletionsRef.current = 0;
     pendingRef.current = { verseKey: "", reps: 0 };
   }, []);
 
@@ -202,6 +214,7 @@ export function TikrarDrill() {
       });
       usePlayer.getState().setRepeatOne(target);
       lastRepeatsRef.current = 0;
+      lastCompletionsRef.current = usePlayer.getState().repeatOneCompletions;
     },
     [revisionReciter, settings.playbackSpeed, target],
   );

@@ -3,6 +3,7 @@ import {
   buildRangeQueue,
   dedupeQueue,
   nextAfterEnded,
+  repeatOneJustCompleted,
   type EndedSnapshot,
 } from "@/lib/player-engine";
 
@@ -226,6 +227,47 @@ describe("nextAfterEnded - default paths", () => {
     expect(
       nextAfterEnded(snap({ mode: "continuous", index: 0, queueLength: 3, sleepEndOfSurah: true })),
     ).toEqual({ kind: "stop", status: "idle" });
+  });
+});
+
+describe("repeatOneJustCompleted", () => {
+  it("is true on the terminal stop of a repeat-one loop (N>=2)", () => {
+    const s = snap({ repeatOne: 3, repeatsDone: 2 });
+    expect(repeatOneJustCompleted(s, nextAfterEnded(s))).toBe(true);
+  });
+
+  it("is true for a target of 1 (single listen, no loop-backs)", () => {
+    const s = snap({ repeatOne: 1, repeatsDone: 0 });
+    expect(repeatOneJustCompleted(s, nextAfterEnded(s))).toBe(true);
+  });
+
+  it("is false mid-loop (still repeating)", () => {
+    const s = snap({ repeatOne: 3, repeatsDone: 0 });
+    expect(repeatOneJustCompleted(s, nextAfterEnded(s))).toBe(false);
+  });
+
+  it("is false for a plain single verse with no repeat armed", () => {
+    const s = snap({ repeatOne: 0, mode: "single", index: 0, queueLength: 1 });
+    expect(repeatOneJustCompleted(s, nextAfterEnded(s))).toBe(false);
+  });
+
+  it("counts exactly N terminal completions across N re-armed loops", () => {
+    // Drive the real decision for a target-N loop and count how many times the
+    // completion fires: exactly once, on the last play (repeatsDone N-1 -> stop).
+    const N = 5;
+    let repeatsDone = 0;
+    let completions = 0;
+    for (let guard = 0; guard < 100; guard++) {
+      const s = snap({ repeatOne: N, repeatsDone });
+      const d = nextAfterEnded(s);
+      if (repeatOneJustCompleted(s, d)) completions++;
+      if (d.kind === "stop") break;
+      if (d.kind === "repeat-one") repeatsDone++;
+    }
+    expect(completions).toBe(1);
+    // The loop-backs (repeatsDone) top out at N-1; the completion signal supplies
+    // the missing final listen, so loop-backs + completion == the true N.
+    expect(repeatsDone + completions).toBe(N);
   });
 });
 
