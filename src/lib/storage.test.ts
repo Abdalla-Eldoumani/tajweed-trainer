@@ -640,6 +640,46 @@ describe("revisionRemindersEnabled setting: default false, boolean coercion (REV
   });
 });
 
+describe("revisionReciter setting: optional, coerced like reciter, falls back to browse (PROG-02)", () => {
+  // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
+  // export). Coerced like `reciter` (normalize / migrate legacy) EXCEPT that an
+  // unset or invalid value stays undefined so resolveRevisionReciter falls back
+  // to the browse reciter, rather than becoming DEFAULT_RECITER_ID.
+  const rr = (v: unknown) => sanitizeProgress({ settings: { revisionReciter: v } }).settings.revisionReciter;
+
+  it("is undefined by default (canonical default and absent value)", () => {
+    expect(DEFAULT_SETTINGS.revisionReciter).toBeUndefined();
+    expect(sanitizeProgress({}).settings.revisionReciter).toBeUndefined();
+    expect(rr(undefined)).toBeUndefined();
+  });
+
+  it("keeps a known reciter id and migrates a legacy alias", () => {
+    expect(rr("7")).toBe("7"); // known Quran.com id kept
+    expect(rr("ea-ghamdi")).toBe("ea-ghamdi"); // known EveryAyah id kept
+    expect(rr("ar.alafasy")).toBe("7"); // legacy alias normalized
+  });
+
+  it("drops any invalid value to undefined so it falls back to browse (not the default)", () => {
+    expect(rr("nope")).toBeUndefined(); // unknown string -> undefined (NOT "12")
+    expect(rr(5)).toBeUndefined(); // number -> undefined
+    expect(rr(null)).toBeUndefined(); // null -> undefined
+  });
+
+  it("a valid value survives an export -> clear -> import round-trip", () => {
+    setSettings({ ...getSettings(), revisionReciter: "7" });
+    const snapshot = exportProgress();
+    localStorage.clear();
+    expect(importProgress(snapshot)).toBe(true);
+    expect(getSettings().revisionReciter).toBe("7");
+  });
+
+  it("survives resetProgress (it is a preference, kept like reciter / theme)", () => {
+    setSettings({ ...getSettings(), revisionReciter: "7" });
+    resetProgress();
+    expect(getSettings().revisionReciter).toBe("7");
+  });
+});
+
 describe("dailyNewVersesTracking: fixed-shape sanitizer, default { date: '', count: 0 } (REV-01)", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeDailyNewVerses. This is
   // a fixed-shape object (not a keyed map), so there is no prototype-key vector to
