@@ -205,6 +205,34 @@ record(
   "AA-normal contrast-scoped text on the revelation badge + surah-number chip (text-gold-dark is banned as text in this file by policy)",
 );
 
+// --- 11. the small gold-on-light badges that sat below AA now carry the
+//         contrast-scoped #7A5E15 (>=4.86:1 on every light ground), not the
+//         shared text-gold-dark (~3.75-4.51:1 there). Three spots: the home
+//         learning-path step numeral, the ModuleCard icon tile + order numeral,
+//         and the MasterySection "started" level badge. The home hero KEEPS its
+//         large-text text-gold-dark headings (>=3:1 as large text), so that file
+//         is checked at the step-badge span only; ModuleCard and MasterySection
+//         dropped the token entirely, so they are asserted file-wide. ---
+const homeSrc = read("src/app/page.tsx");
+const stepBadge = (homeSrc.match(/className="([^"]*bg-gold-light\/30[^"]*)"/) || [])[1] || "";
+record(
+  "home learning-path step badge uses scoped #7A5E15, not text-gold-dark",
+  /text-\[#7A5E15\]/.test(stepBadge) && !/text-gold-dark/.test(stepBadge),
+  "AA-normal contrast-scoped numeral on the step badge (large hero gold headings are untouched)",
+);
+const moduleCardSrc = read("src/components/learn/ModuleCard.tsx");
+record(
+  "ModuleCard.tsx small gold text uses scoped #7A5E15, not text-gold-dark",
+  /text-\[#7A5E15\]/.test(moduleCardSrc) && !/text-gold-dark/.test(moduleCardSrc),
+  "icon tile + order numeral must clear 4.5:1 on the card ground",
+);
+const masterySrc = read("src/components/progress/MasterySection.tsx");
+record(
+  "MasterySection.tsx level badge uses scoped #7A5E15, not text-gold-dark",
+  /text-\[#7A5E15\]/.test(masterySrc) && !/text-gold-dark/.test(masterySrc),
+  "the 'started' badge text must clear 4.5:1 on the gold-light fill",
+);
+
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} accessibility checks passed.`);
 if (failed.length > 0) {

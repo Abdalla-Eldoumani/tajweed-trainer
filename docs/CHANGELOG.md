@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **The remaining small gold badges meet AA.** The home learning-path step numbers, the learn-dashboard module tiles (icon and order numeral), and the progress-page mastery badge used a gold that sat below 4.5:1 on the light grounds; they now use the same contrast-scoped gold as the surah-index badges, clearing AA on every light theme. Purely a color-token change — no layout, wording, or content moved — and a source guard now holds it in place.
+
 ## 2.2.0 — 2026-07-03
 
 A memorization milestone. The review side moved from a fixed schedule to a self-graded spaced-repetition model, and a full hifdh suite grew on top of it: chaining across verse, page, and juz seams; splitting a long verse into chunks; typing recall; audio-led and cover-the-page recall with a peek budget; a daily revision dashboard; freshness, error, and streak views; a repetition counter, a timed exam, and a session journal; and hizb and rub' al-hizb progress with a dedicated revision reciter. Underneath, the project gained a real automated test suite and a consolidated set of documentation, and closed with an accessibility, security, and performance pass. No religious content was generated or edited: every recall check compares your own input against the already-stored verified text, and verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.

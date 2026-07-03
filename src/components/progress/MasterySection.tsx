@@ -11,7 +11,7 @@ import { toArabicIndic } from "@/lib/utils";
 // Badge tone per level, from the app's own tokens (no new colors).
 const LEVEL_TONE: Record<MasteryLevel, string> = {
   untouched: "bg-bg-subtle text-text-muted dark:bg-bg-subtle-dark",
-  started: "bg-gold-light/25 text-gold-dark dark:bg-gold-dark/25 dark:text-gold-light",
+  started: "bg-gold-light/25 text-[#7A5E15] dark:bg-gold-dark/25 dark:text-gold-light",
   practiced: "bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light",
   strong: "bg-accent/15 text-accent",
 };
