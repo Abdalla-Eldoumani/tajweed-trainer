@@ -25,8 +25,6 @@ export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, 
     const c = s.queue[s.index];
     return !!c && c.surah === surah && c.ayah === ayah;
   });
-  const currentTime = usePlayer((s) => s.currentTime);
-  const duration = usePlayer((s) => s.duration);
 
   const activeReciter = reciter ?? settings.reciter;
   const isPlaying = isThis && status === "playing";
@@ -47,7 +45,16 @@ export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, 
     if (isThis) usePlayer.getState().setSpeed(newSpeed);
   };
 
-  const progressPercent = isThis && duration > 0 ? (currentTime / duration) * 100 : 0;
+  // Only the active, non-compact player's progress changes each tick; every other
+  // mounted player returns a constant 0 so zustand's Object.is skips its render.
+  // Reading s.currentTime directly here would re-render all mounted players ~4x/sec
+  // (PlayerHost's unthrottled ontimeupdate) for no visual change.
+  const progressPercent = usePlayer((s) => {
+    if (compact) return 0;
+    const c = s.queue[s.index];
+    const active = !!c && c.surah === surah && c.ayah === ayah;
+    return active && s.duration > 0 ? (s.currentTime / s.duration) * 100 : 0;
+  });
 
   if (compact) {
     return (
