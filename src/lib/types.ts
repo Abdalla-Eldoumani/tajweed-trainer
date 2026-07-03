@@ -434,6 +434,13 @@ export interface UserSettings {
   // so old backups without it still validate. A UI-only default; the drill can
   // still override it per session.
   tikrarTarget?: number;
+  // Reciter used by the revision / recall surfaces (PROG-02), separate from the
+  // browse `reciter`. Unset/undefined means "same as the browse reciter" — the
+  // sanitizer coerces it like `reciter` but drops an invalid value to undefined
+  // (so it falls back to the browse reciter, NOT the default reciter). Resolved
+  // in one place by resolveRevisionReciter (revisionReciter ?? reciter). Additive
+  // optional so old backups without it still validate; never changes what is rendered.
+  revisionReciter?: ReciterId;
 }
 
 export interface ModuleProgress {

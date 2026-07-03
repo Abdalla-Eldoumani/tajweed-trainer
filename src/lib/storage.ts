@@ -14,7 +14,7 @@ import type {
   KhatmahPlan,
   CertificateRecord,
 } from "./types";
-import { normalizeReciterId, DEFAULT_RECITER_ID } from "./reciters";
+import { normalizeReciterId, resolveReciterIdOrNull, DEFAULT_RECITER_ID } from "./reciters";
 import { sanitizePlayerPosition, type PlayerPosition } from "./player-position";
 import { emitProgressChanged } from "./progress-events";
 // The migration function and the SM-2 bounds live with the pure recall curve;
@@ -290,6 +290,15 @@ function sanitizeSettings(input: unknown): UserSettings {
     // newVerseCap pattern); Math.round because a rep target is whole. A
     // non-number / NaN / absent value falls back to 5. Kept by resetProgress.
     tikrarTarget: Math.round(clampNumber(input.tikrarTarget, 5, 1, 20)),
+    // Revision-only reciter (PROG-02). UNSET is meaningful (= "same as the browse
+    // reciter"), so an absent value stays undefined rather than becoming a
+    // default. A known id or legacy alias normalizes via resolveReciterIdOrNull;
+    // anything invalid/tampered drops to undefined so resolveRevisionReciter falls
+    // back to the browse `reciter`, NOT to DEFAULT_RECITER_ID.
+    revisionReciter:
+      input.revisionReciter === undefined
+        ? undefined
+        : (resolveReciterIdOrNull(input.revisionReciter) ?? undefined),
   };
 }
 

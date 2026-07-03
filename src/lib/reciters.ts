@@ -130,6 +130,20 @@ export function normalizeReciterId(value: unknown): string {
   return DEFAULT_RECITER_ID;
 }
 
+// Like normalizeReciterId, but returns null (not the default) when the value is
+// not a recognized recitation id or legacy alias. This lets a caller tell
+// "recognized" from "fall back" — the optional revisionReciter setting needs
+// that distinction so an invalid value drops to undefined and resolves to the
+// browse reciter, rather than silently becoming the default reciter.
+export function resolveReciterIdOrNull(value: unknown): string | null {
+  if (typeof value === "string") {
+    if (BY_ID.has(value)) return value;
+    const legacy = LEGACY_ALIASES[value];
+    if (legacy && BY_ID.has(legacy)) return legacy;
+  }
+  return null;
+}
+
 // Two display groups per the PRD: Mujawwad, and Murattal (which gathers
 // Murattal, Muallim, and the API's unspecified/null style, all measured
 // recitations). Each reciter still carries its exact style for display.
