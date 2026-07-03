@@ -141,11 +141,14 @@ export function ExamMode() {
     if (scopeType === "juz") {
       return t("exam.juzLabel").replace("{n}", num(juz));
     }
-    const a = Math.min(rangeStart, rangeEnd);
-    const b = Math.max(rangeStart, rangeEnd);
+    // Clamp the label bounds to the surah's real ayah count so the logged label
+    // matches the set versesForRange actually tests (e.g. a 108:1-100 pick tests
+    // and must read 108:1-3, not overstate the range).
+    const a = Math.min(Math.max(1, Math.min(rangeStart, rangeEnd)), ayahCount);
+    const b = Math.min(Math.max(1, Math.max(rangeStart, rangeEnd)), ayahCount);
     const raw = `${surah}:${a}-${surah}:${b}`;
     return isAr ? toArabicIndic(raw) : raw;
-  }, [scopeType, surah, juz, rangeStart, rangeEnd, isAr, num, t]);
+  }, [scopeType, surah, juz, rangeStart, rangeEnd, ayahCount, isAr, num, t]);
 
   const stopTimer = useCallback(() => {
     if (timerRef.current !== null) {
