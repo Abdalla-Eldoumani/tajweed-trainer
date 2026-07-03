@@ -584,7 +584,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           >
             <SearchIcon />
             <span className="hidden sm:inline">{t("mushaf.quickJump")}</span>
-            <kbd className="hidden md:inline text-micro text-text-muted/70 font-mono">⌘K</kbd>
+            <kbd className="hidden md:inline text-micro text-text-muted font-mono">⌘K</kbd>
           </button>
 
           {/* The keyboard/all-modes path to the tajweed colors: a plain
