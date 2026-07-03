@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Repetition counter counts the last listen.** In the tikrar (repetition) drill, an audio-led session that looped a verse N times counted only N−1 — the final listen ended the loop without registering. It now counts the full N. The manual count control was always accurate; this aligns the listen-along count with it.
+
 ## 2.2.1 — 2026-07-03
 
 A small polish release: accessibility, a playback performance fix, and a documentation-accuracy pass. No religious content was generated or edited.
