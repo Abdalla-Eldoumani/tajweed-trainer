@@ -173,6 +173,38 @@ record(
   offenders.length ? offenders.map((f) => relative(root, f)).join(", ") : "none",
 );
 
+// --- 9. the reader Cmd/Ctrl+K quick-jump hint uses the FULL text-text-muted,
+//        not the `/70` opacity wash that dropped #555F77 below AA on the
+//        #fcfaf3 toolbar ground. Mirrors the pill convention: the muted token is
+//        AA at full strength, so the hint must not be diluted. (readerSrc was
+//        read above for check 3.) ---
+// Scope to the <kbd> element(s) so the check is independent of Tailwind class
+// ORDER (a formatter reordering `text-text-muted font-mono` must not fail it) and
+// so a legitimate large-text `/70` elsewhere in the 600-line file is not banned.
+const kbdLines = (readerSrc.match(/<kbd[^>]*className="[^"]*"/g) || []).join("\n");
+record(
+  "MushafReader.tsx ⌘K hint uses full text-text-muted (no /70 opacity wash)",
+  /\btext-text-muted\b/.test(kbdLines) && !/text-text-muted\/70/.test(kbdLines),
+  "the kbd hint must clear 4.5:1, not be washed toward the ground",
+);
+
+// --- 10. the /mushaf index Madani/Makki revelation badge + gold surah-number
+//         chip carry a scoped AA text color (mirroring the ayah-number pill in
+//         check 7), NOT the shared text-gold-dark which reads ~3.9-4.1:1 on the
+//         vellum grounds. Assert a scoped hex text color is present AND the
+//         text-gold-dark text token is absent. The absence clause is a DELIBERATE
+//         FILE-WIDE POLICY for this index: gold text here must use a scoped AA hex
+//         (or the bg-/border-gold-dark fills, which are not `text-`), never
+//         `text-gold-dark`, so even a large-text (3:1-passing) gold cannot creep
+//         in below the small-text 4.5:1 bar the badge/chip need. dark:text-gold-light
+//         and the bg-/border-gold-dark fills are a different token and are untouched. ---
+const indexSrc = read("src/components/mushaf/MushafIndex.tsx");
+record(
+  "MushafIndex.tsx badge/chip use a scoped AA text color, not text-gold-dark",
+  /text-\[#[0-9A-Fa-f]{6}\]/.test(indexSrc) && !/text-gold-dark/.test(indexSrc),
+  "AA-normal contrast-scoped text on the revelation badge + surah-number chip (text-gold-dark is banned as text in this file by policy)",
+);
+
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} accessibility checks passed.`);
 if (failed.length > 0) {

@@ -1,8 +1,12 @@
 #!/usr/bin/env node
-// Network-free verification for the study tools layered on the player store:
-// repeat-one, repeat-range, and the stop-at-end-of-surah sleep flag. Asserts the
-// store exposes the controls and that onEnded honors them, plus a deterministic
-// re-implementation check of the repeat-one play count.
+// Network-free source-parity guard for the study tools layered on the player
+// store: repeat-one, repeat-range, and the stop-at-end-of-surah sleep flag. It
+// asserts the store exposes the controls, that onEnded delegates to the engine
+// which honors them, that the mini player wires them, and that the single-rule
+// highlight drill and the tap-a-letter popover are wired in the components. The
+// play-count arithmetic and the rule-link map parity are now owned by the
+// real-import tests src/lib/player-engine.test.ts and
+// src/lib/tajweed-rule-links.test.ts, which import the shipped symbols.
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -20,8 +24,6 @@ const engine = read("src", "lib", "player-engine.ts");
 const css = read("src", "app", "globals.css");
 const miniPlayer = read("src", "components", "ui", "MiniPlayer.tsx");
 const host = read("src", "components", "ui", "PlayerHost.tsx");
-const ruleLinks = read("src", "lib", "tajweed-rule-links.ts");
-const colors = read("src", "lib", "tajweed-colors.ts");
 const tajweedText = read("src", "components", "ui", "TajweedText.tsx");
 const mushafPage = read("src", "components", "mushaf", "MushafPage.tsx");
 const exampleCard = read("src", "components", "learn", "ExampleCard.tsx");
@@ -55,27 +57,6 @@ for (const a of ["setRepeatOne", "setRepeatRange", "setSleepTimer", "setSleepEnd
   record(`Mini player wires ${a}`, new RegExp("\\." + a + "\\(").test(miniPlayer));
 }
 
-// Deterministic re-impl mirroring onEnded: how many times an ayah plays for N.
-function playsForRepeatOne(n) {
-  let plays = 1;
-  let repeatsDone = 0;
-  while (n > 0 && repeatsDone + 1 < n) {
-    repeatsDone++;
-    plays++;
-  }
-  return plays;
-}
-record("repeatOne=3 plays the ayah 3 times", playsForRepeatOne(3) === 3, String(playsForRepeatOne(3)));
-record("repeatOne=1 plays once", playsForRepeatOne(1) === 1, String(playsForRepeatOne(1)));
-record("repeatOne=0 plays once (off)", playsForRepeatOne(0) === 1, String(playsForRepeatOne(0)));
-
-// Deterministic re-impl of range looping: total ayah-plays for [from..to] x count.
-function playsForRange(from, to, count) {
-  const span = to - from + 1;
-  return span * count;
-}
-record("range [1..3] x2 yields 6 plays", playsForRange(1, 3, 2) === 6, String(playsForRange(1, 3, 2)));
-
 // Single-rule highlight drill (CSS-driven, no per-letter re-tokenizing).
 record("Drill dims the verse when data-tajweed-drill is set", /\[data-tajweed-drill\][\s\S]*?\.tajweed-text/.test(css));
 record(
@@ -85,21 +66,6 @@ record(
 );
 
 // --- Tap-a-letter rule popover (EXT-02) ---
-// Every class in the rule-link map must be a real key in the tajweed map, so the
-// popover can never offer a "Learn more" link for a class that has no color /
-// name (a dead link) and the two maps can never drift.
-const linkClasses = [...ruleLinks.matchAll(/^ {2}([a-z_]+):\s*"\/learn\//gm)].map((m) => m[1]);
-const defKeys = new Set([...colors.matchAll(/^ {2}([a-z_]+):\s*\{/gm)].map((m) => m[1]));
-record("Rule-link map has entries", linkClasses.length > 0, `${linkClasses.length} classes`);
-const orphanLinks = linkClasses.filter((c) => !defKeys.has(c));
-record("Every rule-link class exists in the tajweed map", orphanLinks.length === 0, orphanLinks.join(", "));
-
-// The link map is structural routing only: every route value it maps to must be
-// a /learn lesson route, never anything else (it carries no verified content).
-const routeValues = [...ruleLinks.matchAll(/:\s*"(\/[^"]*)"/g)].map((m) => m[1]);
-const badRoutes = routeValues.filter((r) => !r.startsWith("/learn/"));
-record("Rule-link map points only at /learn routes", badRoutes.length === 0, badRoutes.join(", "));
-
 // The rule popover opens on hover (mouse/pen) or a deliberate long-press
 // (touch), resolving the nearest <tajweed> ancestor to a known rule. The
 // resolution still runs first, so the popover only opens for a colored letter

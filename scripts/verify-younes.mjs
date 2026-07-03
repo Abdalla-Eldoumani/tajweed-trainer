@@ -1,46 +1,18 @@
 #!/usr/bin/env node
-// Network-free guard for the walled-off Younes Souilass (Warsh) narration: it
-// must stay isolated from the Hafs catalogue and the shared player, it is offered
-// per surah only, and its single host must be allowlisted in both mirrors with no
-// wildcard. Mirrors the static-parse + record/exit style of verify-security.mjs.
+// Network-free isolation + config guard for the walled-off Younes Souilass
+// (Warsh) narration: it must stay isolated from the Hafs catalogue and the shared
+// player, it is offered per surah only, and its single host must be allowlisted in
+// both mirrors with no wildcard. The per-surah Warsh URL derivation is now owned
+// by the real-import test src/lib/mp3quran-url.test.ts, which imports the shipped
+// builder and fails on a regression.
 
 import { readFileSync } from "node:fs";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { register } from "node:module";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
-
-// Node strips TS types natively but does not rewrite extensionless relative
-// specifiers, and mp3quran-url.ts imports "./validate" (no extension, the
-// bundler convention this repo uses everywhere). Register a tiny resolve hook
-// that appends .ts to such specifiers so we can import the REAL function under a
-// plain `node scripts/verify-younes.mjs` run, exactly as the plan requires,
-// without touching mp3quran-url.ts or validate.ts. The hook is a data-URL module
-// so the script stays self-contained.
-register(
-  "data:text/javascript," +
-    encodeURIComponent(`
-      import { existsSync } from "node:fs";
-      import { fileURLToPath } from "node:url";
-      export async function resolve(specifier, context, nextResolve) {
-        if (/^\\.{1,2}\\//.test(specifier) && !/\\.[mc]?[jt]s$/.test(specifier)) {
-          try {
-            const url = new URL(specifier + ".ts", context.parentURL);
-            if (existsSync(fileURLToPath(url))) return nextResolve(specifier + ".ts", context);
-          } catch {}
-        }
-        return nextResolve(specifier, context);
-      }
-    `),
-  pathToFileURL(__dirname + "/"),
-);
-
-// Imported after the resolve hook is registered so its transitive "./validate"
-// resolves. The plan mandates exercising the real getYounesSurahUrl.
-const { getYounesSurahUrl } = await import("../src/lib/mp3quran-url.ts");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -95,26 +67,6 @@ record(
   !/import[\s\S]*?from\s+["'][^"']*player[^"']*["']/.test(panelCode) &&
     !/import\s*\{[^}]*usePlayer[^}]*\}/.test(panelCode),
   "",
-);
-
-// --- Per-surah URL (not per-ayah) -------------------------------------------
-const url1 = getYounesSurahUrl(1);
-record(
-  "getYounesSurahUrl(1) is the per-surah server16 Warsh URL",
-  url1 === "https://server16.mp3quran.net/souilass/Rewayat-Warsh-A-n-Nafi/001.mp3",
-  url1,
-);
-// The path must end in a 3-digit file (per-surah), never 6 digits (per-ayah).
-record(
-  "Younes URL is per-surah (3-digit file, not 6-digit per-ayah)",
-  /\/\d{3}\.mp3$/.test(url1) && !/\d{3}\d{3}\.mp3$/.test(url1),
-  url1,
-);
-const url93 = getYounesSurahUrl(93);
-record(
-  "getYounesSurahUrl(93) zero-pads to 093.mp3",
-  url93.endsWith("/093.mp3"),
-  url93,
 );
 
 // --- Host allowlist: both mirrors, no wildcard ------------------------------

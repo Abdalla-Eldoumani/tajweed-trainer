@@ -6,10 +6,14 @@
 
 import surahIndex from "@/data/content/surah-index.json";
 import type { SurahHeader } from "./types";
-import { clampPage, clampSurah, clampJuz } from "./validate";
+import { clampInt, clampPage, clampSurah, clampAyah, clampJuz } from "./validate";
+import { PAGE_STARTS } from "./page-starts";
+import { RUB_EL_HIZB_STARTS } from "./rub-el-hizb-starts";
 
 export const TOTAL_MUSHAF_PAGES = 604;
 export const TOTAL_JUZ = 30;
+export const TOTAL_HIZB = 60;
+export const TOTAL_RUB = 240;
 
 // Start page of each juz in the standard Hafs 604-page Madinah mushaf. This is
 // fixed structural pagination (the same in every printing of that mushaf), not
@@ -103,11 +107,137 @@ export function versesForJuz(juz: number): string[] {
   return out;
 }
 
+// Every "surah:ayah" key from a start [s,a] up to (but not including) an
+// exclusive end [s,a], honoring each surah's real ayah count for the rollover.
+// The shared walk behind versesForRub / versesForHizb, driven by the
+// RUB_EL_HIZB_STARTS boundaries — the same shape versesForJuz walks. A sentinel
+// end of [115, 1] runs the walk to the last verse, 114:6.
+function versesBetween(startSurah: number, startAyah: number, endSurah: number, endAyah: number): string[] {
+  const out: string[] = [];
+  let s = startSurah;
+  let a = startAyah;
+  while (s < endSurah || (s === endSurah && a < endAyah)) {
+    out.push(`${s}:${a}`);
+    a++;
+    if (a > ayahCountForSurah(s)) {
+      s++;
+      a = 1;
+    }
+  }
+  return out;
+}
+
+// Every "surah:ayah" key in a rub' al-hizb (1..240). The start is
+// RUB_EL_HIZB_STARTS[n-1]; the end is the verse just before the next rub's start
+// (114:6 for rub' 240), so a rub' beginning mid-surah is handled by the
+// surah-by-surah rollover — the same walk versesForJuz uses. Pure and server-safe.
+export function versesForRub(rub: number): string[] {
+  const r = clampInt(rub, 1, TOTAL_RUB, 1);
+  const [startSurah, startAyah] = RUB_EL_HIZB_STARTS[r - 1];
+  const [endSurah, endAyah] = r < TOTAL_RUB ? RUB_EL_HIZB_STARTS[r] : [115, 1];
+  return versesBetween(startSurah, startAyah, endSurah, endAyah);
+}
+
+// Every "surah:ayah" key in a hizb (1..60). A hizb spans four rub' al-hizb
+// (4n-3..4n), so it walks from RUB_EL_HIZB_STARTS[4(n-1)] to RUB_EL_HIZB_STARTS[4n]
+// exclusive (114:6 for hizb 60). Contiguous rub' boundaries make this identical to
+// versesForRub(4n-3..4n) concatenated, so the two enumerations can never disagree.
+export function versesForHizb(hizb: number): string[] {
+  const h = clampInt(hizb, 1, TOTAL_HIZB, 1);
+  const [startSurah, startAyah] = RUB_EL_HIZB_STARTS[4 * (h - 1)];
+  const [endSurah, endAyah] = h < TOTAL_HIZB ? RUB_EL_HIZB_STARTS[4 * h] : [115, 1];
+  return versesBetween(startSurah, startAyah, endSurah, endAyah);
+}
+
 // Ayah count for a surah, from the bundled index. Used to build a continuous
 // playback queue when switching the player into full-surah mode.
 export function ayahCountForSurah(surah: number): number {
   const meta = INDEX.find((s) => s.number === clampSurah(surah));
   return meta ? meta.versesCount : 7;
+}
+
+// The next "surah:ayah" verseKey, crossing surah boundaries; null at 114:6 (the
+// end of the Quran, the one verse with no next). clampAyah bounds the ayah but
+// is NOT surah-aware, so ayahCountForSurah(s) is the real guard: an over-count
+// input like (2, 999) rolls to the next surah's ayah 1 rather than an
+// out-of-range "2:x". Pure and server-safe.
+export function nextVerse(surah: number, ayah: number): string | null {
+  const s = clampSurah(surah);
+  const a = clampAyah(ayah);
+  if (a < ayahCountForSurah(s)) return `${s}:${a + 1}`; // advance within the surah
+  if (s < 114) return `${s + 1}:1`; // roll to the next surah's ayah 1
+  return null; // 114:6 — no next verse
+}
+
+// The previous verseKey, crossing surah boundaries; null at 1:1 (the start of
+// the Quran, the one verse with no previous). Same ayahCountForSurah guard so a
+// cross-surah step lands on the previous surah's real last ayah. Pure.
+export function prevVerse(surah: number, ayah: number): string | null {
+  const s = clampSurah(surah);
+  const a = clampAyah(ayah);
+  if (a > 1) return `${s}:${a - 1}`; // step back within the surah
+  if (s > 1) return `${s - 1}:${ayahCountForSurah(s - 1)}`; // last ayah of the previous surah
+  return null; // 1:1 — no previous verse
+}
+
+// PAGE_STARTS is the offline first-[surah,ayah] of each of the 604 mushaf pages,
+// generated once from the API by scripts/fetch-page-starts.mjs (never hand-
+// authored) and guarded against drift by navigation.test.ts — the same framing
+// as JUZ_STARTS. Re-exported here so navigation.ts is the single seam-math base
+// (beside ayahCountForSurah / JUZ_STARTS) for the page->verse lookups below.
+export { PAGE_STARTS } from "./page-starts";
+
+// RUB_EL_HIZB_STARTS is the offline first-[surah,ayah] of each of the 240 rub'
+// al-hizb (60 hizb x 4), generated once from the API by
+// scripts/fetch-rub-el-hizb-starts.mjs (never hand-authored) and drift-guarded by
+// navigation.test.ts — the same framing as PAGE_STARTS / JUZ_STARTS. Re-exported
+// here so navigation.ts is the single seam-math base for the versesForRub /
+// versesForHizb enumeration above and the rub'/hizb lookups below.
+export { RUB_EL_HIZB_STARTS } from "./rub-el-hizb-starts";
+
+// The mushaf page a verse falls on: the last page whose start verse is <= (s,a).
+// Linear scan over the monotonic PAGE_STARTS; defaults to page 1.
+export function pageForVerse(surah: number, ayah: number): number {
+  const s = clampSurah(surah);
+  const a = clampAyah(ayah);
+  let page = 1;
+  for (let p = 0; p < PAGE_STARTS.length; p++) {
+    const [ps, pa] = PAGE_STARTS[p];
+    if (ps < s || (ps === s && pa <= a)) page = p + 1;
+    else break;
+  }
+  return page;
+}
+
+// The rub' al-hizb a verse falls in (1..240): the last rub' whose start verse is
+// <= (s,a). Linear scan over the monotonic RUB_EL_HIZB_STARTS; defaults to rub' 1.
+// Mirrors pageForVerse.
+export function rubForVerse(surah: number, ayah: number): number {
+  const s = clampSurah(surah);
+  const a = clampAyah(ayah);
+  let rub = 1;
+  for (let r = 0; r < RUB_EL_HIZB_STARTS.length; r++) {
+    const [rs, ra] = RUB_EL_HIZB_STARTS[r];
+    if (rs < s || (rs === s && ra <= a)) rub = r + 1;
+    else break;
+  }
+  return rub;
+}
+
+// The hizb a verse falls in (1..60), derived from its rub' (a hizb is four rub',
+// 4n-3..4n) so the rub'/hizb lookups can never disagree.
+export function hizbForVerse(surah: number, ayah: number): number {
+  return Math.floor((rubForVerse(surah, ayah) - 1) / 4) + 1;
+}
+
+// The last verseKey of a page = the verse just before the next page's first
+// verse (114:6 for page 604). PAGE_STARTS[p] is the first verse of page p+1; its
+// prevVerse is never null because no page past page 1 starts at 1:1.
+export function lastVerseOfPage(page: number): string {
+  const p = clampPage(page);
+  if (p >= TOTAL_MUSHAF_PAGES) return "114:6";
+  const [ns, na] = PAGE_STARTS[p];
+  return prevVerse(ns, na)!;
 }
 
 // Sorted by surah number so start pages are ascending (surah order == page order).

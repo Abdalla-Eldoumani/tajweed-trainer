@@ -1,22 +1,22 @@
 # Accessibility
 
-This is a statement of how the app supports assistive technology and varied input, written from the code. It is not a certification. If you find a barrier, open a GitHub issue.
+A statement of how the app supports assistive technology and varied input, written from the code, not a certification. If you find a barrier, open a GitHub issue.
 
 ## Keyboard
 
-- Every interactive control is reachable and operable by keyboard. The Mushaf reader turns pages with `ArrowLeft` and `ArrowRight` (mirrored under RTL), and a Cmd/Ctrl+K palette jumps to any surah, page, or juz from anywhere in the reader.
-- Overlays manage focus. The mobile navigation drawer is an `aria-modal` dialog: it traps Tab inside while open, wraps from the last focusable element back to the first, returns focus to the control that opened it on close, and closes on Escape. The player and the verse panels also close on Escape.
+- Every interactive control is reachable and operable by keyboard. The Mushaf reader turns pages with `ArrowLeft` / `ArrowRight` (mirrored under RTL), and a Cmd/Ctrl+K palette jumps to any surah, page, or juz.
+- Overlays manage focus. The mobile navigation drawer is an `aria-modal` dialog: it traps Tab, wraps from the last focusable element back to the first, returns focus to its opener on close, and closes on Escape. The player and verse panels also close on Escape.
 - Focus is visible. Interactive elements carry a `focus-visible` ring (the search box, the quick-jump palette input, and the shared UI primitives), so keyboard users can always see where they are. The active navigation link is marked with `aria-current="page"` in both the sidebar and the drawer.
 
 ## Names and structure
 
-- Icon-only controls carry accessible names through `aria-label`, so a screen reader announces what each button does rather than reading an empty control.
+- Icon-only controls carry accessible names via `aria-label`, so a screen reader announces what each button does.
 - Navigation is exposed as landmarks, and heading order is kept meaningful per page.
 - Arabic text is rendered only through the Arabic-aware wrappers (`ArabicText` for general Arabic, `TajweedText` for color-coded Quran), which set `dir="rtl"`, `lang="ar"`, and the correct Quranic font, so assistive technology and the browser handle direction and language correctly.
 
 ## Motion
 
-- Animations honor `prefers-reduced-motion`. CSS crushes animation and transition durations globally, and JavaScript-driven smooth scrolling (`scrollIntoView`) is gated through `prefersReducedMotion()` so it falls back to an instant jump. Loading spinners and skeletons add `motion-reduce:animate-none`.
+- Animations honor `prefers-reduced-motion`: CSS crushes animation and transition durations globally, JS-driven smooth scrolling (`scrollIntoView`) is gated through `prefersReducedMotion()` (instant-jump fallback), and spinners and skeletons add `motion-reduce:animate-none`.
 
 ## Contrast and color
 
@@ -25,7 +25,7 @@ This is a statement of how the app supports assistive technology and varied inpu
 
 ## Right-to-left and bilingual
 
-- The interface is fully bilingual (English and Arabic). Switching to Arabic sets `dir="rtl"` and `lang="ar"` on the document and flips the chrome, lesson content, surah names, and the rest. Layout uses Tailwind logical properties (`ms-*`, `me-*`) so it mirrors correctly under RTL without separate stylesheets.
+- The interface is fully bilingual. Switching to Arabic sets `dir="rtl"` and `lang="ar"` and flips the chrome, lesson content, and surah names; layout uses Tailwind logical properties (`ms-*`, `me-*`) so it mirrors under RTL without separate stylesheets. See [i18n.md](i18n.md).
 
 ## Touch
 
@@ -33,8 +33,8 @@ This is a statement of how the app supports assistive technology and varied inpu
 
 ## Offline
 
-- After one visit, the app shell and the last Mushaf page you opened stay readable from cache, and a slim connectivity notice appears while you are offline and clears on reconnect. Cross-origin Quran audio and the live API are intentionally not cached, so recitation audio needs a connection.
+- After one visit, the app shell and the last Mushaf page you opened stay readable from cache, and a slim connectivity notice shows while offline and clears on reconnect. Cross-origin Quran audio and the live API are intentionally not cached, so recitation needs a connection.
 
 ## Verification
 
-`scripts/verify-accessibility.mjs` is a source-level guard (no browser) for the focus rings, the reduced-motion gating, the scroll-lock coordination, the `aria-current` wiring, and the contrast-scoped numeral color, so these cannot silently regress. It runs as part of `npm run verify:scripts`. Visual and screen-reader checks are still done by hand in English, Arabic, light, and dark.
+`scripts/verify-accessibility.mjs` is a source-level guard (no browser) for the focus rings, the reduced-motion gating, the scroll-lock coordination, the `aria-current` wiring, and the contrast-scoped numeral color, so these cannot silently regress. It runs as part of `npm run verify:audits` (itself part of the `npm run verify` gate). Visual and screen-reader checks are still done by hand in English, Arabic, light, and dark.

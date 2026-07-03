@@ -70,7 +70,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
     <div className="space-y-6">
       <div className="text-center py-6 islamic-pattern-bg rounded-xl relative overflow-hidden">
         <h1 className="font-heading text-3xl sm:text-4xl font-bold relative z-10">{t("mushaf.title")}</h1>
-        <ArabicText text="المصحف الشريف" quran size="md" className="text-gold-dark dark:text-gold-light mt-2 block relative z-10" />
+        <ArabicText text="المصحف الشريف" quran size="md" className="text-[#7A5E15] dark:text-gold-light mt-2 block relative z-10" />
         <p className="text-sm text-text-muted mt-3 max-w-md mx-auto relative z-10">{t("mushaf.subtitle")}</p>
         <OrnamentalDivider className="max-w-xs mx-auto mt-4 relative z-10" />
       </div>
@@ -127,7 +127,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
               <Link
                 key={p}
                 href={`/mushaf/page/${p}`}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gold/15 text-gold-dark dark:text-gold-light text-xs font-medium hover:bg-gold/25"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gold/15 text-[#7A5E15] dark:text-gold-light text-xs font-medium hover:bg-gold/25"
               >
                 {t("mushaf.pageNumber")} {isAr ? toArabicIndic(p) : p}
               </Link>
@@ -197,7 +197,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
             <Card key={s.number} className="h-full flex flex-col">
               <Link href={`/mushaf/surah/${s.number}`} className="block group">
                 <div className="flex items-start gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-gold-light/20 dark:bg-gold-dark/20 border border-gold-light/40 dark:border-gold-dark/30 flex items-center justify-center text-gold-dark dark:text-gold-light text-sm font-bold font-arabic shrink-0">
+                  <div className="w-11 h-11 rounded-xl bg-gold-light/20 dark:bg-gold-dark/20 border border-gold-light/40 dark:border-gold-dark/30 flex items-center justify-center text-[#7A5E15] dark:text-gold-light text-sm font-bold font-arabic shrink-0">
                     {isAr ? toArabicIndic(s.number) : s.number}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -207,7 +207,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                         className={cn(
                           "text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0",
                           s.revelationPlace === "madinah"
-                            ? "bg-gold/20 text-gold-dark dark:text-gold-light"
+                            ? "bg-gold/20 text-[#7A5E15] dark:text-gold-light"
                             : "bg-primary/10 text-primary dark:text-primary-light"
                         )}
                       >

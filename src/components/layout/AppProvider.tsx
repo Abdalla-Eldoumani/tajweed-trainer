@@ -9,6 +9,7 @@ import { OfflineNotice } from "./OfflineNotice";
 import { PlayerHost } from "@/components/ui/PlayerHost";
 import { MiniPlayer } from "@/components/ui/MiniPlayer";
 import { OnboardingTour } from "@/components/onboarding/OnboardingTour";
+import { RevisionReminder } from "./RevisionReminder";
 
 // The mushaf reader renders its own reader-scoped playback surface, so the
 // global floating MiniPlayer is suppressed there to keep exactly one transport
@@ -56,6 +57,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       <PlayerHost />
       <GlobalMiniPlayer />
       <OnboardingTour />
+      <RevisionReminder />
     </SettingsProvider>
   );
 }

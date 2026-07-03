@@ -6,11 +6,11 @@
 // owned by MAX_MEMORIZED in storage.ts; the `total` default below mirrors it for
 // these pure call sites and is not a second source of truth.
 
-import { ayahCountForSurah, versesForJuz } from "./navigation";
+import { ayahCountForSurah, versesForJuz, versesForRub, versesForHizb } from "./navigation";
 import { clampSurah, clampAyah } from "./validate";
 
 // Re-export so consumers have one import site for every scope enumeration.
-export { versesForJuz };
+export { versesForJuz, versesForRub, versesForHizb };
 
 // Every "surah:ayah" key in a surah, 1..its real ayah count.
 export function versesForSurah(surah: number): string[] {

@@ -367,6 +367,30 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Turn this on to see the short tour of the app again. Turning it off hides it.",
     ar: "شغّل هذا لرؤية جولة التطبيق القصيرة مرة أخرى. وإيقافه يخفيها.",
   },
+  "settings.reviewIntervalModifier": { en: "Review spacing", ar: "تباعد المراجعة" },
+  "settings.reviewIntervalModifierHelp": {
+    en: "Higher spacing means longer gaps between memorized-verse reviews.",
+    ar: "التباعد الأعلى يعني فترات أطول بين مراجعات الآيات المحفوظة.",
+  },
+  "settings.peekBudget": { en: "Recall hint budget", ar: "رصيد تلميحات الاستذكار" },
+  "settings.peekBudgetHelp": {
+    en: "How many hints you can use per recall session before that verse's rating is capped at hard.",
+    ar: "عدد التلميحات التي يمكنك استخدامها في كل جلسة استذكار قبل أن يُقيَّد تقييم تلك الآية عند «صعب».",
+  },
+  "settings.newVerseCap": { en: "New verses per day", ar: "الآيات الجديدة يوميًا" },
+  "settings.newVerseCapHelp": {
+    en: "The most new verses to introduce into revision each day. Due reviews of verses you already know are never capped.",
+    ar: "أقصى عدد من الآيات الجديدة يُدخَل في المراجعة كل يوم. أما المراجعات المستحقة لآيات تعرفها فلا يُحدّ عددها أبدًا.",
+  },
+  "settings.revisionReminders": { en: "Revision reminders", ar: "تذكيرات المراجعة" },
+  "settings.revisionRemindersHelp": {
+    en: "Show a local reminder when you open the installed app and verses are due. This is a reminder on this device, not a server push — nothing is sent while the app is closed.",
+    ar: "أظهر تذكيرًا محليًا عند فتح التطبيق المثبَّت ووجود آيات مستحقة. هذا تذكير على هذا الجهاز، وليس إشعارًا من خادم — لا يُرسَل شيء والتطبيق مغلق.",
+  },
+  "settings.revisionRemindersDenied": {
+    en: "Notifications are blocked for this app. Allow them in your browser settings to use reminders.",
+    ar: "الإشعارات محظورة لهذا التطبيق. اسمح بها في إعدادات المتصفح لاستخدام التذكيرات.",
+  },
   "settings.language": { en: "Language", ar: "اللغة" },
   "settings.normal": { en: "Normal", ar: "عادي" },
   "settings.large": { en: "Large", ar: "كبير" },
@@ -380,6 +404,12 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Reciters come from the Quran.com recitations, grouped by style. Al-Husary (muallim) is the default for teaching-style learning.",
     ar: "القرّاء من تسجيلات Quran.com، مرتّبون حسب النمط. والحصري (المعلّم) هو الافتراضي للتعلّم على نمط المعلّم.",
   },
+  "settings.revisionReciter": { en: "Revision reciter", ar: "قارئ المراجعة" },
+  "settings.revisionReciterHelp": {
+    en: "The reciter used for memorization revision and recall playback only. Leave it as your reading reciter, or pick a different one just for revision.",
+    ar: "القارئ المستخدم لتشغيل مراجعة الحفظ والاستذكار فقط. اتركه كقارئ القراءة، أو اختر قارئًا مختلفًا للمراجعة وحدها.",
+  },
+  "settings.revisionReciterSame": { en: "Same as reading reciter", ar: "نفس قارئ القراءة" },
 
   // Common
   "common.progress": { en: "Progress", ar: "التقدّم" },
@@ -590,6 +620,13 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Dim every verse except the one playing or selected",
     ar: "تعتيم كل آية عدا الآية المشغّلة أو المحدّدة",
   },
+  "mushaf.coverPage": { en: "Cover page", ar: "تغطية الصفحة" },
+  "mushaf.coverPageOn": { en: "Cover the page to recall", ar: "غطّ الصفحة للاستذكار" },
+  "mushaf.coverPageOff": { en: "Show the page", ar: "إظهار الصفحة" },
+  "mushaf.coverPageHint": {
+    en: "Blurs every verse; tap a verse to reveal it.",
+    ar: "يعتّم كل آية؛ انقر آية لكشفها.",
+  },
   "mushaf.drill": { en: "Highlight one rule", ar: "تمييز حكم واحد" },
   "mushaf.drillOff": { en: "All rules", ar: "كل الأحكام" },
   "mushaf.legend": { en: "Color legend", ar: "دليل الألوان" },
@@ -649,6 +686,305 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Each memorized verse is scheduled for recall review based on how well you remember it.",
     ar: "تُجدول كل آية محفوظة للاستذكار بحسب مدى تذكّرك لها.",
   },
+  "memorize.gradeAgain": { en: "Again", ar: "مجددًا" },
+  "memorize.gradeHard": { en: "Hard", ar: "صعب" },
+  "memorize.gradeGood": { en: "Good", ar: "جيد" },
+  "memorize.gradeEasy": { en: "Easy", ar: "سهل" },
+  "memorize.gradeIntervalDays": { en: "{n}d", ar: "{n} يوم" },
+
+  // Audio-led (blind) recall + the per-session peek/hint budget (BLIND-01/03).
+  // Operational UI copy, never Quran/tajweed content. The peek labels stay
+  // DISTINCT from the free mushaf.memorizeReveal ("Reveal") so e2e locators for
+  // the costed hint and the free self-check never collide.
+  "blind.audioLed": { en: "Audio-led (blind) mode", ar: "الوضع الصوتي (استذكار بلا نص)" },
+  "blind.audioLedHint": {
+    en: "Play the verse with the text hidden, then reveal to check.",
+    ar: "شغّل الآية والنص مخفيّ، ثم اكشفه للتحقّق.",
+  },
+  "peek.hint": { en: "Hint", ar: "تلميح" },
+  "peek.remaining": { en: "{n} hints left", ar: "بقي {n} تلميح" },
+  "peek.exhausted": { en: "No hints left", ar: "لا تلميحات متبقّية" },
+
+  // Verse-chaining drill: recall the head of the next unit from the tail of the
+  // current one, at three seam types (verse / page / juz). Operational UI copy,
+  // never Quran/tajweed content. Grade buttons reuse the memorize.grade* keys.
+  "chain.title": { en: "Chain memorized verses", ar: "تسلسل الآيات المحفوظة" },
+  "chain.description": {
+    en: "Recall the start of the next unit from the end of the current one.",
+    ar: "استذكر بداية الوحدة التالية انطلاقًا من نهاية الوحدة الحالية.",
+  },
+  "chain.seamVerse": { en: "Verse to verse", ar: "آية إلى آية" },
+  "chain.seamPage": { en: "Across pages", ar: "عبر الصفحات" },
+  "chain.seamJuz": { en: "Across juz", ar: "عبر الأجزاء" },
+  "chain.cuePrompt": { en: "What comes next?", ar: "ما الذي يأتي بعدها؟" },
+  "chain.tailLabel": { en: "Current", ar: "الحالية" },
+  "chain.headLabel": { en: "Next", ar: "التالية" },
+  "chain.startChaining": { en: "Start chaining", ar: "ابدأ التسلسل" },
+  "chain.empty": {
+    en: "No chains available for this type yet. Memorize adjacent units to build them.",
+    ar: "لا توجد سلاسل من هذا النوع بعد. احفظ وحدات متجاورة لتكوينها.",
+  },
+
+  // Segment drill: break ONE memorized verse into word-boundary chunks, drill each
+  // chunk in isolation, then chain them. Operational UI copy, never Quran/tajweed
+  // content. Distinct from chain.*/memorize.* so the three /progress keyboard
+  // drills never share a title, start, or reveal label. Grade buttons and the
+  // per-chunk play control reuse memorize.grade*/player.playVerse.
+  "segment.title": { en: "Drill a verse in chunks", ar: "تدرّب على آية بالمقاطع" },
+  "segment.description": {
+    en: "Break a memorized verse into small chunks, master each, then chain them together.",
+    ar: "قسّم آية محفوظة إلى مقاطع صغيرة، أتقن كلًّا منها، ثم اربطها معًا.",
+  },
+  "segment.pickVerse": { en: "Pick a memorized verse", ar: "اختر آية محفوظة" },
+  "segment.chunkSize": { en: "Words per chunk", ar: "كلمات لكل مقطع" },
+  "segment.noSplit": {
+    en: "This verse is short — no split needed.",
+    ar: "هذه الآية قصيرة — لا حاجة للتقسيم.",
+  },
+  "segment.startDrill": { en: "Start chunk drill", ar: "ابدأ تدريب المقاطع" },
+  "segment.reveal": { en: "Reveal chunk", ar: "اكشف المقطع" },
+  "segment.nextChunk": { en: "Next chunk", ar: "المقطع التالي" },
+  "segment.beginChain": { en: "Chain the chunks", ar: "اربط المقاطع" },
+  "segment.finish": { en: "Finish", ar: "إنهاء" },
+  "segment.gradePrompt": { en: "Grade the whole verse (optional)", ar: "قيّم الآية كاملة (اختياري)" },
+  "segment.skipGrade": { en: "Skip grading", ar: "تخطَّ التقييم" },
+  "segment.drillProgress": { en: "Drilling chunks", ar: "تدريب المقاطع" },
+  "segment.chainProgress": { en: "Chaining chunks", ar: "ربط المقاطع" },
+  "segment.empty": {
+    en: "Memorize a verse to drill it in chunks.",
+    ar: "احفظ آية لتتدرّب عليها بالمقاطع.",
+  },
+
+  // Typing-recall drill: type a memorized verse back word by word, checked
+  // against the real words (diacritic-insensitive when the setting is on).
+  // Operational UI copy, never Quran/tajweed content. This is the FOURTH
+  // keyboard drill on /progress, so its title, start, and reveal-word labels
+  // stay DISTINCT from review.*/chain.*/segment.* (and mushaf.memorizeReveal)
+  // in both locales — a /progress locator must address exactly one drill. Grade
+  // buttons reuse memorize.grade*.
+  "typing.title": { en: "Type the next word from memory", ar: "اكتب الكلمة التالية من الحفظ" },
+  "typing.description": {
+    en: "Recall a memorized verse word by word by typing each one in turn.",
+    ar: "استذكر آية محفوظة كلمةً كلمةً بكتابة كل واحدة بالترتيب.",
+  },
+  "typing.pickVerse": { en: "Pick a verse to type", ar: "اختر آية للكتابة" },
+  "typing.startDrill": { en: "Start typing recall", ar: "ابدأ استذكار الكتابة" },
+  "typing.prompt": { en: "Type the next word", ar: "اكتب الكلمة التالية" },
+  "typing.inputLabel": { en: "Type the word here", ar: "اكتب الكلمة هنا" },
+  "typing.submit": { en: "Check", ar: "تحقّق" },
+  "typing.correct": { en: "Correct", ar: "صحيح" },
+  "typing.wrong": { en: "Not quite — try again", ar: "ليس تمامًا — حاول مجددًا" },
+  "typing.retry": { en: "Try again", ar: "حاول مجددًا" },
+  "typing.revealWord": { en: "Show this word", ar: "أظهر هذه الكلمة" },
+  "typing.progress": { en: "Word {n} of {total}", ar: "الكلمة {n} من {total}" },
+  "typing.gradePrompt": { en: "Grade this verse (optional)", ar: "قيّم هذه الآية (اختياري)" },
+  "typing.skipGrade": { en: "Skip grading", ar: "تخطَّ التقييم" },
+  "typing.empty": {
+    en: "Memorize a verse first to type it from memory.",
+    ar: "احفظ آية أولًا لتكتبها من ذاكرتك.",
+  },
+  "typing.mistakesNote": {
+    en: "You needed some help — consider a lower grade.",
+    ar: "احتجت بعض المساعدة — ففكّر في تقييم أقل.",
+  },
+
+  // Daily revision (murajaah) dashboard, home due-card, and the local reminder
+  // (Phase 9 REV-01/02/03/04). Operational UI copy and counts only — never Quran
+  // or hadith text; the notification body names a count via {n} and nothing more.
+  // The beginRevision CTA stays DISTINCT from the four /progress drill start
+  // labels (review/chain/segment/typing) in BOTH locales so it scrolls to the
+  // existing review card without a locator or keyboard collision. Placeholders
+  // {n} / {cap} are replaced at the call site (Arabic-Indic digits in AR).
+  "murajaah.title": { en: "Today's revision", ar: "مراجعة اليوم" },
+  "murajaah.description": {
+    en: "A balanced plan from your memorized verses and their review schedule.",
+    ar: "خطة متوازنة من آياتك المحفوظة وجدول مراجعتها.",
+  },
+  "murajaah.dueCount": { en: "{n} due for revision", ar: "{n} مستحقة للمراجعة" },
+  "murajaah.newLabel": { en: "New", ar: "جديدة" },
+  "murajaah.recentLabel": { en: "Recent", ar: "حديثة" },
+  "murajaah.consolidatedLabel": { en: "Consolidated", ar: "راسخة" },
+  "murajaah.newCapStatus": { en: "{n} of {cap} new introduced today", ar: "{n} من {cap} جديدة أُدخِلت اليوم" },
+  "murajaah.introducingNew": { en: "Introducing {n} new today", ar: "إدخال {n} جديدة اليوم" },
+  "murajaah.caughtUp": { en: "All caught up — nothing due today.", ar: "أتممت كل شيء — لا مستحقات اليوم." },
+  "murajaah.capReached": {
+    en: "Today's new verses are done — {n} more will be introduced over the coming days.",
+    ar: "انتهت آيات اليوم الجديدة — سيُدخَل {n} على مدى الأيام القادمة.",
+  },
+  "murajaah.beginRevision": { en: "Begin today's revision", ar: "ابدأ مراجعة اليوم" },
+  "murajaah.homeDue": { en: "{n} verses due for revision", ar: "{n} آيات مستحقة للمراجعة" },
+  "murajaah.review": { en: "Review", ar: "راجِع" },
+  "murajaah.notifyTitle": { en: "Revision reminder", ar: "تذكير بالمراجعة" },
+  "murajaah.notifyBody": { en: "{n} verses due for revision today", ar: "{n} آيات مستحقة للمراجعة اليوم" },
+
+  // Memorization health: the freshness facet (STAT-01) and the error heatmap
+  // (STAT-02) on /progress. Operational UI copy and counts only — never Quran
+  // text; scope names come from the bundled index. The `heatmap.by*` dimension
+  // labels are deliberately DISTINCT from the `memorize.by*` breakdown labels in
+  // BOTH locales so an e2e locator addresses the right section. Placeholders
+  // ({n}/{x}/{y}/{status}/{name}/{errors}/{count}) are replaced at the call site
+  // (Arabic-Indic digits in AR).
+  "strength.healthTitle": { en: "Memorization health", ar: "صحة الحفظ" },
+  "strength.freshnessTitle": { en: "Freshness", ar: "نضارة المحفوظ" },
+  "strength.freshnessHelp": {
+    en: "Each juz ages toward red as time passes since your last successful recall.",
+    ar: "يميل كل جزء نحو الأحمر كلما مضى الوقت منذ آخر استذكار ناجح.",
+  },
+  "strength.fresh": { en: "Fresh", ar: "نضِرة" },
+  "strength.aging": { en: "Aging", ar: "تتقادم" },
+  "strength.overdue": { en: "Overdue", ar: "فات موعدها" },
+  "strength.unseen": { en: "Not yet recalled", ar: "لم تُستذكر بعد" },
+  "strength.freshnessScope": {
+    en: "Juz {n}: {status}, {count} memorized",
+    ar: "الجزء {n}: {status}، {count} محفوظة",
+  },
+  "strength.revisionStreakTitle": { en: "Revision streak", ar: "سلسلة المراجعة" },
+  "strength.revisionCurrent": { en: "Current streak", ar: "السلسلة الحالية" },
+  "strength.revisionLongest": { en: "Longest streak", ar: "أطول سلسلة" },
+  "strength.revisionStreakHelp": {
+    en: "Consecutive days you've done at least one revision.",
+    ar: "الأيام المتتالية التي راجعت فيها آية واحدة على الأقل.",
+  },
+  "heatmap.errorTitle": { en: "Recall errors", ar: "أخطاء الاستذكار" },
+  "heatmap.errorHelp": {
+    en: "Brighter cells are the memorized scopes you've missed most during recall review.",
+    ar: "الخلايا الأكثر إشراقًا هي المواضع المحفوظة التي أخطأت فيها أكثر أثناء الاستذكار.",
+  },
+  "heatmap.byJuz": { en: "Errors by juz", ar: "الأخطاء حسب الجزء" },
+  "heatmap.bySurah": { en: "Errors by surah", ar: "الأخطاء حسب السورة" },
+  "heatmap.byPage": { en: "Errors by page", ar: "الأخطاء حسب الصفحة" },
+  "heatmap.scopeLabel": {
+    en: "{name}: {errors} recall errors across {count} memorized verses",
+    ar: "{name}: {errors} أخطاء استذكار في {count} آية محفوظة",
+  },
+  "heatmap.pageShare": {
+    en: "Page {n}: {x} recall errors across {y} memorized verses",
+    ar: "الصفحة {n}: {x} أخطاء استذكار في {y} آية محفوظة",
+  },
+  "heatmap.showAll": { en: "Show all memorized surahs", ar: "إظهار كل السور المحفوظة" },
+  "heatmap.noErrors": {
+    en: "No recall errors recorded yet — keep reviewing.",
+    ar: "لا أخطاء استذكار مُسجّلة بعد — واصل المراجعة.",
+  },
+
+  // Tikrar (repetition) rep counter on /progress (EXAM-01). Operational UI copy
+  // and counts only — never Quran text (the verse renders through TajweedText).
+  // It is the SIXTH drill-like surface on /progress, so its title / startDrill /
+  // pickVerse labels are deliberately DISTINCT from the other five (review /
+  // chain / segment / typing / murajaah) in BOTH locales so an e2e locator
+  // addresses exactly this drill. Placeholders {done} / {target} / {n} are
+  // replaced at the call site (Arabic-Indic digits in AR).
+  "tikrar.title": { en: "Repeat a verse", ar: "كرّر آية" },
+  "tikrar.description": {
+    en: "Loop a memorized verse and count your repetitions toward a session target.",
+    ar: "كرّر آية محفوظة واعدد تكراراتك نحو هدف الجلسة.",
+  },
+  "tikrar.pickVerse": { en: "Pick a verse to repeat", ar: "اختر آية للتكرار" },
+  "tikrar.target": { en: "Repetition target", ar: "هدف التكرار" },
+  "tikrar.decreaseTarget": { en: "Fewer repetitions", ar: "تكرارات أقل" },
+  "tikrar.increaseTarget": { en: "More repetitions", ar: "تكرارات أكثر" },
+  "tikrar.startDrill": { en: "Start repeating", ar: "ابدأ التكرار" },
+  "tikrar.countRep": { en: "Count a repetition", ar: "احسب تكرارًا" },
+  "tikrar.sessionProgress": { en: "{done} of {target} this session", ar: "{done} من {target} في هذه الجلسة" },
+  "tikrar.runningTotal": { en: "Total for this verse: {n}", ar: "الإجمالي لهذه الآية: {n}" },
+  "tikrar.finish": { en: "Finish session", ar: "أنهِ الجلسة" },
+  "tikrar.empty": {
+    en: "Memorize a verse first, then repeat it here to reinforce it.",
+    ar: "احفظ آية أولًا، ثم كرّرها هنا لترسيخها.",
+  },
+
+  // Timed, no-peek, self-graded exam on /progress (EXAM-02). A MEASUREMENT, not a
+  // teaching drill: operational copy and counts only — never Quran text (the verse
+  // renders through TajweedText). It is the SEVENTH drill-like surface on
+  // /progress, so its title / start / pickScope (and reveal) labels are
+  // deliberately DISTINCT from the other six (review / chain / segment / typing /
+  // tikrar / the murajaah dashboard CTA) in BOTH locales so an e2e locator
+  // addresses exactly this surface. Placeholders {n} / {total} / {percent} /
+  // {recalled} / {time} are replaced at the call site (Arabic-Indic digits in AR).
+  "exam.title": { en: "Timed recall exam", ar: "اختبار الاستذكار الموقوت" },
+  "exam.description": {
+    en: "Pick a scope, then recall each memorized verse from memory before revealing it. Your score and time are logged.",
+    ar: "اختر نطاقًا، ثم استذكر كل آية محفوظة من ذاكرتك قبل كشفها. تُسجَّل نتيجتك ووقتك.",
+  },
+  "exam.pickScope": { en: "Choose a scope", ar: "اختر النطاق" },
+  "exam.scopeSurah": { en: "By surah", ar: "حسب السورة" },
+  "exam.scopeJuz": { en: "By juz", ar: "حسب الجزء" },
+  "exam.scopeRange": { en: "By range", ar: "حسب المدى" },
+  "exam.chooseSurah": { en: "Choose a surah", ar: "اختر سورة" },
+  "exam.chooseJuz": { en: "Choose a juz", ar: "اختر جزءًا" },
+  "exam.juzLabel": { en: "Juz {n}", ar: "الجزء {n}" },
+  "exam.rangeStart": { en: "From ayah", ar: "من الآية" },
+  "exam.rangeEnd": { en: "To ayah", ar: "إلى الآية" },
+  "exam.inScope": { en: "{n} memorized verses in this scope", ar: "{n} آية محفوظة في هذا النطاق" },
+  "exam.emptyScope": {
+    en: "No memorized verses in this scope yet.",
+    ar: "لا آيات محفوظة في هذا النطاق بعد.",
+  },
+  "exam.noPeekNote": {
+    en: "The verse stays hidden until you mark it — recall it from memory first.",
+    ar: "تبقى الآية مخفية حتى تُقيّمها — استذكرها من ذاكرتك أولًا.",
+  },
+  "exam.start": { en: "Start the exam", ar: "ابدأ الاختبار" },
+  "exam.progress": { en: "Verse {n} of {total}", ar: "الآية {n} من {total}" },
+  "exam.markRecalled": { en: "I recalled it", ar: "استذكرتها" },
+  "exam.markMissed": { en: "I missed it", ar: "فاتتني" },
+  "exam.reveal": { en: "Reveal the verse", ar: "اكشف الآية" },
+  "exam.restart": { en: "Start over", ar: "ابدأ من جديد" },
+  "exam.score": { en: "You recalled {percent}%", ar: "استذكرت {percent}%" },
+  "exam.scoreDetail": { en: "{recalled} of {total} recalled", ar: "{recalled} من {total} مستذكرة" },
+  "exam.elapsed": { en: "Time: {time}", ar: "الوقت: {time}" },
+  "exam.recentTitle": { en: "Recent attempts", ar: "المحاولات الأخيرة" },
+  "exam.recentEmpty": { en: "No attempts logged yet.", ar: "لا محاولات مُسجّلة بعد." },
+
+  // Per-day session journal on /progress (EXAM-03): set today's memorize/revise
+  // goals and watch today's tallies climb toward them. Operational copy and the
+  // learner's own counts only — never Quran text. Its title is deliberately
+  // DISTINCT from the neighbouring section titles it renders beside (the revision
+  // streak, memorization health, tikrar, exam, and khatmah) in BOTH locales so an
+  // e2e region locator addresses exactly this card. The {memorized} /
+  // {memorizeGoal} / {revised} / {reviseGoal} placeholders are filled at the call
+  // site (Arabic-Indic digits in AR).
+  "journal.title": { en: "Session journal", ar: "دفتر الجلسة" },
+  "journal.description": {
+    en: "Set today's goals, then watch your memorized and revised counts climb toward them.",
+    ar: "حدّد أهداف اليوم، ثم تابع تقدّم ما حفظته وراجعته نحوها.",
+  },
+  "journal.memorizeGoal": { en: "Memorize goal", ar: "هدف الحفظ" },
+  "journal.reviseGoal": { en: "Revise goal", ar: "هدف المراجعة" },
+  "journal.save": { en: "Save goals", ar: "احفظ الأهداف" },
+  "journal.memorizedLabel": { en: "Memorized", ar: "المحفوظة" },
+  "journal.revisedLabel": { en: "Revised", ar: "المراجَعة" },
+  "journal.summary": {
+    en: "Today: {memorized}/{memorizeGoal} memorized, {revised}/{reviseGoal} revised",
+    ar: "اليوم: {memorized}/{memorizeGoal} محفوظة، {revised}/{reviseGoal} مراجَعة",
+  },
+  "journal.noGoals": {
+    en: "Set a memorize or revise goal above to track today's progress.",
+    ar: "حدّد هدفًا للحفظ أو المراجعة أعلاه لتتبع تقدّم اليوم.",
+  },
+
+  // Hizb & rub' al-hizb coverage rings on /progress (PROG-01). Operational copy
+  // and derived counts only — never Quran text (the rings render only scope
+  // numbers and percentages). The title stays DISTINCT from the neighbouring
+  // memorization section titles in BOTH locales so its region locator addresses
+  // exactly this surface. The {n} / {pct} / {count} / {total} placeholders are
+  // filled at the call site (Arabic-Indic digits in AR).
+  "hizb.title": { en: "Hizb & rub' coverage", ar: "تغطية الحزب والربع" },
+  "hizb.help": {
+    en: "How much of each hizb and rub' al-hizb you've memorized.",
+    ar: "مقدار ما حفظته من كل حزب وربع الحزب.",
+  },
+  "hizb.ringLabel": {
+    en: "Hizb {n}: {pct}% memorized ({count} of {total} verses)",
+    ar: "الحزب {n}: {pct}% محفوظ ({count} من {total} آية)",
+  },
+  "hizb.rubRingLabel": {
+    en: "Rub' {n}: {pct}% memorized ({count} of {total} verses)",
+    ar: "الربع {n}: {pct}% محفوظ ({count} من {total} آية)",
+  },
+  "hizb.showRub": { en: "Show rub' al-hizb rings", ar: "أظهر حلقات ربع الحزب" },
+  "hizb.hideRub": { en: "Hide rub' al-hizb rings", ar: "أخفِ حلقات ربع الحزب" },
+
   "mushaf.allSurahs": { en: "All surahs", ar: "جميع السور" },
   "mushaf.makkahSurahs": { en: "Makkah surahs", ar: "السور المكية" },
   "mushaf.madinahSurahs": { en: "Madinah surahs", ar: "السور المدنية" },
@@ -784,6 +1120,11 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.translationResource": { en: "Translation", ar: "الترجمة" },
   "settings.tafsirResource": { en: "Tafsir", ar: "التفسير" },
   "settings.showWordByWord": { en: "Word-by-word breakdown", ar: "التحليل كلمة بكلمة" },
+  "settings.diacriticInsensitive": { en: "Ignore diacritics when typing", ar: "تجاهل التشكيل عند الكتابة" },
+  "settings.diacriticInsensitiveHelp": {
+    en: "In the typing-recall drill, match a word even if its tashkeel differs, so a missing haraka is not marked wrong.",
+    ar: "في تدريب الاستذكار بالكتابة، طابق الكلمة حتى لو اختلف تشكيلها، فلا تُحسب حركة ناقصة خطأً.",
+  },
   "settings.resourceOnline": { en: "More options load when online.", ar: "تظهر خيارات أكثر عند الاتصال." },
 
   // Khatmah (Quran-completion) planner

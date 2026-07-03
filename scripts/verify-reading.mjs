@@ -1,8 +1,10 @@
 #!/usr/bin/env node
-// Network-free verification for the offline reading-depth UI shell and the
-// page/surah navigation logic. Live API behavior is exercised in the running
-// app; here we check source parity and unit-test the pure navigation functions
-// against the bundled surah index.
+// Network-free source-parity guard for the offline reading-depth UI shell and the
+// page/surah navigation exports. Live API behavior is exercised in the running
+// app; here we check that the shell wires the wrappers and the navigation module
+// exposes its page/surah helpers. The page->surah resolution logic (surahForPage)
+// is now owned by the real-import test src/lib/navigation.test.ts, which imports
+// the shipped function and asserts the non-decreasing-across-604 invariant.
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -13,7 +15,6 @@ const root = join(__dirname, "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
 const rd = read("src", "components", "learn", "ReadingDepth.tsx");
 const nav = read("src", "lib", "navigation.ts");
-const idx = JSON.parse(read("src", "data", "content", "surah-index.json"));
 
 const results = [];
 function record(name, ok, details = "") {
@@ -36,30 +37,6 @@ record(
   /export function pageForSurah/.test(nav) && /export function surahForPage/.test(nav),
 );
 record("navigation exposes page step helpers", /export function nextPage/.test(nav) && /export function prevPage/.test(nav));
-
-// Unit tests: re-implement surahForPage against the bundled index.
-const sorted = idx.slice().sort((a, b) => a.number - b.number);
-function surahForPage(p) {
-  let found = null;
-  for (const s of sorted) {
-    if (s.pages[0] <= p) found = s;
-    else break;
-  }
-  return found;
-}
-record("page 1 resolves to Al-Fatihah (surah 1)", surahForPage(1)?.number === 1, String(surahForPage(1)?.number));
-record("page 604 resolves to a surah", surahForPage(604) != null, String(surahForPage(604)?.number));
-let nonDecreasing = true;
-let prev = 0;
-for (let p = 1; p <= 604; p++) {
-  const n = surahForPage(p)?.number ?? 0;
-  if (n < prev) {
-    nonDecreasing = false;
-    break;
-  }
-  prev = n;
-}
-record("page -> surah is non-decreasing across all 604 pages", nonDecreasing);
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed.`);

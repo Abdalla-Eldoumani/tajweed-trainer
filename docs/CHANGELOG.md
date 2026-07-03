@@ -1,5 +1,35 @@
 # Changelog
 
+## 2.2.0 — 2026-07-03
+
+A memorization milestone. The review side moved from a fixed schedule to a self-graded spaced-repetition model, and a full hifdh suite grew on top of it: chaining across verse, page, and juz seams; splitting a long verse into chunks; typing recall; audio-led and cover-the-page recall with a peek budget; a daily revision dashboard; freshness, error, and streak views; a repetition counter, a timed exam, and a session journal; and hizb and rub' al-hizb progress with a dedicated revision reciter. Underneath, the project gained a real automated test suite and a consolidated set of documentation, and closed with an accessibility, security, and performance pass. No religious content was generated or edited: every recall check compares your own input against the already-stored verified text, and verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
+
+### Added
+
+- **Self-graded recall.** After revealing a verse in review you now rate your recall — again, hard, good, or easy — and an SM-2 scheduler sets the next due date from that rating instead of a fixed ladder. Existing review state carries over losslessly, a memorized verse with no review yet is due, and a balanced-interval modifier in Settings (default 1.0) widens or tightens the whole schedule.
+- **Verse chaining.** A chaining drill cues the tail of one unit and asks you to recall the head of the next, across verse-to-verse, page, and juz seams, respecting the Bismillah exceptions and ending cleanly at the last verse. An audio variant plays the tail on the same audio engine.
+- **Segment memorization.** Split a long verse at word boundaries into chunks, drill each chunk, then chain them back together. A one-word verse offers no split, and a reciter without word timings degrades gracefully.
+- **Typing recall.** Type the next word and it is checked by exact match against the stored verse, with an optional diacritic-insensitive comparison that only affects the check and never rewrites the stored text.
+- **Blind and cover-the-page recall.** An audio-led mode plays a verse with the text hidden and reveals it to check; a cover-the-page mode blurs the current page and uncovers it verse by verse on tap. A per-session peek budget (default 3) tracks hints, caps a peeked verse's rating at hard, and disables the hint control at zero, and it survives a reload.
+- **Daily revision dashboard.** A muraja'ah queue balances new, recent, and consolidated portions with a daily new-verse cap (default 5), surfaces all due reviews without a cap, and shows a due count on open. An opt-in local reminder is available only when the app is installed and permitted, and the due count still works when permission is denied.
+- **Strength, heatmap, and revision streak.** A freshness bar ages toward red since your last successful recall, an error heatmap shows the most-revealed or failed verses by surah, juz, and page, and a memorization revision streak, separate from the practice streak, rolls over across day and timezone boundaries.
+- **Repetition counter, exam, and journal.** A tikrar counter logs reps for a target verse across days, a timed no-peek exam over a chosen scope logs a percent-recalled score, and a session journal records the day's memorization and revision with goals and an end-of-session summary, all carried in the existing backup.
+- **Hizb and rub' progress, and a revision reciter.** Hizb and rub' al-hizb rings show coverage from the API hizb data and render at zero for a new learner, and a revision reciter setting, separate from the reciter you browse with, is honored by the revision and recall surfaces.
+
+### Changed
+
+- **A real automated test suite.** Vitest unit and integration tests import the shipped modules under jsdom with enforced coverage, and a Playwright and axe end-to-end layer covers the reader, the verse overlay, the memorize-and-review flow, offline and PWA behavior, RTL, and reduced motion. Both run in CI as required checks alongside the production dependency audit; the verify scripts that re-implemented shipped logic were migrated into real-import tests.
+- **Consolidated documentation.** The repository root now holds only the README among prose docs, each doc under docs/ owns one topic, and every directory carries a concise directory-local guide. The overview and testing docs match the real suite and commands.
+
+### Fixed
+
+- **An honest accessibility baseline.** The end-to-end accessibility scan now excludes only the verified, immutable mushaf letter colors from the generic contrast rule — a standard, domain-fixed color set, not adjustable UI — while every other element stays under the full AA gate. The genuinely adjustable chrome that failed (the surah-index badges and number chips and the reader's jump-to hint) was corrected to AA, so the whole route map passes clean and deterministically.
+- **A stable weekday row.** The practice streak's weekday pills no longer hydrate a stale row when a prerendered page is opened after the week rolls over.
+
+### Security
+
+- **A clean hardening pass.** The production dependency audit stays clear of high and critical advisories, the Content-Security-Policy and response-header cross-check stays green, and the CSP is unchanged. No user data leaves the device: memorization, review, the journal, and every other field the suite adds are local-only and are covered solely by the backup you choose to export.
+
 ## 2.1.0 — 2026-06-23
 
 Post-2.0.0 reader refinements. No religious content was generated or edited.

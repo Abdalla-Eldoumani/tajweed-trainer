@@ -1,15 +1,11 @@
-import type { ReviewState } from "./types";
+import type { Sm2State } from "./types";
 import { getDueFromUniverse } from "./spaced-repetition";
+import { MASTERED_INTERVAL_DAYS } from "./recall-scheduler";
 
 // Re-exported so a consumer reviewing memorized verses has one import site for
 // both due-selection and these stats; the curve itself lives in
 // spaced-repetition.ts and is never forked here.
 export { getDueFromUniverse };
-
-// Leitner top box (mirrors MASTERY_BOX in spaced-repetition.ts; kept local so
-// this module imports only a type + getDueFromUniverse, exactly as mastery.ts
-// keeps its own literal rather than importing a non-exported const).
-const MASTERY_BOX = 5;
 
 export interface MemorizationReviewStats {
   due: number;
@@ -25,9 +21,14 @@ export interface MemorizationReviewStats {
 // delegates to getDueFromUniverse, which treats a verse with no review entry as
 // due immediately, so a freshly memorized verse correctly shows as due and
 // counts toward the total without ever counting as mastered.
+//
+// "mastered" is the SM-2 definition (intervalDays >= MASTERED_INTERVAL_DAYS, the
+// SRS-standard 21-day mature line), replacing the old Leitner box === 5 check.
+// This preserves the old mastered set under migration exactly: a migrated box-5
+// verse has intervalDays 30 (>= 21 -> mastered), box-4 has 14 (< 21 -> not).
 export function getMemorizationReviewStats(
   memorized: Iterable<string>,
-  reviews: Record<string, ReviewState>,
+  reviews: Record<string, Sm2State>,
   now: Date = new Date(),
 ): MemorizationReviewStats {
   const keys = [...memorized];
@@ -35,7 +36,7 @@ export function getMemorizationReviewStats(
   const due = getDueFromUniverse(keys, reviews, now).length;
   let mastered = 0;
   for (const key of keys) {
-    if (reviews[key]?.box === MASTERY_BOX) mastered += 1;
+    if ((reviews[key]?.intervalDays ?? 0) >= MASTERED_INTERVAL_DAYS) mastered += 1;
   }
   return { due, total, mastered };
 }

@@ -7,12 +7,13 @@ import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { exportProgress, importProgress, getProgress, shouldRemindBackup, getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
 import { subscribeProgressChanged } from "@/lib/progress-events";
-import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, type ReciterStyleGroup } from "@/lib/reciters";
+import { isNotificationSupported, isInstalled } from "@/lib/notification-gate";
+import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, normalizeReciterId, type ReciterStyleGroup } from "@/lib/reciters";
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
 import type { Recitation, TranslationResource, Theme } from "@/lib/types";
 import { withViewTransition } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import { cn, toArabicIndic } from "@/lib/utils";
 
 // Literal anchor hexes per theme (DESIGN_SYSTEM_V2.md), used only to paint the
 // preview swatch: ground, ink, gold. These cannot be var(--bg)/var(--text)/
@@ -51,6 +52,12 @@ export default function SettingsPage() {
   // onboardingMounted) to avoid a hydration flash, mirroring showBackupReminder.
   const [showTour, setShowTour] = useState(false);
   const [onboardingMounted, setOnboardingMounted] = useState(false);
+  // The revision-reminder toggle reads the Notification API and the installed
+  // display-mode, both client-only, so gate its render behind a post-mount flag
+  // to avoid a hydration flash (mirrors onboardingMounted). revisionDenied shows
+  // the honest "blocked" copy when a permission request is refused.
+  const [notifyMounted, setNotifyMounted] = useState(false);
+  const [revisionDenied, setRevisionDenied] = useState(false);
   const [reciterQuery, setReciterQuery] = useState("");
   const [translations, setTranslations] = useState<TranslationResource[]>(CURATED_TRANSLATIONS);
   const [tafsirs, setTafsirs] = useState<TranslationResource[]>(CURATED_TAFSIRS);
@@ -62,6 +69,7 @@ export default function SettingsPage() {
     setShowBackupReminder(shouldRemindBackup(getProgress(), new Date()));
     setShowTour(!getOnboardingSeen());
     setOnboardingMounted(true);
+    setNotifyMounted(true);
     // Keep the toggle in lockstep with the flag through the change bus: if the
     // tour self-dismisses (writes seenOnboarding=true) while Settings is open,
     // the checkbox reflects it without needing a revisit.
@@ -128,6 +136,28 @@ export default function SettingsPage() {
     setShowTour(show);
   };
 
+  // Enabling reminders must request permission from this user gesture (browsers
+  // reject Notification.requestPermission outside one). The toggle only flips on
+  // when the grant succeeds; a denial keeps it off and surfaces the honest
+  // blocked copy. Disabling is a plain write. Read e.target.checked before the
+  // await so the pooled event is not consumed after suspension.
+  const handleReminderToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const enable = e.target.checked;
+    if (!enable) {
+      updateSettings({ revisionRemindersEnabled: false });
+      setRevisionDenied(false);
+      return;
+    }
+    const result = typeof Notification !== "undefined" ? await Notification.requestPermission() : "denied";
+    if (result === "granted") {
+      updateSettings({ revisionRemindersEnabled: true });
+      setRevisionDenied(false);
+    } else {
+      updateSettings({ revisionRemindersEnabled: false });
+      setRevisionDenied(true);
+    }
+  };
+
   // Reciters grouped into the two display styles (Mujawwad, then Murattal),
   // narrowed by the search query against the English or Arabic name or style.
   // The selected reciter always stays in the list so the control never loses
@@ -153,6 +183,24 @@ export default function SettingsPage() {
     const styled = r.style ? `${base}, ${r.style}` : base;
     return r.id === DEFAULT_RECITER_ID ? `${styled} (${t("settings.recitersDefault")})` : styled;
   };
+
+  // Revision reciter (PROG-02): the recall / revision surfaces resolve their
+  // reciter through resolveRevisionReciter, which falls back to the browse reciter
+  // when this override is unset (undefined). Its selector mirrors the browse
+  // reciter's grouped-by-style shape (no search box — the grouped list is short
+  // enough) and prepends a "same as reading reciter" option (value "") that writes
+  // undefined to clear the override. The grouping is static, so it memoizes once.
+  const revisionReciterGroups = useMemo(() => {
+    const groups: Array<{ key: ReciterStyleGroup; labelKey: string; list: Recitation[] }> = [
+      { key: "mujawwad", labelKey: "settings.reciterStyleMujawwad", list: [] },
+      { key: "murattal", labelKey: "settings.reciterStyleMurattal", list: [] },
+    ];
+    for (const r of RECITATIONS) groups.find((x) => x.key === styleGroup(r))?.list.push(r);
+    return groups.filter((g) => g.list.length > 0);
+  }, []);
+  // normalizeReciterId keeps a legacy stored id selectable; an unset override maps
+  // to "" so the "same as reading reciter" default option shows.
+  const revisionReciterValue = settings.revisionReciter ? normalizeReciterId(settings.revisionReciter) : "";
 
   // Keep the saved id selectable even if it is not in the loaded catalogue.
   const ensurePresent = (list: TranslationResource[], id: number): TranslationResource[] =>
@@ -241,6 +289,34 @@ export default function SettingsPage() {
         <p className="text-xs text-text-muted mt-2">
           {t("settings.recitersHelp")}
         </p>
+      </Card>
+
+      {/* Revision reciter (PROG-02): a selector distinct from the browse reciter,
+          honored ONLY by the memorization revision / recall playback surfaces. The
+          first "same as reading reciter" option writes undefined so the shared
+          resolveRevisionReciter falls back to the browse reciter. */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.revisionReciter")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.revisionReciterHelp")}</p>
+        <select
+          value={revisionReciterValue}
+          onChange={(e) =>
+            updateSettings({ revisionReciter: e.target.value === "" ? undefined : e.target.value })
+          }
+          aria-label={t("settings.revisionReciter")}
+          className="w-full px-3 py-2 min-h-[44px] rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark text-sm"
+        >
+          <option value="">{t("settings.revisionReciterSame")}</option>
+          {revisionReciterGroups.map((group) => (
+            <optgroup key={group.key} label={t(group.labelKey)}>
+              {group.list.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {reciterLabel(r)}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
       </Card>
 
       {/* Playback Speed */}
@@ -355,6 +431,21 @@ export default function SettingsPage() {
               aria-label={t("settings.showTranslation")}
             />
           </label>
+
+          {/* Diacritic-insensitive typing recall (TYPE-02): a comparison-only
+              toggle the /progress typing drill reads. It NEVER changes stored or
+              rendered verse text — only how a typed word is matched. */}
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">{t("settings.diacriticInsensitive")}</span>
+            <input
+              type="checkbox"
+              checked={settings.diacriticInsensitive ?? false}
+              onChange={(e) => updateSettings({ diacriticInsensitive: e.target.checked })}
+              className="accent-primary dark:accent-gold w-4 h-4"
+              aria-label={t("settings.diacriticInsensitive")}
+            />
+          </label>
+          <p className="text-xs text-text-muted">{t("settings.diacriticInsensitiveHelp")}</p>
         </div>
       </Card>
 
@@ -404,6 +495,108 @@ export default function SettingsPage() {
           <p className="text-xs text-text-muted">{t("settings.resourceOnline")}</p>
         </div>
       </Card>
+
+      {/* Review spacing (SM-2 balanced interval modifier) */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.reviewIntervalModifier")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.reviewIntervalModifierHelp")}</p>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("settings.reviewIntervalModifier")}>
+          {[0.5, 0.75, 1.0, 1.5, 2.0].map((mod) => {
+            const active = (settings.reviewIntervalModifier ?? 1.0) === mod;
+            const label = `${isAr ? toArabicIndic(mod) : mod}×`;
+            return (
+              <button
+                key={mod}
+                onClick={() => updateSettings({ reviewIntervalModifier: mod })}
+                className={segChip(active)}
+                role="radio"
+                aria-checked={active}
+                aria-label={label}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Recall hint budget (per-session peek budget). Presets sit inside the
+          storage clamp [1, 10]; the write funnels through updateSettings like
+          every other preference. Mirrors the review-spacing radiogroup. */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.peekBudget")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.peekBudgetHelp")}</p>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("settings.peekBudget")}>
+          {[1, 2, 3, 5, 10].map((n) => {
+            const active = (settings.peekBudget ?? 3) === n;
+            const label = isAr ? toArabicIndic(n) : String(n);
+            return (
+              <button
+                key={n}
+                onClick={() => updateSettings({ peekBudget: n })}
+                className={segChip(active)}
+                role="radio"
+                aria-checked={active}
+                aria-label={label}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* New verses per day (murajaah daily NEW cap, REV-01). Presets sit inside
+          the storage clamp [1, 10]; the write funnels through updateSettings.
+          Mirrors the recall-hint-budget radiogroup. Due reviews of known verses
+          are never capped — only the new tail is. */}
+      <Card>
+        <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.newVerseCap")}</h2>
+        <p className="text-xs text-text-muted mb-3">{t("settings.newVerseCapHelp")}</p>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("settings.newVerseCap")}>
+          {[3, 5, 7, 10].map((n) => {
+            const active = (settings.newVerseCap ?? 5) === n;
+            const label = isAr ? toArabicIndic(n) : String(n);
+            return (
+              <button
+                key={n}
+                onClick={() => updateSettings({ newVerseCap: n })}
+                className={segChip(active)}
+                role="radio"
+                aria-checked={active}
+                aria-label={label}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* Revision reminders (REV-04). Rendered ONLY when the Notification API is
+          supported AND the app is installed (an uninstalled tab cannot show a
+          reliable local reminder). Enabling requests permission from the toggle
+          gesture; a denial keeps it off with honest copy. This is a LOCAL
+          on-open reminder, never a server push — nothing fires while closed. */}
+      {notifyMounted && isNotificationSupported() && isInstalled() && (
+        <Card>
+          <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.revisionReminders")}</h2>
+          <p className="text-xs text-text-muted mb-3">{t("settings.revisionRemindersHelp")}</p>
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">{t("settings.revisionReminders")}</span>
+            <input
+              type="checkbox"
+              checked={settings.revisionRemindersEnabled ?? false}
+              onChange={handleReminderToggle}
+              className="accent-primary dark:accent-gold w-4 h-4"
+              aria-label={t("settings.revisionReminders")}
+            />
+          </label>
+          {revisionDenied && (
+            <p className="text-xs text-red-600 dark:text-red-400 mt-2">{t("settings.revisionRemindersDenied")}</p>
+          )}
+        </Card>
+      )}
 
       {/* Backup & Restore */}
       <Card>

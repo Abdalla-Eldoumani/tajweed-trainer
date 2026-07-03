@@ -108,6 +108,18 @@ const FollowAlongIcon = () => (
   </svg>
 );
 
+// A window-shade over a page for the cover-page toggle: a page frame with a
+// filled shade drawn across its top and a short pull cord — it reads as
+// "cover the page". Distinct from the recall eye, the focus crosshair, and the
+// follow-along underline so the four toolbar toggles never read alike.
+const CoverPageIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="4" y="3" width="16" height="18" rx="2" />
+    <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6H4z" fill="currentColor" stroke="none" />
+    <line x1="12" y1="11" x2="12" y2="14" />
+  </svg>
+);
+
 const SearchIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <circle cx="11" cy="11" r="8" />
@@ -136,6 +148,11 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // Memorization mode hides verse text the user has marked memorized so they
   // can recall it. Off by default; in-session state, not persisted.
   const [memorizationMode, setMemorizationMode] = useState(false);
+  // Cover-page recall blurs EVERY verse on the page (not only memorized), so the
+  // whole page can be recalled at once; a tap reveals verses one at a time. An
+  // independent toggle from memorizationMode. Off by default; in-session state,
+  // not persisted (parallel to memorizationMode).
+  const [coverPageMode, setCoverPageMode] = useState(false);
   // Reveal-as-recited: blur the verse being recited and uncover each word as it
   // is recited. Owned here (like memorizationMode) so the page and the verse
   // overlay share one source: the overlay toggle flips it and MushafPage reads it.
@@ -472,6 +489,30 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             );
           })()}
 
+          {/* Cover-page recall: blur EVERY verse on the page (not only the
+              memorized ones) and reveal them one tap at a time — the whole-page
+              companion to the recall eye. In-session like the recall/focus
+              toggles, never persisted. Same toolbar-toggle shape (label beside
+              the icon >=sm, aria-pressed for state, the on/off aria-label pair,
+              the hint in the title) with a DISTINCT covered-page icon. The
+              reveal here is free; it never touches the peek budget. */}
+          <button
+            type="button"
+            onClick={() => setCoverPageMode((v) => !v)}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              coverPageMode
+                ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
+                : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
+            )}
+            aria-label={coverPageMode ? t("mushaf.coverPageOff") : t("mushaf.coverPageOn")}
+            aria-pressed={coverPageMode}
+            title={t("mushaf.coverPageHint")}
+          >
+            <CoverPageIcon />
+            <span className="hidden sm:inline">{t("mushaf.coverPage")}</span>
+          </button>
+
           {/* Reading focus mode: dims every verse but the active one (the playing
               verse, else the single selected verse). Verse-level and
               segment-independent, so it needs no reciter/mounted gate beyond the
@@ -543,7 +584,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           >
             <SearchIcon />
             <span className="hidden sm:inline">{t("mushaf.quickJump")}</span>
-            <kbd className="hidden md:inline text-micro text-text-muted/70 font-mono">⌘K</kbd>
+            <kbd className="hidden md:inline text-micro text-text-muted font-mono">⌘K</kbd>
           </button>
 
           {/* The keyboard/all-modes path to the tajweed colors: a plain
@@ -601,6 +642,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           <MushafPage
             data={data}
             memorizationMode={memorizationMode}
+            coverPageMode={coverPageMode}
             revealAsRecited={revealAsRecited}
             focusMode={focusMode}
             followAlong={followAlong}

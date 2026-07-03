@@ -1,0 +1,39 @@
+{
+  "translations": [
+    {
+      "id": 20,
+      "name": "Saheeh International",
+      "author_name": "Saheeh International",
+      "slug": "en-sahih-international",
+      "language_name": "english",
+      "translated_name": {
+        "name": "Saheeh International",
+        "language_name": "english"
+      }
+    }
+  ],
+  "tafsirs": [
+    {
+      "id": 169,
+      "name": "Ibn Kathir (Abridged)",
+      "author_name": "Hafiz Ibn Kathir",
+      "slug": "en-tafisr-ibn-kathir",
+      "language_name": "english",
+      "translated_name": {
+        "name": "Ibn Kathir (Abridged)",
+        "language_name": "english"
+      }
+    },
+    {
+      "id": 168,
+      "name": "Ma'arif al-Qur'an",
+      "author_name": "Mufti Muhammad Shafi",
+      "slug": "en-tafsir-maarif-ul-quran",
+      "language_name": "english",
+      "translated_name": {
+        "name": "Ma'arif al-Qur'an",
+        "language_name": "english"
+      }
+    }
+  ]
+}
