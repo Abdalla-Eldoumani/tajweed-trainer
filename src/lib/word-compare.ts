@@ -1,4 +1,4 @@
-// Pure Arabic word comparison for the typing-recall drill (TYPE-01/02/03).
+// Pure Arabic word comparison for the typing-recall drill.
 // No React/next/storage/DOM imports — framework-agnostic string math, so the
 // src/lib coverage gate counts it and word-compare.test.ts exercises it directly.
 
