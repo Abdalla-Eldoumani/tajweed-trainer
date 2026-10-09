@@ -376,7 +376,7 @@ export const questions: Question[] = [
     arabicText: "ارْجِعُوا",
     englishGloss: "go back",
     options: [
-      { id: "opt-a", label: { en: "The Kasrah on Hamzat Al-Wasl is TEMPORARY (آرِدة), not original. Raa Sakinah preceded by a temporary kasrah is heavy.", ar: "الكسرة على همزة الوصل عارضة لا أصلية، والراء الساكنة بعد كسرة عارضة مفخّمة" } },
+      { id: "opt-a", label: { en: "The Kasrah on Hamzat Al-Wasl is TEMPORARY (عارضة), not original. Raa Sakinah preceded by a temporary kasrah is heavy.", ar: "الكسرة على همزة الوصل عارضة لا أصلية، والراء الساكنة بعد كسرة عارضة مفخّمة" } },
       { id: "opt-b", label: { en: "All Raa with Sukoon are heavy", ar: "كلّ راء ساكنة مفخّمة" } },
       { id: "opt-c", label: { en: "The Hamzah is silent so it doesn't count", ar: "الهمزة ساقطة فلا تُحتسب" } },
       { id: "opt-d", label: { en: "The Jeem after raises the heaviness", ar: "الجيم بعدها تُفخّم الراء" } },
@@ -503,7 +503,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Preceded by another sakin letter", ar: "مسبوقة بحرف ساكن آخر" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson lists only TWO Tarqeeq cases for sakin Raa: (1) preceded by Kasrah Asliyyah (e.g., فِرْعَوْنَ); (2) preceded by Yaa Maddiyyah (e.g., قَدِيرٌ when stopping). Everything else is heavy.", ar: "ذكر الدرس حالتين فقط لترقيق الراء الساكنة: ١) بعد كسرة أصلية (كفِرْعَوْنَ)، ٢) بعد ياء مدّيّة (كقَدِيرٌ عند الوقف). وما سواهما مفخّمة.", lessonAnchor: "raa-rules" },
+    explanation: { en: "The lesson lists these TWO Tarqeeq cases for sakin Raa: (1) preceded by Kasrah Asliyyah (e.g., فِرْعَوْنَ); (2) preceded by Yaa Maddiyyah (e.g., قَدِيرٌ when stopping).", ar: "ذكر الدرس حالتين لترقيق الراء الساكنة: ١) بعد كسرة أصلية (كفِرْعَوْنَ)، ٢) بعد ياء مدّيّة (كقَدِيرٌ عند الوقف).", lessonAnchor: "raa-rules" },
     source: { surah: 79, ayah: 17, translationEditionId: null, provenance: PROVENANCE },
   },
   {
