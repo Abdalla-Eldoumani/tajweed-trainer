@@ -4,7 +4,7 @@ import type { WordSegment } from "@/lib/audio-api";
 
 // NEW unit test for the follow-along pure functions. verify-follow-along.mjs only
 // presence-asserts these; this exercises the real arithmetic. These are pure - no
-// DOM, no Audio element, no component render (behavioral follow-along is Phase 3).
+// DOM, no Audio element, no component render (behavioral follow-along is covered by the e2e specs).
 // A WordSegment is [startWordIdx, endWordIdxExcl, startMs, endMs]; segments are
 // 0-based contiguous (s[i][0] === i, s[i][1] === i + 1).
 const segments: WordSegment[] = [
