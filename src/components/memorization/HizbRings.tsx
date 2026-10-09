@@ -9,7 +9,7 @@ import { countInScope, memorizedPercent, versesForHizb, versesForRub } from "@/l
 import { TOTAL_HIZB, TOTAL_RUB } from "@/lib/navigation";
 import { toArabicIndic } from "@/lib/utils";
 
-// Coverage rings for the 60 hizb and 240 rub' al-hizb (PROG-01). Each ring is a
+// Coverage rings for the 60 hizb and 240 rub' al-hizb. Each ring is a
 // circular SVG whose arc encodes how much of that scope's verses are memorized:
 // count / total of the scope's enumerated verseKeys, derived from the memorized
 // set (never stored). versesForHizb/Rub(n).length is always > 0, so a new learner
@@ -81,7 +81,7 @@ export function HizbRings() {
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
   // One pass over all 60 + 240 scopes, recomputed only when the memorized Set
-  // identity changes (the MemorizationBreakdown precedent; T-12-03: not per render
+  // identity changes (the MemorizationBreakdown precedent: not per render
   // and not per verse). total is always > 0, so a new learner reads 0 everywhere.
   const { hizbRings, rubRings } = useMemo(() => {
     const hizb: RingDatum[] = Array.from({ length: TOTAL_HIZB }, (_, i) => {
@@ -104,8 +104,8 @@ export function HizbRings() {
     return { hizbRings: hizb, rubRings: rub };
   }, [memorized]);
 
-  // Gate on mount ONLY so the empty rings still render for a new learner (PROG-01
-  // criterion 1); the server paint is the empty set, and this matches it.
+  // Gate on mount only so the empty rings still render for a new learner; the
+  // server paint is the empty set, and this matches it.
   if (!mounted) return null;
 
   const ringLabel = (key: "hizb.ringLabel" | "hizb.rubRingLabel", r: RingDatum) =>
