@@ -704,6 +704,49 @@ html, body {
   pointer-events: none;
 }
 
+/* Numbered ring for lists: a gold hairline with a second rule inside it, the
+   same marker the reader draws at the end of a verse. */
+.medallion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--gold-hairline);
+  box-shadow: inset 0 0 0 3px var(--bg-card), inset 0 0 0 4px var(--gold-hairline);
+  background: var(--bg-subtle);
+  color: #7A5E15;
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+[data-theme="night"] .medallion,
+[data-theme="sepia"] .medallion,
+[data-theme="mihrab"] .medallion {
+  color: #C7A24A;
+}
+
+/* Masthead rule: two gold hairlines, one on the edge and one 4px inside, the
+   same double rule the Quran frame uses. */
+.double-rule {
+  position: relative;
+  border-block: 1px solid var(--gold-hairline);
+}
+
+.double-rule::before,
+.double-rule::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 1px;
+  background: var(--gold-hairline);
+}
+
+.double-rule::before { top: 4px; }
+.double-rule::after { bottom: 4px; }
+
 /* Section banner (surah header style): flat surface with a single gold
    hairline rule and a centered title. No gradient, no busy overlay. */
 .section-banner {
