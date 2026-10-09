@@ -11,8 +11,19 @@ import { useProgress } from "@/hooks/useProgress";
 import { useModuleLock } from "@/hooks/useModuleLock";
 import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
+import { toArabicIndic } from "@/lib/utils";
 import { getColorForClass } from "@/lib/tajweed-colors";
 import maddData from "@/data/content/madd-rules.json";
+
+// Beat counts are authored for English ("4-5", "2, 4, or 6"). In an Arabic page
+// the digits, the range and the "or" are converted, and the group is isolated so
+// the bidi algorithm cannot reverse "4-5" into "5-4".
+function beatsLabel(beats: number | string, isAr: boolean): string {
+  const text = String(beats);
+  if (!isAr) return text;
+  const arabic = toArabicIndic(text.replace(/, or |,\s*|\//g, " أو ").replace("-", "–"));
+  return `\u2068${arabic}\u2069`;
+}
 
 const SECTIONS = ["madd-letters", ...maddData.types.map((t) => t.id)];
 
@@ -87,8 +98,8 @@ export default function MaddPage() {
         {maddData.types.map((type) => (
           <div key={type.id} id={type.id} className="scroll-mt-20">
             <RuleCard
-              titleEn={`${type.title_en} (${type.beats} beats)`}
-              titleAr={`${type.title_ar} (${type.beats} ${t("ghunnah.beats")})`}
+              titleEn={`${type.title_en} (${beatsLabel(type.beats, false)} beats)`}
+              titleAr={`${type.title_ar} (${beatsLabel(type.beats, true)} ${t("ghunnah.beats")})`}
               description={type.description}
               descriptionAr={type.description_ar}
               examples={type.examples}
@@ -113,7 +124,7 @@ export default function MaddPage() {
               {Object.entries(maddData.summary_table).map(([key, val]) => (
                 <tr key={key}>
                   <td className="py-2 pe-4 font-medium">{isAr && val.type_ar ? val.type_ar : val.type}</td>
-                  <td className="py-2 pe-4 text-center">{val.beats}</td>
+                  <td className="py-2 pe-4 text-center">{beatsLabel(val.beats, isAr)}</td>
                   <td className="py-2 text-text-muted">{isAr && val.trigger_ar ? val.trigger_ar : val.trigger}</td>
                 </tr>
               ))}
