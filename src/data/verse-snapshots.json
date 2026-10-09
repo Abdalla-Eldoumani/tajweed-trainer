@@ -71,10 +71,22 @@
     "fetchedAt": "2026-05-31T04:41:53.063Z",
     "source": "api.quran.com/api/v4 uthmani_tajweed"
   },
+  "2:9": {
+    "tajweedHtml": "يُخَ<tajweed class=madda_normal>ـٰ</tajweed>دِعُونَ <tajweed class=ham_wasl>ٱ</tajweed>للَّهَ وَ<tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ ءَامَنُو<tajweed class=slnt>اْ</tajweed> وَمَا يَخْدَعُونَ إِلّ<tajweed class=madda_obligatory>َآ</tajweed> أَ<tajweed class=ikhafa>نف</tajweed>ُسَهُمْ وَمَا يَشْعُر<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>٩</span>",
+    "arabic": "يُخَـٰدِعُونَ ٱللَّهَ وَٱلَّذِينَ ءَامَنُواْ وَمَا يَخْدَعُونَ إِلَّآ أَنفُسَهُمْ وَمَا يَشْعُرُونَ ٩",
+    "fetchedAt": "2026-10-09T14:13:35.528Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
   "2:14": {
     "tajweedHtml": "وَإِذَا لَقُو<tajweed class=slnt>اْ</tajweed> <tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ ءَامَنُو<tajweed class=slnt>اْ</tajweed> قَال<tajweed class=madda_obligatory>ُوٓ</tajweed><tajweed class=slnt>اْ</tajweed> ءَامَ<tajweed class=ghunnah>نّ</tajweed>َا وَإِذَا خَلَوْ<tajweed class=slnt>اْ</tajweed> إِلَىٰ شَيَ<tajweed class=madda_normal>ـٰ</tajweed>طِينِهِمْ قَال<tajweed class=madda_obligatory>ُوٓ</tajweed><tajweed class=slnt>اْ</tajweed> إِ<tajweed class=ghunnah>نّ</tajweed>َا مَعَكُمْ إِ<tajweed class=ghunnah>نّ</tajweed>َمَا نَحْنُ مُسْتَهْزِء<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>١٤</span>",
     "arabic": "وَإِذَا لَقُواْ ٱلَّذِينَ ءَامَنُواْ قَالُوٓاْ ءَامَنَّا وَإِذَا خَلَوْاْ إِلَىٰ شَيَـٰطِينِهِمْ قَالُوٓاْ إِنَّا مَعَكُمْ إِنَّمَا نَحْنُ مُسْتَهْزِءُونَ ١٤",
     "fetchedAt": "2026-05-31T04:41:53.063Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
+  "2:19": {
+    "tajweedHtml": "أَوْ كَصَيِّ<tajweed class=idgham_ghunnah>بٍ م</tajweed>ِّنَ <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed>سَّم<tajweed class=madda_obligatory>َا</tajweed>ٓءِ فِيهِ ظُلُمَ<tajweed class=madda_normal>ـٰ</tajweed><tajweed class=idgham_ghunnah>تٌ و</tajweed>َرَعْ<tajweed class=idgham_ghunnah>دٌ و</tajweed>َبَرْ<tajweed class=idgham_ghunnah>قٌ ي</tajweed>َ<tajweed class=qalaqah>جْ</tajweed>عَلُونَ أَصَ<tajweed class=madda_normal>ـٰ</tajweed>بِعَهُمْ ف<tajweed class=madda_obligatory>ِىٓ</tajweed> ءَاذَانِه<tajweed class=idgham_shafawi>ِم م</tajweed>ِّنَ <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed>صَّو<tajweed class=madda_normal>َٲ</tajweed>عِقِ حَذَرَ <tajweed class=ham_wasl>ٱ</tajweed>لْمَوْتِ‌ۚ وَ<tajweed class=ham_wasl>ٱ</tajweed>للَّهُ مُحِي<tajweed class=iqlab>طُۢ ب</tajweed>ِ<tajweed class=ham_wasl>ٱ</tajweed>لْكَ<tajweed class=madda_normal>ـٰ</tajweed>فِر<tajweed class=madda_permissible>ِي</tajweed>نَ <span class=end>١٩</span>",
+    "arabic": "أَوْ كَصَيِّبٍ مِّنَ ٱلسَّمَآءِ فِيهِ ظُلُمَـٰتٌ وَرَعْدٌ وَبَرْقٌ يَجْعَلُونَ أَصَـٰبِعَهُمْ فِىٓ ءَاذَانِهِم مِّنَ ٱلصَّوَٲعِقِ حَذَرَ ٱلْمَوْتِ‌ۚ وَٱللَّهُ مُحِيطُۢ بِٱلْكَـٰفِرِينَ ١٩",
+    "fetchedAt": "2026-10-09T14:13:35.528Z",
     "source": "api.quran.com/api/v4 uthmani_tajweed"
   },
   "2:27": {
@@ -105,6 +117,12 @@
     "tajweedHtml": "وَ<tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ كَفَرُو<tajweed class=slnt>اْ</tajweed> وَكَذَّبُو<tajweed class=slnt>اْ</tajweed> بِـَٔـايَ<tajweed class=madda_normal>ـٰ</tajweed>تِن<tajweed class=madda_obligatory>َآ</tajweed> أُ<tajweed class=slnt>وْ</tajweed>لَ<tajweed class=madda_obligatory>ـٰٓ</tajweed>ئِكَ أَصْحَ<tajweed class=madda_normal>ـٰ</tajweed>بُ <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed><tajweed class=ghunnah>نّ</tajweed>َارِ‌ۖ هُمْ فِيهَا خَ<tajweed class=madda_normal>ـٰ</tajweed>لِد<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>٣٩</span>",
     "arabic": "وَٱلَّذِينَ كَفَرُواْ وَكَذَّبُواْ بِـَٔـايَـٰتِنَآ أُوْلَـٰٓئِكَ أَصْحَـٰبُ ٱلنَّارِ‌ۖ هُمْ فِيهَا خَـٰلِدُونَ ٣٩",
     "fetchedAt": "2026-05-31T04:41:53.063Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
+  "2:79": {
+    "tajweedHtml": "فَوَيْ<tajweed class=idgham_wo_ghunnah>لٌ ل</tajweed>ِّلَّذِينَ يَكْتُبُونَ <tajweed class=ham_wasl>ٱ</tajweed>لْكِتَ<tajweed class=madda_normal>ـٰ</tajweed>بَ بِأَيْدِيهِمْ ثُ<tajweed class=ghunnah>مّ</tajweed>َ يَقُولُونَ هَ<tajweed class=madda_normal>ـٰ</tajweed>ذَا مِنْ عِ<tajweed class=ikhafa>ند</tajweed>ِ <tajweed class=ham_wasl>ٱ</tajweed>للَّهِ لِيَشْتَرُو<tajweed class=slnt>اْ</tajweed> بِه<tajweed class=madda_normal>ِۦ</tajweed> ثَمَ<tajweed class=ikhafa>نًا ق</tajweed>َلِيل<tajweed class=ikhafa>اً‌ۖ ف</tajweed>َوَيْ<tajweed class=idgham_wo_ghunnah>لٌ ل</tajweed>َّه<tajweed class=idgham_shafawi>ُم م</tajweed>ِّ<tajweed class=ghunnah>مّ</tajweed>َا كَتَبَتْ أَيْدِيهِمْ وَوَيْ<tajweed class=idgham_wo_ghunnah>لٌ ل</tajweed>َّه<tajweed class=idgham_shafawi>ُم م</tajweed>ِّ<tajweed class=ghunnah>مّ</tajweed>َا يَكْسِب<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>٧٩</span>",
+    "arabic": "فَوَيْلٌ لِّلَّذِينَ يَكْتُبُونَ ٱلْكِتَـٰبَ بِأَيْدِيهِمْ ثُمَّ يَقُولُونَ هَـٰذَا مِنْ عِندِ ٱللَّهِ لِيَشْتَرُواْ بِهِۦ ثَمَنًا قَلِيلاً‌ۖ فَوَيْلٌ لَّهُم مِّمَّا كَتَبَتْ أَيْدِيهِمْ وَوَيْلٌ لَّهُم مِّمَّا يَكْسِبُونَ ٧٩",
+    "fetchedAt": "2026-10-09T14:13:35.528Z",
     "source": "api.quran.com/api/v4 uthmani_tajweed"
   },
   "2:85": {
@@ -173,6 +191,12 @@
     "fetchedAt": "2026-05-31T04:41:53.063Z",
     "source": "api.quran.com/api/v4 uthmani_tajweed"
   },
+  "16:100": {
+    "tajweedHtml": "إِ<tajweed class=ghunnah>نّ</tajweed>َمَا سُلْطَ<tajweed class=madda_normal>ـٰ</tajweed>نُهُ<tajweed class=madda_normal>ۥ</tajweed> عَلَى <tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ يَتَوَلَّوْنَهُ<tajweed class=madda_normal>ۥ</tajweed> وَ<tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ ه<tajweed class=ikhafa_shafawi>ُم ب</tajweed>ِه<tajweed class=madda_normal>ِۦ</tajweed> مُشْرِك<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>١٠٠</span>",
+    "arabic": "إِنَّمَا سُلْطَـٰنُهُۥ عَلَى ٱلَّذِينَ يَتَوَلَّوْنَهُۥ وَٱلَّذِينَ هُم بِهِۦ مُشْرِكُونَ ١٠٠",
+    "fetchedAt": "2026-10-09T14:13:35.528Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
   "17:1": {
     "tajweedHtml": "سُ<tajweed class=qalaqah>بْ</tajweed>حَ<tajweed class=madda_normal>ـٰ</tajweed>نَ <tajweed class=ham_wasl>ٱ</tajweed>لَّذ<tajweed class=madda_obligatory>ِىٓ</tajweed> أَسْرَىٰ بِعَ<tajweed class=qalaqah>بْ</tajweed>دِه<tajweed class=madda_normal>ِۦ</tajweed> لَيْل<tajweed class=idgham_ghunnah>اً م</tajweed>ِّنَ <tajweed class=ham_wasl>ٱ</tajweed>لْمَسْجِدِ <tajweed class=ham_wasl>ٱ</tajweed>لْحَرَامِ إِلَى <tajweed class=ham_wasl>ٱ</tajweed>لْمَسْجِدِ <tajweed class=ham_wasl>ٱ</tajweed>لْأَ<tajweed class=qalaqah>قْ</tajweed>صَا <tajweed class=ham_wasl>ٱ</tajweed>لَّذِى بَ<tajweed class=madda_normal>ـٰ</tajweed>رَكْنَا حَوْلَهُ<tajweed class=madda_normal>ۥ</tajweed> لِنُرِيَهُ<tajweed class=madda_normal>ۥ</tajweed> مِنْ ءَايَ<tajweed class=madda_normal>ـٰ</tajweed>تِن<tajweed class=madda_obligatory>َآ‌ۚ</tajweed> إِ<tajweed class=ghunnah>نّ</tajweed>َهُ<tajweed class=madda_normal>ۥ</tajweed> هُوَ <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed>سَّمِيعُ <tajweed class=ham_wasl>ٱ</tajweed>لْبَص<tajweed class=madda_permissible>ِي</tajweed>رُ <span class=end>١</span>",
     "arabic": "سُبْحَـٰنَ ٱلَّذِىٓ أَسْرَىٰ بِعَبْدِهِۦ لَيْلاً مِّنَ ٱلْمَسْجِدِ ٱلْحَرَامِ إِلَى ٱلْمَسْجِدِ ٱلْأَقْصَا ٱلَّذِى بَـٰرَكْنَا حَوْلَهُۥ لِنُرِيَهُۥ مِنْ ءَايَـٰتِنَآ‌ۚ إِنَّهُۥ هُوَ ٱلسَّمِيعُ ٱلْبَصِيرُ ١",
@@ -197,6 +221,18 @@
     "fetchedAt": "2026-06-07T00:00:00.000Z",
     "source": "api.quran.com/api/v4 uthmani"
   },
+  "22:61": {
+    "tajweedHtml": "ذ<tajweed class=madda_normal>َٲ</tajweed>لِكَ بِأَ<tajweed class=ghunnah>نّ</tajweed>َ <tajweed class=ham_wasl>ٱ</tajweed>للَّهَ يُولِجُ <tajweed class=ham_wasl>ٱ</tajweed>لَّيْلَ فِى <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed><tajweed class=ghunnah>نّ</tajweed>َهَارِ وَيُولِجُ <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed><tajweed class=ghunnah>نّ</tajweed>َهَارَ فِى <tajweed class=ham_wasl>ٱ</tajweed>لَّيْلِ وَأَ<tajweed class=ghunnah>نّ</tajweed>َ <tajweed class=ham_wasl>ٱ</tajweed>للَّهَ سَمِي<tajweed class=iqlab>عُۢ ب</tajweed>َص<tajweed class=madda_permissible>ِي</tajweed>رٌ <span class=end>٦١</span>",
+    "arabic": "ذَٲلِكَ بِأَنَّ ٱللَّهَ يُولِجُ ٱلَّيْلَ فِى ٱلنَّهَارِ وَيُولِجُ ٱلنَّهَارَ فِى ٱلَّيْلِ وَأَنَّ ٱللَّهَ سَمِيعُۢ بَصِيرٌ ٦١",
+    "fetchedAt": "2026-10-09T14:13:35.528Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
+  "26:109": {
+    "tajweedHtml": "وَم<tajweed class=madda_obligatory>َآ</tajweed> أَسْــَٔلُكُمْ عَلَيْهِ مِنْ أَ<tajweed class=qalaqah>جْ</tajweed>رٍ‌ۖ إِنْ أَ<tajweed class=qalaqah>جْ</tajweed>رِىَ إِلَّا عَلَىٰ رَبِّ <tajweed class=ham_wasl>ٱ</tajweed>لْعَ<tajweed class=madda_normal>ـٰ</tajweed>لَم<tajweed class=madda_permissible>ِي</tajweed>نَ <span class=end>١٠٩</span>",
+    "arabic": "وَمَآ أَسْــَٔلُكُمْ عَلَيْهِ مِنْ أَجْرٍ‌ۖ إِنْ أَجْرِىَ إِلَّا عَلَىٰ رَبِّ ٱلْعَـٰلَمِينَ ١٠٩",
+    "fetchedAt": "2026-10-09T14:13:35.528Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
   "30:4": {
     "tajweedHtml": "فِى بِضْعِ سِنِينَ‌ۗ لِلَّهِ <tajweed class=ham_wasl>ٱ</tajweed>لْأَمْرُ مِ<tajweed class=ikhafa>ن ق</tajweed>َ<tajweed class=qalaqah>بْ</tajweed>لُ وَم<tajweed class=iqlab>ِنۢ ب</tajweed>َعْدُ‌ۚ وَيَوْمَئِ<tajweed class=idgham_ghunnah>ذٍ ي</tajweed>َفْرَحُ <tajweed class=ham_wasl>ٱ</tajweed>لْمُؤْمِن<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>٤</span>",
     "arabic": "فِى بِضْعِ سِنِينَ‌ۗ لِلَّهِ ٱلْأَمْرُ مِن قَبْلُ وَمِنۢ بَعْدُ‌ۚ وَيَوْمَئِذٍ يَفْرَحُ ٱلْمُؤْمِنُونَ ٤",
@@ -213,6 +249,12 @@
     "tajweedHtml": "ٱتَّبِعُو<tajweed class=slnt>اْ</tajweed> م<tajweed class=idgham_wo_ghunnah>َن ل</tajweed>َّا يَسْــَٔلُكُمْ أَ<tajweed class=qalaqah>جْ</tajweed><tajweed class=idgham_ghunnah>رًا و</tajweed>َه<tajweed class=idgham_shafawi>ُم م</tajweed>ُّهْتَد<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>٢١</span>",
     "arabic": "ٱتَّبِعُواْ مَن لَّا يَسْــَٔلُكُمْ أَجْرًا وَهُم مُّهْتَدُونَ ٢١",
     "fetchedAt": "2026-05-31T04:41:53.063Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
+  "39:34": {
+    "tajweedHtml": "لَه<tajweed class=idgham_shafawi>ُم م</tajweed>َّا يَش<tajweed class=madda_obligatory>َا</tajweed>ٓءُونَ عِ<tajweed class=ikhafa>ند</tajweed>َ رَبِّهِمْ‌ۚ ذ<tajweed class=madda_normal>َٲ</tajweed>لِكَ جَز<tajweed class=madda_obligatory>َا</tajweed>ٓءُ <tajweed class=ham_wasl>ٱ</tajweed>لْمُحْسِن<tajweed class=madda_permissible>ِي</tajweed>نَ <span class=end>٣٤</span>",
+    "arabic": "لَهُم مَّا يَشَآءُونَ عِندَ رَبِّهِمْ‌ۚ ذَٲلِكَ جَزَآءُ ٱلْمُحْسِنِينَ ٣٤",
+    "fetchedAt": "2026-10-09T14:13:35.528Z",
     "source": "api.quran.com/api/v4 uthmani_tajweed"
   },
   "42:31": {
