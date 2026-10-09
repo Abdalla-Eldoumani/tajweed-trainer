@@ -72,7 +72,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
           <Badge color={color}>{ruleApplied}</Badge>
           <Link
             href={`/mushaf/page/${pageForVerse(example.surah, example.ayah)}?v=${example.surah}:${example.ayah}`}
-            className="inline-flex items-center gap-1 text-micro text-primary dark:text-primary-light hover:underline shrink-0"
+            className="inline-flex items-center gap-1 min-h-[44px] text-micro text-primary dark:text-primary-light hover:underline shrink-0"
           >
             {t("lesson.openInReader")}
             <span aria-hidden="true">{isAr ? "←" : "→"}</span>
