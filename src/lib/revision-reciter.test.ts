@@ -4,9 +4,9 @@ import { DEFAULT_SETTINGS } from "@/lib/storage";
 import { resolveRevisionReciter } from "@/lib/revision-reciter";
 
 // The single `revisionReciter ?? reciter` derivation the four revision surfaces
-// (wired in 12-04) consume. Pure: it reads only two already-sanitized settings
+// consume. Pure: it reads only two already-sanitized settings
 // fields, so a valid stored value can only be a known reciter id.
-describe("resolveRevisionReciter: revisionReciter ?? reciter (PROG-02)", () => {
+describe("resolveRevisionReciter: revisionReciter ?? reciter", () => {
   const withReciters = (reciter: string, revisionReciter?: string): UserSettings => ({
     ...DEFAULT_SETTINGS,
     reciter,
