@@ -541,8 +541,8 @@ export interface TajweedProgress {
   // set. A single plan at a time; tracked from lastRead.page. Cleared by reset.
   khatmah?: KhatmahPlan | null;
   // A small bounded record of memorization milestones the learner generated a
-  // certificate for (one per juz or the khatmah). The image is NEVER stored
-  // (EDGE_CASES_V2 line 50), only this record. Additive optional for lossless
+  // certificate for (one per juz or the khatmah). The image is NEVER stored,
+  // only this record. Additive optional for lossless
   // migration; deduped per milestone and capped by the storage sanitizer.
   certificates?: CertificateRecord[];
   // Whether the first-launch onboarding has been shown and dismissed. Cleared by
@@ -602,7 +602,7 @@ export interface VerseLocation {
 
 // A small bounded record that the learner reached (and generated a certificate
 // for) a memorization milestone. The certificate image is rendered and
-// downloaded on-device and is NEVER stored (EDGE_CASES_V2 line 50); only this
+// downloaded on-device and is NEVER stored; only this
 // record persists, so the count grows by at most one per milestone. `ref` is the
 // juz number (1..30) for a juz milestone, null for the whole-Quran khatmah.
 export interface CertificateRecord {
