@@ -1,6 +1,6 @@
 // The local revision reminder's fire-decision plus the two browser-capability
-// detectors it depends on (REV-04). Pure of app state: shouldNotify takes plain
-// booleans and a count in and returns a boolean, so REV-04's whole gating truth
+// detectors it depends on. Pure of app state: shouldNotify takes plain
+// booleans and a count in and returns a boolean, so the whole gating truth
 // table is unit-testable without a real Notification object. The two detectors
 // are SSR-safe window reads mirroring reduced-motion.ts — false with no window,
 // so a server render never throws. No React / next / storage imports, so this
