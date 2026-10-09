@@ -56,13 +56,13 @@ export function useMemorizationReviews() {
       if (!prev) recordNewVerseIntroduced();
       // Every revision grade (any of the four recall drills route through this
       // one path) marks today as revised for the memorization revision streak
-      // (STAT-03). Unconditional, not gated on `!prev`: re-grading an
+      // Unconditional, not gated on `!prev`: re-grading an
       // already-introduced verse still counts as revising today. The storage
       // helper is idempotent per local day, so a second grade the same day is a
       // no-op. SM-2 grading and the memorizationReviews write above are untouched.
       updateMemorizationStreak();
       // The session-journal revision tally rides here beside the streak
-      // (EXAM-03): a separate `sessionJournal` side effect that increments
+      // as a separate `sessionJournal` side effect that increments
       // today's `revised` count. Also unconditional and once per grade, so any
       // of the four recall drills tallies the day's revision. Independent of the
       // streak (neither reads the other) and, like the streak, leaves the SM-2
@@ -99,7 +99,7 @@ export function useMemorizationReviews() {
   // Computes the full (uncapped) due set via the same getDueFromUniverse, then
   // hands it to the pure composeDailyQueue with the introduced-today counter and
   // the newVerseCap so only the NEW tail is capped (recent + consolidated stay
-  // uncapped, REV-02). Recomputes through the change bus because `reviews` is a
+  // uncapped). Recomputes through the change bus because `reviews` is a
   // dep and every recordReview write bumps the bus; the tracking counter is read
   // fresh (side-effect-free) each time so it reflects today's introductions.
   const composeToday = useCallback(
