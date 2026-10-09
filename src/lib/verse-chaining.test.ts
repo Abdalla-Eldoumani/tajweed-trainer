@@ -19,7 +19,7 @@ import {
 // verse-chaining exports (seams are never re-derived here); the JUZ_STARTS /
 // nextVerse / pageForJuz cross-checks come from the equally-real navigation
 // exports. The three terminal nulls (114:6, juz 30, page 604) are pinned so no
-// seam is ever fabricated for the last unit (Pitfall 1).
+// seam is ever fabricated for the last unit.
 
 describe("resolveVerseSeam - verse seams", () => {
   it("mid-surah: 2:5 -> 2:6", () => {
