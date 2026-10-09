@@ -56,7 +56,7 @@ interface MushafPageProps {
   // When true (the default), the verse currently being recited by a
   // segment-capable reciter gets the word-sync highlight (TajweedFollowText);
   // every other verse keeps the plain TajweedText. The reader toolbar toggle
-  // (Plan 04) threads this in so a learner can turn the highlight off; off
+  // threads this in so a learner can turn the highlight off; off
   // renders today's TajweedText for every verse.
   followAlong?: boolean;
   // Reveal-as-recited: when true, the verse being recited (with alignable
@@ -72,7 +72,7 @@ interface MushafPageProps {
   // nothing playing/selected focus mode dims nothing). VERSE-level and
   // segment-INDEPENDENT: it keys on the playing/selected verse, never the active
   // word index, so it works for every reciter and with audio paused. Fed by the
-  // reader toolbar toggle (Plan 04). In-session only.
+  // reader toolbar toggle. In-session only.
   focusMode?: boolean;
 }
 
@@ -232,7 +232,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                       // below so revealed words show. The hideText whole-verse blur
                       // stays on the element so that when segments do not align the
                       // layer adds no marker and the recall verse stays fully
-                      // blurred (the FOLLOW-05 fallback); the Reveal pill remains
+                      // blurred (the fallback); the Reveal pill remains
                       // the manual escape.
                       <TajweedFollowText
                         tajweedHtml={v.tajweedHtml}
