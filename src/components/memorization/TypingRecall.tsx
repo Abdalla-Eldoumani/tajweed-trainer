@@ -100,7 +100,7 @@ function PrefixReveal({
 }
 
 // The frozen per-verse snapshot captured once when the learner starts a drill.
-// realWords / realWordCount are the 06-02 end-marker-filtered word list — the
+// realWords / realWordCount are the end-marker-filtered word list, the
 // exact-match typing target (VerseWord.textUthmani carries tashkeel). tier decides
 // the reveal path. Mid-session memorization changes never re-seed this (mirrors
 // the other drills' snapshot-once invariant); the picker's effectiveKey fallback
@@ -122,12 +122,12 @@ type Feedback = "none" | "wrong" | "correct";
 
 // The typing-recall drill: the FOURTH keyboard drill on /progress. Pick a
 // memorized verse, then type its words one at a time from memory. Each submission
-// is checked by wordsMatch against the stored verified textUthmani — exact by
-// default, diacritic-insensitive when settings.diacriticInsensitive is on (TYPE-01
-// / TYPE-02). A match advances and grows the revealed prefix; a mismatch shows
+// is checked by wordsMatch against the stored verified textUthmani: exact by
+// default, diacritic-insensitive when settings.diacriticInsensitive is on. A
+// match advances and grows the revealed prefix; a mismatch shows
 // feedback and offers Retry or Reveal-this-word (both count as a mistake, neither
 // writes). At verse end the four SM-2 grade buttons record ONE recordReview per
-// verse (TYPE-03: the ONLY write; the comparison strips copies and no path
+// verse (the ONLY write; the comparison strips copies and no path
 // rewrites verse text). It reuses SegmentDrill's session skeleton verbatim — the
 // DrillSession snapshot, loadSeq guard, tier probe, PrefixReveal, the
 // rootRef.contains + INPUT/TEXTAREA keydown guard (grade phase ONLY), and the
@@ -197,7 +197,7 @@ export function TypingRecall() {
     setRevealed(false);
   }, []);
 
-  // Resolve the chosen verse's REAL word list (06-02 filtered) — the exact-match
+  // Resolve the chosen verse's REAL word list (end marker filtered), the exact-match
   // typing target — and its tajweed HTML (snapshot-first, else the cached surah
   // fetch) for the growing-prefix reveal, then snapshot them. No audio segments:
   // typing is compared against textUthmani, not word timing.
@@ -251,7 +251,7 @@ export function TypingRecall() {
     }
   }, [effectiveKey, verseMeta]);
 
-  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // The revision reciter: resolveRevisionReciter picks
   // settings.revisionReciter when set, else the browse settings.reciter. Passed as
   // opts.reciter so the typing drill's optional assist-play matches the other
   // revision surfaces; the browse reader keeps settings.reciter.
@@ -285,7 +285,7 @@ export function TypingRecall() {
 
   // Check the typed word against the stored verified textUthmani. Comparison-only:
   // wordsMatch strips COPIES; a mismatch shows feedback and records NOTHING (no
-  // storage write, no content rewrite — TYPE-03). A match advances the prefix.
+  // storage write, no content rewrite). A match advances the prefix.
   const check = useCallback(() => {
     if (!session) return;
     // A stray empty/whitespace submit (e.g. Enter on the auto-focused input) is a
@@ -321,7 +321,7 @@ export function TypingRecall() {
     setFeedback("none");
   }, []);
 
-  // The single end-of-verse grade (TYPE-03: the ONLY storage write in this
+  // The single end-of-verse grade (the ONLY storage write in this
   // component). Records ONCE through the shared memorizationReviews SM-2 keyspace,
   // then returns to the picker. No per-word grade; recall-scheduler UNCHANGED.
   const submitGrade = useCallback(
