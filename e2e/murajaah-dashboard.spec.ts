@@ -1,15 +1,15 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 import type { BrowserContext } from "@playwright/test";
 
-// E2E (REV-01/02/03/04): the daily-revision (murajaah) dashboard on /progress and
+// E2E: the daily-revision (murajaah) dashboard on /progress and
 // the honest on-open due card on the home page. The pure queue math and the
 // notification fire-decision are unit-tested (murajaah-queue.test.ts /
 // notification-gate.test.ts); these prove the learner-facing behavior end to end:
-//   - REV-03 the uncapped due count shows on open (dashboard + home);
-//   - REV-02 every due recent + consolidated verse is surfaced with no cap;
-//   - REV-01 the daily NEW cap (default 5) bounds only the new tail of the
+//   - the uncapped due count shows on open (dashboard + home);
+//   - every due recent + consolidated verse is surfaced with no cap;
+//   - the daily NEW cap (default 5) bounds only the new tail of the
 //     composed recall session — the count stays uncapped, the session does not;
-//   - REV-04 the due count + dashboard function with notification permission never
+//   - the due count + dashboard function with notification permission never
 //     granted (the default headless state) and no reminder toggle when uninstalled.
 //
 // A memorized verse with NO memorizationReviews entry is due immediately AND
@@ -28,8 +28,8 @@ const STORAGE_KEY = "tajweed-trainer-progress";
 // scripts run in add order, so it reads the base payload back out of localStorage
 // and augments it with the memorizationReviews entries and the daily-new tracking
 // counter. Every date is computed INSIDE the browser via toLocaleDateString(
-// "en-CA") so the seeded due dates line up with the app's own day boundary
-// (RESEARCH §6); a due entry's nextDueDate is five days in the past so it is
+// "en-CA") so the seeded due dates line up with the app's own day boundary.
+// A due entry's nextDueDate is five days in the past so it is
 // robustly due whatever the wall clock. A memorized verse absent from both lists
 // keeps no entry and so stays NEW and due immediately.
 async function seedReviewDates(
@@ -87,7 +87,7 @@ function dashboard(page: import("@playwright/test").Page) {
   return page.getByRole("heading", { name: "Today's revision" }).locator("xpath=..");
 }
 
-test("REV-03: the uncapped due count shows on open on the dashboard and the home card", async ({
+test("the uncapped due count shows on open on the dashboard and the home card", async ({
   page,
   context,
   consoleErrors,
@@ -112,14 +112,14 @@ test("REV-03: the uncapped due count shows on open on the dashboard and the home
   await expect(panel.getByRole("progressbar", { name: "Recent: 1" })).toBeVisible();
   await expect(panel.getByRole("progressbar", { name: "Consolidated: 1" })).toBeVisible();
 
-  // The home page surfaces the SAME uncapped due count on open (REV-03).
+  // The home page surfaces the SAME uncapped due count on open.
   await page.goto("/");
   await expect(page.getByText("3 verses due for revision")).toBeVisible();
 
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("REV-02: every due recent and consolidated verse is surfaced with no cap", async ({
+test("every due recent and consolidated verse is surfaced with no cap", async ({
   page,
   context,
   consoleErrors,
@@ -148,7 +148,7 @@ test("REV-02: every due recent and consolidated verse is surfaced with no cap", 
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("REV-01: the NEW tail caps at the default 5 in the composed recall session", async ({
+test("the NEW tail caps at the default 5 in the composed recall session", async ({
   page,
   context,
   consoleErrors,
@@ -165,7 +165,7 @@ test("REV-01: the NEW tail caps at the default 5 in the composed recall session"
   // The dashboard shows the honest uncapped due count (7) ...
   await expect(panel.locator("span.text-red-600")).toHaveText("7");
   await expect(panel.getByRole("progressbar", { name: "New: 7" })).toBeVisible();
-  // ... but only 5 are admitted to today's session (REV-01 caps the NEW tail) ...
+  // ... but only 5 are admitted to today's session (caps the NEW tail) ...
   await expect(panel.getByText("Introducing 5 new today")).toBeVisible();
   await expect(panel.getByText("0 of 5 new introduced today")).toBeVisible();
 
@@ -187,7 +187,7 @@ test("REV-01: the NEW tail caps at the default 5 in the composed recall session"
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("REV-01: when the daily new cap is spent, the CTA does not dead-end on an empty session", async ({
+test("when the daily new cap is spent, the CTA does not dead-end on an empty session", async ({
   page,
   context,
   consoleErrors,
@@ -205,7 +205,7 @@ test("REV-01: when the daily new cap is spent, the CTA does not dead-end on an e
   await page.goto("/progress");
 
   const panel = dashboard(page);
-  // The honest due total is still uncapped (REV-02) ...
+  // The honest due total is still uncapped ...
   await expect(panel.locator("span.text-red-600")).toHaveText("8");
   // ... but nothing new is admitted today, so there is no actionable session ...
   await expect(panel.getByText("Introducing 0 new today")).toBeVisible();
@@ -222,7 +222,7 @@ test("REV-01: when the daily new cap is spent, the CTA does not dead-end on an e
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("REV-04: the due count and dashboard work with notification permission never granted", async ({
+test("the due count and dashboard work with notification permission never granted", async ({
   page,
   context,
   consoleErrors,
@@ -241,7 +241,7 @@ test("REV-04: the due count and dashboard work with notification permission neve
   );
   expect(permission).not.toBe("granted");
 
-  // The due count and the full dashboard still render regardless (REV-04).
+  // The due count and the full dashboard still render regardless.
   const panel = dashboard(page);
   await expect(panel.getByRole("heading", { name: "Today's revision" })).toBeVisible();
   await expect(panel.locator("span.text-red-600")).toHaveText("3");
