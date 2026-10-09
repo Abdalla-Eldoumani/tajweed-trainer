@@ -2,16 +2,16 @@ import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fix
 import type { BrowserContext, Locator, Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 
-// E2E (EXAM-01/02/03): the three Phase-11 memorization surfaces on /progress,
+// E2E: the three memorization surfaces on /progress,
 // proven end to end against the real prod build.
-//   - EXAM-01 (Test A) the tikrar rep counter: a session's reps ADD to a seeded
+//   - (Test A) the tikrar rep counter: a session's reps ADD to a seeded
 //     prior-day total (across-days) and the cumulative total PERSISTS across a
 //     reload — proving reps accumulate on the verse's running total, not reset.
-//   - EXAM-02 (Test B) the timed no-peek exam over a chosen scope: the verse text
+//   - (Test B) the timed no-peek exam over a chosen scope: the verse text
 //     is HIDDEN until the learner self-marks (no-peek), and a KNOWN mix (2 of 3
 //     recalled) logs the EXACT computed percent (67%), shown in the summary and
 //     the recent-attempts list, and persisted in examLog across a reload.
-//   - EXAM-03 (Test C) the session journal: setting goals then doing a memorize
+//   - (Test C) the session journal: setting goals then doing a memorize
 //     (bulk-mark) and a recall grade climbs the memorized/revised tallies LIVE,
 //     and the journal rides the exported backup (present in localStorage and in
 //     the actual Settings Export download JSON).
@@ -19,7 +19,7 @@ import { readFileSync } from "node:fs";
 // The storage math (logTikrarReps cumulative, logExamResult cap/percent,
 // sanitizeSessionJournal + the memorize-add / revise tallies + export round-trip)
 // is unit-tested in storage.test.ts; this spec proves the learner-facing behavior
-// and that the 11-02 recordReview -> recordJournalRevision fan-out shows up in the
+// and that the recordReview -> recordJournalRevision fan-out shows up in the
 // journal. Every date is computed INSIDE the browser via toLocaleDateString(
 // "en-CA") so a seed lines up with the app's own local-day boundary (mirrors
 // memorization-strength.spec / murajaah-dashboard.spec). Verses seeded for the
@@ -45,7 +45,7 @@ function today(page: Page): Promise<string> {
 // raw reload/goto would wipe what the app just persisted. Snapshot the live
 // progress and append an init script restoring it; context init scripts run in
 // add order, so this one runs AFTER the seed and wins — the reload then
-// faithfully preserves the app's writes. (The BLIND-04 spec uses this idiom.)
+// faithfully preserves the app's writes. (The spec uses this idiom.)
 async function preserveAcrossNavigation(page: Page, context: BrowserContext): Promise<void> {
   const persisted = await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY);
   await context.addInitScript(
@@ -64,7 +64,7 @@ async function runningTotal(region: Locator): Promise<number> {
   return m ? Number(m[1]) : NaN;
 }
 
-test("EXAM-01: a tikrar session's reps add to a seeded prior-day total and persist across a reload", async ({
+test("a tikrar session's reps add to a seeded prior-day total and persist across a reload", async ({
   page,
   context,
   consoleErrors,
@@ -138,7 +138,7 @@ test("EXAM-01: a tikrar session's reps add to a seeded prior-day total and persi
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("EXAM-02: a timed no-peek exam hides the verse until self-marked and logs the exact percent", async ({
+test("a timed no-peek exam hides the verse until self-marked and logs the exact percent", async ({
   page,
   context,
   consoleErrors,
@@ -201,7 +201,7 @@ test("EXAM-02: a timed no-peek exam hides the verse until self-marked and logs t
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("EXAM-03: the journal shows today's goals and tallies and rides the exported backup", async ({
+test("the journal shows today's goals and tallies and rides the exported backup", async ({
   page,
   context,
   consoleErrors,
@@ -229,7 +229,7 @@ test("EXAM-03: the journal shows today's goals and tallies and rides the exporte
   await page.getByRole("button", { name: "Mark 4 verses" }).click();
   await expect(journal.getByText("Today: 4/5 memorized, 0/3 revised")).toBeVisible();
 
-  // Run one recall grade. recordReview fans out to recordJournalRevision (11-02),
+  // Run one recall grade. recordReview fans out to recordJournalRevision,
   // so the journal's revised tally climbs by one — the silent side effect made
   // visible.
   await page.getByRole("button", { name: "Start Review" }).click();
