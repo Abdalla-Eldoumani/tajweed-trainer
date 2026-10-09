@@ -1087,7 +1087,7 @@ export function VerseOverlay({
           pointer-events still key on `open`. Fades at the short motion duration. */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity [transition-duration:var(--motion-short)] motion-reduce:transition-none",
+          "fixed inset-0 z-[60] bg-black/60 transition-opacity [transition-duration:var(--motion-short)] motion-reduce:transition-none",
           entered ? "opacity-100" : "opacity-0",
           open ? "" : "pointer-events-none",
         )}
