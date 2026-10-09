@@ -58,9 +58,8 @@ const RecitationCompare = dynamic(
   { ssr: false, loading: () => <LazyLine /> },
 );
 
-// Per-verse repeat options for the stepper, lifted with MultiVerseControls from
-// PlaybackSurface. "Off" (count 0/1) plays each verse once; the rest mirror the
-// study UI's 2/3/5/10 set. Wired to usePlayer.setRepeatOne.
+// Per-verse repeat options for the stepper. "Off" (count 0/1) plays each verse
+// once; the rest mirror the study UI's 2/3/5/10 set. Wired to usePlayer.setRepeatOne.
 const REPEAT_OPTIONS = [0, 2, 3, 5, 10] as const;
 
 // Inter-verse gap presets in seconds (NOT a free slider). Wired to
@@ -80,8 +79,7 @@ const MAX_VISIBLE_CHIPS = 30;
 
 // Past this many pixels of downward drag on the sheet's grab handle, a release
 // dismisses the sheet (a smaller movement is treated as a tap that toggles the
-// height); an upward drag past it expands from peek. Ported verbatim from the
-// retired PlaybackSurface bottom sheet so the gesture feels identical.
+// height); an upward drag past it expands from peek.
 const SWIPE_CLOSE_THRESHOLD = 64;
 
 // Action-row glyphs, copied from the reading-depth panel header and the playback
@@ -125,8 +123,8 @@ const CloseIcon = () => (
   </svg>
 );
 
-// Transport glyphs, lifted from PlaybackSurface so the overlay's prev/play/next
-// row reads in the same visual language as the rest of the player.
+// Transport glyphs for the prev/play/next row, in the same visual language as
+// the rest of the player.
 const PrevIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M6 5h2v14H6z" />
@@ -164,17 +162,11 @@ const LoadingIcon = () => (
   </svg>
 );
 
-// --- Lifted from PlaybackSurface (the docked panel's shared sub-parts) --------
-// These move here verbatim from PlaybackSurface so the overlay carries the same
-// selection + transport content without forking the logic. They command the one
-// player store (usePlayer) and the one selection source (useVerseSelection);
-// they construct no <audio>. The docked-panel chrome (SidePanel, BottomSheet,
-// the collapse rail, the matchMedia switch, the player-position offset math) is
-// deliberately NOT lifted: that is the retired docked/sheet presentation.
+// --- Selection and transport sub-parts ---------------------------------------
+// They command the one player store (usePlayer) and the one selection source
+// (useVerseSelection); they construct no <audio>.
 
-// The reciter readout + "Change reciter" settings link that used to sit above the
-// transport was retired: OverlayInlineControls now shows the current
-// reciter and changes it in place, so the link is no longer the way to do it. The
+// OverlayInlineControls shows the current reciter and changes it in place. The
 // ErrorLine below keeps its own settings link as an error-recovery affordance.
 
 // Transport row at 44px targets. Commands store actions only. The play/pause
@@ -647,7 +639,7 @@ function SubVerseLoopControl({ surah, ayah }: { surah: number; ayah: number }) {
     const bounds = rangeBounds(segments, from, to);
     if (!bounds) return;
     // Reuse the existing repeat count from the store (the whole-verse repeat
-    // stepper), defaulting to 3 passes when repeat is off, per the plan.
+    // stepper), defaulting to 3 passes when repeat is off.
     const count = usePlayer.getState().repeatOne || 3;
     usePlayer.getState().setSubVerseLoop(bounds.startMs, bounds.endMs, count);
     setWordRange(surah, ayah, from, to);
@@ -799,10 +791,9 @@ function ReadingDepthSection({
   );
 }
 
-// One focused surface for a single verse, opened over a dimmed, inert page. It
-// replaces the page-shrinking docked panel as the primary verse interaction on a
-// pointer device: tapping a verse opens this, and everything the learner can do
-// to that verse lives here instead of as inline buttons on the page.
+// One focused surface for a single verse, opened over a dimmed, inert page.
+// Tapping a verse opens this, and everything the learner can do to that verse
+// lives here instead of as inline buttons on the page.
 //
 // The mechanics (portal to body, inert when closed, ref-counted body-scroll
 // lock, opener focus capture/restore, Tab trap, Escape + scrim-tap + explicit
@@ -878,9 +869,9 @@ export function VerseOverlay({
   const isSheet = isDesktop === false;
 
   // Sheet height: peek shows the compact top, expanded the full body. The
-  // overlay opens already expanded (a verse tap is a deliberate open, unlike
-  // PlaybackSurface which opened in peek), but the peek/expanded split is kept so
-  // an upward drag still expands and the handle tap still toggles the height.
+  // overlay opens already expanded (a verse tap is a deliberate open), but the
+  // peek/expanded split is kept so an upward drag still expands and the handle
+  // tap still toggles the height.
   const [sheetState, setSheetState] = useState<"peek" | "expanded">("expanded");
   const expanded = sheetState === "expanded";
   // Pointer-drag bookkeeping for the grab handle (start Y + running delta).
@@ -892,7 +883,7 @@ export function VerseOverlay({
     if (open) setSheetState("expanded");
   }, [open]);
 
-  // The sheet's bottom offset in CSS pixels, ported from PlaybackSurface: it
+  // The sheet's bottom offset in CSS pixels: it
   // reserves the tab-bar strip only in peek below 768px (sheetBottomOffset); when
   // the keyboard is up it rides the visual viewport so the focused note field
   // stays above the keyboard inset. Recomputed on window resize/orientationchange
@@ -923,11 +914,10 @@ export function VerseOverlay({
     };
   }, [open, expanded]);
 
-  // Grab-handle drag, ported from PlaybackSurface with one adaptation: a
-  // swipe-down past the threshold calls the overlay's onClose (close the overlay,
-  // KEEP audio playing and the verse visible), NEVER the player's stop(). An
-  // upward drag past the threshold expands; a small movement is a tap that
-  // toggles peek<->expanded.
+  // Grab-handle drag: a swipe-down past the threshold calls the overlay's
+  // onClose (close the overlay, KEEP audio playing and the verse visible), NEVER
+  // the player's stop(). An upward drag past the threshold expands; a small
+  // movement is a tap that toggles peek<->expanded.
   const onHandlePointerDown = (e: React.PointerEvent) => {
     dragRef.current = { startY: e.clientY, delta: 0 };
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
@@ -1139,8 +1129,8 @@ export function VerseOverlay({
             isSheet
               ? // Bottom sheet: full width, top corners rounded, capped height with
                 // internal scroll so the verse it concerns stays visible above it
-                // and long verses stay reachable. z-[60] matches the shared scrim
-                // (NOT PlaybackSurface's z-40). safe-bottom reserves the home-bar.
+                // and long verses stay reachable. z-[60] matches the shared scrim.
+                // safe-bottom reserves the home-bar.
                 // Height follows peek/expanded so the handle's toggle/drag is real:
                 // expanded fills toward 80vh, peek shrinks back so more of the verse
                 // shows above. Never full-height in either state.
@@ -1289,9 +1279,8 @@ export function VerseOverlay({
           {/* Playback + selection: the transport (prev / play / next) and the
               multi-verse controls (range picker when nothing is selected;
               summary + capped chips + repeat stepper + loop toggle + gap presets
-              + play-selection + clear once a selection exists). All lifted from
-              PlaybackSurface; all command the one store + selection source, no
-              second <audio>. The reciter / speed / translation-source controls
+              + play-selection + clear once a selection exists). All command the
+              one store + selection source, no second <audio>. The reciter / speed / translation-source controls
               sit in their own section below. */}
           {valid && (
             <section
