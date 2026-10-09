@@ -18,10 +18,10 @@ const ZERO_ENTRY = { memorizeGoal: 0, reviseGoal: 0, memorized: 0, revised: 0 };
 const FIELD_CLASS =
   "w-20 text-sm bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px] tabular-nums";
 
-// The per-day session journal (EXAM-03): set today's memorize/revise goals and
+// The per-day session journal: set today's memorize/revise goals and
 // watch today's memorized/revised tallies climb toward them. Reads today's entry
 // through the useProgress change-bus snapshot so it re-renders live as the
-// memorize-add tally (11-01) and the revise tally (11-02) accrue. Writes goals
+// memorize-add tally and the revise tally accrue. Writes goals
 // through setJournalGoals (SET semantics; a re-save overwrites). "Rides the
 // backup" by living on TajweedProgress — no separate export path. Renders no
 // verse text (the learner's own counts only), so no TajweedText / dangerous HTML.
