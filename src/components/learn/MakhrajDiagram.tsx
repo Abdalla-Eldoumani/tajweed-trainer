@@ -9,11 +9,11 @@ interface MakhrajDiagramProps {
 }
 
 const REGIONS = [
-  { id: "al-jawf", label: "Al-Jawf", labelAr: "الجوف", description: "Empty Space / Oral Cavity", y: 45, x: 50 },
-  { id: "al-halq", label: "Al-Halq", labelAr: "الحلق", description: "The Throat", y: 70, x: 35 },
-  { id: "al-lisan", label: "Al-Lisan", labelAr: "اللسان", description: "The Tongue", y: 40, x: 45 },
-  { id: "ash-shafataan", label: "Ash-Shafataan", labelAr: "الشفتان", description: "The Two Lips", y: 30, x: 15 },
-  { id: "al-khayshoom", label: "Al-Khayshoom", labelAr: "الخيشوم", description: "The Nasal Cavity", y: 15, x: 40 },
+  { id: "al-jawf", label: "Al-Jawf", labelAr: "الجوف", description: "Empty Space / Oral Cavity", y: 42, x: 50 },
+  { id: "al-halq", label: "Al-Halq", labelAr: "الحلق", description: "The Throat", y: 72, x: 62 },
+  { id: "al-lisan", label: "Al-Lisan", labelAr: "اللسان", description: "The Tongue", y: 58, x: 38 },
+  { id: "ash-shafataan", label: "Ash-Shafataan", labelAr: "الشفتان", description: "The Two Lips", y: 45, x: 16 },
+  { id: "al-khayshoom", label: "Al-Khayshoom", labelAr: "الخيشوم", description: "The Nasal Cavity", y: 22, x: 38 },
 ];
 
 export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagramProps) {
@@ -22,7 +22,7 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
   return (
     <div className="relative w-full max-w-md mx-auto">
       {/* Decorative visual layer; the labelled button grid below is the
-          accessible control, so the svg circles are mouse affordances only. */}
+          accessible control, so the svg markers are mouse affordances only. */}
       <svg viewBox="0 0 100 100" className="w-full h-auto" aria-hidden="true">
         {/* Head outline - simplified cross-section */}
         <path
@@ -48,31 +48,33 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
           const isHovered = hoveredRegion === region.id;
 
           return (
-            <g key={region.id}>
+            <g
+              key={region.id}
+              className="cursor-pointer"
+              onClick={() => onRegionSelect?.(region.id)}
+              onMouseEnter={() => setHoveredRegion(region.id)}
+              onMouseLeave={() => setHoveredRegion(null)}
+            >
               <circle
                 cx={region.x}
                 cy={region.y}
-                r={isSelected || isHovered ? 8 : 6}
+                r={isSelected || isHovered ? 3.2 : 2.4}
                 className={cn(
-                  "cursor-pointer transition-all",
+                  "transition-all",
                   isSelected
                     ? "fill-primary/30 stroke-primary dark:fill-primary-light/30 dark:stroke-primary-light"
                     : isHovered
                     ? "fill-primary/10 stroke-primary/60"
-                    : "fill-bg-subtle/50 stroke-border dark:fill-bg-subtle-dark/50"
+                    : "fill-gold/40 stroke-gold-deep"
                 )}
-                strokeWidth={isSelected ? "1" : "0.5"}
-                onClick={() => onRegionSelect?.(region.id)}
-                onMouseEnter={() => setHoveredRegion(region.id)}
-                onMouseLeave={() => setHoveredRegion(null)}
+                strokeWidth={isSelected ? "0.8" : "0.5"}
               />
               <text
-                x={region.x}
-                y={region.y + 0.8}
-                textAnchor="middle"
-                className="text-[3px] fill-current font-medium pointer-events-none select-none"
+                x={region.x + 4.5}
+                y={region.y + 1.2}
+                className="text-[3.4px] fill-current font-medium select-none"
               >
-                {region.label.split(" ")[0]}
+                {region.label}
               </text>
             </g>
           );
