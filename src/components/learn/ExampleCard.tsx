@@ -34,7 +34,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
   return (
     <QuranFrame size="sm">
       <div className="space-y-3">
-        <div className="text-center overflow-x-auto">
+        <div className="text-center">
           {snapshot?.tajweedHtml ? (
             <TajweedText tajweedHtml={snapshot.tajweedHtml} size="lg" explainRules />
           ) : (
@@ -68,7 +68,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
           <AudioPlayer surah={example.surah} ayah={example.ayah} compact />
         </div>
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <Badge color={color}>{ruleApplied}</Badge>
           <Link
             href={`/mushaf/page/${pageForVerse(example.surah, example.ayah)}?v=${example.surah}:${example.ayah}`}
