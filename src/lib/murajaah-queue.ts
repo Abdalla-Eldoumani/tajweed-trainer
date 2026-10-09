@@ -9,8 +9,8 @@
 // types-only) — never spaced-repetition.ts / storage.ts, which would pull the
 // storage graph and break this lib's purity.
 //
-// REV-01: the daily NEW-verse cap bounds ONLY the new tail of the session.
-// REV-02: every due recent + consolidated verse is always surfaced, uncapped.
+// the daily NEW-verse cap bounds ONLY the new tail of the session.
+// every due recent + consolidated verse is always surfaced, uncapped.
 // dueTotal is the honest uncapped due count regardless of the cap. Deterministic:
 // no wall clock, no randomness; order preserves dueKeys order within each class.
 
@@ -36,13 +36,13 @@ export function classifyVerse(state: Sm2State | undefined): VerseClass {
 export interface DailyQueue {
   order: string[]; // recent (all) then consolidated (all) then the capped new tail
   counts: { new: number; recent: number; consolidated: number }; // per-class due totals (uncapped)
-  dueTotal: number; // dueKeys.length — the honest uncapped due count (REV-02)
+  dueTotal: number; // dueKeys.length — the honest uncapped due count
   newDue: number; // count of due NEW verses (uncapped)
-  newAllowed: number; // NEW verses admitted to the session today (REV-01 cap)
+  newAllowed: number; // NEW verses admitted to the session today (cap)
 }
 
 // Shape today's session from the full due set. `dueKeys` is ALL due verseKeys
-// (uncapped, REV-02); the caller computes it (via getDueFromUniverse) and passes
+// (uncapped); the caller computes it (via getDueFromUniverse) and passes
 // it in so this lib never re-derives the due rule. One O(n) pass classifies each
 // key via reviews[key] and partitions into recent / consolidated / new arrays,
 // each preserving dueKeys order. newAllowed = min(newDue, max(0, cap -
