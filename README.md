@@ -2,7 +2,7 @@
 
 A bilingual (English / Arabic) web app for learning Tajweed, the rules of proper Quran recitation. It pairs nine color-coded lesson modules and practice quizzes with a full 604-page Madinan Mushaf reader, where tapping a verse opens a focused overlay for playback, memorization, notes, and meaning, and a follow-along highlights each word as it is recited. It ships in five art-directed manuscript themes and runs entirely in the browser: no account, no server, and offline as an installed app, with progress kept in `localStorage`.
 
-All recitation follows Hafs 'an 'Asim, the most widely used Qira'ah. Quranic text and audio come from established APIs; the rule explanations and examples come from JSON that is reviewed against primary sources before it is marked verified.
+The text, the color coding, and the per-verse recitation follow Hafs 'an 'Asim, the most widely used Qira'ah. Quranic text and audio come from established APIs; the rule explanations and examples come from JSON that is reviewed against primary sources before it is marked verified.
 
 ## How it stays accurate
 
@@ -10,7 +10,7 @@ Tajweed is an oral science traced through chains of recitation back to the Proph
 
 1. **No fabricated tajweed content.** Rules, letter classifications, and Quranic examples live in pre-reviewed JSON under `src/data/content/`, each example carrying a surah:ayah reference. The app renders this data and never generates, edits, paraphrases, translates, or classifies it. See [docs/content-schema.md](docs/content-schema.md) and [docs/content-audit.md](docs/content-audit.md).
 2. **Color-coded text comes from the API.** The Quran.com Foundation `text_uthmani_tajweed` field carries the full color markup, sanitized at the boundary and rendered as-is, never mixed with user text. See [docs/api-integrations.md](docs/api-integrations.md).
-3. **Hafs 'an 'Asim only.** No mixing of qira'aat; beat counts and letter sets follow Hafs.
+3. **Hafs 'an 'Asim for the text and the rules.** No mixing of qira'aat; beat counts and letter sets follow Hafs. The single Warsh recitation on the surah index is a separate listening option behind a disclaimer, and it never touches the Hafs text or the per-verse player.
 4. **When in doubt, omit.** It is better to fall back to English than to ship an unreviewed translation.
 
 The same rule is why per-letter tafkheem coloring is not shipped: the API emits no tafkheem class for those letters, and there is no verified per-letter dataset to drive it without the app classifying tajweed itself.
