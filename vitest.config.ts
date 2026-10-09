@@ -29,14 +29,13 @@ export default defineConfig({
         "src/lib/types.ts", // type-only, 0 executable lines
         "src/lib/quran-api.ts", // thin fetch/cache/retry network wrapper; behavior is covered by e2e
         "src/lib/motion.ts", // View Transitions API + DOM; behavior is covered by e2e
-        "src/lib/search.ts", // out-of-migration-scope peripheral, no dedicated test
-        "src/lib/question-pool.ts", // out-of-migration-scope peripheral, no dedicated test
-        "src/lib/practice-scores.ts", // out-of-migration-scope peripheral, no dedicated test
-        "src/lib/reading-resources.ts", // out-of-migration-scope peripheral, no dedicated test
+        "src/lib/search.ts", // peripheral, no dedicated test
+        "src/lib/practice-scores.ts", // peripheral, no dedicated test
+        "src/lib/reading-resources.ts", // peripheral, no dedicated test
         "**/*.test.ts",
       ],
       // Thresholds are set from the measured baseline (npm run coverage), not
-      // aspirational round numbers. The migrated suite measured, over the
+      // aspirational round numbers. The suite measured, over the
       // src/lib/** set: statements 69.79 / branches 65.04 / functions 72.44 /
       // lines 73.01. Global floors sit ~2 points below the measured aggregate;
       // the src/lib/** glob is a stricter floor that stays a point under the
