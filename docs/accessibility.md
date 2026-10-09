@@ -20,7 +20,7 @@ A statement of how the app supports assistive technology and varied input, writt
 
 ## Contrast and color
 
-- Text meets WCAG AA contrast in both light and dark themes. The tajweed letter colors carry a separate dark-mode value so coloring stays legible at night, and the verse-end numeral pill uses a theme-scoped color that clears AA on its own background in each theme.
+- Text meets WCAG AA contrast in all five themes (vellum, pearl, night, sepia, mihrab). The end-to-end axe scan covers the key routes in the default theme, so after any color change run the same scan with each theme and both languages selected. The tajweed letter colors carry a value per theme so coloring stays legible on every ground, and the verse-end numeral pill uses a theme-scoped color that clears AA on its own background in each theme.
 - Color is never the only signal. The tajweed coloring is supplementary to the text; lessons name every rule, and the tap-a-letter popover states the rule name alongside its color.
 
 ## Right-to-left and bilingual
@@ -29,7 +29,7 @@ A statement of how the app supports assistive technology and varied input, writt
 
 ## Touch
 
-- Interactive targets are sized for touch, and the controls that matter on a phone (verse taps, the playback sheet, navigation) are reachable without precise pointing.
+- Buttons, toolbar controls, settings rows, the mini player, and the reader's page buttons are at least 44 by 44 CSS pixels. Inline verse controls inside running text keep a smaller glyph with a 44 px tall hit area.
 
 ## Offline
 
