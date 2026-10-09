@@ -45,7 +45,7 @@ function versesForPage(page: number): string[] {
 
 type FreshnessBucket = "fresh" | "aging" | "overdue" | "unseen";
 
-// STAT-01 aggregate freshness for a scope. Unseen (memorized but never recalled)
+// aggregate freshness for a scope. Unseen (memorized but never recalled)
 // verses count as freshness 0, so a single fresh verse can never mask a scope
 // that is mostly unrecalled: `avgFreshness` is over the reviewed verses only, so
 // we scale it back down by the reviewed share of the memorized total. A scope
@@ -99,7 +99,7 @@ const FRESHNESS_LEGEND: ReadonlyArray<readonly [FreshnessBucket, string]> = [
   ["unseen", "bg-accent/25"],
 ];
 
-// STAT-01 freshness facet + STAT-02 surah/juz/page error heatmap. Reads the pure
+// freshness facet + surah/juz/page error heatmap. Reads the pure
 // `memorization-strength` lib over the memorized set and the reviews map; renders
 // only scope names, counts, and manuscript-palette colors — never verse text.
 export function MemorizationHeatmap() {
@@ -190,7 +190,7 @@ export function MemorizationHeatmap() {
     <div className="space-y-8">
       <SectionHeading as="h2">{t("strength.healthTitle")}</SectionHeading>
 
-      {/* FRESHNESS facet (STAT-01): a per-juz aging bar. Color is BUCKETED
+      {/* FRESHNESS facet: a per-juz aging bar. Color is BUCKETED
           (lapis -> gold -> ochre), width is the aggregate freshness, and a scope
           that has never been recalled reads a faint full ochre with a red count. */}
       <section aria-labelledby="strength-freshness">
@@ -249,7 +249,7 @@ export function MemorizationHeatmap() {
         </ul>
       </section>
 
-      {/* ERROR heatmap (STAT-02): the most-failed memorized scopes across juz,
+      {/* ERROR heatmap: the most-failed memorized scopes across juz,
           surah, AND page. Brighter ochre = more recall errors. Only scopes with
           errors show by default; the surah dimension can reveal every memorized
           surah. When nothing has been missed the calm note stands in. */}
