@@ -17,7 +17,7 @@ export function Header() {
         style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
         <div className="flex items-center justify-between px-4 h-14">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 min-h-[44px]">
             {/* Locale-dependent wordmark: the server renders the English default
                 while the client's first render reads the stored language. Suppress
                 on this one text node so React patches it without a hydration warning. */}
