@@ -105,7 +105,7 @@ function ChunkReveal({
 }
 
 // The frozen per-verse snapshot captured once when the learner starts a drill.
-// realWords / realWordCount are the 06-02 end-marker-filtered word list; chunks is
+// realWords / realWordCount are the end-marker-filtered word list; chunks is
 // the pure split; tier decides the reveal path; segments/aligned decide per-chunk
 // audio. Mid-session memorization changes never re-seed this (mirrors the other
 // drills' snapshot-once invariant).
@@ -126,16 +126,16 @@ interface DrillSession {
 
 type Phase = "picker" | "loading" | "error" | "drill" | "chain" | "grade";
 
-// The segment drill: pick a memorized verse, split it into word-boundary chunks
-// (06-01), drill each chunk in isolation via a window reveal over the verse's
-// tajweed HTML (SEG-01), chain the chunks with a growing-prefix cue (SEG-02), and
+// The segment drill: pick a memorized verse, split it into word-boundary chunks,
+// drill each chunk in isolation via a window reveal over the verse's
+// tajweed HTML, chain the chunks with a growing-prefix cue, and
 // optionally record ONE whole-verse SM-2 grade at the end. It mirrors
 // ChainingDrill's session mechanics verbatim — the mounted gate, the
 // revealRef→continueRef focus loop, and the root-scoped keys-1-4 grade listener —
 // so with three keyboard drills on /progress a keypress grades only the focused
 // one. Distinct segment.* labels + role="region" keep its locators unambiguous.
-// A one-word / short verse shows a "no split" message and presents the verse whole
-// (SEG-03); per-chunk audio uses rangeBounds + setSubVerseLoop only when the
+// A one-word / short verse shows a "no split" message and presents the verse whole;
+// per-chunk audio uses rangeBounds + setSubVerseLoop only when the
 // segments align, else it degrades to whole-verse playVerse — bounds are never
 // fabricated. No storage-schema change: the one optional grade writes through the
 // existing memorizationReviews keyspace.
@@ -182,7 +182,7 @@ export function SegmentDrill() {
     ? selectedKey
     : memorizedList[0] ?? "";
 
-  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // The revision reciter: resolveRevisionReciter picks
   // settings.revisionReciter when set, else the browse settings.reciter. It feeds
   // BOTH fetchSegments (so the word-level timings come from the reciter that will
   // actually play) and playChunk's opts.reciter, so the segment drill can never
@@ -199,9 +199,9 @@ export function SegmentDrill() {
     setRevealed(false);
   }, []);
 
-  // Resolve the chosen verse's REAL word list (06-02 filtered), its tajweed HTML
+  // Resolve the chosen verse's REAL word list (end marker filtered), its tajweed HTML
   // (snapshot-first, else the cached surah fetch), and its audio segments, then
-  // snapshot the split. A single-chunk verse (SEG-03) skips straight to the
+  // snapshot the split. A single-chunk verse skips straight to the
   // optional grade, presenting the verse whole with the no-split note.
   const start = useCallback(async () => {
     const key = effectiveKey;
@@ -261,7 +261,7 @@ export function SegmentDrill() {
   // Per-chunk audio: play the verse (loading it as the queue head — Pitfall 6) and,
   // when the segments align, loop just the chunk's [startMs..endMs] once via the
   // ONE player engine. When null/misaligned there are no bounds, so this is a plain
-  // whole-verse play (SEG-03 degrade) — bounds are never fabricated. No second
+  // whole-verse play (degrade) — bounds are never fabricated. No second
   // <audio> element.
   const playChunk = useCallback(
     (startWordIdx: number, endWordIdx: number) => {
