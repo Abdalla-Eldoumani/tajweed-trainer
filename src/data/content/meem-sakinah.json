@@ -36,14 +36,14 @@
         {
           "arabic": "هُمْ بِهِ",
           "transliteration": "hum bihi",
-          "translation": "they in it",
-          "surah": 78,
-          "ayah": 3,
-          "surah_name_en": "An-Naba",
+          "translation": "",
+          "surah": 16,
+          "ayah": 100,
+          "surah_name_en": "An-Nahl",
           "highlight_word": "هُمْ بِهِ",
           "rule_applied": "Ikhfaa Shafawi — Meem Sakinah followed by Baa (ب)",
           "rule_applied_ar": "إخفاء شفوي — ميم ساكنة قبل الباء (ب)",
-          "surah_name_ar": "النبإ"
+          "surah_name_ar": "النحل"
         }
       ],
       "common_mistakes_ar": [
@@ -71,25 +71,13 @@
           "arabic": "لَهُمْ مَا يَشَاءُونَ",
           "transliteration": "lahum maa yashaa'oon",
           "translation": "for them whatever they wish",
-          "surah": 16,
-          "ayah": 31,
-          "surah_name_en": "An-Nahl",
+          "surah": 39,
+          "ayah": 34,
+          "surah_name_en": "Az-Zumar",
           "highlight_word": "لَهُمْ مَا",
           "rule_applied": "Idgham Shafawi — Meem Sakinah followed by Meem (م)",
           "rule_applied_ar": "إدغام شفوي — ميم ساكنة قبل ميم (م)",
-          "surah_name_ar": "النحل"
-        },
-        {
-          "arabic": "أَنَّهُمْ مُّبْتَلُونَ",
-          "transliteration": "annahum mubtaloon",
-          "translation": "that they are being tested",
-          "surah": 68,
-          "ayah": 17,
-          "surah_name_en": "Al-Qalam",
-          "highlight_word": "أَنَّهُمْ مُّبْتَلُونَ",
-          "rule_applied": "Idgham Shafawi — Meem Sakinah followed by Meem (م)",
-          "rule_applied_ar": "إدغام شفوي — ميم ساكنة قبل ميم (م)",
-          "surah_name_ar": "القلم"
+          "surah_name_ar": "الزمر"
         }
       ],
       "common_mistakes_ar": [
