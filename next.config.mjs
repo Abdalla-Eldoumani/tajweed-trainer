@@ -82,7 +82,7 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  // Without this, next dev writes an AGENTS.md and CLAUDE.md block into the repo.
+  // Without this, next dev writes agent rule files into the repo root.
   agentRules: false,
   async headers() {
     return [
