@@ -1,5 +1,5 @@
-// Pure freshness + error-strength derivations of the already-persisted Sm2State
-// (STAT-01 freshness, STAT-02 errors). This is point-in-time MATH ONLY: it reads
+// Pure freshness + error-strength derivations of the already-persisted Sm2State.
+// This is point-in-time MATH ONLY: it reads
 // an existing memorizationReviews entry and never writes, so there is no new
 // storage — every value here is derived from what gradeRecall already durably
 // wrote (lastReviewedDate / nextDueDate for freshness; lapses / timesSeen /
@@ -32,7 +32,7 @@ function daysBetween(a: Date, b: Date): number {
   return Math.round((bMidnight - aMidnight) / 86_400_000);
 }
 
-// STAT-01. Freshness in [0, 1]: 1 right after a successful recall, decaying
+// Freshness in [0, 1]: 1 right after a successful recall, decaying
 // linearly toward 0 as the next-due date approaches, and 0 at/after nextDueDate
 // (overdue reads red). A verse with no entry OR no lastReviewedDate has never been
 // recalled, so it returns the 0 sentinel ("needs recall" == red); pair it with
@@ -65,7 +65,7 @@ export function hasBeenRecalled(state: Sm2State | undefined): boolean {
   return Boolean(state && state.lastReviewedDate);
 }
 
-// STAT-02. The durable miss signal for a verse: how many times a recall failed
+// The durable miss signal for a verse: how many times a recall failed
 // (lapses, the q<3 count gradeRecall maintains) plus any recorded misses not
 // already counted as lapses (timesSeen - timesCorrect, floored at 0). A verse with
 // no entry scores 0. Recall reveals/peeks are deliberately NOT part of this: the
@@ -83,7 +83,7 @@ export function hasError(state: Sm2State | undefined): boolean {
 
 // Whether a verse has consolidated to the SM-2 mature line (its pure base interval
 // has grown to >= MASTERED_INTERVAL_DAYS, the same threshold classifyVerse /
-// getMemorizationReviewStats use for "mastered"). Exposed here so the Wave-2/3
+// getMemorizationReviewStats use for "mastered"). Exposed here so the
 // heatmap can flag consolidated cells from this single strength-math source rather
 // than re-deriving the mature-line check inline.
 export function isMastered(state: Sm2State | undefined): boolean {
