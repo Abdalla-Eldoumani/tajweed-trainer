@@ -52,7 +52,7 @@ async function main() {
   });
 
   // 1. Reset progress, confirm only Makharij is unlocked on /learn.
-  // Locked ModuleCards wrap content in a div.cursor-not-allowed (line 87 of ModuleCard.tsx).
+  // Locked ModuleCards wrap their content in a div.cursor-not-allowed.
   await page.goto(`${BASE}/learn`, { waitUntil: "networkidle" });
   await setProgress(page, {});
   await page.reload({ waitUntil: "networkidle" });
