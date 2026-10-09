@@ -179,7 +179,7 @@ export function MushafBookmarks({ surahs }: MushafBookmarksProps) {
         dir="auto"
         placeholder={t("bookmarks.filterPlaceholder")}
         aria-label={t("bookmarks.filterLabel")}
-        className="w-full rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+        className="w-full min-h-[44px] rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
       />
 
       {filtered.length === 0 ? (
@@ -226,7 +226,7 @@ export function MushafBookmarks({ surahs }: MushafBookmarksProps) {
 
                   <Link
                     href={`/mushaf/page/${pageForVerse(sv, av)}?v=${vk}`}
-                    className="inline-flex items-center gap-1 text-sm text-primary dark:text-primary-light hover:underline underline-offset-2"
+                    className="inline-flex items-center gap-1 min-h-[44px] text-sm text-primary dark:text-primary-light hover:underline underline-offset-2"
                   >
                     {t("mushaf.bookmarkOpenVerse")}
                     <span aria-hidden="true">{isAr ? "←" : "→"}</span>
