@@ -20,7 +20,7 @@
 //   4. no new flag / no version bump — the tour touches no localStorage directly
 //      and gates on no tour-version token; auto-show keys only on the existing
 //      boolean flag.
-//   5. copy from i18n only (CONST-01) — the tour renders its strings through t(
+//   5. copy from i18n only — the tour renders its strings through t(
 //      and holds no Arabic-script literal at all (a hardcoded verse/hadith would
 //      trip this; the Arabic lives in i18n.ts, never the component).
 //   6. mechanics retained (regression lock) — createPortal, inert,
@@ -118,7 +118,7 @@ record(
     : `noLocalStorage=${noLocalStorage} noVersionGate=${noVersionGate}`,
 );
 
-// --- 5. copy from i18n only (CONST-01) ----------------------------------------
+// --- 5. copy from i18n only ----------------------------------------
 // The tour renders its strings through t( and holds no Arabic-script literal at
 // all — a hardcoded verse/hadith would trip the zero-scan. The Arabic copy lives
 // in i18n.ts (checked separately below), never in the component.
@@ -126,7 +126,7 @@ const rendersViaT = /\bt\(/.test(tour);
 const noArabicLiteral = !/[؀-ۿ]/.test(tour);
 const copyFromI18n = rendersViaT && noArabicLiteral;
 record(
-  "the tour renders copy through t() and holds no hardcoded Arabic/verse text (CONST-01)",
+  "the tour renders copy through t() and holds no hardcoded Arabic/verse text",
   copyFromI18n,
   copyFromI18n
     ? "t() used, zero Arabic-script literals in the component"
