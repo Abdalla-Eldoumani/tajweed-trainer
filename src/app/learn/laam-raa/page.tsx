@@ -78,7 +78,7 @@ export default function LaamRaaPage() {
 
             {st.mnemonic_ar && (
               <div className="mt-2 p-2 rounded bg-accent/10">
-                <p className="text-micro font-semibold text-text-muted">{t("module.mnemonic")}:</p>
+                <p className="text-micro font-semibold">{t("module.mnemonic")}:</p>
                 <ArabicText text={st.mnemonic_ar} size="sm" />
               </div>
             )}
