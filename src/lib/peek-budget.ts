@@ -1,4 +1,4 @@
-// Pure peek-budget arithmetic for the blind-recall review (BLIND-03). The single
+// Pure peek-budget arithmetic for the blind-recall review. The single
 // source of how many hints remain in a review session and whether a given verse
 // has been peeked. This is count math over the persisted `sessionPeekUsed` map
 // only: it imports nothing from React/next/`@/lib/storage`/DOM, so it is safe on
@@ -7,8 +7,7 @@
 //
 // `sessionPeekUsed` is a Record<verseKey, count> ("surah:ayah" -> times peeked,
 // count >= 1). The consumer never imports storage; it passes the read map in.
-// Signatures are map-FIRST (the CONTEXT lock), which differs from the RESEARCH
-// prose example that wrote the budget first — honor the lock.
+// Signatures are map-first: peekRemaining(map, budget) and wasPeeked(map, key).
 
 // How many peeks remain: the budget minus the number of DISTINCT peeked verses
 // (Object.keys length), NOT the sum of counts, floored at 0. Counting distinct
