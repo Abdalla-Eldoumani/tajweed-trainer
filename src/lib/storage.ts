@@ -250,7 +250,7 @@ function sanitizeSettings(input: unknown): UserSettings {
     tafsirId: pickNumber(input.tafsirId, DEFAULT_SETTINGS.tafsirId ?? 169, 1, 1_000_000),
     showWordByWord:
       typeof input.showWordByWord === "boolean" ? input.showWordByWord : (DEFAULT_SETTINGS.showWordByWord ?? false),
-    // Comparison-only typing-recall toggle (TYPE-02). Boolean coercion mirroring
+    // Comparison-only typing-recall toggle. Boolean coercion mirroring
     // showWordByWord: a tampered non-boolean falls back to the default false so a
     // restored backup can never carry a non-boolean here. Changes nothing stored.
     diacriticInsensitive:
@@ -268,29 +268,29 @@ function sanitizeSettings(input: unknown): UserSettings {
     // reject, so a tampered 5 becomes 2.0. This scales only the memorized-verse
     // due date, never the SM-2 easeFactor.
     reviewIntervalModifier: clampNumber(input.reviewIntervalModifier, 1.0, 0.5, 2.0),
-    // Per-session recall peek/hint budget (BLIND-03). Clamp to [1, 10] rather
+    // Per-session recall peek/hint budget. Clamp to [1, 10] rather
     // than reject, so a tampered 999 pins to 10 (mirroring reviewIntervalModifier);
     // Math.round because peeks are whole. A non-number / NaN / absent value falls
     // back to 3. Kept by resetProgress (it preserves settings).
     peekBudget: Math.round(clampNumber(input.peekBudget, 3, 1, 10)),
-    // Daily NEW-verse cap for the murajaah revision queue (REV-01). Clamp to
+    // Daily NEW-verse cap for the murajaah revision queue. Clamp to
     // [1, 10] rather than reject, so a tampered 999 pins to 10 (verbatim the
     // peekBudget pattern); Math.round because a cap is a whole verse count. A
     // non-number / NaN / absent value falls back to 5. Kept by resetProgress.
     newVerseCap: Math.round(clampNumber(input.newVerseCap, 5, 1, 10)),
-    // Opt-in local revision reminder flag (REV-04). Boolean coercion mirroring
+    // Opt-in local revision reminder flag. Boolean coercion mirroring
     // showWordByWord / diacriticInsensitive: a tampered non-boolean falls back to
     // the default false so a restored backup can never carry a non-boolean here.
     revisionRemindersEnabled:
       typeof input.revisionRemindersEnabled === "boolean"
         ? input.revisionRemindersEnabled
         : (DEFAULT_SETTINGS.revisionRemindersEnabled ?? false),
-    // Default per-session tikrar rep target (EXAM-01). Clamp to [1, 20] rather
+    // Default per-session tikrar rep target. Clamp to [1, 20] rather
     // than reject, so a tampered 999 pins to 20 (verbatim the peekBudget /
     // newVerseCap pattern); Math.round because a rep target is whole. A
     // non-number / NaN / absent value falls back to 5. Kept by resetProgress.
     tikrarTarget: Math.round(clampNumber(input.tikrarTarget, 5, 1, 20)),
-    // Revision-only reciter (PROG-02). UNSET is meaningful (= "same as the browse
+    // Revision-only reciter. UNSET is meaningful (= "same as the browse
     // reciter"), so an absent value stays undefined rather than becoming a
     // default. A known id or legacy alias normalizes via resolveReciterIdOrNull;
     // anything invalid/tampered drops to undefined so resolveRevisionReciter falls
@@ -348,7 +348,7 @@ function sanitizeReviews(input: unknown): Record<string, ReviewState> {
 }
 
 // Bounds one SM-2 recall state at the trust boundary. Every field is clamped,
-// not rejected wholesale (T-04-04): a tampered easeFactor / intervalDays pins to
+// not rejected wholesale: a tampered easeFactor / intervalDays pins to
 // its nearest bound rather than nuking the whole entry. Mirrors sanitizeReview's
 // style. easeFactor uses the algorithm's [MIN_EF, MAX_EF] band (a non-number ->
 // the neutral INITIAL_EF); intervalDays is a whole day count in [1, MAX_INTERVAL]
@@ -382,9 +382,9 @@ function sanitizeSm2(input: Record<string, unknown>): Sm2State {
 // verseKey check + cap:
 //   - a numeric easeFactor => already SM-2: pass through sanitizeSm2 (idempotent).
 //   - else a valid Leitner box => bound the preserved fields via sanitizeReview
-//     first (so the migration cannot become a bounds-bypass, T-04-06), then
+//     first (so the migration cannot become a bounds-bypass), then
 //     migrateLeitnerToSm2 (nextDueDate copied verbatim; box-5 does not regress).
-//   - else drop it (a memorized verse with no entry is due anyway, SCHED-03).
+//   - else drop it (a memorized verse with no entry is due anyway).
 // A tampered entry carrying BOTH easeFactor and box takes the SM-2 branch. A
 // stored object without this field reads back as {} (lossless migration).
 function sanitizeMemorizationReviews(input: unknown): Record<string, Sm2State> {
@@ -558,7 +558,7 @@ function sanitizeTikrarLog(input: unknown): Record<string, { reps: number; lastR
   return out;
 }
 
-// The per-day session journal (EXAM-03), a keyed map like sanitizeSessionPeeks so
+// The per-day session journal, a keyed map like sanitizeSessionPeeks so
 // the dangerous prototype keys are skipped — but the KEY here must be a real
 // YYYY-MM-DD day (isValidIsoDate), not a verseKey. Each value's four counters are
 // clamped to [0, 100000]; a non-object value is dropped; the map is a rolling
@@ -719,7 +719,7 @@ function sanitizeCertificates(input: unknown): CertificateRecord[] {
   return out;
 }
 
-// The timed no-peek exam attempt log (EXAM-02). Mirrors sanitizeCertificates
+// The timed no-peek exam attempt log. Mirrors sanitizeCertificates
 // (the capped-object-array precedent): each entry must be an object; its fields
 // are coerced (scope trimmed and <=80 chars, dateIso a real ISO date else "",
 // percent rounded and clamped to [0,100], total clamped to [0,6236]); a non-object
@@ -764,7 +764,7 @@ function sanitizeLastReadBySurah(input: unknown): Record<number, VerseLocation> 
   return out;
 }
 
-// The daily NEW-verse introduction counter (REV-01). A fixed-shape object, NOT a
+// The daily NEW-verse introduction counter. A fixed-shape object, NOT a
 // keyed map, so there is NO attacker-controlled key and NO prototype-pollution-key
 // guard is needed. `date` is bounded to a <=10-char string (a YYYY-MM-DD day, or
 // "" when never set); `count` is clamped to [0, 100000] like the other counters.
@@ -777,7 +777,7 @@ function sanitizeDailyNewVerses(input: unknown): { date: string; count: number }
   };
 }
 
-// The memorization REVISION streak (STAT-03). A fixed-shape object, NOT a keyed
+// The memorization REVISION streak. A fixed-shape object, NOT a keyed
 // map, so there is NO attacker-controlled key and NO prototype-pollution-key
 // guard is needed (mirrors sanitizeDailyNewVerses and the `streaks` sanitizer).
 // Both counters are clamped to [0, 100000] like the practice streak; a tampered
@@ -1038,7 +1038,7 @@ export function setMemorizationReview(verseKey: string, state: Sm2State): void {
   setProgress(progress);
 }
 
-// How many NEW memorized verses were introduced to revision today (REV-01), for
+// How many NEW memorized verses were introduced to revision today, for
 // the murajaah queue's daily cap. SIDE-EFFECT-FREE by design: when the stored
 // day is stale it returns 0 WITHOUT writing or emitting the change bus, so a pure
 // render read never triggers a re-render loop. Do NOT "helpfully" add a reset
@@ -1051,7 +1051,7 @@ export function getNewVersesIntroducedToday(now: Date = new Date()): number {
   return t.date === now.toLocaleDateString("en-CA") ? t.count : 0;
 }
 
-// Record that one NEW memorized verse entered revision today (REV-01). One write,
+// Record that one NEW memorized verse entered revision today. One write,
 // one emitProgressChanged(): a same-day call increments the count, a stale (or
 // empty) stored day rolls to { date: today, count: 1 }. `now` is injected so
 // tests control the clock. Day boundary is the app-wide en-CA local date.
@@ -1268,7 +1268,7 @@ export function toggleMemorizedVerse(verseKey: string): boolean {
     nowMemorized = true;
   }
   progress.memorizedVerses = Array.from(set);
-  // Count a real ADD toward today's journal `memorized` tally (EXAM-03), never an
+  // Count a real ADD toward today's journal `memorized` tally, never an
   // unmark, folded into this same single write + emit.
   if (nowMemorized) {
     bumpJournalEntry(progress, new Date().toLocaleDateString("en-CA"), { memorized: 1 });
@@ -1301,7 +1301,7 @@ export function setMemorizedVerses(verseKeys: string[], memorize: boolean): numb
   }
   progress.memorizedVerses = Array.from(set);
   // On the mark path only, count the net-added verses toward today's journal
-  // `memorized` tally (EXAM-03): re-marking an already-memorized verse adds 0, and
+  // `memorized` tally: re-marking an already-memorized verse adds 0, and
   // the unmark path never touches the journal. Folded into this same single write.
   if (memorize) {
     const netAdded = progress.memorizedVerses.length - beforeSize;
@@ -1420,7 +1420,7 @@ export function updateStreak(): void {
   setProgress(progress);
 }
 
-// The memorization REVISION streak roller (STAT-03). A structural mirror of
+// The memorization REVISION streak roller. A structural mirror of
 // updateStreak, but over `memorizationStreak` / `lastRevisionDate` — it NEVER
 // reads or writes `progress.streaks`, so grading a recall and finishing a
 // practice quiz keep two independent streaks. Idempotent per local day: the
@@ -1455,7 +1455,7 @@ export function updateMemorizationStreak(now: Date = new Date()): void {
   setProgress(progress);
 }
 
-// Log tikrar (repetition) reps for a verse (EXAM-01), ADDING to the cumulative
+// Log tikrar (repetition) reps for a verse, ADDING to the cumulative
 // running total and stamping today's en-CA date. The per-call reps is clamped to
 // [0, MAX_TIKRAR_PER_CALL] and a call that rounds to 0 is a no-op. A brand-new
 // verseKey once the map is already at MAX_MEMORIZED is a no-op (mirrors
@@ -1478,7 +1478,7 @@ export function logTikrarReps(verseKey: string, reps: number): void {
   setProgress(progress);
 }
 
-// Log one timed no-peek exam attempt (EXAM-02). The new entry is PREPENDED so the
+// Log one timed no-peek exam attempt. The new entry is PREPENDED so the
 // log stays most-recent-first, then trimmed to MAX_EXAM_LOG (the oldest attempt
 // ages off the tail). scope is trimmed and <=80 chars; dateIso is today's en-CA
 // date; percent is rounded and clamped to [0,100]; total is clamped to [0,6236].
@@ -1529,7 +1529,7 @@ function bumpJournalEntry(
   progress.sessionJournal = map;
 }
 
-// Set (upsert) a day's memorize/revise goals (EXAM-03). Goals are SET, not added
+// Set (upsert) a day's memorize/revise goals. Goals are SET, not added
 // (a second call overwrites), rounded and clamped to [0, 100000]. A tampered /
 // non-ISO dateIso is rejected. One write, one emit. Never SM-2.
 export function setJournalGoals(
