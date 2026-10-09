@@ -25,7 +25,8 @@
 //      ink on every utility surface, not just a light/dark pair. Reverting any
 //      to a static hex collapses sepia/mihrab into night (and pearl into
 //      vellum) and is a FAIL. The opacity-bearing accent/fill tokens (primary,
-//      gold, accent, bg-subtle, text-muted) stay hex by design, not checked.
+//      gold, accent) stay hex by design, not checked. bg-subtle reads the
+//      per-theme --bg-subtle-rgb channels, which must equal --bg-subtle.
 //
 // Mirrors scripts/verify-tajweed-colors.mjs in shape: same record/warn
 // reporting, the same hexToRgb/relLum/contrast helpers, process.exit(1) on FAIL.
@@ -57,7 +58,7 @@ const DARK_GROUNDS = new Set(["night", "sepia", "mihrab"]);
 
 // The non-tajweed app token set every theme must define.
 const REQUIRED_APP_TOKENS = [
-  "--primary", "--accent", "--bg", "--bg-card", "--bg-subtle", "--text",
+  "--primary", "--accent", "--bg", "--bg-card", "--bg-subtle", "--bg-subtle-rgb", "--text",
   "--text-muted", "--gold", "--gold-hairline", "--border", "--margin-bg",
   "--margin-card", "--margin-text", "--margin-muted", "--margin-line",
   "--margin-active", "--margin-active-bg", "--margin-hover-bg",
@@ -292,7 +293,8 @@ record(
 // pair on every Tailwind-utility surface (the dominant surfaces). Both the base
 // and the -dark token must resolve to the same per-theme variable so `dark:`
 // utilities re-assert the themed value. Accent/fill tokens that take opacity
-// modifiers stay hex by design and are intentionally not checked here.
+// modifiers stay hex by design and are intentionally not checked here;
+// bg-subtle is checked below because its rgb channels are duplicated per theme.
 const tw = readFileSync(join(root, "tailwind.config.ts"), "utf8");
 const groundTokenChecks = [
   [/\bbg:\s*\{[^}]*\bDEFAULT:\s*"var\(--bg\)"/, "bg.DEFAULT -> var(--bg)"],
@@ -308,6 +310,22 @@ record(
   groundMisses.length === 0,
   groundMisses.length ? `not var-driven: ${groundMisses.join(", ")}` : "bg, bg-card, text resolve to var(--*)",
 );
+
+// bg-subtle takes an alpha, so it reads rgb channels instead of the hex. Each
+// block's channels must equal its own hex or the two drift apart silently.
+const subtleTokens = /\bsubtle:\s*"rgb\(var\(--bg-subtle-rgb\) \/ <alpha-value>\)"/.test(tw)
+  && /"subtle-dark":\s*"rgb\(var\(--bg-subtle-rgb\) \/ <alpha-value>\)"/.test(tw);
+record("bg.subtle tokens read --bg-subtle-rgb", subtleTokens);
+const subtleDrift = [...THEMES.map((t) => [t, themeBlock(t)]), [":root", leadBlock(":root")], [".dark", leadBlock("\\.dark")]]
+  .filter(([, block]) => {
+    const hex = varHex(block, "--bg-subtle");
+    const ch = (block.match(/--bg-subtle-rgb:\s*(\d+) (\d+) (\d+)/) || []).slice(1).map(Number);
+    if (!hex || ch.length !== 3) return true;
+    const want = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    return want.some((v, i) => v !== ch[i]);
+  })
+  .map(([name]) => name);
+record("--bg-subtle-rgb equals --bg-subtle in every block", subtleDrift.length === 0, subtleDrift.join(", "));
 
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} checks passed, ${warnings.length} warnings.`);
