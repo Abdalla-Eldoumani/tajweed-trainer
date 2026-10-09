@@ -4,8 +4,8 @@
 // verse of the next unit). The three seam types — verse, juz, page — are the
 // SAME relation, head = nextVerse(tail); they differ only in which verses count
 // as a tail (every verse / the last verse of a juz / the last verse of a page).
-// A unit with no next unit returns null so no seam is ever fabricated (CHAIN-03:
-// 114:6, juz 30, and page 604 all resolve to null). Grading of the resolved head
+// A unit with no next unit returns null so no seam is ever fabricated (114:6,
+// juz 30, and page 604 all resolve to null). Grading of the resolved head
 // is done by the drill through the existing SM-2 scheduler, never here.
 //
 // Pure and server-safe: imports only navigation (seam-math base), memorization-
