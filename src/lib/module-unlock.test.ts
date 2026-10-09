@@ -13,7 +13,7 @@ import type { LearningModule, ModuleProgress, TajweedProgress } from "@/lib/type
 // only exercised by the browser verify:ui script before; this closes the
 // coverage gap. The gating truth (quiz-based unlock) is asserted against the REAL
 // exports over the shipped learning-path.json - the rule is never reimplemented
-// here. Landmine (RESEARCH row 28): lessons alone must NEVER unlock; only a
+// here. Landmine: lessons alone must NEVER unlock; only a
 // quizScores entry on the prerequisite does; the mixed/review keys never unlock.
 
 const allModules = learningPath.modules as LearningModule[];
