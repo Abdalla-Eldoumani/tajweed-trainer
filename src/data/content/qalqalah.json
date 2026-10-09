@@ -64,13 +64,13 @@
           "arabic": "يَجْعَلُونَ",
           "transliteration": "yaj'aloon",
           "translation": "they make",
-          "surah": 6,
-          "ayah": 136,
-          "surah_name_en": "Al-An'am",
+          "surah": 2,
+          "ayah": 19,
+          "surah_name_en": "Al-Baqarah",
           "highlight_word": "يَجْعَلُونَ",
           "rule_applied": "Qalqalah Sughra — Jeem (ج) with sukoon in middle of word",
           "rule_applied_ar": "قلقلة صغرى — جيم (ج) ساكنة في وسط الكلمة",
-          "surah_name_ar": "الأنعام"
+          "surah_name_ar": "البقرة"
         }
       ],
       "verified": true
