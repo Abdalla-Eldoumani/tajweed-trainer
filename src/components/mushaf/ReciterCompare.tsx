@@ -76,7 +76,7 @@ export function ReciterCompare({ surah, ayah, surahName }: ReciterCompareProps) 
   };
 
   const playPill =
-    "inline-flex items-center justify-center gap-1.5 min-h-[36px] px-3 rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light hover:bg-primary/20 text-xs font-medium transition-colors motion-reduce:transition-none";
+    "inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3 rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light hover:bg-primary/20 text-xs font-medium transition-colors motion-reduce:transition-none";
 
   return (
     <div className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 p-3">
@@ -92,11 +92,11 @@ export function ReciterCompare({ surah, ayah, surahName }: ReciterCompareProps) 
 
       {open && (
         <div className="mt-3 space-y-3">
-          <p className="text-[11px] text-text-muted">{t("recompare.hint")}</p>
+          <p className="text-[0.8125rem] text-text-muted">{t("recompare.hint")}</p>
           <div className="grid grid-cols-2 gap-3">
             {/* Reciter A */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] text-text-muted">{t("recompare.reciterA")}</span>
+              <span className="text-[0.8125rem] text-text-muted">{t("recompare.reciterA")}</span>
               <ReciterSelect value={reciterA} onChange={setReciterA} label={t("recompare.reciterA")} />
               <button type="button" onClick={() => play(reciterA)} aria-label={t("recompare.playA")} className={playPill}>
                 <PlayIcon />
@@ -105,7 +105,7 @@ export function ReciterCompare({ surah, ayah, surahName }: ReciterCompareProps) 
             </div>
             {/* Reciter B */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] text-text-muted">{t("recompare.reciterB")}</span>
+              <span className="text-[0.8125rem] text-text-muted">{t("recompare.reciterB")}</span>
               <ReciterSelect value={reciterB} onChange={setReciterB} label={t("recompare.reciterB")} />
               <button type="button" onClick={() => play(reciterB)} aria-label={t("recompare.playB")} className={playPill}>
                 <PlayIcon />
