@@ -302,8 +302,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.reciterStyleMurattal": { en: "Murattal", ar: "مرتّل" },
   "settings.reciterNoResults": { en: "No reciters match your search.", ar: "لا يوجد قارئ مطابق لبحثك." },
   "settings.recitersHelp": {
-    en: "Reciters come from the Quran.com recitations, grouped by style. Al-Husary (muallim) is the default for teaching-style learning.",
-    ar: "القرّاء من تسجيلات Quran.com، مرتّبون حسب النمط. والحصري (المعلّم) هو الافتراضي للتعلّم على نمط المعلّم.",
+    en: "Reciters come from Quran.com and EveryAyah recordings, grouped by style. Al-Husary (muallim) is the default for teaching-style learning.",
+    ar: "القرّاء من تسجيلات Quran.com وEveryAyah، مرتّبون حسب النمط. والحصري (المعلّم) هو الافتراضي للتعلّم على نمط المعلّم.",
   },
   "settings.revisionReciter": { en: "Revision reciter", ar: "قارئ المراجعة" },
   "settings.revisionReciterHelp": {
