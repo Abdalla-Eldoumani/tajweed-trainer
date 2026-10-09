@@ -1,16 +1,16 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 import type { BrowserContext } from "@playwright/test";
 
-// E2E (STAT-01/02/03): the /progress "memorization health" section and the
+// E2E: the /progress "memorization health" section and the
 // revision-streak counter, proven end to end against seeded Sm2State.
-//   - STAT-01 freshness: a verse recalled today reads FRESH while a verse whose
+//   - freshness: a verse recalled today reads FRESH while a verse whose
 //     next-due date has passed reads OVERDUE, so the two juz cells sit on opposite
 //     sides of the aging scale (distinct accessible names, distinct color buckets).
-//   - STAT-02 error heatmap: verses with recorded lapses surface as high-error in
+//   - error heatmap: verses with recorded lapses surface as high-error in
 //     their juz, surah, AND page scopes, while a clean scope (never failed) does
 //     NOT — including a scope that is overdue but never lapsed, proving freshness
 //     and error are independent signals.
-//   - STAT-03 revision streak: the seeded memorizationStreak renders in a counter
+//   - revision streak: the seeded memorizationStreak renders in a counter
 //     whose title ("Revision streak") is DISTINCT from the practice streak
 //     ("Streak") and whose figures come from memorizationStreak, not progress.streaks.
 //
@@ -32,7 +32,7 @@ const MEMORIZED = ["1:1", "78:1", "2:255", "36:1"];
 // Seed the base memorized set, then layer the date-dependent Sm2State and the
 // revision streak in a SECOND init script (registered after seedProgress's, run in
 // add order) that computes every date in-browser so it matches the app's day
-// boundary (RESEARCH §5, T-10-12). errorScore(state) = lapses + max(0, timesSeen -
+// boundary. errorScore(state) = lapses + max(0, timesSeen -
 // timesCorrect); a due/overdue date is several days in the past so it is robustly
 // overdue whatever the wall clock.
 async function seedStrength(context: BrowserContext): Promise<void> {
@@ -78,14 +78,14 @@ async function seedStrength(context: BrowserContext): Promise<void> {
     };
 
     base.memorizationReviews = reviews;
-    // STAT-03: a distinct revision streak (never the practice streak). Values are
+    // a distinct revision streak (never the practice streak). Values are
     // picked so they cannot be confused with the practice streak (seeded to 0/0).
     base.memorizationStreak = { currentStreak: 4, longestStreak: 9, lastRevisionDate: today };
     window.localStorage.setItem(KEY, JSON.stringify(base));
   });
 }
 
-test("STAT-01: a freshly recalled scope reads FRESH and an overdue one reads OVERDUE", async ({
+test("a freshly recalled scope reads FRESH and an overdue one reads OVERDUE", async ({
   page,
   context,
   consoleErrors,
@@ -111,7 +111,7 @@ test("STAT-01: a freshly recalled scope reads FRESH and an overdue one reads OVE
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("STAT-02: the error heatmap surfaces lapsed verses by juz, surah, and page", async ({
+test("the error heatmap surfaces lapsed verses by juz, surah, and page", async ({
   page,
   context,
   consoleErrors,
@@ -168,7 +168,7 @@ test("STAT-02: the error heatmap surfaces lapsed verses by juz, surah, and page"
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("STAT-03: the revision streak renders its own figures, distinct from the practice streak", async ({
+test("the revision streak renders its own figures, distinct from the practice streak", async ({
   page,
   context,
   consoleErrors,
