@@ -17,7 +17,7 @@
 // Quranic text, and this lib holds no display strings: the component passes the
 // already-localized lines in. The ornament is re-derived trig (the 12-point star
 // from Ornament.tsx), not the SVG component and not traced Mushaf art.
-// EDGE_CASES_V2 line 50: the image blob is rendered and downloaded on-device and
+// The image blob is rendered and downloaded on-device and
 // is NEVER persisted; only a small completion record is stored (see storage.ts).
 
 import { countInScope, versesForJuz } from "./memorization-scope";
@@ -196,7 +196,7 @@ export function drawCertificate(
 
 // Export the rendered canvas as a PNG blob, in memory. The caller turns this
 // into an object URL, clicks a temporary download link, and revokes the URL;
-// nothing is ever written to storage (EDGE_CASES_V2 line 50). Resolves null if
+// nothing is ever written to storage. Resolves null if
 // the browser cannot produce a blob, which the caller surfaces quietly.
 export function certificateToBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
   return new Promise((resolve) => {
