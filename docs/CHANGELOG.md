@@ -2,9 +2,24 @@
 
 ## Unreleased
 
+### Corrected Qur'an references
+
+Every lesson example and quiz question was checked against api.quran.com, and the ones whose Arabic was not in the verse they cited were fixed.
+
+- Removed the idgham shafawi example "أَنَّهُمْ مُّبْتَلُونَ" (cited as 68:17) and its four questions. The phrase does not occur in the Qur'an.
+- "هُمْ بِهِ" now cites 16:100 instead of 78:3, which reads "هُمْ فِيهِ". Its gloss was written for 78:3 and was removed.
+- Other phrases now cite a verse that contains them: يَقُولُونَ 2:79 (was 2:8), آمَنُوا 2:9 (was 2:3), لَهُمْ مَا يَشَاءُونَ 39:34 (was 16:31), مِنْ أَجْرٍ 26:109 (was 36:21), سَمِيعٌۢ بَصِيرٌ 22:61 (was 17:1, which has no iqlab), يَجْعَلُونَ 2:19 (was 6:136), الْقُرْآنَ 4:82 (was 75:18), بِسْمِ اللَّهِ 1:1 (was 3:26), قَالَ اللَّهُ 3:55 (was 2:30).
+- الصَّاخَّةُ (80:33) carries the damma the verse has.
+- `verify-content.mjs` now fails when a question's Arabic is not in its cited verse.
+
 ### Fixed
 
+- **Quiz read-aloud skips Qur'anic words.** The read-aloud button no longer voices the vowelled Qur'anic words inside a prompt, since device voices misread them.
 - **Repetition counter counts the last listen.** In the tikrar (repetition) drill, an audio-led session that looped a verse N times counted only N−1 — the final listen ended the loop without registering. It now counts the full N. The manual count control was always accurate; this aligns the listen-along count with it.
+
+### Changed
+
+- **Next.js 16.4.0.** Picks up the framework's security fixes released this month. Vitest moves to 4.1.11.
 
 ## 2.2.1 — 2026-07-03
 
