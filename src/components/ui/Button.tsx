@@ -11,7 +11,7 @@ type ButtonBaseProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "aria-label
 
 // An icon-only button carries no text, so it MUST declare an accessible name.
 // The type splits the icon variant out and requires aria-label or
-// aria-labelledby; omitting both fails the build (DESIGN_SYSTEM section 6/9).
+// aria-labelledby; omitting both fails the build.
 type IconLabel =
   | { "aria-label": string; "aria-labelledby"?: string }
   | { "aria-labelledby": string; "aria-label"?: string };
