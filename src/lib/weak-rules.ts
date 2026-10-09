@@ -4,7 +4,7 @@ import type { TajweedProgress } from "./types";
 // attempted: the authored questions carry no rule id and their options are
 // factual answers, not rule names (question-pool sets rule_applied to the literal
 // option label), so deriving a rule from an option would fabricate a
-// classification (CONST-01). Each of the nine modules is a tajweed rule family,
+// classification. Each of the nine modules is a tajweed rule family,
 // so attributing misses to the module is honest and links cleanly to
 // /practice/[module]. This lib returns moduleId + counts only; it never holds a
 // display name (those come from verified nav-data, never authored here).
