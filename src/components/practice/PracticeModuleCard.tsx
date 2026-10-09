@@ -61,7 +61,7 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
   const card = (
       <Card hover={!locked} className={`relative h-full ${accentClasses} ${locked ? "opacity-60" : ""}`}>
         {badgeText && (
-          <span className="absolute top-3 end-3 text-[10px] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light">
+          <span className="absolute top-3 end-3 text-[0.75rem] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light">
             {badgeText}
           </span>
         )}
@@ -122,7 +122,7 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
           </div>
 
           {locked && (
-            <p className="text-[11px] text-text-muted">{t("practice.hub.lockedHint")}</p>
+            <p className="text-[0.8125rem] text-text-muted">{t("practice.hub.lockedHint")}</p>
           )}
         </div>
       </Card>
