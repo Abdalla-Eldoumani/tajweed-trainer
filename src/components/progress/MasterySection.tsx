@@ -64,13 +64,13 @@ export function MasterySection() {
                 className="flex items-center justify-between gap-3 py-1.5 border-b border-gold-light/30 dark:border-gold-dark/20 last:border-0"
               >
                 <span className="text-sm font-medium truncate min-w-0 flex-1">{moduleName(r.moduleId)}</span>
-                <div className="flex items-center gap-2 shrink-0 text-[11px] text-text-muted">
+                <div className="flex items-center gap-2 shrink-0 text-[0.8125rem] text-text-muted">
                   {r.bestScore !== null && (
                     <span>{t("mastery.best")} {num(r.bestScore)}%</span>
                   )}
                   {r.mastered > 0 && <span>{num(r.mastered)} {t("mastery.mastered")}</span>}
                   {r.due > 0 && <span className="text-accent">{num(r.due)} {t("mastery.due")}</span>}
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${LEVEL_TONE[r.level]}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-[0.75rem] font-medium ${LEVEL_TONE[r.level]}`}>
                     {t(`mastery.level.${r.level}`)}
                   </span>
                 </div>
