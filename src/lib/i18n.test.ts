@@ -27,11 +27,11 @@ const ONBOARDING_KEYS = [
   "settings.onboardingTourHelp",
 ];
 
-// The segment-drill keys (Phase 6). Same EN+AR parity assertion, plus a
+// The segment-drill keys. Same EN+AR parity assertion, plus a
 // distinctness check below. /progress now hosts FOUR keyboard drills (review,
-// chaining, segment, and the typing drill added in Phase 8), so the segment
+// chaining, segment, and the typing drill), so the segment
 // drill's title / start / reveal labels must differ from the chaining and
-// review drills or the four-drill e2e locators collide (RESEARCH Pitfall 4).
+// review drills or the four-drill e2e locators collide.
 const SEGMENT_KEYS = [
   "segment.title",
   "segment.description",
@@ -50,11 +50,11 @@ const SEGMENT_KEYS = [
   "segment.empty",
 ];
 
-// The typing-recall keys (Phase 8). Same EN+AR parity assertion, plus the
+// The typing-recall keys. Same EN+AR parity assertion, plus the
 // four-drill distinctness check below: the typing drill is the FOURTH keyboard
 // drill on /progress, so its title / start / reveal-word labels must differ
 // from the segment, chaining, and review drills (and mushaf.memorizeReveal) or
-// a /progress locator addresses the wrong drill (RESEARCH Pitfall 4). The two
+// a /progress locator addresses the wrong drill. The two
 // settings.diacriticInsensitive* keys are the paired toggle copy.
 const TYPING_KEYS = [
   "typing.title",
@@ -78,7 +78,7 @@ const TYPING_KEYS = [
 ];
 
 // The daily-revision (murajaah) dashboard, home due-card, local-reminder, and
-// paired settings keys (Phase 9). Same EN+AR parity assertion, plus the
+// paired settings keys. Same EN+AR parity assertion, plus the
 // distinctness check below: the dashboard's "begin revision" CTA is a fifth
 // start-like control on the /progress family, so it must read differently from
 // the four keyboard drills' start labels (review/chain/segment/typing) in BOTH
@@ -105,8 +105,8 @@ const MURAJAAH_KEYS = [
   "settings.revisionRemindersDenied",
 ];
 
-// The memorization-health keys (Phase 10): the freshness facet (STAT-01) and the
-// error heatmap (STAT-02) on /progress. Same EN+AR parity assertion, plus the
+// The memorization-health keys: the freshness facet and the
+// error heatmap on /progress. Same EN+AR parity assertion, plus the
 // distinctness check below: the heatmap's dimension labels (byJuz / bySurah) and
 // its show-all toggle must NOT collide with the MemorizationBreakdown's own
 // memorize.byJuz / memorize.bySurah / memorize.showAllSurahs — both render on the
@@ -131,7 +131,7 @@ const STRENGTH_HEATMAP_KEYS = [
   "heatmap.noErrors",
 ];
 
-// The revision-streak keys (Phase 10, STAT-03): the memorization revision-streak
+// The revision-streak keys: the memorization revision-streak
 // counter on /progress. Same EN+AR parity assertion, plus the distinctness check
 // below: its title MUST differ from practice.streak in BOTH locales, because the
 // practice StreakCounter and this revision counter both render streak figures on
@@ -144,12 +144,12 @@ const REVISION_STREAK_KEYS = [
   "strength.revisionStreakHelp",
 ];
 
-// The tikrar (repetition) rep-counter keys (Phase 11, EXAM-01). Same EN+AR
+// The tikrar (repetition) rep-counter keys. Same EN+AR
 // parity assertion, plus the six-surface distinctness check below: tikrar is the
 // SIXTH drill-like surface on /progress (review, chaining, segment, typing, the
 // murajaah dashboard CTA, and now tikrar), so its title / start / pickVerse
 // labels must differ from all five others in BOTH locales or a /progress
-// role/name locator addresses the wrong surface (RESEARCH Pitfall 4).
+// role/name locator addresses the wrong surface.
 const TIKRAR_KEYS = [
   "tikrar.title",
   "tikrar.description",
@@ -165,12 +165,12 @@ const TIKRAR_KEYS = [
   "tikrar.empty",
 ];
 
-// The timed no-peek exam keys (Phase 11, EXAM-02). Same EN+AR parity assertion,
+// The timed no-peek exam keys. Same EN+AR parity assertion,
 // plus the seven-surface distinctness check below: the exam is the SEVENTH
 // drill-like surface on /progress (review, chaining, segment, typing, tikrar, the
 // murajaah dashboard CTA, and now the exam), so its title / start / pickScope
 // (and reveal) labels must differ from all six others in BOTH locales or a
-// /progress role/name locator addresses the wrong surface (RESEARCH Pitfall 4).
+// /progress role/name locator addresses the wrong surface.
 const EXAM_KEYS = [
   "exam.title",
   "exam.description",
@@ -199,7 +199,7 @@ const EXAM_KEYS = [
   "exam.recentEmpty",
 ];
 
-// The per-day session-journal keys (Phase 11, EXAM-03). Same EN+AR parity
+// The per-day session-journal keys. Same EN+AR parity
 // assertion, plus the distinctness check below: the journal card renders on
 // /progress beside the revision-streak, memorization-health, tikrar, exam, and
 // khatmah sections, so its title must differ from every one of those section
@@ -217,7 +217,7 @@ const JOURNAL_KEYS = [
   "journal.noGoals",
 ];
 
-// The hizb & rub' coverage-ring keys (Phase 12, PROG-01). Same EN+AR parity
+// The hizb & rub' coverage-ring keys. Same EN+AR parity
 // assertion, plus the distinctness check below: the rings render on /progress in
 // the memorization section, so `hizb.title` (its region's accessible name) must
 // differ from every neighbouring section/drill title in BOTH locales, or a
@@ -231,7 +231,7 @@ const HIZB_KEYS = [
   "hizb.hideRub",
 ];
 
-// The revision-reciter settings keys (Phase 12, PROG-02): the revision-only
+// The revision-reciter settings keys: the revision-only
 // reciter selector distinct from the browse reciter. Same EN+AR parity assertion,
 // plus the distinctness check below: settings.revisionReciter is a SECOND reciter
 // control on the same /settings page as settings.reciter, so its heading must
@@ -269,7 +269,7 @@ describe("segment-drill i18n keys carry both en and ar", () => {
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
   });
 
-  // The three-drill locator guarantee (RESEARCH Pitfall 4): the segment drill's
+  // The three-drill locator guarantee: the segment drill's
   // section title, start control, and reveal control must be textually distinct
   // from the chaining and review drills' equivalents, in both locales, so a
   // Playwright role/name locator can address exactly one drill.
@@ -295,7 +295,7 @@ describe("typing-drill i18n keys carry both en and ar", () => {
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
   });
 
-  // The four-drill locator guarantee (RESEARCH Pitfall 4): the typing drill's
+  // The four-drill locator guarantee: the typing drill's
   // section title, start control, and reveal-word control must be textually
   // distinct from the segment, chaining, and review drills' equivalents (and the
   // free mushaf.memorizeReveal), in both locales, so a Playwright role/name
@@ -332,7 +332,7 @@ describe("murajaah dashboard + settings i18n keys carry both en and ar", () => {
   // spawning a second review instance, so it sits on /progress alongside all
   // four keyboard drills. Its label must be textually distinct from every
   // drill's start label in BOTH locales, or a role/name locator addresses the
-  // wrong control (RESEARCH Pitfall 4).
+  // wrong control.
   it("murajaah.beginRevision is distinct from all four drill start labels", () => {
     for (const lang of ["en", "ar"] as const) {
       expect(t("murajaah.beginRevision", lang)).not.toBe(t("review.startReview", lang));
@@ -357,7 +357,7 @@ describe("memorization-health i18n keys carry both en and ar", () => {
   // The heatmap's dimension labels and its show-all toggle sit on the same
   // /progress as the MemorizationBreakdown's own by-juz / by-surah / show-all
   // labels, so they must be textually distinct in BOTH locales — otherwise a
-  // Playwright role/name locator addresses the wrong section (RESEARCH Pitfall 4).
+  // Playwright role/name locator addresses the wrong section.
   it("heatmap.byJuz / bySurah / showAll are distinct from the breakdown's labels", () => {
     for (const lang of ["en", "ar"] as const) {
       expect(t("heatmap.byJuz", lang)).not.toBe(t("memorize.byJuz", lang));
@@ -378,7 +378,7 @@ describe("revision-streak i18n keys carry both en and ar", () => {
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
   });
 
-  // STAT-03 locator guarantee: the revision-streak counter and the practice
+  // locator guarantee: the revision-streak counter and the practice
   // StreakCounter both render streak figures on the /progress family, so the
   // revision counter's title MUST be textually distinct from practice.streak in
   // BOTH locales, or a role/name locator addresses the wrong streak card.
@@ -400,7 +400,7 @@ describe("tikrar rep-counter i18n keys carry both en and ar", () => {
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
   });
 
-  // The six-surface locator guarantee (RESEARCH Pitfall 4): the tikrar drill's
+  // The six-surface locator guarantee: the tikrar drill's
   // section title, start control, and verse picker must be textually distinct
   // from the five other drill-like /progress surfaces — the review
   // (memorize.reviewStart / review.startReview), chaining, segment, and typing
@@ -434,7 +434,7 @@ describe("timed exam i18n keys carry both en and ar", () => {
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
   });
 
-  // The seven-surface locator guarantee (RESEARCH Pitfall 4): the exam's section
+  // The seven-surface locator guarantee: the exam's section
   // title, start control, scope picker, and reveal control must be textually
   // distinct from the six other drill-like /progress surfaces — the review
   // (memorize.reviewStart / review.startReview), chaining, segment, typing, and
@@ -478,7 +478,7 @@ describe("session-journal i18n keys carry both en and ar", () => {
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
   });
 
-  // Region locator guarantee (RESEARCH Pitfall 4): the session journal renders on
+  // Region locator guarantee: the session journal renders on
   // /progress alongside the revision-streak, memorization-health, tikrar, exam,
   // and khatmah sections. Its title must be textually distinct from each of those
   // section titles in BOTH locales, or a role/name region locator addresses the
@@ -505,7 +505,7 @@ describe("hizb coverage-ring i18n keys carry both en and ar", () => {
     expect(ar, `${key} ar fell back to en`).not.toBe(en);
   });
 
-  // Region locator guarantee (RESEARCH Pitfall 4): the coverage-rings section
+  // Region locator guarantee: the coverage-rings section
   // renders on /progress in the memorization block. Its title is the region's
   // accessible name, so it must be textually distinct from every neighbouring
   // section/drill title in BOTH locales — the breakdown/review, the six other
