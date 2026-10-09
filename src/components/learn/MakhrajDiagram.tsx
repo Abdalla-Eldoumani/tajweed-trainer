@@ -39,7 +39,7 @@ export function MakhrajDiagram({ onRegionSelect, selectedRegion }: MakhrajDiagra
           fill="none"
           stroke="currentColor"
           strokeWidth="0.3"
-          className="text-text-muted/70"
+          className="text-text-muted opacity-70"
         />
 
         {/* Interactive regions */}
