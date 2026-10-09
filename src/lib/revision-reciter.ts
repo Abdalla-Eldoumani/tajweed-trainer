@@ -1,7 +1,7 @@
 import type { ReciterId, UserSettings } from "./types";
 
-// The ONE place the revision-reciter fallback lives (PROG-02). The four revision
-// / recall surfaces (wired in 12-04) all resolve through here so they can never
+// The ONE place the revision-reciter fallback lives. The four revision
+// / recall surfaces all resolve through here so they can never
 // diverge: an explicit `revisionReciter` overrides the browse reciter, and an
 // unset one (undefined) falls back to it. Both fields are already sanitized on
 // read (see storage.ts sanitizeSettings), so this can only emit a known reciter
