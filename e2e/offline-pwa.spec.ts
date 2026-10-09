@@ -1,7 +1,7 @@
 import { test, expect, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E-02: the production-only service worker and the PWA manifest. The prod
-// server under test is the only place these hold — PWARegister registers the
+// The production-only service worker and the PWA manifest. The prod
+// server under test is the only place these hold: PWARegister registers the
 // worker after the load event in prod builds only (a no-op under next dev), so
 // offline-shell resilience and a live serviceWorker.controller are meaningful
 // here and nowhere else.
