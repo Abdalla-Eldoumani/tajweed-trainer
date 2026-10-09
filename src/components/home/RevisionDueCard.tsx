@@ -8,7 +8,7 @@ import { useMemorizationReviews } from "@/hooks/useMemorizationReviews";
 import { useTranslation } from "@/lib/i18n";
 import { toArabicIndic } from "@/lib/utils";
 
-// The honest on-open revision card (REV-03): "N verses due for revision" linking
+// The honest on-open revision card: "N verses due for revision" linking
 // to /progress, where the full dashboard and the recall session live. It shows
 // the uncapped due total (the honest count) but renders ONLY when today's queue
 // has something actionable (order.length > 0), so it never nags about verses the
