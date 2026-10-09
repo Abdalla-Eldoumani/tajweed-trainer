@@ -118,7 +118,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "practice.correct": { en: "correct", ar: "إجابة صحيحة" },
   "practice.tryAgain": { en: "Try Again", ar: "حاول مجددا" },
   "practice.questionOf": { en: "Question {current} of {total}", ar: "السؤال {current} من {total}" },
-  "practice.identifyRule": { en: "What tajweed rule applies to the highlighted word?", ar: "ما حكم التجويد المطبّق على الكلمة المظلّلة؟" },
   "practice.wellDone": { en: "Well done. You have demonstrated strong knowledge.", ar: "أحسنت. لقد أظهرت معرفة جيّدة." },
   "practice.goodProgress": { en: "Good progress. Continue reviewing the material.", ar: "تقدّم جيّد. واصل مراجعة المادة." },
   "practice.keepReviewing": { en: "Review the rules above and try again.", ar: "راجع الأحكام أعلاه وحاول مجددا." },
