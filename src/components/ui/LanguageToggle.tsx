@@ -23,9 +23,9 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
       )}
       aria-label={isAr ? "Switch to English" : "التبديل إلى العربية"}
     >
-      <span className={cn("transition-opacity", isAr ? "opacity-50" : "opacity-100 font-bold")}>EN</span>
-      <span className="text-gold opacity-60">|</span>
-      <span className={cn("font-arabic transition-opacity", isAr ? "opacity-100 font-bold" : "opacity-50")}>عربي</span>
+      <span className={cn("transition-colors", isAr ? "text-[var(--margin-muted)]" : "font-bold")}>EN</span>
+      <span aria-hidden="true" className="h-4 w-px bg-[var(--margin-line)]" />
+      <span className={cn("font-arabic transition-colors", isAr ? "font-bold" : "text-[var(--margin-muted)]")}>عربي</span>
     </button>
   );
 }
