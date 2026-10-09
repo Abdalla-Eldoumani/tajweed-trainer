@@ -166,7 +166,7 @@ export function TajweedRulePopover({ target, onClose, onPointerEnter, onPointerL
           ref={linkRef}
           href={link}
           onClick={onClose}
-          className="mt-2 inline-flex items-center gap-1 rounded-md px-1 -mx-1 text-micro text-primary dark:text-primary-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+          className="mt-2 inline-flex items-center gap-1 min-h-[44px] rounded-md px-1 -mx-1 text-micro text-primary dark:text-primary-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
         >
           {t("ruleInfo.learnMore").replace("{rule}", ruleName)}
           <span aria-hidden="true">{isAr ? "←" : "→"}</span>
