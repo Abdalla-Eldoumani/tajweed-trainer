@@ -1,6 +1,6 @@
 import { test, expect, expectNoConsoleErrors, seedProgress } from "./support/fixtures";
 
-// E2E-02: a seeded Arabic locale must flip the document direction and localize
+// A seeded Arabic locale must flip the document direction and localize
 // the visible UI, not merely stamp the html attributes.
 test("seeded Arabic locale renders RTL with Arabic navigation labels", async ({
   page,
