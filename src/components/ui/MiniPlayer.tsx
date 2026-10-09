@@ -267,7 +267,7 @@ export function MiniPlayer() {
     posRef.current = pos;
   }, [pos]);
   // True only while a pointer drag is in flight; used to suppress the position
-  // transition so the 1:1 follow has no easing (the spec's hard requirement).
+  // transition so the 1:1 follow has no easing (the drag must track the pointer exactly).
   const [dragging, setDragging] = useState(false);
   // Pointer-down offset between the grab point and the card's top-left, so the
   // card does not jump under the cursor when the drag starts.
