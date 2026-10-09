@@ -40,7 +40,7 @@ function milestoneValue(m: Milestone): string {
 // A self-contained /progress card for the on-device milestone certificate. When a
 // juz is fully memorized or a khatmah is complete, the learner picks the
 // milestone, sees it rendered on a canvas, and can save it as a PNG. Only a small
-// completion record is persisted on save (never the image; EDGE_CASES_V2 line 50).
+// completion record is persisted on save (never the image).
 // Mounted-gated like KhatmahCard so the store-derived UI never flashes on
 // hydration (the server has no memorized verses and no plan).
 export function MilestoneCertificate() {
