@@ -57,7 +57,7 @@ export function DailyVerse() {
         </span>
         <Link
           href={`/mushaf/page/${pageForVerse(surah, ayah)}?v=${surah}:${ayah}`}
-          className="text-micro text-primary dark:text-primary-light hover:underline shrink-0"
+          className="inline-flex items-center min-h-[44px] text-micro text-primary dark:text-primary-light hover:underline shrink-0"
         >
           {t("lesson.openInReader")}
         </Link>
