@@ -12,7 +12,7 @@
 //      ambient DOM lib types (no runtime import), and the pure functions call no
 //      DOM API, so importing the pure half never pulls the DOM in at runtime.
 //
-// CONST-01: the certificate draws operational achievement copy only (the
+// the certificate draws operational achievement copy only (the
 // milestone, the date, the app name) and a procedural ornament. It NEVER draws
 // Quranic text, and this lib holds no display strings: the component passes the
 // already-localized lines in. The ornament is re-derived trig (the 12-point star
@@ -54,7 +54,7 @@ export function isKhatmahComplete(
 }
 
 // What the canvas needs to render. The human-readable strings are passed IN by
-// the component from i18n (this lib holds no display copy; CONST-01). `ref` is
+// the component from i18n (this lib holds no display copy). `ref` is
 // the juz number for a juz certificate, null for a khatmah. `dir` lets the canvas
 // align/lay out Arabic right-to-left without this lib knowing the language.
 export interface CertificateData {
