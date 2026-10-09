@@ -103,7 +103,7 @@ export function ReadingDepth({ surah, ayah }: ReadingDepthProps) {
         type="button"
         onClick={toggleTafsir}
         aria-expanded={tafsirOpen}
-        className="text-xs text-primary dark:text-primary-light hover:underline underline-offset-2"
+        className="inline-flex items-center min-h-[44px] text-xs text-primary dark:text-primary-light hover:underline underline-offset-2"
       >
         {tafsirOpen ? t("reading.hideTafsir") : t("reading.showTafsir")}
       </button>
