@@ -8,7 +8,7 @@ import {
 import type { RecallGrade, ReviewState, Sm2State } from "@/lib/types";
 
 // Real-import coverage for the pure SM-2 recall scheduler. Every expected value
-// is pinned from 04-RESEARCH.md's worked tables (updated-EF' ordering). The
+// is a literal worked SM-2 value (updated-EF' ordering). The
 // scheduler is pure, so these call the REAL exports directly.
 
 // Local-noon fixture keeps toIsoDate (computed in local time by the source)
