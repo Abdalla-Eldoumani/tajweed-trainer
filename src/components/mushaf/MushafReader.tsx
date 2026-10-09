@@ -367,8 +367,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={playFullSurah}
@@ -393,7 +393,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           </Link>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Surah and juz selectors are controlled readouts of the open page:
               the surah is one genuinely on the page (currentSurahValue), the juz
               is the page's juz. Both come from server props, so a deep-linked
@@ -407,7 +407,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
               if (n === currentSurahValue) return;
               router.push(`/mushaf/page/${pageForSurah(n)}`);
             }}
-            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px] min-w-[44px] justify-center"
             aria-label={t("mushaf.surahIndex")}
           >
             {surahs.map((s) => (
@@ -424,7 +424,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
               if (j === currentJuzValue) return;
               router.push(`/mushaf/page/${pageForJuz(j)}`);
             }}
-            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px] min-w-[44px] justify-center"
             aria-label={t("mushaf.juzIndex")}
           >
             {Array.from({ length: TOTAL_JUZ }, (_, i) => i + 1).map((j) => (
@@ -437,7 +437,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           <select
             value={drill}
             onChange={(e) => setDrill(e.target.value)}
-            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px]"
+            className="text-micro bg-bg-card dark:bg-bg-card-dark border border-gold-light/40 dark:border-gold-dark/30 rounded-lg px-2 py-2 min-h-[44px] min-w-[44px] justify-center"
             aria-label={t("mushaf.drill")}
             title={t("mushaf.drill")}
           >
@@ -473,7 +473,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
                 onClick={() => setMemorizationMode((v) => !v)}
                 disabled={recallDisabled}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors disabled:opacity-50 disabled:pointer-events-none",
+                  "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] min-w-[44px] justify-center text-micro transition-colors disabled:opacity-50 disabled:pointer-events-none",
                   memorizationMode
                     ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                     : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
@@ -499,7 +499,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             type="button"
             onClick={() => setCoverPageMode((v) => !v)}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] min-w-[44px] justify-center text-micro transition-colors",
               coverPageMode
                 ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                 : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
@@ -523,7 +523,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             type="button"
             onClick={() => setFocusMode((v) => !v)}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] min-w-[44px] justify-center text-micro transition-colors",
               focusMode
                 ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                 : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
@@ -547,7 +547,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             type="button"
             onClick={() => setFollowAlong((v) => !v)}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] min-w-[44px] justify-center text-micro transition-colors",
               followAlong
                 ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                 : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
@@ -579,7 +579,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             onClick={() => setPaletteOpen(true)}
             aria-label={t("mushaf.quickJump")}
             title={t("mushaf.quickJump")}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark text-text-muted hover:bg-gold-light/15 px-2 py-2 min-h-[44px] text-micro transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark text-text-muted hover:bg-gold-light/15 px-2 py-2 min-h-[44px] min-w-[44px] justify-center text-micro transition-colors"
           >
             <SearchIcon />
             <span className="hidden sm:inline">{t("mushaf.quickJump")}</span>
@@ -600,7 +600,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             aria-expanded={legendOpen}
             aria-controls="mushaf-color-legend"
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] text-micro transition-colors",
+              "inline-flex items-center gap-1.5 rounded-lg border px-2 py-2 min-h-[44px] min-w-[44px] justify-center text-micro transition-colors",
               legendOpen
                 ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
                 : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-gold-light/15",
