@@ -127,4 +127,4 @@ Rare; it spans code and content. Authoritative steps: [CONTENT.md](CONTENT.md#ad
 
 ## Validation
 
-`npx tsc --noEmit` catches most schema mismatches, since lesson pages import the JSON with its type. Add new fields to `src/lib/types.ts` first.
+`npx tsc --noEmit` catches a page that reads a field its lesson file does not have, since TypeScript infers each file's shape from the JSON. `node scripts/verify-content.mjs` checks the question pool against the verse text.
