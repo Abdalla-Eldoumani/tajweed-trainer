@@ -72,10 +72,7 @@ export interface LearningModule {
   title_ar: string;
   description: string;
   description_ar?: string;
-  estimated_hours: number;
-  lessons_count: number;
   prerequisite: string | null;
-  icon: string;
 }
 
 export interface LearningPath {
