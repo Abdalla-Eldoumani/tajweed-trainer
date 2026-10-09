@@ -29,8 +29,8 @@ export const BOTTOM_NAV_HEIGHT = 64;
 // above it the nav moves to the side and the bottom strip is free.
 export const MOBILE_BREAKPOINT = 768;
 
-// The reader's playback presentation switches at Tailwind lg = 1024px: a docked
-// side panel at and above it, a bottom sheet below. Kept distinct from
+// The reader's playback presentation switches at Tailwind lg = 1024px: a centered
+// dialog at and above it, a bottom sheet below. Kept distinct from
 // MOBILE_BREAKPOINT (the md tab-bar boundary) because a width in [768,1024) has
 // no tab bar yet still shows the sheet (see the sheetBottomOffset note below).
 export const READER_PANEL_BREAKPOINT = 1024;
