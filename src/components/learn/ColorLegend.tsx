@@ -6,7 +6,7 @@ import {
   type TajweedColor,
   type TajweedGroup,
 } from "@/lib/tajweed-colors";
-import { Card } from "@/components/ui/Card";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useTranslation } from "@/lib/i18n";
 
 // Groups shown in the legend, in order. tafkheem is omitted: the API does not
@@ -30,46 +30,23 @@ function dedupeByColor(colors: TajweedColor[]): TajweedColor[] {
   });
 }
 
-// One legend cell: a small card holding a colored Arabic specimen plus the
-// rule's English and Arabic names. The specimen is the rule set in its own
-// color, read from the map through the --tajweed-${cssClass} CSS variable
-// (theme-aware, never a hard-coded hex), so the legend can never disagree with
-// the same rule rendered in a verse. The specimen chip carries a gold hairline
-// so the pale grays and light blues stay visible on the vellum card; without it
-// they wash out. The English name truncates so multi-word names never overflow.
-function LegendCell({ color }: { color: TajweedColor }) {
-  const swatch = `var(--tajweed-${color.cssClass})`;
+// One legend entry: the rule's Arabic name set in its own color, read through
+// the --tajweed-${cssClass} variable (theme-aware, never a hard-coded hex) so
+// the legend cannot disagree with the same rule in a verse. The specimen sits on
+// a bg-subtle chip with a gold hairline; without it the pale grays and light
+// blues wash out on vellum.
+function LegendEntry({ color }: { color: TajweedColor }) {
   return (
-    <li
-      className="flex flex-col gap-2 rounded-lg border bg-bg-card px-3 py-2 min-w-0 dark:bg-bg-card-dark"
-      style={{ borderColor: "var(--gold-hairline)" }}
-      role="listitem"
-    >
+    <li className="flex items-center gap-2 min-w-0">
       <span
-        className="inline-flex h-9 w-fit max-w-full items-center self-start rounded-md border px-2"
-        style={{ borderColor: "var(--gold-hairline)" }}
+        className="shrink-0 rounded-md border bg-bg-subtle px-2 py-0.5 font-arabic text-base leading-normal whitespace-nowrap dark:bg-bg-subtle-dark"
+        style={{ borderColor: "var(--gold-hairline)", color: `var(--tajweed-${color.cssClass})` }}
+        dir="rtl"
+        lang="ar"
       >
-        <span
-          className="font-arabic text-base leading-none whitespace-nowrap overflow-hidden text-ellipsis"
-          dir="rtl"
-          lang="ar"
-          style={{ color: swatch }}
-        >
-          {color.nameAr}
-        </span>
+        {color.nameAr}
       </span>
-      <span className="min-w-0">
-        <span className="block font-heading text-small font-medium truncate">
-          {color.nameEn}
-        </span>
-        <span
-          className="block font-arabic text-micro text-text-muted truncate"
-          dir="rtl"
-          lang="ar"
-        >
-          {color.nameAr}
-        </span>
-      </span>
+      <span className="text-small truncate">{color.nameEn}</span>
     </li>
   );
 }
@@ -80,22 +57,24 @@ export function ColorLegend() {
   const groups = TAJWEED_GROUP_ORDER.filter((g) => GROUP_LABEL[g] && byGroup[g].length > 0);
 
   return (
-    <Card variant="ornate">
-      <h3 className="font-heading text-small font-semibold mb-4">{t("common.colorLegend")}</h3>
-      <div className="space-y-6">
+    <section aria-label={t("common.colorLegend")}>
+      <SectionHeading as="h2" rule className="mb-4">
+        {t("common.colorLegend")}
+      </SectionHeading>
+      <div className="space-y-5">
         {groups.map((group) => (
           <section key={group} aria-label={t(GROUP_LABEL[group]!)}>
-            <h4 className="text-micro font-medium uppercase tracking-[0.08em] text-text-muted mb-2">
+            <h3 className="text-micro font-medium uppercase tracking-[0.08em] text-text-muted mb-2">
               {t(GROUP_LABEL[group]!)}
-            </h4>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2" role="list">
+            </h3>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2" role="list">
               {dedupeByColor(byGroup[group]).map((c) => (
-                <LegendCell key={c.cssClass} color={c} />
+                <LegendEntry key={c.cssClass} color={c} />
               ))}
             </ul>
           </section>
         ))}
       </div>
-    </Card>
+    </section>
   );
 }
