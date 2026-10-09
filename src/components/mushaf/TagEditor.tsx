@@ -76,14 +76,14 @@ export function TagEditor({ verseKey }: TagEditorProps) {
         <ul className="flex flex-wrap gap-1.5">
           {tags.map((tag) => (
             <li key={tag}>
-              <span className="inline-flex items-center gap-1 rounded-full bg-bg-subtle dark:bg-bg-subtle-dark border border-gold-light/30 dark:border-gold-dark/20 ps-2.5 pe-1 py-1 text-xs">
+              <span className="inline-flex items-center gap-1 rounded-full bg-bg-subtle dark:bg-bg-subtle-dark border border-gold-light/30 dark:border-gold-dark/20 ps-3 text-xs">
                 <span dir="auto" className="max-w-[12rem] truncate">{tag}</span>
                 <button
                   type="button"
                   onClick={() => removeTag(tag)}
                   aria-label={t("tags.remove").replace("{tag}", tag)}
                   title={t("tags.remove").replace("{tag}", tag)}
-                  className="inline-flex items-center justify-center w-6 h-6 -me-0.5 rounded-full text-text-muted hover:text-accent hover:bg-bg-card dark:hover:bg-bg-card-dark transition-colors motion-reduce:transition-none"
+                  className="inline-flex items-center justify-center w-11 h-11 rounded-full text-text-muted hover:text-accent hover:bg-bg-card dark:hover:bg-bg-card-dark transition-colors motion-reduce:transition-none"
                 >
                   <RemoveIcon />
                 </button>
@@ -105,7 +105,7 @@ export function TagEditor({ verseKey }: TagEditorProps) {
           dir="auto"
           placeholder={t("tags.placeholder")}
           aria-label={t("tags.add")}
-          className="min-w-0 flex-1 rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          className="min-w-0 flex-1 min-h-[44px] rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         />
         <button
           type="button"
