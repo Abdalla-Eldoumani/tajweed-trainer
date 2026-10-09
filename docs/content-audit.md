@@ -59,15 +59,14 @@ alif, shadda, and Uthmani pause marks versus a plainer spelling), so the same wo
 compares equal across spellings while a different word or inflection does not.
 
 Structural checks are a hard gate: a question with no valid answer, a duplicate id,
-or the wrong option count fails the run. Verse-membership is a warning, not a hard
-failure: resolving a mismatch is an editorial decision about the citation and the
-immutable verse text, not something the script may change.
+or the wrong option count fails the run. So does a question whose Arabic is not in
+the verse it cites. Resolving that is an editorial decision about the citation,
+not something the script may change.
 
-A few question fragments raise that warning: real Quran in simplified spelling
-rather than the snapshot's Uthmani, so the fold does not line them up. They are
-left for a maintainer to reconcile, not silently rewritten. When adding a question,
-keep the warning count flat: cite the surah:ayah whose snapshot contains your
-fragment.
+A question that cites a verse with no entry in `src/data/verse-snapshots.json`
+raises a warning instead, since the script cannot check it offline. When adding a
+question, keep the warning count flat: cite a verse that has a snapshot, or add
+its snapshot.
 
 ## Running the check
 
