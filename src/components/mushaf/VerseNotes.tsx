@@ -104,7 +104,7 @@ export function VerseNotes({ verseKey }: VerseNotesProps) {
           <button
             type="button"
             onClick={clear}
-            className="text-[11px] font-medium text-accent hover:underline underline-offset-2"
+            className="text-[0.8125rem] font-medium text-accent hover:underline underline-offset-2"
           >
             {t("notes.clear")}
           </button>
@@ -126,21 +126,21 @@ export function VerseNotes({ verseKey }: VerseNotesProps) {
         className="w-full resize-y rounded-lg border border-gold-light/40 dark:border-gold-dark/30 bg-bg-card dark:bg-bg-card-dark px-3 py-2 text-sm leading-relaxed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
       />
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] text-text-muted">{t("notes.privacy")}</p>
+        <p className="text-[0.8125rem] text-text-muted">{t("notes.privacy")}</p>
         {showCounter && (
-          <span className="text-[11px] tabular-nums text-text-muted shrink-0">{counterText}</span>
+          <span className="text-[0.8125rem] tabular-nums text-text-muted shrink-0">{counterText}</span>
         )}
       </div>
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={save}
-          className="inline-flex items-center gap-1.5 min-h-[36px] px-3 rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light hover:bg-primary/20 text-xs font-medium transition-colors motion-reduce:transition-none"
+          className="inline-flex items-center gap-1.5 min-h-[44px] px-3 rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light hover:bg-primary/20 text-xs font-medium transition-colors motion-reduce:transition-none"
         >
           {t("notes.save")}
         </button>
         {justSaved && (
-          <span className="text-[11px] text-text-muted" role="status">
+          <span className="text-[0.8125rem] text-text-muted" role="status">
             {t("notes.saved")}
           </span>
         )}
