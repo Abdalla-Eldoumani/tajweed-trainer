@@ -269,7 +269,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                     }}
                     aria-label={`${noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
                     title={noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")}
-                    className="mushaf-verse-details relative ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
+                    className="mushaf-verse-details relative before:absolute before:content-[''] before:-inset-y-[9px] before:-inset-x-[3px] ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                       <circle cx="5" cy="12" r="1.8" />
@@ -302,7 +302,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                     aria-pressed={selected}
                     title={selected ? t("player.removeFromSelection") : t("player.addToSelection")}
                     className={cn(
-                      "mushaf-verse-add ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
+                      "mushaf-verse-add relative before:absolute before:content-[''] before:-inset-y-[9px] before:-inset-x-[3px] ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1",
                       selected
                         ? "text-primary dark:text-primary-light bg-primary/10"
                         : "text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
@@ -315,7 +315,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                       type="button"
                       onClick={(e) => handleReveal(e, v.verseKey)}
                       aria-label={t("mushaf.memorizeReveal")}
-                      className="ms-1 inline-flex items-center justify-center text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:text-primary-light align-middle"
+                      className="ms-1 inline-flex items-center justify-center text-[0.75rem] uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:text-primary-light align-middle"
                     >
                       {t("mushaf.memorizeReveal")}
                     </button>
