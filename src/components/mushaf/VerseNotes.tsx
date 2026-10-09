@@ -91,7 +91,7 @@ export function VerseNotes({ verseKey }: VerseNotesProps) {
     <button
       type="button"
       onClick={openEditor}
-      className="inline-flex items-center gap-1.5 text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+      className="inline-flex items-center gap-1.5 min-h-[44px] text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
     >
       <NoteIcon />
       {hasNote ? t("notes.edit") : t("notes.add")}
@@ -104,7 +104,7 @@ export function VerseNotes({ verseKey }: VerseNotesProps) {
           <button
             type="button"
             onClick={clear}
-            className="text-[0.8125rem] font-medium text-accent hover:underline underline-offset-2"
+            className="inline-flex items-center min-h-[44px] px-2 -me-2 text-[0.8125rem] font-medium text-accent hover:underline underline-offset-2"
           >
             {t("notes.clear")}
           </button>
