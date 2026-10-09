@@ -65,7 +65,7 @@ export function StreakCounter() {
           <div
             key={i}
             className={cn(
-              "w-8 h-8 rounded flex items-center justify-center text-[10px] font-medium",
+              "w-8 h-8 rounded flex items-center justify-center text-[0.75rem] font-medium",
               day.isPracticed
                 ? "bg-primary/20 text-primary dark:bg-primary-light/20 dark:text-primary-light"
                 : day.isToday
