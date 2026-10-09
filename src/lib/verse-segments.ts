@@ -5,11 +5,11 @@
 // safe on server and client and the `src/lib/**` coverage gate exercises it
 // directly (mirrors verse-chaining.ts / memorization-scope.ts).
 //
-// A WordChunk is an inclusive, 0-based index range into the verse's REAL words —
-// the words that remain after 06-02 filters the trailing ayah-"end" marker out of
+// A WordChunk is an inclusive, 0-based index range into the verse's REAL words,
+// the words that remain once the trailing ayah-"end" marker is dropped from
 // the word list, so index 0 is the first real word.
 //
-// SEG-03 no-split rule: a verse no longer than one chunk (a one-word verse, or a
+// no-split rule: a verse no longer than one chunk (a one-word verse, or a
 // verse whose word count is <= the chunk size) yields a SINGLE chunk == the whole
 // verse. The splitter never fabricates a boundary the word count does not
 // support; the drill presents such a verse whole and says as much (isSplittable
@@ -34,7 +34,7 @@ export const CHUNK_SIZE_PRESETS = [3, 4, 5] as const;
 // (wordCount to >= 0, chunkSize to >= 1) so a degenerate or fractional input can
 // never throw or spin: the size floor keeps the loop advancing and a zero count
 // short-circuits to []. The final chunk's end is pinned to the last real index,
-// so no boundary the word count does not support is ever produced (SEG-03).
+// so no boundary the word count does not support is ever produced.
 export function splitIntoChunks(wordCount: number, chunkSize: number): WordChunk[] {
   const n = Math.max(0, Math.floor(wordCount || 0));
   const size = Math.max(1, Math.floor(chunkSize || 0));
@@ -47,7 +47,7 @@ export function splitIntoChunks(wordCount: number, chunkSize: number): WordChunk
 }
 
 // Whether the verse splits into more than one chunk — the drill shows the verse
-// whole and says "no split" when this is false (SEG-03 messaging). A one-word or
+// whole and says "no split" when this is false (messaging). A one-word or
 // short verse, and an empty verse, are all non-splittable.
 export function isSplittable(wordCount: number, chunkSize: number): boolean {
   return splitIntoChunks(wordCount, chunkSize).length > 1;
