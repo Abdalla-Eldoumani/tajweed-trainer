@@ -26,16 +26,9 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
 
   const displayOptions = isAr && question.optionsAr ? question.optionsAr : question.options;
   const displayCorrect = isAr && question.correctAnswerAr ? question.correctAnswerAr : question.correctAnswer;
-  // Authored Question records carry their own prompt; legacy random-from-examples
-  // questions don't and fall back to the static "identify the rule" header.
-  const promptText =
-    (isAr && question.prompt?.ar) || question.prompt?.en || t("practice.identifyRule");
-  const explanationText = question.explanation
-    ? (isAr && question.explanation.ar) || question.explanation.en
-    : null;
-  const lessonHref = question.explanation?.lessonAnchor
-    ? `/learn/${question.moduleId}#${question.explanation.lessonAnchor}`
-    : `/learn/${question.moduleId}`;
+  const promptText = (isAr && question.prompt.ar) || question.prompt.en;
+  const explanationText = (isAr && question.explanation.ar) || question.explanation.en;
+  const lessonHref = `/learn/${question.moduleId}#${question.explanation.lessonAnchor}`;
   const wasCorrect = selectedAnswer === displayCorrect;
 
   const handleSelect = (option: string) => {
@@ -163,21 +156,19 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
             <span className="text-text-muted">{t("practice.feedback.rule")}: </span>
             <span className="font-medium">{displayCorrect}</span>
           </p>
-          {explanationText && <p className="text-sm">{explanationText}</p>}
-          {question.explanation && (
-            <Link
-              href={lessonHref}
-              className={cn(
-                "inline-flex items-center text-sm font-medium min-h-[44px]",
-                wasCorrect
-                  ? "text-primary dark:text-primary-light hover:underline"
-                  : "px-3 rounded-lg bg-primary text-on-primary hover:bg-primary-weak transition-colors",
-              )}
-            >
-              {t("practice.feedback.openLesson")}
-              <span aria-hidden className="ms-1">{isAr ? "←" : "→"}</span>
-            </Link>
-          )}
+          <p className="text-sm">{explanationText}</p>
+          <Link
+            href={lessonHref}
+            className={cn(
+              "inline-flex items-center text-sm font-medium min-h-[44px]",
+              wasCorrect
+                ? "text-primary dark:text-primary-light hover:underline"
+                : "px-3 rounded-lg bg-primary text-on-primary hover:bg-primary-weak transition-colors",
+            )}
+          >
+            {t("practice.feedback.openLesson")}
+            <span aria-hidden className="ms-1">{isAr ? "←" : "→"}</span>
+          </Link>
         </div>
       )}
     </div>
