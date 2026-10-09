@@ -17,11 +17,11 @@ All under `src/components/mushaf/`.
 
 ### `MushafFrame`
 
-The outer wrapper: three nested CSS layers (`globals.css`) drawing the multi-color ornamental border of a real Madinan Mushaf. `.mushaf-frame` is the outer gold rule (cream ground), `::before` the inner gold rule, and `::after` a multi-color repeating geometric band (gold/red/blue) as a `repeating-linear-gradient` border.
+The outer wrapper, drawn in `globals.css` with three layers: `.mushaf-frame` is the outer gold rule on the card ground, `::before` is a fainter inner gold rule, and `::after` is a small rub el hizb mark at the head corner. The ornament uses gold tokens only, never a tajweed color.
 
 ### `SurahCartouche`
 
-The surah-start banner: the surah name in `font-quran` plus the Latin name, verse count, and Makkah / Madinah badge, flanked by two 8-pointed star ornaments (CSS pseudo-elements).
+The surah-start banner: the surah name in `font-quran` plus the Latin name, verse count, and Makkah / Madinah badge, flanked by a rub el hizb mark at each end (CSS pseudo-elements).
 
 ### `BismillahLine`
 
