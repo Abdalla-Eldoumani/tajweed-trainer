@@ -108,7 +108,7 @@ export default function TafkheemTarqeeqPage() {
               )}
               {letter.light_example && (
                 <p className="text-micro text-text-muted mt-1">
-                  <span className="text-blue-500 font-medium">{t("tafkheem.alwaysLight").split(" ")[0]}:</span> {letter.light_example}
+                  <span className="font-medium">{t("tafkheem.alwaysLight").split(" ")[0]}:</span> {letter.light_example}
                 </p>
               )}
             </div>
