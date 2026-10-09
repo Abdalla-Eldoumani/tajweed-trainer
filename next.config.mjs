@@ -51,7 +51,6 @@ const securityHeaders = [
       "camera=()",
       "microphone=(self)",
       "geolocation=()",
-      "interest-cohort=()",
       "payment=()",
       "usb=()",
       "serial=()",
@@ -68,8 +67,6 @@ const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ];
 
-import bundleAnalyzer from "@next/bundle-analyzer";
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Pin the workspace root to this project so a stray parent-directory lockfile
@@ -82,7 +79,7 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  // Without this, next dev writes agent rule files into the repo root.
+  // Keeps next dev from writing generated rule files into the repo root.
   agentRules: false,
   async headers() {
     return [
@@ -94,9 +91,4 @@ const nextConfig = {
   },
 };
 
-// Bundle analyzer, enabled only when ANALYZE=true so it never touches normal
-// builds. It hooks the webpack builder, so an analysis pass must run the
-// webpack build (ANALYZE=true npm run build); Turbopack ignores the plugin.
-const withBundleAnalyzer = bundleAnalyzer({ enabled: process.env.ANALYZE === "true" });
-
-export default withBundleAnalyzer(nextConfig);
+export default nextConfig;
