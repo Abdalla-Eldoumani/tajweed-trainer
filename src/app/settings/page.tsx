@@ -410,7 +410,7 @@ export default function SettingsPage() {
       <Card>
         <h2 className="font-heading font-semibold text-sm mb-3">{t("settings.displayOptions")}</h2>
         <div className="space-y-3">
-          <label className="flex items-center justify-between cursor-pointer">
+          <label className="flex items-center justify-between cursor-pointer min-h-[44px]">
             <span className="text-sm">{t("settings.showTransliteration")}</span>
             <input
               type="checkbox"
@@ -421,7 +421,7 @@ export default function SettingsPage() {
             />
           </label>
 
-          <label className="flex items-center justify-between cursor-pointer">
+          <label className="flex items-center justify-between cursor-pointer min-h-[44px]">
             <span className="text-sm">{t("settings.showTranslation")}</span>
             <input
               type="checkbox"
@@ -435,7 +435,7 @@ export default function SettingsPage() {
           {/* Diacritic-insensitive typing recall: a comparison-only
               toggle the /progress typing drill reads. It NEVER changes stored or
               rendered verse text — only how a typed word is matched. */}
-          <label className="flex items-center justify-between cursor-pointer">
+          <label className="flex items-center justify-between cursor-pointer min-h-[44px]">
             <span className="text-sm">{t("settings.diacriticInsensitive")}</span>
             <input
               type="checkbox"
@@ -481,7 +481,7 @@ export default function SettingsPage() {
             </select>
           </label>
 
-          <label className="flex items-center justify-between cursor-pointer">
+          <label className="flex items-center justify-between cursor-pointer min-h-[44px]">
             <span className="text-sm">{t("settings.showWordByWord")}</span>
             <input
               type="checkbox"
@@ -582,7 +582,7 @@ export default function SettingsPage() {
         <Card>
           <h2 className="font-heading font-semibold text-sm mb-1">{t("settings.revisionReminders")}</h2>
           <p className="text-xs text-text-muted mb-3">{t("settings.revisionRemindersHelp")}</p>
-          <label className="flex items-center justify-between cursor-pointer">
+          <label className="flex items-center justify-between cursor-pointer min-h-[44px]">
             <span className="text-sm">{t("settings.revisionReminders")}</span>
             <input
               type="checkbox"
@@ -651,7 +651,7 @@ export default function SettingsPage() {
       {/* Welcome tour */}
       <Card>
         <h2 className="font-heading font-semibold text-sm mb-3">{t("settings.onboardingTour")}</h2>
-        <label className="flex items-center justify-between cursor-pointer">
+        <label className="flex items-center justify-between cursor-pointer min-h-[44px]">
           <span className="text-sm">{t("settings.onboardingTour")}</span>
           <input
             type="checkbox"
