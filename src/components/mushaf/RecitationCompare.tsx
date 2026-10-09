@@ -85,17 +85,17 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
     void record();
   };
 
-  const pill = "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium min-h-[36px] transition-colors motion-reduce:transition-none";
+  const pill = "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium min-h-[44px] transition-colors motion-reduce:transition-none";
 
   return (
     <div className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 p-3">
       <h4 className="text-xs font-semibold text-text-muted">{t("compare.title")}</h4>
-      <p className="text-[11px] text-text-muted mt-1">{t("compare.privacy")}</p>
+      <p className="text-[0.8125rem] text-text-muted mt-1">{t("compare.privacy")}</p>
 
       <div className="grid grid-cols-2 gap-3 mt-3">
         {/* Reciter side */}
         <div className="flex flex-col items-start gap-1.5">
-          <span className="text-[11px] text-text-muted">{t("compare.reciter")}</span>
+          <span className="text-[0.8125rem] text-text-muted">{t("compare.reciter")}</span>
           <button
             type="button"
             onClick={playReciter}
@@ -106,13 +106,13 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
             {t("compare.playReciter")}
           </button>
           {reciterError && (
-            <p className="text-[11px] text-accent" role="status">{t("audio.unavailable")}</p>
+            <p className="text-[0.8125rem] text-accent" role="status">{t("audio.unavailable")}</p>
           )}
         </div>
 
         {/* Your take side */}
         <div className="flex flex-col items-start gap-1.5">
-          <span className="text-[11px] text-text-muted">{t("compare.yourTake")}</span>
+          <span className="text-[0.8125rem] text-text-muted">{t("compare.yourTake")}</span>
 
           {state === "idle" && (
             <button type="button" onClick={startRecording} aria-label={t("compare.record")} className={`${pill} bg-accent/15 text-accent hover:bg-accent/25`}>
@@ -143,7 +143,7 @@ export function RecitationCompare({ surah, ayah, reciter }: RecitationComparePro
 
           {state === "denied" && (
             <div className="space-y-1.5">
-              <p className="text-[11px] text-accent">{t("compare.denied")}</p>
+              <p className="text-[0.8125rem] text-accent">{t("compare.denied")}</p>
               <button type="button" onClick={startRecording} className={`${pill} bg-accent/15 text-accent hover:bg-accent/25`}>
                 <MicIcon />
                 {t("compare.tryAgain")}
