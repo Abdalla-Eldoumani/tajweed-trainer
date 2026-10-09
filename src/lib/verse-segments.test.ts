@@ -6,15 +6,15 @@ import {
   CHUNK_SIZE_PRESETS,
 } from "@/lib/verse-segments";
 
-// The SEG-01 / SEG-03 splitter matrix. Every case asserts against the REAL
+// The splitter matrix. Every case asserts against the REAL
 // verse-segments exports — the expected ranges are written out literally and are
 // never re-derived from the function under test. A chunk is an inclusive, 0-based
-// word-index range into the verse's REAL words. The SEG-03 no-split cases (a
+// word-index range into the verse's REAL words. The no-split cases (a
 // one-word verse, a verse no longer than the chunk size) are pinned so the
 // splitter can never fabricate a boundary the word count does not support.
 
-describe("splitIntoChunks - the SEG-01/SEG-03 matrix", () => {
-  it("(1, 4) -> a one-word verse yields a single whole-verse chunk (SEG-03)", () => {
+describe("splitIntoChunks - the matrix", () => {
+  it("(1, 4) -> a one-word verse yields a single whole-verse chunk", () => {
     expect(splitIntoChunks(1, 4)).toEqual([{ startWordIdx: 0, endWordIdx: 0 }]);
   });
 
@@ -22,7 +22,7 @@ describe("splitIntoChunks - the SEG-01/SEG-03 matrix", () => {
     expect(splitIntoChunks(4, 4)).toEqual([{ startWordIdx: 0, endWordIdx: 3 }]);
   });
 
-  it("(3, 5) -> chunkSize >= wordCount yields a single chunk (SEG-03)", () => {
+  it("(3, 5) -> chunkSize >= wordCount yields a single chunk", () => {
     expect(splitIntoChunks(3, 5)).toEqual([{ startWordIdx: 0, endWordIdx: 2 }]);
   });
 
@@ -33,7 +33,7 @@ describe("splitIntoChunks - the SEG-01/SEG-03 matrix", () => {
     ]);
   });
 
-  it("(9, 4) -> the last chunk holds a remainder of one (SEG-01)", () => {
+  it("(9, 4) -> the last chunk holds a remainder of one", () => {
     expect(splitIntoChunks(9, 4)).toEqual([
       { startWordIdx: 0, endWordIdx: 3 },
       { startWordIdx: 4, endWordIdx: 7 },
@@ -83,7 +83,7 @@ describe("splitIntoChunks - the SEG-01/SEG-03 matrix", () => {
   });
 });
 
-describe("splitIntoChunks - degenerate input is clamped, never thrown (T-06-03 / T-06-04)", () => {
+describe("splitIntoChunks - degenerate input is clamped, never thrown", () => {
   it("a negative chunkSize clamps to 1 (six one-word chunks)", () => {
     expect(splitIntoChunks(6, -4)).toEqual([
       { startWordIdx: 0, endWordIdx: 0 },
@@ -122,7 +122,7 @@ describe("splitIntoChunks - degenerate input is clamped, never thrown (T-06-03 /
   });
 });
 
-describe("isSplittable - SEG-03 no-split messaging", () => {
+describe("isSplittable - no-split messaging", () => {
   it("is false for a one-word verse (a single chunk is not a meaningful split)", () => {
     expect(isSplittable(1, 4)).toBe(false);
   });
