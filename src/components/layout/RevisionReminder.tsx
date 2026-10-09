@@ -9,7 +9,7 @@ import { getMemorizationReviewStats } from "@/lib/memorization-review";
 import { shouldNotify, isInstalled, isNotificationSupported } from "@/lib/notification-gate";
 import { toArabicIndic } from "@/lib/utils";
 
-// The opt-in local revision reminder (REV-04). Mounted once in AppProvider,
+// The opt-in local revision reminder. Mounted once in AppProvider,
 // renders nothing. On app open it fires ONE best-effort local notification when
 // every gate is open (installed PWA + Notification API + permission granted +
 // the setting on + verses due). The gating truth is the pure `shouldNotify`; the
