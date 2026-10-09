@@ -58,9 +58,7 @@ export function QuizSession({ moduleFilter, mode = "random" }: QuizSessionProps)
       setAnsweredCorrect(correct);
 
       const currentQuestion = questions[currentIndex];
-      if (currentQuestion?.questionId) {
-        recordReview(currentQuestion.questionId, correct);
-      }
+      if (currentQuestion) recordReview(currentQuestion.questionId, correct);
     },
     [currentIndex, questions, recordReview]
   );
