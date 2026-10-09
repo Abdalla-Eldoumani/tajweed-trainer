@@ -106,7 +106,7 @@ npm test
 node scripts/verify-mushaf.mjs               # 23/23
 node scripts/verify-module-lock.mjs          # 14/14
 node scripts/verify-questions.mjs            # 19/19
-node scripts/verify-reciters.mjs             # 14/14 hard (live-resolution probes non-fatal)
+node scripts/verify-reciters.mjs             # 17/17 hard (live-resolution probes non-fatal)
 ```
 
 ## Why these constraints
