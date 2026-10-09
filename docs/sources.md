@@ -21,7 +21,7 @@ The tajweed letter colors are the "new" (mushaf) scheme from the **Quranic Unive
 
 ## Fonts
 
-Arabic is set in **Amiri** and **Amiri Quran** (the latter for Quranic text with full tashkeel); the interface uses Inter, Spectral, and JetBrains Mono. All are self-hosted through `next/font`.
+Arabic is set in **Amiri** and **Amiri Quran** (the latter for Quranic text with full tashkeel); the interface uses Alegreya Sans, Spectral, and JetBrains Mono. All are self-hosted through `next/font`.
 
 ## Religious-content integrity
 
