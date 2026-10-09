@@ -517,7 +517,7 @@ export function MiniPlayer() {
                 value={REPEAT_OPTIONS.includes(repeatOne as 0 | 2 | 3 | 5) ? repeatOne : 0}
                 onChange={(e) => usePlayer.getState().setRepeatOne(Number(e.target.value))}
                 aria-label={t("player.repeatVerse")}
-                className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
+                className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1 min-h-[44px]"
               >
                 {REPEAT_OPTIONS.map((n) => (
                   <option key={n} value={n}>
@@ -534,20 +534,20 @@ export function MiniPlayer() {
                   type="number" min={1} max={maxAyah} value={from}
                   onChange={(e) => setFrom(Number(e.target.value))}
                   aria-label={t("player.rangeFrom")}
-                  className="w-12 rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
+                  className="w-12 rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1 min-h-[44px]"
                 />
                 <span className="text-text-muted">-</span>
                 <input
                   type="number" min={1} max={maxAyah} value={to}
                   onChange={(e) => setTo(Number(e.target.value))}
                   aria-label={t("player.rangeTo")}
-                  className="w-12 rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
+                  className="w-12 rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1 min-h-[44px]"
                 />
                 <select
                   value={count}
                   onChange={(e) => setCount(Number(e.target.value))}
                   aria-label={t("player.times")}
-                  className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
+                  className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1 min-h-[44px]"
                 >
                   {[2, 3, 5, 10].map((n) => (
                     <option key={n} value={n}>{`${t("player.times")}${n}`}</option>
@@ -569,7 +569,7 @@ export function MiniPlayer() {
                 value={sleepEndOfSurah ? "surah" : sleepActive ? sleepSel || "" : ""}
                 onChange={(e) => onSleepChange(e.target.value)}
                 aria-label={t("player.sleep")}
-                className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
+                className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1 min-h-[44px]"
               >
                 <option value="">{t("player.off")}</option>
                 {SLEEP_MINUTES.map((m) => (
@@ -594,7 +594,7 @@ export function MiniPlayer() {
               onKeyDown={onHandleKeyDown}
               aria-label={t("player.dragHandle")}
               title={t("player.dragHandle")}
-              className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+              className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
             >
               <GripIcon />
             </button>
@@ -602,7 +602,7 @@ export function MiniPlayer() {
               type="button"
               onClick={() => usePlayer.getState().toggle()}
               aria-label={playing ? t("player.pause") : t("player.play")}
-              className="p-2 min-w-[40px] min-h-[40px] rounded-lg bg-primary/10 dark:bg-primary-light/20 hover:bg-primary/20 inline-flex items-center justify-center"
+              className="p-2 min-w-[44px] min-h-[44px] rounded-lg bg-primary/10 dark:bg-primary-light/20 hover:bg-primary/20 inline-flex items-center justify-center"
             >
               {status === "loading" ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />}
             </button>
@@ -617,7 +617,7 @@ export function MiniPlayer() {
               onClick={toggleMinimized}
               aria-label={t("player.expand")}
               title={t("player.expand")}
-              className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+              className="p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
             >
               <ExpandIcon />
             </button>
@@ -627,7 +627,7 @@ export function MiniPlayer() {
               onClick={() => setDismissed(true)}
               aria-label={t("player.hide")}
               title={t("player.hide")}
-              className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+              className="p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
             >
               <HideIcon />
             </button>
@@ -646,7 +646,7 @@ export function MiniPlayer() {
             onKeyDown={onHandleKeyDown}
             aria-label={t("player.dragHandle")}
             title={t("player.dragHandle")}
-            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+            className="touch-none cursor-grab active:cursor-grabbing p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
           >
             <GripIcon />
           </button>
@@ -655,7 +655,7 @@ export function MiniPlayer() {
             onClick={() => usePlayer.getState().prev()}
             disabled={!hasPrev}
             aria-label={t("player.previous")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            className="p-2 min-w-[44px] min-h-[44px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
             <PrevIcon />
           </button>
@@ -672,7 +672,7 @@ export function MiniPlayer() {
             onClick={() => usePlayer.getState().next()}
             disabled={!hasNext}
             aria-label={t("player.next")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            className="p-2 min-w-[44px] min-h-[44px] rounded-lg disabled:opacity-40 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
             <NextIcon />
           </button>
@@ -692,7 +692,7 @@ export function MiniPlayer() {
                 }}
                 aria-label={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
                 title={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
-                className="shrink-0 text-[10px] uppercase tracking-wide rounded px-1.5 py-0.5 text-primary dark:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
+                className="shrink-0 text-[0.75rem] uppercase tracking-wide rounded px-1.5 py-0.5 min-h-[44px] text-primary dark:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
               >
                 {mode === "continuous" ? t("player.modeContinuous") : t("player.modeSingle")}
               </button>
@@ -707,9 +707,9 @@ export function MiniPlayer() {
               value={Number.isFinite(duration) && duration > 0 ? Math.min(currentTime, duration) : 0}
               onChange={(e) => usePlayer.getState().seek(Number(e.target.value))}
               aria-label={t("player.seek")}
-              className="w-full accent-primary dark:accent-gold"
+              className="w-full h-11 accent-primary dark:accent-gold"
             />
-            <div className="flex items-center justify-between text-[10px] text-text-muted tabular-nums">
+            <div className="flex items-center justify-between text-[0.75rem] text-text-muted tabular-nums">
               <span>{fmt(currentTime)}</span>
               <span>{fmt(duration)}</span>
             </div>
@@ -722,7 +722,7 @@ export function MiniPlayer() {
             aria-label={t("player.studyOptions")}
             aria-expanded={showStudy}
             title={t("player.studyOptions")}
-            className={`p-2 min-w-[40px] min-h-[40px] rounded-lg ${
+            className={`p-2 min-w-[44px] min-h-[44px] rounded-lg ${
               showStudy || repeatOne > 0 || repeatRange || sleepEndOfSurah || sleepActive
                 ? "text-primary dark:text-primary-light bg-primary/10 dark:bg-primary-light/20"
                 : "text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
@@ -734,7 +734,7 @@ export function MiniPlayer() {
             value={speed}
             onChange={(e) => usePlayer.getState().setSpeed(Number(e.target.value))}
             aria-label={t("player.speed")}
-            className="text-xs rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1"
+            className="text-xs rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1 min-h-[44px]"
           >
             {SPEEDS.map((sp) => (
               <option key={sp} value={sp}>
@@ -747,7 +747,7 @@ export function MiniPlayer() {
             onClick={toggleMinimized}
             aria-label={t("player.minimize")}
             title={t("player.minimize")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            className="p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
             <MinimizeIcon />
           </button>
@@ -758,7 +758,7 @@ export function MiniPlayer() {
             onClick={() => setDismissed(true)}
             aria-label={t("player.hide")}
             title={t("player.hide")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            className="p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
             <HideIcon />
           </button>
@@ -767,7 +767,7 @@ export function MiniPlayer() {
             onClick={() => usePlayer.getState().stop()}
             aria-label={t("player.close")}
             title={t("player.close")}
-            className="p-2 min-w-[40px] min-h-[40px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
+            className="p-2 min-w-[44px] min-h-[44px] rounded-lg text-text-muted hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark inline-flex items-center justify-center"
           >
             <CloseIcon />
           </button>
