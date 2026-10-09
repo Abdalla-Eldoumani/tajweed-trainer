@@ -53,7 +53,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Madd Waw must be sakinah and preceded by Dammah (e.g., يَقُولُونَ).", ar: "واو المدّ ساكنة مسبوقة بضمّة (كيَقُولُونَ).", lessonAnchor: "madd-letters" },
-    source: { surah: 2, ayah: 8, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 79, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "madd-easy-yaa-condition",
@@ -111,7 +111,7 @@ export const questions: Question[] = [
     moduleId: "madd",
     difficulty: "easy",
     prompt: { en: "How many beats is Madd Lazim?", ar: "كم مقدار المدّ اللازم؟" },
-    arabicText: "الصَّاخَّةِ",
+    arabicText: "الصَّاخَّةُ",
     englishGloss: "the deafening blast",
     options: [
       { id: "opt-a", label: { en: "6 beats — always", ar: "ستّ حركات لزوما" } },
@@ -155,7 +155,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Madd Badal is 2 beats. It occurs when a Hamzah PRECEDES a madd letter (the reverse of Muttasil/Munfasil).", ar: "مدّ البدل حركتان. ويقع عندما تتقدّم الهمزة على حرف المدّ (عكس المتّصل والمنفصل).", lessonAnchor: "madd-badal" },
-    source: { surah: 2, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 9, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "madd-easy-tabeei-meaning",
@@ -299,8 +299,8 @@ export const questions: Question[] = [
     id: "madd-medium-saakhkhah-rule",
     moduleId: "madd",
     difficulty: "medium",
-    prompt: { en: "Which madd applies in الصَّاخَّةِ?", ar: "أيّ مدّ في الصَّاخَّةِ؟" },
-    arabicText: "الصَّاخَّةِ",
+    prompt: { en: "Which madd applies in الصَّاخَّةُ?", ar: "أيّ مدّ في الصَّاخَّةُ؟" },
+    arabicText: "الصَّاخَّةُ",
     englishGloss: "the deafening blast",
     options: [
       { id: "opt-a", label: { en: "Madd Lazim Kalimi Muthaqqal — Alif followed by shaddah in same word, 6 beats", ar: "مدّ لازم كلمي مثقّل — ألف يليها مشدّد في الكلمة، ستّ حركات" } },
@@ -344,7 +344,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Hamzah comes BEFORE the madd letter (the original آ was two hamzas, the second replaced by an Alif). 2 beats.", ar: "تقدّمت الهمزة على حرف المدّ (وأصل آ همزتان، أُبدلت الثانية ألفا). حركتان.", lessonAnchor: "madd-badal" },
-    source: { surah: 2, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 9, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "madd-medium-quraysh-rule",
