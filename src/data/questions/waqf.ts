@@ -115,7 +115,7 @@ export const questions: Question[] = [
     id: "waqf-easy-mu-anaqah",
     moduleId: "waqf",
     difficulty: "easy",
-    prompt: { en: "Mu'anaqah (∴ ∴) means you must stop at...", ar: "المعانقة (∴ ∴) تعني أنه يجب الوقف عند..." },
+    prompt: { en: "If you stop at a Mu'anaqah pair (∴ ∴), you stop at...", ar: "إذا وقفتَ عند المعانقة (∴ ∴) فإنّك تقف عند..." },
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
@@ -125,7 +125,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "The first one only", ar: "الأولى فقط" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Mu'anaqah is a pair of stop marks where you stop at exactly ONE of them, never both. Stopping at both would break the meaning.", ar: "المعانقة علامتا وقف متجاورتان، يُوقف عند إحداهما لا كلتيهما. والجمع بين الوقفين يُخلّ بالمعنى.", lessonAnchor: "mu-anaqah" },
+    explanation: { en: "Mu'anaqah is a pair of stop marks where you may stop at ONE of them, never both. Stopping at both would break the meaning.", ar: "المعانقة علامتا وقف متجاورتان، يُوقف عند إحداهما لا كلتيهما. والجمع بين الوقفين يُخلّ بالمعنى.", lessonAnchor: "mu-anaqah" },
     source: { surah: 114, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -236,7 +236,7 @@ export const questions: Question[] = [
     id: "waqf-medium-aula-symbol",
     moduleId: "waqf",
     difficulty: "medium",
-    prompt: { en: "The symbol 'قلي' (Al-Waqf Awla) indicates...", ar: "العلامة (قلي) للوقف أَولى تدلّ على..." },
+    prompt: { en: "The symbol 'قلى' (Al-Waqf Awla) indicates...", ar: "العلامة (قلى) للوقف أَولى تدلّ على..." },
     arabicText: "الرَّحْمَنِ",
     englishGloss: "the Most Gracious",
     options: [
@@ -246,14 +246,14 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Do not stop", ar: "لا تقف" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "قلي (Al-Waqf Awla): stopping is the BETTER choice; continuing is still permissible.", ar: "(قلي): الوقف أَولى من الوصل مع جواز الوصل.", lessonAnchor: "waqf-aula" },
+    explanation: { en: "قلى (Al-Waqf Awla): stopping is the BETTER choice; continuing is still permissible.", ar: "(قلى): الوقف أَولى من الوصل مع جواز الوصل.", lessonAnchor: "waqf-aula" },
     source: { surah: 1, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "waqf-medium-wasl-aula-symbol",
     moduleId: "waqf",
     difficulty: "medium",
-    prompt: { en: "The symbol 'صلي' (Al-Wasl Awla) indicates...", ar: "العلامة (صلي) للوصل أَولى تدلّ على..." },
+    prompt: { en: "The symbol 'صلى' (Al-Wasl Awla) indicates...", ar: "العلامة (صلى) للوصل أَولى تدلّ على..." },
     arabicText: "الْحَمْدُ",
     englishGloss: "all praise",
     options: [
@@ -263,14 +263,14 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Do not stop", ar: "لا تقف" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "صلي (Al-Wasl Awla): continuing is BETTER; stopping is permissible.", ar: "(صلي): الوصل أَولى من الوقف مع جواز الوقف.", lessonAnchor: "wasl-aula" },
+    explanation: { en: "صلى (Al-Wasl Awla): continuing is BETTER; stopping is permissible.", ar: "(صلى): الوصل أَولى من الوقف مع جواز الوقف.", lessonAnchor: "wasl-aula" },
     source: { surah: 1, ayah: 2, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "waqf-medium-aula-vs-jaiz",
     moduleId: "waqf",
     difficulty: "medium",
-    prompt: { en: "What is the difference between Waqf Jaiz (ج) and Al-Waqf Awla (قلي)?", ar: "ما الفرق بين الوقف الجائز (ج) والوقف الأَولى (قلي)؟" },
+    prompt: { en: "What is the difference between Waqf Jaiz (ج) and Al-Waqf Awla (قلى)?", ar: "ما الفرق بين الوقف الجائز (ج) والوقف الأَولى (قلى)؟" },
     arabicText: "الرَّحْمَنِ",
     englishGloss: "the Most Gracious",
     options: [
@@ -280,7 +280,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Awla means do not stop", ar: "الأَولى نهي عن الوقف" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Jaiz puts stopping and continuing on equal footing. Awla expresses a preference for stopping (or continuing, in the case of صلي).", ar: "الجائز يساوي بين الوقف والوصل. والأَولى يُبدي ترجيحا للوقف (أو للوصل في حالة صلي).", lessonAnchor: "waqf-jaiz" },
+    explanation: { en: "Jaiz puts stopping and continuing on equal footing. Awla expresses a preference for stopping (or continuing, in the case of صلى).", ar: "الجائز يساوي بين الوقف والوصل. والأَولى يُبدي ترجيحا للوقف (أو للوصل في حالة صلى).", lessonAnchor: "waqf-jaiz" },
     source: { surah: 1, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -418,7 +418,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Acceptable in Hafs", ar: "مقبول في حفص" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson states: 'Stopping at both would break the meaning.' One must choose ONE of the two markers, not both.", ar: "نصّ الدرس على أنّ 'الجمع بين الوقفين يُخلّ بالمعنى'. ويُختار أحد الموضعين دون الآخر.", lessonAnchor: "mu-anaqah" },
+    explanation: { en: "The lesson states: 'Stopping at both would break the meaning.' If a stop is made, it is at one of the two markers, not both.", ar: "نصّ الدرس على أنّ 'الجمع بين الوقفين يُخلّ بالمعنى'. ويُختار أحد الموضعين دون الآخر.", lessonAnchor: "mu-anaqah" },
     source: { surah: 114, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
