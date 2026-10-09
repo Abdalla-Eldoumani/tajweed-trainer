@@ -52,10 +52,10 @@ export default function HomePage() {
         <p className="text-micro text-text-muted mt-2">{t("home.riwaya")}</p>
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link href={next ? `/learn/${next.id}` : "/learn"}>
-            <Button size="lg">{heroLabel}</Button>
+            <Button size="lg" className="min-w-40">{heroLabel}</Button>
           </Link>
           <Link href="/practice">
-            <Button variant="outline" size="lg">{t("nav.practice")}</Button>
+            <Button variant="outline" size="lg" className="min-w-40">{t("nav.practice")}</Button>
           </Link>
         </div>
       </header>
