@@ -11,7 +11,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { formatSurahReference } from "@/lib/utils";
 import { getVerseSnapshot } from "@/lib/verse-snapshots";
-import { pageForSurah } from "@/lib/navigation";
+import { pageForVerse } from "@/lib/navigation";
 import type { QuranicExample } from "@/lib/types";
 
 interface ExampleCardProps {
@@ -71,7 +71,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
         <div className="flex items-center justify-between gap-2">
           <Badge color={color}>{ruleApplied}</Badge>
           <Link
-            href={`/mushaf/page/${pageForSurah(example.surah)}?v=${example.surah}:${example.ayah}`}
+            href={`/mushaf/page/${pageForVerse(example.surah, example.ayah)}?v=${example.surah}:${example.ayah}`}
             className="inline-flex items-center gap-1 text-micro text-primary dark:text-primary-light hover:underline shrink-0"
           >
             {t("lesson.openInReader")}
