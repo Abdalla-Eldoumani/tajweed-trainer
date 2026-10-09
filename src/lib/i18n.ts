@@ -664,7 +664,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "memorize.gradeEasy": { en: "Easy", ar: "سهل" },
   "memorize.gradeIntervalDays": { en: "{n}d", ar: "{n} يوم" },
 
-  // Audio-led (blind) recall + the per-session peek/hint budget (BLIND-01/03).
+  // Audio-led (blind) recall + the per-session peek/hint budget.
   // Operational UI copy, never Quran/tajweed content. The peek labels stay
   // DISTINCT from the free mushaf.memorizeReveal ("Reveal") so e2e locators for
   // the costed hint and the free self-check never collide.
@@ -761,7 +761,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
 
   // Daily revision (murajaah) dashboard, home due-card, and the local reminder
-  // (Phase 9 REV-01/02/03/04). Operational UI copy and counts only — never Quran
+  // Operational UI copy and counts only — never Quran
   // or hadith text; the notification body names a count via {n} and nothing more.
   // The beginRevision CTA stays DISTINCT from the four /progress drill start
   // labels (review/chain/segment/typing) in BOTH locales so it scrolls to the
@@ -789,8 +789,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "murajaah.notifyTitle": { en: "Revision reminder", ar: "تذكير بالمراجعة" },
   "murajaah.notifyBody": { en: "{n} verses due for revision today", ar: "{n} آيات مستحقة للمراجعة اليوم" },
 
-  // Memorization health: the freshness facet (STAT-01) and the error heatmap
-  // (STAT-02) on /progress. Operational UI copy and counts only — never Quran
+  // Memorization health: the freshness facet and the error heatmap
+  // on /progress. Operational UI copy and counts only — never Quran
   // text; scope names come from the bundled index. The `heatmap.by*` dimension
   // labels are deliberately DISTINCT from the `memorize.by*` breakdown labels in
   // BOTH locales so an e2e locator addresses the right section. Placeholders
@@ -839,7 +839,7 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "لا أخطاء استذكار مُسجّلة بعد — واصل المراجعة.",
   },
 
-  // Tikrar (repetition) rep counter on /progress (EXAM-01). Operational UI copy
+  // Tikrar (repetition) rep counter on /progress. Operational UI copy
   // and counts only — never Quran text (the verse renders through TajweedText).
   // It is the SIXTH drill-like surface on /progress, so its title / startDrill /
   // pickVerse labels are deliberately DISTINCT from the other five (review /
@@ -865,7 +865,7 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "احفظ آية أولًا، ثم كرّرها هنا لترسيخها.",
   },
 
-  // Timed, no-peek, self-graded exam on /progress (EXAM-02). A MEASUREMENT, not a
+  // Timed, no-peek, self-graded exam on /progress. A MEASUREMENT, not a
   // teaching drill: operational copy and counts only — never Quran text (the verse
   // renders through TajweedText). It is the SEVENTH drill-like surface on
   // /progress, so its title / start / pickScope (and reveal) labels are
@@ -908,7 +908,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "exam.recentTitle": { en: "Recent attempts", ar: "المحاولات الأخيرة" },
   "exam.recentEmpty": { en: "No attempts logged yet.", ar: "لا محاولات مُسجّلة بعد." },
 
-  // Per-day session journal on /progress (EXAM-03): set today's memorize/revise
+  // Per-day session journal on /progress: set today's memorize/revise
   // goals and watch today's tallies climb toward them. Operational copy and the
   // learner's own counts only — never Quran text. Its title is deliberately
   // DISTINCT from the neighbouring section titles it renders beside (the revision
@@ -935,7 +935,7 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "حدّد هدفًا للحفظ أو المراجعة أعلاه لتتبع تقدّم اليوم.",
   },
 
-  // Hizb & rub' al-hizb coverage rings on /progress (PROG-01). Operational copy
+  // Hizb & rub' al-hizb coverage rings on /progress. Operational copy
   // and derived counts only — never Quran text (the rings render only scope
   // numbers and percentages). The title stays DISTINCT from the neighbouring
   // memorization section titles in BOTH locales so its region locator addresses
@@ -1138,7 +1138,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "khatmah.behindDays": { en: "{n} days behind", ar: "متأخّر بـ {n} يومًا" },
   "khatmah.complete": { en: "Khatmah complete, may Allah accept it", ar: "تمّت الختمة، تقبّل الله" },
 
-  // Milestone certificate. Operational achievement copy only (CONST-01): the
+  // Milestone certificate. Operational achievement copy only: the
   // milestone reached, the date, and the app name. It NEVER contains verse or
   // hadith text. The AR side is a translation of this operational copy.
   "certificate.title": { en: "Certificate", ar: "شهادة" },
@@ -1194,7 +1194,7 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "حدّد آيات أو سورة كاملة أو جزءًا كمحفوظ. تعرض صفحة التقدّم نصيبك من القرآن وما حان وقت مراجعته، ويُخفي الاستذكار الآيات المحفوظة لتتلوها من ذاكرتك.",
   },
 
-  // Warsh "different narration" surface. Operational copy only (CONST-01): it
+  // Warsh "different narration" surface. Operational copy only: it
   // states what the app shows and how this entry behaves, and links out to an
   // external reference. It must never explain what the Warsh narration is or
   // describe its rules. The AR side is a translation of this operational copy.
