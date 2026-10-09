@@ -27,8 +27,8 @@ export default defineConfig({
       include: ["src/lib/**/*.ts"],
       exclude: [
         "src/lib/types.ts", // type-only, 0 executable lines
-        "src/lib/quran-api.ts", // thin fetch/cache/retry network wrapper; behavior is Phase 3 e2e
-        "src/lib/motion.ts", // View Transitions API + DOM; behavior is Phase 3 e2e
+        "src/lib/quran-api.ts", // thin fetch/cache/retry network wrapper; behavior is covered by e2e
+        "src/lib/motion.ts", // View Transitions API + DOM; behavior is covered by e2e
         "src/lib/search.ts", // out-of-migration-scope peripheral, no dedicated test
         "src/lib/question-pool.ts", // out-of-migration-scope peripheral, no dedicated test
         "src/lib/practice-scores.ts", // out-of-migration-scope peripheral, no dedicated test
