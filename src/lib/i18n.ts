@@ -1098,7 +1098,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "onboarding.stepOf": { en: "{current} / {total}", ar: "{current} / {total}" },
   "onboarding.step.mushaf.title": { en: "Read and listen", ar: "اقرأ واستمع" },
   "onboarding.step.mushaf.body": {
-    en: "Open the mushaf and tap any verse. A focused panel opens (a centred panel on desktop, a bottom sheet on your phone) where you play that verse, play on from there, mark it memorized, bookmark it, add a private note, and read its translation and tafsir.",
+    en: "Open the mushaf and tap any verse. A focused panel opens (a centered panel on desktop, a bottom sheet on your phone) where you play that verse, play on from there, mark it memorized, bookmark it, add a private note, and read its translation and tafsir.",
     ar: "افتح المصحف وانقر أي آية. تنفتح لوحة مركّزة (وسطية على الحاسوب، وورقة سفلية على الهاتف) حيث تشغّل تلك الآية، أو تتابع منها، وتحدّدها محفوظة، وتضيف إشارة مرجعية، وتكتب ملاحظة خاصة، وتقرأ ترجمتها وتفسيرها.",
   },
   "onboarding.step.themes.title": { en: "Make it yours", ar: "اجعله بأسلوبك" },
