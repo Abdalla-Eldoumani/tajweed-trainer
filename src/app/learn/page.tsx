@@ -22,19 +22,22 @@ export default function LearnPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <ol className="divide-y divide-[color:var(--gold-hairline)] border-y border-[color:var(--gold-hairline)]">
         {modules.map((module) => {
           const modProgress = moduleProgress(module.id);
+          const scores = modProgress.quizScores;
           return (
-            <ModuleCard
-              key={module.id}
-              module={module}
-              completedLessons={modProgress.lessonsCompleted.length}
-              locked={!isModuleUnlocked(progress, module.id)}
-            />
+            <li key={module.id}>
+              <ModuleCard
+                module={module}
+                lessonDone={modProgress.lessonsCompleted.length > 0}
+                quizScore={scores.length > 0 ? scores[scores.length - 1].score : null}
+                locked={!isModuleUnlocked(progress, module.id)}
+              />
+            </li>
           );
         })}
-      </div>
+      </ol>
     </div>
   );
 }
