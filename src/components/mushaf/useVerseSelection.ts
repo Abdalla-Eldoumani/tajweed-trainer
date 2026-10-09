@@ -6,9 +6,9 @@ import type { QueueItem } from "@/hooks/usePlayer";
 // Multi-verse selection state for the reader. It holds two independent ways to
 // build one playback queue:
 //   - a hand-picked SET: an order-stable, de-duped list of verseKeys the user
-//     adds one verse at a time (PLAY-04);
+//     adds one verse at a time;
 //   - a contiguous RANGE within one surah: a { surah, from, to } picked as a
-//     start + end, normalized when reversed (PLAY-03).
+//     start + end, normalized when reversed.
 // Both resolve to a QueueItem[] the surface hands to the engine (playSet /
 // playRange). This hook owns ZERO audio: it never constructs `new Audio()` and
 // never touches PlayerHost; playback only ever happens by the surface calling a
@@ -19,7 +19,7 @@ import type { QueueItem } from "@/hooks/usePlayer";
 // page-to-page transitions inside the reader, but it is intentionally NOT
 // persisted across a full reload. If reload persistence is ever wanted it must
 // go through the consolidated storage.ts sanitizer (verseKey regex + caps) with
-// export/import, never an ad-hoc localStorage key (UI-SPEC B8, threat T-05-10).
+// export/import, never an ad-hoc localStorage key.
 
 const VERSE_KEY_RE = /^\d{1,3}:\d{1,3}$/;
 
@@ -49,7 +49,7 @@ export interface VerseSelection {
   // True when either a set or a range exists (drives the surface's empty fold).
   hasSelection: boolean;
   // The exact number of distinct selected verses across whichever mode is
-  // active. Always exact even when the chip list is capped (UI-SPEC B5).
+  // active. Always exact even when the chip list is capped.
   count: number;
   // The keys to mark in the page: the set keys, or the range expanded to keys.
   // A Set for O(1) isSelected lookups while rendering every verse on a page.
