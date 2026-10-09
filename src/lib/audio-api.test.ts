@@ -5,7 +5,7 @@ import { activeWordIndex, type WordSegment } from "@/lib/audio-api";
 // activeWordIndex locally because bare Node could not load audio-api.ts; under
 // Vitest we import the REAL export so a regression in the word lookup fails the
 // suite. Only the pure lookup is tested here: the network half
-// (fetchSegments/fetchAudioUrl) is Phase 3 and is not exercised.
+// (fetchSegments/fetchAudioUrl) is covered by the e2e specs, not here.
 
 // Real captured segments: verse 1:2, reciter 12 (Al-Husary, the default), four
 // words, confirmed live on 2026-06-13. Each tuple is
