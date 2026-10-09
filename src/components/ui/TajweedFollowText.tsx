@@ -54,7 +54,7 @@ const BLURRED_CLASS = "mushaf-word-blurred";
 // whole-verse blur the caller put on this element, so the per-word .mushaf-word-
 // blurred wrappers become the single blur source and revealed words show through.
 // When reveal cannot align it is absent, so the caller's whole-verse blur stands
-// as the fallback (the recall path stays hidden; FOLLOW-05).
+// as the fallback (the recall path stays hidden).
 const REVEAL_ACTIVE_CLASS = "mushaf-reveal-active";
 // The wrapper element this layer inserts around a word's nodes (the active word
 // and, in reveal mode, each unrevealed word). A custom tag name so a grouping
@@ -74,7 +74,7 @@ const WRAP_TAG = "mushaf-word";
 // growing-prefix cue with start pinned to 0) and skips the activeIdx highlight —
 // the additive reveal primitive the segment drill uses over the same grouping. It
 // NEVER edits the markup string,
-// recolors a <tajweed> span, or re-tokenizes the text (CONST-01) — the letter
+// recolors a <tajweed> span, or re-tokenizes the text — the letter
 // colors come entirely from the untouched spans underneath. On any alignment
 // mismatch it shows the plain markup with no highlight and no blur (silent
 // fallback; the caller handles the whole-verse blur for reveal mode).
@@ -123,7 +123,7 @@ export function TajweedFollowText({
     // Re-merge the word/space text fragments the grouping split out, restoring the
     // container to the exact injected markup so nothing accumulates across ticks or
     // lingers. normalize() only merges adjacent plain-text nodes; the colored
-    // <tajweed> spans and their order are untouched (CONST-01).
+    // <tajweed> spans and their order are untouched.
     containerRef.current?.normalize();
     containerRef.current?.classList.remove(REVEAL_ACTIVE_CLASS);
   }, [unwrap]);
@@ -170,7 +170,7 @@ export function TajweedFollowText({
     // single word can span several nodes (plain text + <tajweed> letter spans).
     // So subdivide each text node at its spaces into word-piece and space
     // fragments -- a read-only split of PLAIN TEXT that never touches a <tajweed>
-    // span, its letters, or their order (CONST-01) -- then accumulate runs of
+    // span, its letters, or their order -- then accumulate runs of
     // non-space nodes into words. A space fragment (and the trailing
     // <span class="end"> ayah number, excluded) closes the current word.
     const groups: Node[][] = [];
