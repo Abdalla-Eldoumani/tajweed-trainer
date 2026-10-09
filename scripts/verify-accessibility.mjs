@@ -205,26 +205,22 @@ record(
   "AA-normal contrast-scoped text on the revelation badge + surah-number chip (text-gold-dark is banned as text in this file by policy)",
 );
 
-// --- 11. the small gold-on-light badges that sat below AA now carry the
-//         contrast-scoped #7A5E15 (>=4.86:1 on every light ground), not the
-//         shared text-gold-dark (~3.75-4.51:1 there). Three spots: the home
-//         learning-path step numeral, the ModuleCard icon tile + order numeral,
-//         and the MasterySection "started" level badge. The home hero KEEPS its
-//         large-text text-gold-dark headings (>=3:1 as large text), so that file
-//         is checked at the step-badge span only; ModuleCard and MasterySection
-//         dropped the token entirely, so they are asserted file-wide. ---
-const homeSrc = read("src/app/page.tsx");
-const stepBadge = (homeSrc.match(/className="([^"]*bg-gold-light\/30[^"]*)"/) || [])[1] || "";
+// --- 11. the small gold-on-light numerals carry the contrast-scoped #7A5E15
+//         (>=4.86:1 on every light ground), not the shared text-gold-dark
+//         (~3.75-4.51:1 there). The learning-path numeral is drawn by the shared
+//         medallion, whose rule holds the color, so the CSS rule and the card that
+//         uses it are asserted; MasterySection is asserted file-wide. ---
+const globalCss = read("src/app/globals.css");
 record(
-  "home learning-path step badge uses scoped #7A5E15, not text-gold-dark",
-  /text-\[#7A5E15\]/.test(stepBadge) && !/text-gold-dark/.test(stepBadge),
-  "AA-normal contrast-scoped numeral on the step badge (large hero gold headings are untouched)",
+  ".medallion numeral uses the scoped #7A5E15",
+  /\.medallion\s*\{[^}]*color:\s*#7A5E15/.test(globalCss),
+  "the order numeral must clear 4.5:1 on the medallion ground",
 );
 const moduleCardSrc = read("src/components/learn/ModuleCard.tsx");
 record(
-  "ModuleCard.tsx small gold text uses scoped #7A5E15, not text-gold-dark",
-  /text-\[#7A5E15\]/.test(moduleCardSrc) && !/text-gold-dark/.test(moduleCardSrc),
-  "icon tile + order numeral must clear 4.5:1 on the card ground",
+  "ModuleCard.tsx draws its numeral through the medallion, not text-gold-dark",
+  /<Medallion/.test(moduleCardSrc) && !/text-gold-dark/.test(moduleCardSrc),
+  "no small gold text of its own on the card",
 );
 const masterySrc = read("src/components/progress/MasterySection.tsx");
 record(
