@@ -57,7 +57,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "30", ar: "٣٠" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "29 letters total — the 28 Arabic alphabet letters plus the consonant Yaa, treated separately from the madd Yaa.", ar: "تسعة وعشرون حرفا — الحروف الثمانية والعشرون مع الياء غير المدّيّة منفصلة عن المدّيّة.", lessonAnchor: "makharij-overview" },
+    explanation: { en: "29 letters in total: the 28 letters of the alphabet plus Hamzah, counted separately from Alif.", ar: "تسعة وعشرون حرفا: الحروف الثمانية والعشرون مع الهمزة معدودة مستقلّة عن الألف.", lessonAnchor: "makharij-overview" },
     source: { surah: 1, ayah: 2, translationEditionId: null, provenance: PROVENANCE },
   },
   {
