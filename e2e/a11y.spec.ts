@@ -1,19 +1,18 @@
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect, seedProgress } from "./support/fixtures";
 
-// E2E-04: run the axe-core WCAG 2 A/AA rule engine over the key routes and
-// enforce a ratcheted-clean baseline. The gate mirrors the Vitest coverage gate —
-// it is enforced-and-met, not aspirational: every serious/critical violation must
-// be ABSENT. HARD-03 landed the real fixes, so ACCEPTED_VIOLATIONS is now `{}` on
-// every route (nothing tolerated). The two prior deferrals were resolved: the
+// Run the axe-core WCAG 2 A/AA rule engine over the key routes and enforce a
+// clean baseline. The gate mirrors the Vitest coverage gate: it is enforced and
+// met, not aspirational, so every serious/critical violation must be absent.
+// ACCEPTED_VIOLATIONS is `{}` on every route (nothing tolerated). The two prior deferrals were resolved: the
 // genuinely-adjustable UI chrome (the /mushaf gold badges + surah-number chips and
 // the reader ⌘K hint) was fixed to AA at source, and the verified-immutable
 // tajweed letter colors are scoped OUT of the scan (see the exclude rationale
 // below). The ["serious","critical"] severity threshold is never loosened to make
-// it pass — a fresh serious/critical violation on any route fails the gate.
+// it pass: a fresh serious/critical violation on any route fails the gate.
 //
 // The eight routes: home, the learn index, the always-unlocked first lesson
-// (/learn/makharij has no prerequisite gate — module-unlock.ts), the Mushaf
+// (/learn/makharij has no prerequisite gate; see module-unlock.ts), the Mushaf
 // index, a Mushaf reader page, practice, progress, and settings.
 const ROUTES = [
   "/",
@@ -29,12 +28,12 @@ const ROUTES = [
 type Route = (typeof ROUTES)[number];
 
 // Per-route accepted serious/critical rule ids mapped to a tolerated baseline
-// node count. HARD-03 ratcheted this to a clean `{}` on EVERY route: no
+// node count. Every route is a clean `{}`: no
 // serious/critical violation is tolerated on any route. A rule id absent from a
 // route's map (which is now all of them) is blocking at any count, so a fresh
-// serious/critical node anywhere fails the gate. The two former deferrals — the
+// serious/critical node anywhere fails the gate. The two former deferrals, the
 // /mushaf gold badges + chips (color-contrast 133) and the reader ⌘K hint on
-// /mushaf/page/1 (color-contrast 1) — were fixed at source to AA and dropped
+// /mushaf/page/1 (color-contrast 1), were fixed at source to AA and dropped
 // here. Never re-add an entry to absorb a regression, and never lower the
 // ["serious","critical"] threshold instead of fixing the source.
 const ACCEPTED_VIOLATIONS: Record<Route, Record<string, number>> = {
