@@ -264,7 +264,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Raa Sakinah preceded by Dammah is heavy.", ar: "الراء الساكنة بعد ضمّة مفخّمة.", lessonAnchor: "raa-rules" },
-    source: { surah: 75, ayah: 18, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 4, ayah: 82, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "laam-medium-rabb-rule",
@@ -521,7 +521,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "The vocative form اللَّهُمَّ inherits the Allah-Laam rule. The lesson's listed common mistake (تفخيم في قُلِ اللَّهُمَّ) confirms that the same rule governs اللَّهُمَّ.", ar: "صيغة النداء اللَّهُمَّ تتبع نفس حكم لام الجلالة. والخطأ الشائع المذكور (تفخيم اللام في قُلِ اللَّهُمَّ) دليل أنّ الحكم نفسه يطبَّق عليها.", lessonAnchor: "laam-lafzul-jalalah" },
-    source: { surah: 3, ayah: 26, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 1, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "laam-new-firaown-heavy-or-light",
