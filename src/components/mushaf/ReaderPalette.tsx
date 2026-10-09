@@ -16,7 +16,7 @@ import type { SurahHeader } from "@/lib/types";
 // row is offered only for a query in 1..604.
 const TOTAL_PAGES = 604;
 // Cap the rendered surah rows so an empty or broad query never paints all 114
-// heavy rows. The list scrolls; the cap keeps it responsive (threat T-06-06).
+// heavy rows. The list scrolls; the cap keeps it responsive.
 const MAX_SURAH_ROWS = 50;
 
 type Row =
@@ -63,7 +63,7 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
   // Build the typed row list from a focused LOCAL filter over the bundled index
   // (NOT search.ts, which would pull rules/modules/waqf into the reader). A
   // numeric query can match a surah number, a juz, and a page at once; all three
-  // show as separate rows disambiguated by their muted secondary (UI-SPEC B4).
+  // show as separate rows disambiguated by their muted secondary.
   const rows = useMemo<Row[]>(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
@@ -224,7 +224,7 @@ export function ReaderPalette({ open, onClose, surahs }: ReaderPaletteProps) {
       // listener; React's synthetic stopPropagation alone would NOT stop the
       // native event from bubbling to it, so stop the native event immediately.
       // Closing the palette must not reach the sheet's Escape -> stop() and kill
-      // playback (UI-SPEC B8).
+      // playback.
       e.preventDefault();
       e.stopPropagation();
       e.nativeEvent.stopImmediatePropagation();
