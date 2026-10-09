@@ -1,6 +1,6 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E (CHAIN-01/04): the verse-chaining drill on /progress. Seeding one memorized
+// E2E: the verse-chaining drill on /progress. Seeding one memorized
 // verse (1:1) creates a verse seam whose tail is memorized (tail 1:1 -> head 1:2),
 // so the drill has a session with no prior interaction. The drill cues the TAIL and
 // hides the HEAD behind a Reveal; grading records the HEAD verse (1:2) into the
@@ -86,7 +86,7 @@ test("keyboard grading is scoped to the focused drill, not both at once", async 
   expect((await readProgress(page)).memorizationReviews).not.toHaveProperty("1:1");
 });
 
-// Regression (T-06-02): /progress now renders THREE keyboard drills at once — the
+// Regression: /progress now renders THREE keyboard drills at once — the
 // memorized-verse review, the chaining drill, and the segment drill. Each binds
 // keys 1-4 while its grade buttons are live; a keypress must grade ONLY the focused
 // drill. Seeding two memorized verses makes the three drills grade THREE distinct
