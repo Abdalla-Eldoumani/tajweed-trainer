@@ -211,10 +211,10 @@ export default function SettingsPage() {
   // lapis fill on vellum, gold leaf with navy ink at night.
   const segChip = (active: boolean) =>
     cn(
-      "px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
+      "px-4 py-2 min-h-[44px] min-w-[44px] rounded-lg text-sm font-medium transition-colors",
       active
         ? "bg-primary text-on-primary hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep"
-        : "bg-bg-subtle text-text dark:bg-bg-subtle-dark dark:text-text-dark hover:bg-cream-dark dark:hover:bg-bg-card-dark"
+        : "bg-bg-subtle text-text dark:bg-bg-subtle-dark dark:text-text-dark hover:bg-bg-card"
     );
 
   return (
@@ -612,7 +612,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => setShowBackupReminder(false)}
-              className="text-xs font-medium text-[color:var(--text-muted)] hover:text-[color:var(--text)] shrink-0 transition-colors"
+              className="text-xs font-medium text-[color:var(--text-muted)] hover:text-[color:var(--text)] shrink-0 min-h-[44px] px-2 transition-colors"
               aria-label={t("settings.backup.reminderDismiss")}
             >
               {t("settings.backup.reminderDismiss")}
