@@ -10,7 +10,7 @@ export const questions: Question[] = [
     difficulty: "easy",
     prompt: { en: "How many rules govern Meem Sakinah?", ar: "كم حكما للميم الساكنة؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "2", ar: "٢" } },
       { id: "opt-b", label: { en: "3", ar: "٣" } },
@@ -19,7 +19,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-b",
     explanation: { en: "Three rules: Ikhfaa Shafawi, Idgham Shafawi, Izhar Shafawi.", ar: "ثلاثة أحكام: الإخفاء الشفوي، والإدغام الشفوي، والإظهار الشفوي.", lessonAnchor: "meem-sakinah-overview" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-easy-ikhfaa-shafawi-letter",
@@ -53,7 +53,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Idgham Shafawi occurs when Meem Sakinah meets another Meem (م). The two Meems merge into one shaddah-marked Meem with ghunnah for 2 beats.", ar: "يقع الإدغام الشفوي عند التقاء الميم الساكنة بميم متحرّكة، فتُدغَم فيها وتصبح ميما واحدة مشدّدة مع الغنّة بمقدار حركتين.", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 16, ayah: 31, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 39, ayah: 34, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-easy-izhar-shafawi-letters",
@@ -78,7 +78,7 @@ export const questions: Question[] = [
     difficulty: "easy",
     prompt: { en: "How long is the ghunnah held in Ikhfaa Shafawi and Idgham Shafawi?", ar: "كم مقدار الغنّة في الإخفاء الشفوي والإدغام الشفوي؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "2 beats", ar: "حركتان" } },
       { id: "opt-b", label: { en: "1 beat", ar: "حركة واحدة" } },
@@ -87,7 +87,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Both rules carry 2 beats of ghunnah.", ar: "كلا الحكمين فيه غنّة بمقدار حركتين.", lessonAnchor: "ikhfaa-shafawi" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-easy-izhar-no-ghunnah",
@@ -105,23 +105,6 @@ export const questions: Question[] = [
     correctOptionId: "opt-a",
     explanation: { en: "Izhar Shafawi is clear pronunciation. Adding ghunnah at Faa (ف) or Waw (و) is a common mistake.", ar: "الإظهار الشفوي نطق واضح بلا غنّة. وإضافة الغنّة عند الفاء (ف) أو الواو (و) من الأخطاء الشائعة.", lessonAnchor: "izhar-shafawi" },
     source: { surah: 2, ayah: 39, translationEditionId: null, provenance: PROVENANCE },
-  },
-  {
-    id: "meem-easy-idgham-shafawi-name",
-    moduleId: "meem-sakinah",
-    difficulty: "easy",
-    prompt: { en: "Idgham Shafawi is also called what?", ar: "بأيّ اسم آخر يُعرف الإدغام الشفوي؟" },
-    arabicText: "أَنَّهُمْ مُّبْتَلُونَ",
-    englishGloss: "that they are being tested",
-    options: [
-      { id: "opt-a", label: { en: "Idgham Mithlayn Sagheer", ar: "إدغام المتماثلين الصغير" } },
-      { id: "opt-b", label: { en: "Idgham Mutajanisayn", ar: "إدغام المتجانسين" } },
-      { id: "opt-c", label: { en: "Idgham Mutaqaribayn", ar: "إدغام المتقاربين" } },
-      { id: "opt-d", label: { en: "Idgham Halqi", ar: "إدغام حلقي" } },
-    ],
-    correctOptionId: "opt-a",
-    explanation: { en: "The lesson notes that Idgham Shafawi (lip merging of two Meems) is also called Idgham Mithlayn Sagheer (merging of two identical letters, the smaller form).", ar: "ذكر الدرس أنّ الإدغام الشفوي (إدغام الميمين) يُسمّى أيضا إدغام المتماثلين الصغير.", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 68, ayah: 17, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-easy-shafawi-meaning",
@@ -146,7 +129,7 @@ export const questions: Question[] = [
     difficulty: "easy",
     prompt: { en: "Why does Meem Sakinah have 3 rules instead of 4?", ar: "لماذا كان للميم الساكنة ثلاثة أحكام لا أربعة؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "There is no Iqlab for Meem; the four-rule structure is specific to Noon/Tanween", ar: "لا إقلاب للميم؛ والأحكام الأربعة خاصّة بالنون والتنوين" } },
       { id: "opt-b", label: { en: "Iqlab is included within Idgham Shafawi", ar: "الإقلاب مندرج تحت الإدغام الشفوي" } },
@@ -155,24 +138,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Meem Sakinah has only three rules: Ikhfaa, Idgham, and Izhar — all Shafawi. There is no Iqlab for Meem; the four-rule structure is specific to Noon Sakinah and Tanween.", ar: "الميم الساكنة لها ثلاثة أحكام فحسب: إخفاء وإدغام وإظهار، كلّها شفوية. ولا إقلاب للميم؛ والأحكام الأربعة خاصّة بالنون والتنوين.", lessonAnchor: "meem-sakinah-overview" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
-  },
-  {
-    id: "meem-easy-shaddah-result",
-    moduleId: "meem-sakinah",
-    difficulty: "easy",
-    prompt: { en: "What happens when Idgham Shafawi merges two Meems?", ar: "ماذا يحدث عند إدغام الميمين في الإدغام الشفوي؟" },
-    arabicText: "أَنَّهُمْ مُّبْتَلُونَ",
-    englishGloss: "that they are being tested",
-    options: [
-      { id: "opt-a", label: { en: "They become a single emphasized Meem (with shaddah) plus ghunnah", ar: "تصبحان ميما واحدة مشدّدة مع الغنّة" } },
-      { id: "opt-b", label: { en: "The first Meem disappears entirely with no ghunnah", ar: "تختفي الميم الأولى كلّيّا بلا غنّة" } },
-      { id: "opt-c", label: { en: "They become a hidden Meem like in Iqlab", ar: "تصيران ميما مخفاة كالإقلاب" } },
-      { id: "opt-d", label: { en: "They convert to a Noon", ar: "تتحوّلان إلى نون" } },
-    ],
-    correctOptionId: "opt-a",
-    explanation: { en: "The two Meems merge into one Meem with shaddah, held with ghunnah for 2 beats.", ar: "تُدغَم الميمان في ميم واحدة مشدّدة مع غنّة بمقدار حركتين.", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 68, ayah: 17, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
 
   // ---------- MEDIUM (12) ----------
@@ -199,7 +165,7 @@ export const questions: Question[] = [
     difficulty: "medium",
     prompt: { en: "Which rule applies in هُمْ بِهِ?", ar: "ما الحكم في هُمْ بِهِ؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "Ikhfaa Shafawi", ar: "إخفاء شفوي" } },
       { id: "opt-b", label: { en: "Idgham Shafawi", ar: "إدغام شفوي" } },
@@ -208,7 +174,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Meem Sakinah at the end of هُمْ followed by Baa at the start of بِهِ → Ikhfaa Shafawi.", ar: "ميم ساكنة في آخر هُمْ تليها باء في بِهِ → إخفاء شفوي.", lessonAnchor: "ikhfaa-shafawi" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-medium-lahum-maa-rule",
@@ -225,24 +191,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Meem Sakinah followed by Meem → Idgham Shafawi. Two Meems merge into one with shaddah and ghunnah for 2 beats.", ar: "ميم ساكنة تليها ميم → إدغام شفوي. تُدغَم الميمان في ميم مشدّدة مع غنّة بمقدار حركتين.", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 16, ayah: 31, translationEditionId: null, provenance: PROVENANCE },
-  },
-  {
-    id: "meem-medium-annahum-mubtaloon-rule",
-    moduleId: "meem-sakinah",
-    difficulty: "medium",
-    prompt: { en: "Which rule applies in أَنَّهُمْ مُّبْتَلُونَ?", ar: "ما الحكم في أَنَّهُمْ مُّبْتَلُونَ؟" },
-    arabicText: "أَنَّهُمْ مُّبْتَلُونَ",
-    englishGloss: "that they are being tested",
-    options: [
-      { id: "opt-a", label: { en: "Idgham Shafawi (also called Idgham Mithlayn Sagheer)", ar: "إدغام شفوي (إدغام المتماثلين الصغير)" } },
-      { id: "opt-b", label: { en: "Ikhfaa Shafawi", ar: "إخفاء شفوي" } },
-      { id: "opt-c", label: { en: "Izhar Shafawi", ar: "إظهار شفوي" } },
-      { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
-    ],
-    correctOptionId: "opt-a",
-    explanation: { en: "Meem Sakinah at the end of أَنَّهُمْ followed by another Meem → Idgham Shafawi.", ar: "ميم ساكنة في آخر أَنَّهُمْ تليها ميم → إدغام شفوي.", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 68, ayah: 17, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 39, ayah: 34, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-medium-hum-feeha-rule",
@@ -301,7 +250,7 @@ export const questions: Question[] = [
     difficulty: "medium",
     prompt: { en: "Why is the Ikhfaa here called 'Shafawi' rather than 'Haqiqi'?", ar: "لماذا يُسمّى الإخفاء هنا شفويا لا حقيقيا؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "Because it involves the LIPS (Meem and Baa); 'Haqiqi' refers to Noon Sakinah's Ikhfaa", ar: "لأنه يتعلّق بالشفتين (الميم والباء)، أمّا الحقيقي فهو إخفاء النون الساكنة" } },
       { id: "opt-b", label: { en: "Because it is less authentic", ar: "لأنّه أدنى ثبوتا" } },
@@ -310,7 +259,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Shafawi means 'related to the lips' (Meem and Baa are lip letters). The Ikhfaa for Noon Sakinah is called Haqiqi (true) because the Noon's makhraj is hidden in 15 different positions.", ar: "الشفوي نسبة إلى الشفتين (الميم والباء حرفان شفويّان). أمّا إخفاء النون الساكنة فيُسمّى حقيقيا لإخفاء حقيقة مخرج النون عند خمسة عشر حرفا.", lessonAnchor: "ikhfaa-shafawi" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-medium-baa-versus-meem-rule",
@@ -318,7 +267,7 @@ export const questions: Question[] = [
     difficulty: "medium",
     prompt: { en: "Meem Sakinah + Baa = which rule? Meem Sakinah + Meem = which rule?", ar: "ميم ساكنة + باء = أيّ حكم؟ وميم ساكنة + ميم = أيّ حكم؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "Ikhfaa Shafawi (with Baa); Idgham Shafawi (with Meem)", ar: "إخفاء شفوي (مع الباء)؛ إدغام شفوي (مع الميم)" } },
       { id: "opt-b", label: { en: "Idgham Shafawi (with Baa); Ikhfaa Shafawi (with Meem)", ar: "إدغام شفوي (مع الباء)؛ إخفاء شفوي (مع الميم)" } },
@@ -327,7 +276,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Baa triggers Ikhfaa (hidden Meem); Meem triggers Idgham (merged Meem). Memorise: Baa = Ikhfaa, Meem = Idgham, anything else = Izhar.", ar: "الباء تستوجب الإخفاء (ميم مخفاة)، والميم تستوجب الإدغام (ميم مدغمة). والقاعدة: الباء إخفاء، والميم إدغام، وما سواهما إظهار.", lessonAnchor: "ikhfaa-shafawi" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-medium-stop-meem-shaddah",
@@ -344,7 +293,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "The two Meems merge into a single Meem with shaddah, pronounced with ghunnah for 2 beats.", ar: "تُدغَم الميمان في ميم واحدة مشدّدة، تُنطق مع الغنّة بمقدار حركتين.", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 16, ayah: 31, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 39, ayah: 34, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-medium-meem-with-faa-mistake",
@@ -388,7 +337,7 @@ export const questions: Question[] = [
     difficulty: "hard",
     prompt: { en: "How does Ikhfaa Shafawi (Meem→Baa) differ from Iqlab (Noon→Baa)?", ar: "ما الفرق بين الإخفاء الشفوي (ميم → باء) والإقلاب (نون → باء)؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "Iqlab CONVERTS the Noon to a hidden Meem; Ikhfaa Shafawi keeps the Meem and hides it before Baa", ar: "الإقلاب يُحوّل النون إلى ميم مخفاة، أمّا الإخفاء الشفوي فيُبقي الميم ويُخفيها قبل الباء" } },
       { id: "opt-b", label: { en: "There is no difference", ar: "لا فرق بينهما" } },
@@ -397,7 +346,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Iqlab transforms the Noon into a hidden Meem before Baa. Ikhfaa Shafawi keeps the existing Meem but hides it. Both involve a hidden Meem before Baa with 2 beats of ghunnah, but the starting letter is different.", ar: "الإقلاب يُحوّل النون إلى ميم مخفاة قبل الباء. أمّا الإخفاء الشفوي فيُبقي الميم الموجودة ويُخفيها. وكلاهما ينتهي بميم مخفاة قبل الباء بغنّة بمقدار حركتين، والفرق في الحرف الأصلي.", lessonAnchor: "ikhfaa-shafawi" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-hard-ghunnah-on-shafawi-ranking",
@@ -415,23 +364,6 @@ export const questions: Question[] = [
     correctOptionId: "opt-a",
     explanation: { en: "Izhar Shafawi means clear pronunciation with NO ghunnah. Idgham Shafawi (and Ikhfaa Shafawi) carry a 2-beat ghunnah.", ar: "الإظهار الشفوي نطق واضح بلا غنّة. أمّا الإدغام الشفوي والإخفاء الشفوي ففيهما غنّة بمقدار حركتين.", lessonAnchor: "izhar-shafawi" },
     source: { surah: 2, ayah: 39, translationEditionId: null, provenance: PROVENANCE },
-  },
-  {
-    id: "meem-hard-mithlayn-meaning",
-    moduleId: "meem-sakinah",
-    difficulty: "hard",
-    prompt: { en: "Why is Idgham Shafawi called 'Mithlayn' Sagheer (Identical-Pair Lesser)?", ar: "لماذا يُسمّى الإدغام الشفوي إدغام المتماثلين الصغير؟" },
-    arabicText: "أَنَّهُمْ مُّبْتَلُونَ",
-    englishGloss: "that they are being tested",
-    options: [
-      { id: "opt-a", label: { en: "Because two IDENTICAL letters (Meem + Meem) are merged; Sagheer because the first is sakin", ar: "لأنّ المدغَمَين حرفان متماثلان (ميم + ميم)، والصغير لأنّ الأوّل ساكن" } },
-      { id: "opt-b", label: { en: "Because the merged Meem is small", ar: "لأنّ الميم الناتجة صغيرة" } },
-      { id: "opt-c", label: { en: "Because it is rare in the Quran", ar: "لقلّة وروده في القرآن" } },
-      { id: "opt-d", label: { en: "Because it only applies in short surahs", ar: "لأنّه لا يقع إلا في السور القصار" } },
-    ],
-    correctOptionId: "opt-a",
-    explanation: { en: "'Mithlayn' = two identical letters. 'Sagheer' = the first is sakin (the second carries a vowel). When both letters are voweled, it would be 'Kabeer' (different rule).", ar: "المتماثلان: حرفان متطابقان. والصغير: لأنّ الأوّل ساكن والثاني متحرّك. ولو كانا كلاهما متحرّكين لكان كبيرا (وله حكم آخر).", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 68, ayah: 17, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-hard-shafawi-mistakes-pressing",
@@ -456,7 +388,7 @@ export const questions: Question[] = [
     difficulty: "hard",
     prompt: { en: "Given the Meem Sakinah rules, what determines whether to use Ikhfaa, Idgham, or Izhar?", ar: "ما الذي يحدّد تطبيق الإخفاء أو الإدغام أو الإظهار للميم الساكنة؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "The single letter that follows the Meem Sakinah", ar: "الحرف الذي يلي الميم الساكنة" } },
       { id: "opt-b", label: { en: "The number of letters in the surah", ar: "عدد حروف السورة" } },
@@ -465,7 +397,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "The rule is determined entirely by the letter following the Meem Sakinah: Baa → Ikhfaa Shafawi, Meem → Idgham Shafawi, anything else → Izhar Shafawi.", ar: "يُحدَّد الحكم بالحرف الذي يلي الميم الساكنة فقط: الباء إخفاء شفوي، والميم إدغام شفوي، وما سواهما إظهار شفوي.", lessonAnchor: "meem-sakinah-overview" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-hard-incomplete-merge",
@@ -482,7 +414,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "The lesson explicitly lists incomplete merging as a common mistake. The two Meems must become a single shaddah-marked Meem.", ar: "ذكر الدرس أنّ عدم الإدغام التامّ من الأخطاء الشائعة. يجب أن تصير الميمان ميما واحدة مشدّدة.", lessonAnchor: "idgham-shafawi" },
-    source: { surah: 16, ayah: 31, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 39, ayah: 34, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-hard-izhar-lips-position",
@@ -507,7 +439,7 @@ export const questions: Question[] = [
     difficulty: "hard",
     prompt: { en: "Together, the three Meem Sakinah rules cover how many letters?", ar: "كم عدد الحروف التي تشملها أحكام الميم الساكنة الثلاثة مجتمعة؟" },
     arabicText: "هُمْ بِهِ",
-    englishGloss: "they in it",
+    englishGloss: "",
     options: [
       { id: "opt-a", label: { en: "All 28 Arabic letters (1 + 1 + 26)", ar: "جميع الحروف الثمانية والعشرين (١ + ١ + ٢٦)" } },
       { id: "opt-b", label: { en: "Only the lip letters", ar: "الحروف الشفوية فقط" } },
@@ -516,7 +448,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Ikhfaa covers Baa (1), Idgham covers Meem (1), and Izhar covers everything else (26). Together: 28 letters — every Arabic letter has a defined behavior after Meem Sakinah.", ar: "الإخفاء يشمل الباء (واحد)، والإدغام يشمل الميم (واحد)، والإظهار يشمل ما سواهما (ستّة وعشرون). والمجموع: ثمانية وعشرون حرفا، فلكلّ حرف بعد الميم الساكنة حكم مقرّر.", lessonAnchor: "meem-sakinah-overview" },
-    source: { surah: 78, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-new-izhar-shafawi-no-ghunnah",
