@@ -205,7 +205,7 @@ export function MushafBookmarks({ surahs }: MushafBookmarksProps) {
                       onClick={() => toggle(vk)}
                       aria-label={t("mushaf.bookmarkVerseRemove")}
                       title={t("mushaf.bookmarkVerseRemove")}
-                      className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg text-text-muted hover:text-accent hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors"
+                      className="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-lg text-text-muted hover:text-accent hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark transition-colors"
                     >
                       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
                         <path d="M6 2h12a1 1 0 0 1 1 1v18l-7-4-7 4V3a1 1 0 0 1 1-1z" />
