@@ -681,7 +681,7 @@ function sanitizeKhatmah(input: unknown): KhatmahPlan | null {
 // `ref` that is an integer 1..30 for a juz or null for a khatmah; malformed
 // entries are dropped. Records are deduped by kind+ref (one per milestone, so the
 // list cannot grow past ~31), then capped at MAX_CERTIFICATES as a final ceiling.
-// The image is NEVER part of this record (EDGE_CASES_V2 line 50), only the fact
+// The image is NEVER part of this record, only the fact
 // that the milestone was reached/exported. This is an array, not a keyed map, so
 // it carries no prototype-pollution-key guard (there are no attacker-controlled
 // object keys to rebuild). A stored object without this field reads back as []
@@ -961,7 +961,7 @@ export function clearKhatmah(): void {
 // model (field `certificates`, not an ad-hoc key) so export / import / reset cover
 // it; the default-[] in DEFAULT_PROGRESS makes resetProgress clear the records.
 // This records only that a milestone was reached and a certificate generated; it
-// NEVER stores the image (EDGE_CASES_V2 line 50).
+// NEVER stores the image.
 export function getCertificates(): CertificateRecord[] {
   return getProgress().certificates ?? [];
 }
@@ -1242,7 +1242,7 @@ export function recordPeek(verseKey: string): void {
 // Clear the per-session peek map (the review's finish transition calls this;
 // resetProgress also clears it via the default clone). Early-returns when the map
 // is already empty, so a change-bus re-entry on the finished transition cannot
-// loop (Pitfall 4) and a redundant reset is a no-op.
+// loop and a redundant reset is a no-op.
 export function resetSessionPeeks(): void {
   if (!isBrowser()) return;
   if (Object.keys(getSessionPeeks()).length === 0) return;
