@@ -1,6 +1,6 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E-01 + E2E-03: drive the verse overlay's action hub (memorize, bookmark,
+// Drive the verse overlay's action hub (memorize, bookmark,
 // play-from-here) and assert the localStorage writes and player state. The
 // memorize/bookmark toggles flip their aria-label + aria-pressed and route
 // through the storage funnel (memorizedVerses / bookmarks); play-from-here starts
