@@ -6,8 +6,8 @@ import { DEFAULT_RECITER_ID } from "@/lib/reciters";
 import { setPlayerResume } from "@/lib/storage";
 import { buildRangeQueue, dedupeQueue, nextAfterEnded, repeatOneJustCompleted, type EndedSnapshot } from "@/lib/player-engine";
 
-// The inter-verse gap presets (seconds). A free slider is intentionally avoided
-// (UI-SPEC section 7); setInterVersePause clamps to the nearest preset.
+// The inter-verse gap presets (seconds). A free slider is intentionally avoided;
+// setInterVersePause clamps to the nearest preset.
 const INTER_VERSE_PRESETS = [0, 1, 2, 4] as const;
 
 export interface QueueItem {
