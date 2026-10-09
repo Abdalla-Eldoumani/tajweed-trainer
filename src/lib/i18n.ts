@@ -28,36 +28,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "home.startLearning": { en: "Start Learning", ar: "ابدأ التعلّم" },
   "home.yourProgress": { en: "Your Progress", ar: "تقدّمك" },
-  "home.learningModules": { en: "Learning Modules", ar: "وحدات التعلّم" },
-  "home.learningModulesDesc": {
-    en: "From articulation points to stopping rules, covering all essential tajweed topics.",
-    ar: "من مخارج الحروف إلى أحكام الوقف، تغطية شاملة لجميع أبواب التجويد الأساسية.",
-  },
-  "home.colorCodedText": { en: "Color-Coded Text", ar: "نصوص ملوّنة" },
-  "home.colorCodedTextDesc": {
-    en: "See tajweed rules highlighted in real Quranic text using the standard color-coding system.",
-    ar: "شاهد أحكام التجويد مُظلّلة في النص القرآني باستخدام نظام الألوان المعتمد.",
-  },
-  "home.audioExamples": { en: "Audio Examples", ar: "أمثلة صوتية" },
-  "home.audioExamplesDesc": {
-    en: "Listen to correct pronunciation from renowned reciters like Al-Husary and Alafasy.",
-    ar: "استمع إلى النطق الصحيح من قرّاء مشهورين كالحصري والعفاسي.",
-  },
-  "home.practiceQuizzes": { en: "Practice Quizzes", ar: "اختبارات تدريبية" },
-  "home.practiceQuizzesDesc": {
-    en: "Test your knowledge by identifying tajweed rules in real Quranic examples.",
-    ar: "اختبر معرفتك بتحديد أحكام التجويد في أمثلة قرآنية حقيقية.",
-  },
-  "home.progressTracking": { en: "Progress Tracking", ar: "متابعة التقدّم" },
-  "home.progressTrackingDesc": {
-    en: "Track completed lessons, quiz scores, and maintain your daily practice streak.",
-    ar: "تابع الدروس المكتملة، ونتائج الاختبارات، وحافظ على سلسلة تدريبك اليومية.",
-  },
-  "home.hafsAnAsim": { en: "Hafs 'an 'Asim", ar: "حفص عن عاصم" },
-  "home.hafsAnAsimDesc": {
-    en: "All rules follow the most widely used Qira'ah globally, with verified scholarly sources.",
-    ar: "جميع الأحكام وفق رواية حفص عن عاصم، الأكثر انتشارا في العالم، بمصادر علمية موثّقة.",
-  },
+  "home.riwaya": { en: "Rules follow the recitation of Hafs 'an 'Asim.", ar: "الأحكام وفق رواية حفص عن عاصم." },
+  "home.nextLesson": { en: "Next lesson", ar: "الدرس التالي" },
   "home.learningPath": { en: "Learning Path", ar: "مسار التعلّم" },
   "home.dailyVerse": { en: "Verse of the day", ar: "آية اليوم" },
   "home.resumeReading": { en: "Continue reading", ar: "تابع القراءة" },
@@ -69,7 +41,7 @@ const translations: Record<string, { en: string; ar: string }> = {
     en: "Structured curriculum for learning Tajweed rules, ordered from foundational to advanced.",
     ar: "منهج منظّم لتعلّم أحكام التجويد، مرتّب من الأساسيات إلى المتقدّم.",
   },
-  "learn.lessons": { en: "lessons", ar: "دروس" },
+  "learn.notStarted": { en: "Not started", ar: "لم تبدأ بعد" },
   "learn.prerequisite": { en: "Prerequisite", ar: "متطلب سابق" },
   "learn.locked": { en: "Locked", ar: "مقفل" },
   "learn.locked.body": {
