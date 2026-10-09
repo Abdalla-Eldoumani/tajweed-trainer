@@ -410,6 +410,18 @@ describe("shouldRemindBackup / hasMeaningfulProgress", () => {
   });
 });
 
+describe("importProgress: a file that is not a backup", () => {
+  it.each(["not json", "null", "5", '"text"', "[]", '{"foo":1}'])(
+    "rejects %s and leaves stored progress untouched",
+    (payload) => {
+      toggleMemorizedVerse("1:1");
+      const before = localStorage.getItem(STORAGE_KEY);
+      expect(importProgress(payload)).toBe(false);
+      expect(localStorage.getItem(STORAGE_KEY)).toBe(before);
+    },
+  );
+});
+
 describe("reviewIntervalModifier setting: default 1.0, clamp [0.5, 2.0]", () => {
   // Exercised through the real sanitizeProgress -> sanitizeSettings so no new
   // export is added; sanitizeSettings itself stays module-private.
