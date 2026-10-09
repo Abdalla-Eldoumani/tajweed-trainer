@@ -38,7 +38,7 @@ Routes: `/`, `/learn`, `/learn/[module]`, `/mushaf`, `/mushaf/page/[page]`, `/mu
 - **TypeScript** strict, `@types/react` ^19. **Tailwind** stays at 3.4.19 on purpose (v4 deferred). Node 24.
 - **ESLint 9, flat config:** `eslint.config.mjs` spreads `eslint-config-next/core-web-vitals`. The lint script is `eslint .`, not the deprecated `next lint`. Scripts are listed in [development.md](development.md#scripts).
 - **Next 15+ async APIs:** dynamic route `params` is a Promise (see routes below); `export const revalidate` uses a literal seconds value (e.g. `86400`, `604800`).
-- **Fonts:** self-hosted via `next/font` (Inter, Spectral, JetBrains Mono, Amiri, Amiri Quran); no Google Fonts `<link>`. Tailwind `fontFamily` tokens map to the `next/font` variables.
+- **Fonts:** self-hosted via `next/font` (Alegreya Sans, Spectral, JetBrains Mono, Amiri, Amiri Quran); no Google Fonts `<link>`. Tailwind `fontFamily` tokens map to the `next/font` variables.
 - **Headers / CSP:** all response headers and the CSP are assembled once in `next.config.mjs` (`headers()` applies them to every path); see [security.md](security.md#content-security-policy) for the directive table and origins.
 - Project version is **2.2.1**.
 
