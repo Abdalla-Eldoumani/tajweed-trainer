@@ -692,7 +692,7 @@ export function MiniPlayer() {
                 }}
                 aria-label={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
                 title={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
-                className="shrink-0 text-[0.75rem] uppercase tracking-wide rounded px-1.5 py-0.5 min-h-[44px] text-primary dark:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
+                className="shrink-0 text-[0.75rem] uppercase tracking-wide rounded px-1.5 py-0.5 min-h-[44px] min-w-[44px] text-primary dark:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
               >
                 {mode === "continuous" ? t("player.modeContinuous") : t("player.modeSingle")}
               </button>
