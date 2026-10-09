@@ -11,7 +11,7 @@ import { TagEditor } from "./TagEditor";
 import { useTranslation } from "@/lib/i18n";
 import { getVerseSnapshotByKey } from "@/lib/verse-snapshots";
 import { getTajweedSurah } from "@/lib/quran-api";
-import { pageForSurah } from "@/lib/navigation";
+import { pageForVerse } from "@/lib/navigation";
 import { toArabicIndic, cn } from "@/lib/utils";
 import type { SurahHeader } from "@/lib/types";
 
@@ -225,7 +225,7 @@ export function MushafBookmarks({ surahs }: MushafBookmarksProps) {
                   <TagEditor verseKey={vk} />
 
                   <Link
-                    href={`/mushaf/page/${pageForSurah(sv)}?v=${vk}`}
+                    href={`/mushaf/page/${pageForVerse(sv, av)}?v=${vk}`}
                     className="inline-flex items-center gap-1 text-sm text-primary dark:text-primary-light hover:underline underline-offset-2"
                   >
                     {t("mushaf.bookmarkOpenVerse")}
