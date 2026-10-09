@@ -100,7 +100,7 @@ self.addEventListener("fetch", (event) => {
   if (isHtmlNavigation(request)) { event.respondWith(networkFirstHtml(request)); return; }
 });
 
-// Tapping the local revision reminder (REV-04) takes the user to /progress
+// Tapping the local revision reminder takes the user to /progress
 // (where the revision dashboard and recall session live): it focuses an open
 // window and navigates it there, or opens a new window at /progress. Purely
 // additive: it touches no fetch/cache path, so the offline scope is unchanged.
