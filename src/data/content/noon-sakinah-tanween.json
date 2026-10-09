@@ -258,8 +258,8 @@
           "transliteration": "b"
         }
       ],
-      "description_detailed": "Only ONE letter triggers Iqlab: Baa (ب). The sound of Noon changes to a light Meem, and you pronounce the Meem with ghunnah (nasalization) for 2 beats before saying the Baa. In many Mushafs, a small Meem (مۢ) is written above the Noon to indicate this rule.",
-      "description_detailed_ar": "حرف واحد فقط يستدعي الإقلاب وهو الباء (ب). فيُقلب صوت النون ميما خفيفة، وتُنطق الميم مع الغنّة بمقدار حركتين قبل النطق بالباء. وفي كثير من المصاحف تُكتب ميم صغيرة (مۢ) فوق النون للدلالة على هذا الحكم.",
+      "description_detailed": "Only ONE letter triggers Iqlab: Baa (ب). The sound of Noon changes to a light Meem, and you pronounce the Meem with ghunnah (nasalization) for 2 beats before saying the Baa. In many Mushafs, a small Meem (مۢ) is written above the Noon to indicate this rule. Teachers differ on how closely the lips meet while the Meem is hidden. A local imam or teacher can explain the details.",
+      "description_detailed_ar": "حرف واحد فقط يستدعي الإقلاب وهو الباء (ب). فيُقلب صوت النون ميما خفيفة، وتُنطق الميم مع الغنّة بمقدار حركتين قبل النطق بالباء. وفي كثير من المصاحف تُكتب ميم صغيرة (مۢ) فوق النون للدلالة على هذا الحكم. ويختلف المعلّمون في مقدار تقارب الشفتين عند إخفاء الميم، ويستطيع إمام أو معلّم قريب أن يشرح التفاصيل.",
       "examples": [
         {
           "arabic": "مِنۢ بَعْدِ",
@@ -395,7 +395,7 @@
           "transliteration": "k"
         }
       ],
-      "description_detailed": "Ikhfaa is the most common rule in the Quran. The quality of the ghunnah (nasal sound) varies — it takes on a heavier or lighter quality depending on whether the following letter is heavy (mufakhham) or light (muraqqaq). For example, Ikhfaa before ط (heavy letter) has a heavier ghunnah than Ikhfaa before ت (light letter).",
+      "description_detailed": "Ikhfaa is the most common of the Noon Sakinah and Tanween rules in the Quran. The quality of the ghunnah (nasal sound) varies — it takes on a heavier or lighter quality depending on whether the following letter is heavy (mufakhham) or light (muraqqaq). For example, Ikhfaa before ط (heavy letter) has a heavier ghunnah than Ikhfaa before ت (light letter).",
       "description_detailed_ar": "الإخفاء أكثر أحكام النون الساكنة والتنوين ورودا في القرآن. وتتغيّر صفة الغنّة تفخيما أو ترقيقا بحسب الحرف الذي يأتي بعدها: فإذا كان مفخّما (كالطاء) كانت الغنّة أثقل، وإذا كان مرقّقا (كالتاء) كانت أرقّ.",
       "examples": [
         {
