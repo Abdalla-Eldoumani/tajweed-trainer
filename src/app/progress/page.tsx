@@ -167,7 +167,7 @@ export default function ProgressPage() {
             section so it never flashes before hydration. */}
         {memorizedMounted && memorizedCount > 0 && <MurajaahDashboard />}
         <MemorizationTracker onOpenBulk={() => setBulkOpen(true)} />
-        {/* Hizb & rub' coverage rings (PROG-01): the ONE memorization surface
+        {/* Hizb & rub' coverage rings: the ONE memorization surface
             that renders at ZERO. Gated on `memorizedMounted` ONLY (never
             `memorizedCount > 0`) so a brand-new learner still sees the empty
             rings — the component derives coverage from the memorized set and is
@@ -179,8 +179,8 @@ export default function ProgressPage() {
             <MemorizationBreakdown memorized={memorized} />
           </Card>
         )}
-        {/* Memorization health: the STAT-01 freshness facet (per-juz aging bars)
-            and the STAT-02 error heatmap by juz / surah / page. Reads the pure
+        {/* Memorization health: the freshness facet (per-juz aging bars)
+            and the error heatmap by juz / surah / page. Reads the pure
             memorization-strength lib over the memorized set and the reviews map;
             renders only scope names, counts, and manuscript-palette colors — no
             verse text. Sits between "what I've memorized" and "how due it is". */}
@@ -230,7 +230,7 @@ export default function ProgressPage() {
           </Card>
         )}
 
-        {/* Revision streak (STAT-03): the memorization revision streak the store
+        {/* Revision streak: the memorization revision streak the store
             now tracks and the recall path updates on every graded verse —
             consecutive days with at least one revision, plus a 7-day pill row.
             Reads progress.memorizationStreak with a DISTINCT label so it never
@@ -238,7 +238,7 @@ export default function ProgressPage() {
             on the page. Same mount + count gate as the rest of the section. */}
         {memorizedMounted && memorizedCount > 0 && <RevisionStreakCounter />}
 
-        {/* Session journal (EXAM-03): set today's memorize/revise goals and watch
+        {/* Session journal: set today's memorize/revise goals and watch
             today's tallies climb toward them with a summary line. Reads today's
             sessionJournal entry through the useProgress change bus so the counts
             move live as memorize/revise activity accrues; rides the exported
@@ -282,7 +282,7 @@ export default function ProgressPage() {
             the review, chaining, or segment drills. Same mount + count gate. */}
         {memorizedMounted && memorizedCount > 0 && <TypingRecall />}
 
-        {/* Tikrar rep counter (EXAM-01): pick a memorized verse and loop it via
+        {/* Tikrar rep counter: pick a memorized verse and loop it via
             the one player engine, counting reps toward a session target that add
             to the verse's cumulative cross-day total. It is a COUNTER, not a
             graded drill — no SM-2 grade and no document-level key handler (buttons
@@ -290,7 +290,7 @@ export default function ProgressPage() {
             mount + count gate. */}
         {memorizedMounted && memorizedCount > 0 && <TikrarDrill />}
 
-        {/* Timed exam (EXAM-02): pick a scope, run a timed no-peek session over
+        {/* Timed exam: pick a scope, run a timed no-peek session over
             its memorized verses (verse hidden until self-marked), and log a
             percent-recalled score. It is a self-graded MEASUREMENT — no SM-2
             write, no streak touch, and no document-level grade keys (buttons
