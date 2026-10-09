@@ -1,6 +1,6 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E-01: open the reader and play a single verse. Two-step by design (v0.6.0):
+// Open the reader and play a single verse. Two-step by design (v0.6.0):
 // a plain verse TAP opens the verse overlay and does NOT auto-play; the overlay's
 // auto-focused "Play this verse" is what starts playback. Player state is asserted
 // byte-free via aria-current on the played verse (playVerse sets status
