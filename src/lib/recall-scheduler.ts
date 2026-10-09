@@ -18,15 +18,15 @@ import type { RecallGrade, ReviewBox, ReviewState, Sm2State } from "./types";
 const Q: Record<RecallGrade, number> = { again: 2, hard: 3, good: 4, easy: 5 };
 
 // SM-2 constants. INITIAL_EF/MIN_EF are the algorithm invariants; MAX_EF and
-// MAX_INTERVAL are the tamper bounds the storage sanitizer (sanitizeSm2, plan
-// 04-02) applies at the trust boundary. Exported so those bounds have one source.
+// MAX_INTERVAL are the tamper bounds the storage sanitizer (sanitizeSm2)
+// applies at the trust boundary. Exported so those bounds have one source.
 export const INITIAL_EF = 2.5;
 export const MIN_EF = 1.3;
-export const MAX_EF = 5.0; // tamper ceiling, enforced in sanitizeSm2 (04-02)
+export const MAX_EF = 5.0; // tamper ceiling, enforced in sanitizeSm2
 export const MAX_INTERVAL = 36500; // ~100 years, Anki's default interval cap
 
 // "mastered" for SM-2: a consolidated verse has survived to a >= 21-day interval
-// (the SRS-standard mature-card line). Exported for the stats module (04-02).
+// (the SRS-standard mature-card line). Exported for the stats module.
 export const MASTERED_INTERVAL_DAYS = 21;
 
 // Leitner interval table, copied locally (NOT imported from spaced-repetition.ts,
@@ -138,7 +138,7 @@ export function previewIntervals(
 // due), repetitions = box, intervalDays = the box's Leitner interval, a neutral
 // easeFactor 2.5 (no history to derive it). A box-5 verse does not regress: its
 // next passing grade grows the interval (round(30 * 2.5) = 75 > 30). Pure; the
-// storage sanitizer (04-02) feeds an already-bounded ReviewState in.
+// storage sanitizer feeds an already-bounded ReviewState in.
 export function migrateLeitnerToSm2(old: ReviewState): Sm2State {
   return {
     repetitions: old.box,
