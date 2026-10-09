@@ -57,12 +57,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           isIcon
             ? {
                 // Square control at the touch floor; no horizontal padding.
-                "h-9 w-9": size === "sm",
-                "h-11 w-11": size === "md",
+                "h-11 w-11": size !== "lg",
                 "h-14 w-14": size === "lg",
               }
             : {
-                "h-9 px-3 text-sm": size === "sm",
+                "h-11 px-3 text-sm": size === "sm",
                 "h-11 px-4 text-sm": size === "md",
                 "h-14 px-6 text-base": size === "lg",
               },
