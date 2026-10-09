@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { TajweedText } from "@/components/ui/TajweedText";
 import { useTranslation } from "@/lib/i18n";
 import { getSnapshotKeys, getVerseSnapshotByKey } from "@/lib/verse-snapshots";
-import { pageForSurah } from "@/lib/navigation";
+import { pageForVerse } from "@/lib/navigation";
 import { formatSurahReference } from "@/lib/utils";
 import surahIndex from "@/data/content/surah-index.json";
 import type { SurahHeader } from "@/lib/types";
@@ -56,7 +56,7 @@ export function DailyVerse() {
             : verseKey}
         </span>
         <Link
-          href={`/mushaf/page/${pageForSurah(surah)}?v=${surah}:${ayah}`}
+          href={`/mushaf/page/${pageForVerse(surah, ayah)}?v=${surah}:${ayah}`}
           className="text-micro text-primary dark:text-primary-light hover:underline shrink-0"
         >
           {t("lesson.openInReader")}
