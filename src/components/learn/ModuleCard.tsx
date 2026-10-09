@@ -3,93 +3,73 @@
 import { memo } from "react";
 import Link from "next/link";
 import { ArabicText } from "@/components/ui/ArabicText";
-import { Card } from "@/components/ui/Card";
-import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Medallion } from "@/components/ui/Medallion";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import type { LearningModule } from "@/lib/types";
 
 interface ModuleCardProps {
   module: LearningModule;
-  completedLessons: number;
+  lessonDone: boolean;
+  quizScore: number | null;
   locked?: boolean;
 }
 
-const MODULE_ICONS: Record<string, string> = {
-  mouth: "M",
-  noon: "ن",
-  meem: "م",
-  sound: "~",
-  echo: "Q",
-  stretch: "~",
-  letters: "ل",
-  weight: "W",
-  pause: "||",
-};
-
-export const ModuleCard = memo(function ModuleCard({ module, completedLessons, locked = false }: ModuleCardProps) {
-  const progress = module.lessons_count > 0 ? (completedLessons / module.lessons_count) * 100 : 0;
+export const ModuleCard = memo(function ModuleCard({ module, lessonDone, quizScore, locked = false }: ModuleCardProps) {
   const { t, isAr } = useTranslation();
 
   const title = isAr ? module.title_ar : module.title_en;
   const subtitle = isAr ? module.title_en : module.title_ar;
   const desc = isAr && module.description_ar ? module.description_ar : module.description;
 
+  const status = locked
+    ? t("learn.locked")
+    : lessonDone
+      ? t("common.completed")
+      : t("learn.notStarted");
+
   const content = (
-    // Locked cards keep full text contrast (opacity dimming pushed the muted
-    // text below 4.5:1); the lock icon and the grayed icon tile carry the state.
-    <Card hover={!locked} className={cn("relative", locked && "grayscale")}>
-      {locked && (
-        <div className="absolute top-3 end-3">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-muted" aria-hidden="true">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-        </div>
-      )}
+    <div className={cn("flex items-start gap-4 py-5 px-2", locked && "grayscale")}>
+      <Medallion n={module.order} />
 
-      <div className="flex items-start gap-4">
-        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gold-light/20 text-[#7A5E15] dark:bg-gold-dark/20 dark:text-gold-light text-lg font-bold font-arabic shrink-0 border border-gold-light/30 dark:border-gold-dark/30">
-          {MODULE_ICONS[module.icon] ?? module.order}
-        </div>
+      <div className="flex-1 min-w-0">
+        <h2 className="font-heading font-semibold text-body">{title}</h2>
+        {isAr ? (
+          <p className="text-micro text-text-muted">{subtitle}</p>
+        ) : (
+          <ArabicText text={subtitle} size="sm" className="text-text-muted" />
+        )}
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-micro text-[#7A5E15] dark:text-gold-light font-medium">
-              {module.order}
-            </span>
-          </div>
+        <p className="text-small text-text-muted mt-1.5 line-clamp-2">{desc}</p>
 
-          <h2 className="font-heading font-semibold text-small mb-0.5">
-            {title}
-          </h2>
-          {isAr ? (
-            <p className="text-micro text-text-muted">{subtitle}</p>
-          ) : (
-            <ArabicText text={subtitle} size="sm" className="text-text-muted" />
+        <p className="mt-2 flex items-center gap-2 text-micro text-text-muted">
+          {locked && (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
           )}
-
-          <p className="text-micro text-text-muted mt-2 line-clamp-2">
-            {desc}
-          </p>
-
-          <div className="mt-3">
-            <ProgressBar value={completedLessons} max={module.lessons_count} showLabel />
-          </div>
-
-          <div className="flex items-center gap-3 mt-2 text-micro text-text-muted">
-            <span>{module.lessons_count} {t("learn.lessons")}</span>
-          </div>
-        </div>
+          {lessonDone && (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary dark:text-primary-light" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          )}
+          <span>{status}</span>
+          {quizScore !== null && <span>{t("progress.latestQuiz")}: {quizScore}%</span>}
+        </p>
       </div>
-    </Card>
+    </div>
   );
 
   if (locked) {
     return <div className="cursor-not-allowed">{content}</div>;
   }
 
-  return <Link href={`/learn/${module.id}`}>{content}</Link>;
+  return (
+    <Link href={`/learn/${module.id}`} className="block transition-colors hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark">
+      {content}
+    </Link>
+  );
 });
 
 ModuleCard.displayName = "ModuleCard";
