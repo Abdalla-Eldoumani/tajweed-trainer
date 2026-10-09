@@ -29,6 +29,7 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - **Small controls reach the 44px touch target.** The verse panel's disclosure toggles (select a range, loop a word range, compare reciters, translation and tafsir, notes), its drag handle on a phone, tag chips and their remove buttons, the bookmark filter and links, the bookmark pills on the mushaf index, the rule popover link, and short-label buttons such as the repetition stepper were all smaller than 44px in at least one direction.
 - **Quiz read-aloud skips Qur'anic words.** The read-aloud button no longer voices the vowelled Qur'anic words inside a prompt, since device voices misread them.
 - **Repetition counter counts the last listen.** In the tikrar (repetition) drill, an audio-led session that looped a verse N times counted only N−1: the final listen ended the loop without registering. It now counts the full N. The manual count control was always accurate; this aligns the listen-along count with it.
+- **The browser verify scripts pass again.** They now skip the first-run tour, unlock the modules they visit, use the current theme setting and labels, and close the browser when a step fails.
 
 ### Changed
 
