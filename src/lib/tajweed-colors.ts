@@ -290,8 +290,7 @@ export type ThemeName = "vellum" | "pearl" | "night" | "sepia" | "mihrab";
 // their cue is the legend's hairline swatch, not contrast.
 // src/app/globals.css mirrors this map under each [data-theme] block (a manual
 // mirror, like the :root/.dark mirror); scripts/verify-tajweed-colors.mjs keeps
-// the :root/.dark parity green and Plan 07 adds the per-ground completeness and
-// contrast gate that reads this structure.
+// the :root/.dark parity green.
 export const THEME_TAJWEED: Record<string, Record<ThemeName, string>> = {
   ham_wasl: { vellum: "#AAAAAA", pearl: "#949494", night: "#B7BCC6", sepia: "#B3AEA2", mihrab: "#A8B0A6" },
   slnt: { vellum: "#AAAAAA", pearl: "#949494", night: "#B7BCC6", sepia: "#B3AEA2", mihrab: "#A8B0A6" },
