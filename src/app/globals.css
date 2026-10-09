@@ -423,7 +423,7 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
 }
 
 /* Focus ring for keyboard navigation. Gold at 2px offset 2px is the single
-   global keyboard focus default (DESIGN_SYSTEM section 6); the mushaf verse
+   global keyboard focus default; the mushaf verse
    sets its own affordance and is intentionally exempt below. */
 *:focus-visible {
   outline: 2px solid var(--gold);
@@ -618,7 +618,7 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
     text-wrap: balance;
   }
 
-  /* Tabular figures for live counts (DESIGN_SYSTEM section 4 Numerals) so digits
+  /* Tabular figures for live counts so digits
      keep a fixed width and do not jitter as a count updates. */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
@@ -760,8 +760,8 @@ html, body {
   overflow: hidden;
 }
 
-/* Gold divider: a flat 1px gold hairline. Gold is a hairline, never a fill
-   (DESIGN_SYSTEM section 3), so the old multi-stop gradient is dropped. A flat
+/* Gold divider: a flat 1px gold hairline. Gold is a hairline, never a fill,
+   so the old multi-stop gradient is dropped. A flat
    hairline has no direction, so no RTL variant is needed. */
 .gold-divider {
   height: 1px;
