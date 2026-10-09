@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { toRealVerseWords } from "@/lib/quran-api";
 
 // The pure half of getWordsForChapter, tested by direct import. quran-api.ts is
-// coverage-excluded (its network half — fetch/cache/retry — is Phase-3 e2e), so
+// coverage-excluded (its network half — fetch/cache/retry — is covered by e2e), so
 // only this mapper is exercised here, exactly as audio-api.test.ts imports and
 // tests only the pure activeWordIndex.
 //
@@ -72,7 +72,7 @@ describe("toRealVerseWords - drops the trailing ayah-end marker", () => {
   });
 });
 
-describe("toRealVerseWords - SEG-03 short verse and idempotence", () => {
+describe("toRealVerseWords - short verse and idempotence", () => {
   it("one real word (+ end marker) -> length 1, position 1", () => {
     const words = toRealVerseWords([realWord(1), endMarker(2)]);
     expect(words).toHaveLength(1);
