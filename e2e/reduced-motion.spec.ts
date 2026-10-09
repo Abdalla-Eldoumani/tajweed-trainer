@@ -1,6 +1,6 @@
 import { test, expect, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E-02: emulating prefers-reduced-motion must be honored. The app gates
+// Emulating prefers-reduced-motion must be honored. The app gates
 // JS-driven smooth scroll on the query (src/lib/reduced-motion.ts) and the CSS
 // @media block neutralizes the .route-enter page-enter animation.
 test("prefers-reduced-motion is honored", async ({ page, consoleErrors }) => {
