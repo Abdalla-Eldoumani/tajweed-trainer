@@ -136,7 +136,7 @@ export default function SearchPage() {
 
   const chipClass = (active: boolean) =>
     cn(
-      "px-3 py-1.5 min-h-[36px] text-xs rounded-full font-medium transition-colors border",
+      "px-3 py-1.5 min-h-[44px] text-xs rounded-full font-medium transition-colors border",
       active
         ? "bg-primary text-on-primary border-transparent dark:bg-gold dark:text-ink"
         : "bg-bg-card text-text-muted border-border hover:text-text dark:bg-bg-card-dark",
@@ -248,7 +248,7 @@ export default function SearchPage() {
                               <ArabicText text={r.title.ar.replace(/^\d+\.\s*/, "")} size="sm" className="text-text-muted" />
                             )}
                           </div>
-                          <span className="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light shrink-0">
+                          <span className="text-[0.75rem] uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light shrink-0">
                             {isAr ? KIND_LABEL[r.kind].ar : KIND_LABEL[r.kind].en}
                           </span>
                         </div>
