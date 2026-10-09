@@ -38,7 +38,7 @@ export function MemorizationBreakdown({ memorized }: MemorizationBreakdownProps)
   const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
   // One pass over all 30 + 114 scopes, recomputed only when the memorized Set
-  // identity changes (UI-SPEC B4: do not recompute 144 scopes on every render).
+  // identity changes.
   const { juzRows, surahRows } = useMemo(() => {
     const juz = Array.from({ length: TOTAL_JUZ }, (_, i) => {
       const j = i + 1;
