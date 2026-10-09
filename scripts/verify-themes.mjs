@@ -55,7 +55,7 @@ function warn(name, details = "") {
 const THEMES = ["vellum", "pearl", "night", "sepia", "mihrab"];
 const DARK_GROUNDS = new Set(["night", "sepia", "mihrab"]);
 
-// The non-tajweed app token set every theme must define (the Plan 02 set).
+// The non-tajweed app token set every theme must define.
 const REQUIRED_APP_TOKENS = [
   "--primary", "--accent", "--bg", "--bg-card", "--bg-subtle", "--text",
   "--text-muted", "--gold", "--gold-hairline", "--border", "--margin-bg",
