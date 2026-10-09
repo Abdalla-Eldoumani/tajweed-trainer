@@ -1,8 +1,8 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 import wordsByChapter from "./fixtures/words-by-chapter.json";
 
-// E2E (SEG-01/02/03): the segment (chunk) drill on /progress plus the WordByWord
-// ripple from the 06-02 end-marker filter. The unit layer proves the splitter, the
+// E2E: the segment (chunk) drill on /progress plus the WordByWord
+// ripple from the end-marker filter. The unit layer proves the splitter, the
 // filter, and the reveal prop; these prove the composed behavior a learner sees.
 //
 // The verse under test is 1:7 (Al-Fatihah): the stub serves the captured
@@ -98,7 +98,7 @@ test("with misaligned segments the drill offers whole-verse play and keeps the c
 }) => {
   // The stub's by_key segments (four) never match 1:7's nine real words, so
   // canAlign is false: per-chunk audio degrades to a plain whole-verse play with no
-  // fabricated sub-verse bounds (SEG-03 degrade), and the text stays drillable.
+  // fabricated sub-verse bounds (degrade), and the text stays drillable.
   await seedProgress(context, { seenOnboarding: true, memorizedVerses: ["1:7"] });
   await page.goto("/progress");
 
@@ -126,7 +126,7 @@ test("a short verse shows the no-split note and presents the verse whole", async
 }) => {
   // 1:3 has two real words (<= the chunk size), so it yields a single chunk: the
   // drill skips straight to the optional grade, shows the no-split note, and
-  // presents the verse whole (SEG-03 no-split messaging). No fabricated boundary.
+  // presents the verse whole (no-split messaging). No fabricated boundary.
   await seedProgress(context, { seenOnboarding: true, memorizedVerses: ["1:3"] });
   await page.goto("/progress");
 
@@ -151,7 +151,7 @@ test("the reading-depth word-by-word renders only real words after the ayah-end 
   context,
   consoleErrors,
 }) => {
-  // The 06-02 ripple, proven end-to-end: WordByWord maps getWordsForChapter through
+  // The end-marker ripple, proven end-to-end: WordByWord maps getWordsForChapter through
   // toRealVerseWords, which drops the trailing char_type_name:"end" pseudo-word
   // (whose text is the Arabic-Indic ayah number). Open the reader, open a verse
   // overlay, expand reading depth, and assert the rendered cells are the REAL words
