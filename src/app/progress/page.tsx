@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Medallion } from "@/components/ui/Medallion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { MasterySection } from "@/components/progress/MasterySection";
 import { WeakRulesSection } from "@/components/progress/WeakRulesSection";
@@ -87,12 +88,7 @@ export default function ProgressPage() {
   // the headline and breakdown stay visible and the count visibly moves on confirm.
   const [bulkOpen, setBulkOpen] = useState(false);
 
-  const totalLessons: Record<string, number> = {};
-  for (const m of modules) {
-    totalLessons[m.id] = m.lessons_count;
-  }
-
-  const overall = getOverallCompletion(totalLessons);
+  const overall = getOverallCompletion(modules.map((m) => m.id));
 
   const handleReset = () => {
     resetProgress();
@@ -333,40 +329,36 @@ export default function ProgressPage() {
 
       <div>
         <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.moduleProgress")}</h2>
-        <div className="space-y-3">
+        <ol className="divide-y divide-[color:var(--gold-hairline)] border-y border-[color:var(--gold-hairline)]">
           {modules.map((module) => {
             const mp = moduleProgress(module.id);
-            const completed = mp.lessonsCompleted.length;
-            const total = module.lessons_count;
+            const done = mp.lessonsCompleted.length > 0;
 
             return (
-              <Card key={module.id}>
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <h3 className="font-heading font-semibold text-h3">
-                      {isAr ? module.title_ar : module.title_en}
-                    </h3>
-                    {!isAr && (
-                      <p className="text-xs text-text-muted font-arabic" dir="rtl" lang="ar">
-                        {module.title_ar}
-                      </p>
-                    )}
-                  </div>
-                  <span className="text-xs text-text-muted">
-                    {completed}/{total}
-                  </span>
+              <li key={module.id} className="flex items-center gap-4 py-4 px-2">
+                <Medallion n={module.order} />
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-heading font-semibold text-body">
+                    {isAr ? module.title_ar : module.title_en}
+                  </h3>
+                  {!isAr && (
+                    <p className="text-xs text-text-muted font-arabic" dir="rtl" lang="ar">
+                      {module.title_ar}
+                    </p>
+                  )}
                 </div>
-                <ProgressBar value={completed} max={total} />
-
-                {mp.quizScores.length > 0 && (
-                  <div className="mt-2 text-xs text-text-muted">
-                    {t("progress.latestQuiz")}: {mp.quizScores[mp.quizScores.length - 1].score}%
-                  </div>
-                )}
-              </Card>
+                <div className="text-end text-xs text-text-muted shrink-0">
+                  <p className={done ? "text-primary dark:text-primary-light font-medium" : undefined}>
+                    {done ? t("common.completed") : t("learn.notStarted")}
+                  </p>
+                  {mp.quizScores.length > 0 && (
+                    <p>{t("progress.latestQuiz")}: {mp.quizScores[mp.quizScores.length - 1].score}%</p>
+                  )}
+                </div>
+              </li>
             );
           })}
-        </div>
+        </ol>
       </div>
 
       <MasterySection />
