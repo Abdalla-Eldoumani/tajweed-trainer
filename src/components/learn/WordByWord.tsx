@@ -128,10 +128,10 @@ export function WordByWord({ surah, ayah }: WordByWordProps) {
             >
               <ArabicText text={w.textUthmani} quran size="sm" className="!leading-normal" />
               {w.transliteration && (
-                <span className="text-[10px] font-mono text-text-muted" dir="ltr">{w.transliteration}</span>
+                <span className="text-[0.75rem] font-mono text-text-muted" dir="ltr">{w.transliteration}</span>
               )}
               {w.translation && (
-                <span className="text-[10px] text-text-muted" dir="ltr">{w.translation}</span>
+                <span className="text-[0.75rem] text-text-muted" dir="ltr">{w.translation}</span>
               )}
             </button>
           );
