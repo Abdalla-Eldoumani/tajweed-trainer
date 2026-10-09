@@ -78,8 +78,15 @@ const config: Config = {
         quran: ["var(--font-quran)", '"Amiri Quran"', '"Scheherazade New"', "serif"],
         arabic: ["var(--font-amiri)", "Amiri", "serif"],
         heading: ["var(--font-heading)", "Spectral", "serif"],
-        body: ["var(--font-inter)", "Inter", "sans-serif"],
+        body: ["var(--font-body)", '"Alegreya Sans"', "sans-serif"],
         mono: ["var(--font-mono)", '"JetBrains Mono"', "monospace"],
+      },
+      // Squarer corners than Tailwind's defaults: a manuscript page is a ruled
+      // rectangle, so the card and control radii stay small.
+      borderRadius: {
+        lg: "6px",
+        xl: "8px",
+        "2xl": "10px",
       },
       fontSize: {
         "arabic-sm": ["clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem)", { lineHeight: "2" }],
@@ -88,19 +95,22 @@ const config: Config = {
         "arabic-xl": ["clamp(1.875rem, 1.5rem + 1vw, 2.5rem)", { lineHeight: "2" }],
         // Named Latin UI type scale (size + line-height; weight and face are
         // applied at use sites). Weight: 600 headings, 500 micro/eyebrow, 400
-        // body. Face: Spectral for display/h1/h2/h3 (font-heading), Inter for
+        // body. Face: Spectral for display/h1/h2/h3 (font-heading), Alegreya Sans for
         // body/small/micro (font-body). The @layer base h1..h6 rule already
         // sets Spectral and -0.01em on bare headings, so an element keeps the
         // right face without the named class. These names let SectionHeading
         // and pages pick a step without re-deriving line-height.
+        xs: ["0.8125rem", { lineHeight: "1.2rem" }],
+        sm: ["0.9375rem", { lineHeight: "1.4rem" }],
+        base: ["1.0625rem", { lineHeight: "1.65rem" }],
         display: ["2.5rem", { lineHeight: "1.15", letterSpacing: "-0.01em" }],
         h1: ["2rem", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
         h2: ["1.5rem", { lineHeight: "1.25" }],
         h3: ["1.25rem", { lineHeight: "1.3" }],
-        "body-lg": ["1.125rem", { lineHeight: "1.6" }],
-        body: ["1rem", { lineHeight: "1.6" }],
-        small: ["0.875rem", { lineHeight: "1.5" }],
-        micro: ["0.75rem", { lineHeight: "1.4" }],
+        "body-lg": ["1.1875rem", { lineHeight: "1.6" }],
+        body: ["1.0625rem", { lineHeight: "1.6" }],
+        small: ["0.9375rem", { lineHeight: "1.5" }],
+        micro: ["0.8125rem", { lineHeight: "1.4" }],
       },
     },
   },
