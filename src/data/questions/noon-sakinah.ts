@@ -26,7 +26,7 @@ export const questions: Question[] = [
       ar: "أربعة أحكام: الإظهار، والإدغام، والإقلاب، والإخفاء. ويُحدَّد الحكم بحسب الحرف الذي يلي النون الساكنة أو التنوين.",
       lessonAnchor: "noon-sakinah-overview",
     },
-    source: { surah: 36, ayah: 21, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 26, ayah: 109, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "noon-easy-izhar-letters-count",
@@ -173,7 +173,7 @@ export const questions: Question[] = [
       ar: "يُقلب الصوت إلى ميم مخفاة مع الغنّة بمقدار حركتين. وفي كثير من المصاحف تُكتب ميم صغيرة (مۢ) فوق النون للدلالة على ذلك.",
       lessonAnchor: "iqlab",
     },
-    source: { surah: 17, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 22, ayah: 61, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "noon-easy-ghunnah-beats",
@@ -238,7 +238,7 @@ export const questions: Question[] = [
       ar: "تأتي النون الساكنة قبل الهمزة (ء) وهي من حروف الحلق الستّة، فيطبَّق الإظهار: تُنطق النون نطقا واضحا بلا غنّة.",
       lessonAnchor: "izhar-halqi",
     },
-    source: { surah: 36, ayah: 21, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 26, ayah: 109, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "noon-medium-min-ilm-rule",
