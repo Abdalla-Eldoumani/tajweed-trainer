@@ -64,80 +64,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   "module.rule": { en: "Rule", ar: "الحكم" },
   "module.count": { en: "Count", ar: "العدد" },
 
-  // Module descriptions (Arabic translations for learning-path.json descriptions)
-  "module.makharij.desc": {
-    en: "Where each Arabic letter originates in the mouth, throat, and nasal cavity. The foundation of all tajweed.",
-    ar: "مواضع خروج كل حرف من حروف اللغة العربية من الفم والحلق والتجويف الأنفي. أساس علم التجويد.",
-  },
-  "module.noon-sakinah.desc": {
-    en: "The four rules governing the pronunciation of Noon with sukoon and Tanween: Izhar, Idgham, Iqlab, and Ikhfaa.",
-    ar: "الأحكام الأربعة التي تحكم نطق النون الساكنة والتنوين: الإظهار، والإدغام، والإقلاب، والإخفاء.",
-  },
-  "module.meem-sakinah.desc": {
-    en: "The three rules for Meem with sukoon: Ikhfaa Shafawi, Idgham Shafawi, and Izhar Shafawi.",
-    ar: "الأحكام الثلاثة للميم الساكنة: الإخفاء الشفوي، والإدغام الشفوي، والإظهار الشفوي.",
-  },
-  "module.ghunnah.desc": {
-    en: "The nasal sound produced when pronouncing Noon and Meem Mushaddad, held for 2 beats.",
-    ar: "الصوت الذي يخرج من الخيشوم عند نطق النون والميم المشددتين، ومقداره حركتان.",
-  },
-  "module.qalqalah.desc": {
-    en: "The bouncing or echoing sound applied to five specific letters when they have sukoon.",
-    ar: "الاضطراب الذي يحدث عند نطق خمسة أحرف مخصوصة وهي ساكنة.",
-  },
-  "module.madd.desc": {
-    en: "Rules for elongating vowel sounds, from natural 2-beat madd to obligatory 6-beat madd.",
-    ar: "أحكام إطالة الصوت بحرف من حروف المد، من المد الطبيعي (حركتان) إلى المد اللازم (ست حركات).",
-  },
-  "module.laam-raa.desc": {
-    en: "Sun and Moon letters (Shamsiyyah/Qamariyyah), plus when Raa is heavy or light.",
-    ar: "الحروف الشمسية والقمرية، وأحكام تفخيم وترقيق حرف الراء.",
-  },
-  "module.tafkheem-tarqeeq.desc": {
-    en: "Which letters are always heavy (Tafkheem), always light (Tarqeeq), or variable depending on context.",
-    ar: "الحروف المفخّمة دائما، والمرقّقة دائما، والمتردّدة بين التفخيم والترقيق حسب السياق.",
-  },
-  "module.waqf.desc": {
-    en: "Symbols and rules for where to stop, pause, or continue when reciting the Quran.",
-    ar: "الرموز والأحكام المتعلّقة بمواضع الوقف والابتداء عند تلاوة القرآن الكريم.",
-  },
-
-  // Module introductions (Arabic translations)
-  "module.makharij.intro": {
-    en: "Makhraj (plural: Makharij) refers to the specific point in the mouth, throat, or nasal cavity where a letter's sound originates. According to Imam Ibn Al-Jazari and Imam Al-Khalil, there are 17 articulation points grouped into 5 major regions.",
-    ar: "المخرج هو المكان الذي يخرج منه الحرف في الفم أو الحلق أو التجويف الأنفي. وعند الإمام ابن الجزري والإمام الخليل، هناك سبعة عشر مخرجا مقسّمة إلى خمس مناطق رئيسية.",
-  },
-  "module.noon-sakinah.intro": {
-    en: "Noon Sakinah is the letter Noon with a sukoon. Tanween is the double vowel marks at the end of nouns, producing the same 'n' sound. Both follow the same four rules depending on the letter that comes after them.",
-    ar: "النون الساكنة هي النون الخالية من الحركة. والتنوين هو نون ساكنة زائدة تلحق آخر الاسم لفظا لا خطا. وكلاهما يخضع لأربعة أحكام بحسب الحرف الذي يأتي بعدهما.",
-  },
-  "module.meem-sakinah.intro": {
-    en: "Meem Sakinah is the letter Meem with a sukoon. It has three rules based on the letter that follows it.",
-    ar: "الميم الساكنة هي الميم الخالية من الحركة. ولها ثلاثة أحكام بحسب الحرف الذي يأتي بعدها.",
-  },
-  "module.ghunnah.intro": {
-    en: "Ghunnah is the nasal sound that resonates in the nasal cavity when pronouncing certain letters. It is an inherent quality of the letters Noon and Meem. The duration and prominence of Ghunnah varies depending on the tajweed rule being applied.",
-    ar: "الغنّة هي صوت أغنّ يخرج من الخيشوم. وهي صفة لازمة للنون والميم. ويختلف مقدارها ودرجة وضوحها بحسب حكم التجويد المطبّق.",
-  },
-  "module.qalqalah.intro": {
-    en: "Qalqalah means disturbance or vibration. It is the slight bouncing sound that occurs when pronouncing any of the five Qalqalah letters with a sukoon.",
-    ar: "القلقلة لغة: الاضطراب. واصطلاحا: اضطراب المخرج عند النطق بالحرف الساكن حتى يُسمع له نبرة قوية. وحروفها خمسة مجموعة في: قطب جد.",
-  },
-  "module.madd.intro": {
-    en: "Madd means to extend or elongate. In tajweed, it refers to lengthening the sound of a vowel letter. There are three letters of Madd: Alif, Waw, and Yaa, each with specific conditions.",
-    ar: "المد لغة: الزيادة. واصطلاحا: إطالة الصوت بحرف من حروف المد الثلاثة: الألف، والواو، والياء، كل منها بشروط معيّنة.",
-  },
+  // Module introduction
   "module.laam-raa.intro": {
     en: "The rules of Laam and Raa govern specific pronunciation behaviors. Laam Al-Ta'reef determines assimilation with sun and moon letters. Raa rules determine whether it is pronounced heavy or light based on surrounding vowels and letters.",
     ar: "تحكم أحكام اللام والراء سلوكيات نطقية محدّدة. لام التعريف تحدّد الإدغام مع الحروف الشمسية والإظهار مع القمرية. وأحكام الراء تحدّد تفخيمها أو ترقيقها بحسب الحركات والحروف المحيطة.",
-  },
-  "module.tafkheem-tarqeeq.intro": {
-    en: "Tafkheem (heaviness) and Tarqeeq (lightness) refer to the thickness or thinness of a letter's sound. Seven letters are always heavy, most letters are always light, and a few vary depending on their position and surrounding vowels.",
-    ar: "التفخيم والترقيق: التفخيم هو تسمين الحرف، والترقيق هو تنحيفه. سبعة أحرف مفخّمة دائما، وأغلب الحروف مرقّقة دائما، وبعضها يتردّد بين التفخيم والترقيق حسب موقعه وحركته.",
-  },
-  "module.waqf.intro": {
-    en: "Waqf means stopping the recitation at the end of a word, with the intention of continuing. The Quran uses specific symbols to guide the reciter on where to stop, where stopping is preferred, and where it should be avoided.",
-    ar: "الوقف هو قطع الصوت عن آخر الكلمة زمنا يتنفّس فيه القارئ عادة بنية استئناف القراءة. ويستخدم المصحف رموزا محدّدة لتوجيه القارئ إلى مواضع الوقف المناسبة.",
   },
 
   // Makharij specific
@@ -323,7 +253,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "settings.displayOptions": { en: "Display Options", ar: "خيارات العرض" },
   "settings.showTransliteration": { en: "Show Transliteration", ar: "إظهار النقحرة" },
   "settings.showTranslation": { en: "Show Translation", ar: "إظهار الترجمة" },
-  "settings.darkMode": { en: "Dark Mode", ar: "الوضع الداكن" },
   "settings.theme": { en: "Theme", ar: "المظهر" },
   "settings.themeHelp": {
     en: "Choose how the app looks. Your choice is saved on this device.",
@@ -356,8 +285,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "settings.revisionReminders": { en: "Revision reminders", ar: "تذكيرات المراجعة" },
   "settings.revisionRemindersHelp": {
-    en: "Show a local reminder when you open the installed app and verses are due. This is a reminder on this device, not a server push — nothing is sent while the app is closed.",
-    ar: "أظهر تذكيرًا محليًا عند فتح التطبيق المثبَّت ووجود آيات مستحقة. هذا تذكير على هذا الجهاز، وليس إشعارًا من خادم — لا يُرسَل شيء والتطبيق مغلق.",
+    en: "Show a local reminder when you open the installed app and verses are due. This is a reminder on this device, not a server push. Nothing is sent while the app is closed.",
+    ar: "أظهر تذكيرًا محليًا عند فتح التطبيق المثبَّت ووجود آيات مستحقة. هذا تذكير على هذا الجهاز، وليس إشعارًا من خادم. لا يُرسَل شيء والتطبيق مغلق.",
   },
   "settings.revisionRemindersDenied": {
     en: "Notifications are blocked for this app. Allow them in your browser settings to use reminders.",
@@ -396,7 +325,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "legend.group.qalqalah": { en: "Qalqalah", ar: "القلقلة" },
   "legend.group.ikhfaIqlab": { en: "Ikhfa & Iqlab", ar: "الإخفاء والإقلاب" },
   "legend.group.silentLaam": { en: "Silent & Laam", ar: "الصامت واللام" },
-  "common.bismillah": { en: "In the name of Allah, the Most Gracious, the Most Merciful", ar: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ" },
 
   // Audio player
   "player.play": { en: "Play", ar: "تشغيل" },
@@ -467,9 +395,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   "player.stopLoop": { en: "Stop loop", ar: "إيقاف التكرار" },
   "player.selectionControls": { en: "Range and repeat", ar: "النطاق والتكرار" },
   "player.readingDepth": { en: "Translation and tafsir", ar: "الترجمة والتفسير" },
-  "player.collapsePlayer": { en: "Collapse player", ar: "طيّ المشغّل" },
-  "player.expandPlayer": { en: "Expand player", ar: "توسيع المشغّل" },
-  "player.closePlayer": { en: "Close player", ar: "إغلاق المشغّل" },
   "player.grabHandle": { en: "Player controls, drag to expand or collapse", ar: "أدوات المشغّل، اسحب للتوسيع أو الطيّ" },
   "player.tryAgain": { en: "Try again", ar: "إعادة المحاولة" },
   "audio.unavailable": {
@@ -482,7 +407,6 @@ const translations: Record<string, { en: string; ar: string }> = {
   // Tajweed rule popover (tap a colored letter to see which rule colors it)
   "ruleInfo.label": { en: "Tajweed rule", ar: "حكم التجويد" },
   "ruleInfo.learnMore": { en: "Learn about {rule}", ar: "تعلّم {rule}" },
-  "ruleInfo.close": { en: "Close", ar: "إغلاق" },
 
   // Not found
   "notFound.title": { en: "Page Not Found", ar: "الصفحة غير موجودة" },
@@ -710,8 +634,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   "segment.pickVerse": { en: "Pick a memorized verse", ar: "اختر آية محفوظة" },
   "segment.chunkSize": { en: "Words per chunk", ar: "كلمات لكل مقطع" },
   "segment.noSplit": {
-    en: "This verse is short — no split needed.",
-    ar: "هذه الآية قصيرة — لا حاجة للتقسيم.",
+    en: "This verse is short. No split needed.",
+    ar: "هذه الآية قصيرة، لا حاجة للتقسيم.",
   },
   "segment.startDrill": { en: "Start chunk drill", ar: "ابدأ تدريب المقاطع" },
   "segment.reveal": { en: "Reveal chunk", ar: "اكشف المقطع" },
@@ -732,7 +656,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   // Operational UI copy, never Quran/tajweed content. This is the FOURTH
   // keyboard drill on /progress, so its title, start, and reveal-word labels
   // stay DISTINCT from review.*/chain.*/segment.* (and mushaf.memorizeReveal)
-  // in both locales — a /progress locator must address exactly one drill. Grade
+  // in both locales: a /progress locator must address exactly one drill. Grade
   // buttons reuse memorize.grade*.
   "typing.title": { en: "Type the next word from memory", ar: "اكتب الكلمة التالية من الحفظ" },
   "typing.description": {
@@ -745,7 +669,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "typing.inputLabel": { en: "Type the word here", ar: "اكتب الكلمة هنا" },
   "typing.submit": { en: "Check", ar: "تحقّق" },
   "typing.correct": { en: "Correct", ar: "صحيح" },
-  "typing.wrong": { en: "Not quite — try again", ar: "ليس تمامًا — حاول مجددًا" },
+  "typing.wrong": { en: "Not quite. Try again", ar: "ليس تمامًا. حاول مجددًا" },
   "typing.retry": { en: "Try again", ar: "حاول مجددًا" },
   "typing.revealWord": { en: "Show this word", ar: "أظهر هذه الكلمة" },
   "typing.progress": { en: "Word {n} of {total}", ar: "الكلمة {n} من {total}" },
@@ -756,12 +680,12 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "احفظ آية أولًا لتكتبها من ذاكرتك.",
   },
   "typing.mistakesNote": {
-    en: "You needed some help — consider a lower grade.",
-    ar: "احتجت بعض المساعدة — ففكّر في تقييم أقل.",
+    en: "You needed some help, so consider a lower grade.",
+    ar: "احتجت بعض المساعدة، ففكّر في تقييم أقل.",
   },
 
   // Daily revision (murajaah) dashboard, home due-card, and the local reminder
-  // Operational UI copy and counts only — never Quran
+  // Operational UI copy and counts only; never Quran
   // or hadith text; the notification body names a count via {n} and nothing more.
   // The beginRevision CTA stays DISTINCT from the four /progress drill start
   // labels (review/chain/segment/typing) in BOTH locales so it scrolls to the
@@ -778,10 +702,10 @@ const translations: Record<string, { en: string; ar: string }> = {
   "murajaah.consolidatedLabel": { en: "Consolidated", ar: "راسخة" },
   "murajaah.newCapStatus": { en: "{n} of {cap} new introduced today", ar: "{n} من {cap} جديدة أُدخِلت اليوم" },
   "murajaah.introducingNew": { en: "Introducing {n} new today", ar: "إدخال {n} جديدة اليوم" },
-  "murajaah.caughtUp": { en: "All caught up — nothing due today.", ar: "أتممت كل شيء — لا مستحقات اليوم." },
+  "murajaah.caughtUp": { en: "All caught up. Nothing due today.", ar: "أتممت كل شيء. لا مستحقات اليوم." },
   "murajaah.capReached": {
-    en: "Today's new verses are done — {n} more will be introduced over the coming days.",
-    ar: "انتهت آيات اليوم الجديدة — سيُدخَل {n} على مدى الأيام القادمة.",
+    en: "Today's new verses are done. {n} more will be introduced over the coming days.",
+    ar: "انتهت آيات اليوم الجديدة. سيُدخَل {n} على مدى الأيام القادمة.",
   },
   "murajaah.beginRevision": { en: "Begin today's revision", ar: "ابدأ مراجعة اليوم" },
   "murajaah.homeDue": { en: "{n} verses due for revision", ar: "{n} آيات مستحقة للمراجعة" },
@@ -790,7 +714,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "murajaah.notifyBody": { en: "{n} verses due for revision today", ar: "{n} آيات مستحقة للمراجعة اليوم" },
 
   // Memorization health: the freshness facet and the error heatmap
-  // on /progress. Operational UI copy and counts only — never Quran
+  // on /progress. Operational UI copy and counts only; never Quran
   // text; scope names come from the bundled index. The `heatmap.by*` dimension
   // labels are deliberately DISTINCT from the `memorize.by*` breakdown labels in
   // BOTH locales so an e2e locator addresses the right section. Placeholders
@@ -835,12 +759,12 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
   "heatmap.showAll": { en: "Show all memorized surahs", ar: "إظهار كل السور المحفوظة" },
   "heatmap.noErrors": {
-    en: "No recall errors recorded yet — keep reviewing.",
-    ar: "لا أخطاء استذكار مُسجّلة بعد — واصل المراجعة.",
+    en: "No recall errors recorded yet. Keep reviewing.",
+    ar: "لا أخطاء استذكار مُسجّلة بعد. واصل المراجعة.",
   },
 
   // Tikrar (repetition) rep counter on /progress. Operational UI copy
-  // and counts only — never Quran text (the verse renders through TajweedText).
+  // and counts only; never Quran text (the verse renders through TajweedText).
   // It is the SIXTH drill-like surface on /progress, so its title / startDrill /
   // pickVerse labels are deliberately DISTINCT from the other five (review /
   // chain / segment / typing / murajaah) in BOTH locales so an e2e locator
@@ -866,7 +790,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
 
   // Timed, no-peek, self-graded exam on /progress. A MEASUREMENT, not a
-  // teaching drill: operational copy and counts only — never Quran text (the verse
+  // teaching drill: operational copy and counts only; never Quran text (the verse
   // renders through TajweedText). It is the SEVENTH drill-like surface on
   // /progress, so its title / start / pickScope (and reveal) labels are
   // deliberately DISTINCT from the other six (review / chain / segment / typing /
@@ -893,8 +817,8 @@ const translations: Record<string, { en: string; ar: string }> = {
     ar: "لا آيات محفوظة في هذا النطاق بعد.",
   },
   "exam.noPeekNote": {
-    en: "The verse stays hidden until you mark it — recall it from memory first.",
-    ar: "تبقى الآية مخفية حتى تُقيّمها — استذكرها من ذاكرتك أولًا.",
+    en: "The verse stays hidden until you mark it. Recall it from memory first.",
+    ar: "تبقى الآية مخفية حتى تُقيّمها. استذكرها من ذاكرتك أولًا.",
   },
   "exam.start": { en: "Start the exam", ar: "ابدأ الاختبار" },
   "exam.progress": { en: "Verse {n} of {total}", ar: "الآية {n} من {total}" },
@@ -910,7 +834,7 @@ const translations: Record<string, { en: string; ar: string }> = {
 
   // Per-day session journal on /progress: set today's memorize/revise
   // goals and watch today's tallies climb toward them. Operational copy and the
-  // learner's own counts only — never Quran text. Its title is deliberately
+  // learner's own counts only; never Quran text. Its title is deliberately
   // DISTINCT from the neighbouring section titles it renders beside (the revision
   // streak, memorization health, tikrar, exam, and khatmah) in BOTH locales so an
   // e2e region locator addresses exactly this card. The {memorized} /
@@ -936,7 +860,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   },
 
   // Hizb & rub' al-hizb coverage rings on /progress. Operational copy
-  // and derived counts only — never Quran text (the rings render only scope
+  // and derived counts only; never Quran text (the rings render only scope
   // numbers and percentages). The title stays DISTINCT from the neighbouring
   // memorization section titles in BOTH locales so its region locator addresses
   // exactly this surface. The {n} / {pct} / {count} / {total} placeholders are
@@ -1175,13 +1099,13 @@ const translations: Record<string, { en: string; ar: string }> = {
   "onboarding.stepOf": { en: "{current} / {total}", ar: "{current} / {total}" },
   "onboarding.step.mushaf.title": { en: "Read and listen", ar: "اقرأ واستمع" },
   "onboarding.step.mushaf.body": {
-    en: "Open the mushaf and tap any verse. A focused panel opens — a side panel on desktop, a bottom sheet on your phone — where you play that verse, play on from there, mark it memorized, bookmark it, add a private note, and read its translation and tafsir.",
-    ar: "افتح المصحف وانقر أي آية. تنفتح لوحة مركّزة — جانبية على الحاسوب، وورقة سفلية على الهاتف — حيث تشغّل تلك الآية، أو تتابع منها، وتحدّدها محفوظة، وتضيف إشارة مرجعية، وتكتب ملاحظة خاصة، وتقرأ ترجمتها وتفسيرها.",
+    en: "Open the mushaf and tap any verse. A focused panel opens (a centred panel on desktop, a bottom sheet on your phone) where you play that verse, play on from there, mark it memorized, bookmark it, add a private note, and read its translation and tafsir.",
+    ar: "افتح المصحف وانقر أي آية. تنفتح لوحة مركّزة (وسطية على الحاسوب، وورقة سفلية على الهاتف) حيث تشغّل تلك الآية، أو تتابع منها، وتحدّدها محفوظة، وتضيف إشارة مرجعية، وتكتب ملاحظة خاصة، وتقرأ ترجمتها وتفسيرها.",
   },
   "onboarding.step.themes.title": { en: "Make it yours", ar: "اجعله بأسلوبك" },
   "onboarding.step.themes.body": {
-    en: "Choose from five curated themes — two light and three dark — in Settings. Your choice is saved on this device.",
-    ar: "اختر من بين خمسة مظاهر منسّقة — اثنان فاتحان وثلاثة داكنة — من الإعدادات. ويُحفظ اختيارك على هذا الجهاز.",
+    en: "Choose from five curated themes (two light, three dark) in Settings. Your choice is saved on this device.",
+    ar: "اختر من بين خمسة مظاهر منسّقة (اثنان فاتحان وثلاثة داكنة) من الإعدادات. ويُحفظ اختيارك على هذا الجهاز.",
   },
   "onboarding.step.followAlong.title": { en: "Follow along", ar: "تابع التلاوة" },
   "onboarding.step.followAlong.body": {
@@ -1200,8 +1124,8 @@ const translations: Record<string, { en: string; ar: string }> = {
   // describe its rules. The AR side is a translation of this operational copy.
   "warsh.entryTitle": { en: "Listen in another narration (Warsh)", ar: "الاستماع برواية أخرى (ورش)" },
   "warsh.entrySubtitle": {
-    en: "Per surah only — for this narration, per-verse playback is not available.",
-    ar: "لكل سورة فقط — في هذه الرواية، التشغيل لكل آية غير متاح.",
+    en: "Per surah only. For this narration, per-verse playback is not available.",
+    ar: "لكل سورة فقط. في هذه الرواية، التشغيل لكل آية غير متاح.",
   },
   "warsh.reciter": { en: "Reciter: Younes Souilass (Warsh ‘an Nāfi‘)", ar: "القارئ: يونس سويلص (ورش عن نافع)" },
   "warsh.disclaimerTitle": { en: "A different narration", ar: "رواية مختلفة" },

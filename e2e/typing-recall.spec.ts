@@ -31,7 +31,7 @@ const WORDS_1_2 = (wordsByChapter.verses.find((v) => v.verse_key === "1:2")?.wor
 const REGION = "Type the next word from memory"; // typing.title
 const START = "Start typing recall"; // typing.startDrill
 const INPUT_LABEL = "Type the word here"; // typing.inputLabel
-const WRONG_FEEDBACK = "Not quite — try again"; // typing.wrong
+const WRONG_FEEDBACK = "Not quite. Try again"; // typing.wrong
 const GRADE_PROMPT = "Grade this verse (optional)"; // typing.gradePrompt
 
 function readProgress(page: import("@playwright/test").Page) {

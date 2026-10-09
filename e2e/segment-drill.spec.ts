@@ -134,7 +134,7 @@ test("a short verse shows the no-split note and presents the verse whole", async
   const region = page.getByRole("region", { name: REGION });
   await expect(region).toBeVisible();
 
-  await expect(region.getByText("This verse is short — no split needed.")).toBeVisible();
+  await expect(region.getByText("This verse is short. No split needed.")).toBeVisible();
   await expect(region.getByRole("button", { name: "Play this verse" })).toBeVisible();
   await expect(region.getByText("Grade the whole verse (optional)")).toBeVisible();
 
