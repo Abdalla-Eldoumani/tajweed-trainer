@@ -71,7 +71,7 @@ export function MemorizationBreakdown({ memorized }: MemorizationBreakdownProps)
       .replace("{y}", num(y));
 
   // Default to surahs with progress; "show all" reveals the full 114 list. This
-  // keeps the populated tracker short without ever horizontal-scrolling (B4).
+  // keeps the populated tracker short without ever horizontal-scrolling.
   const surahsWithProgress = surahRows.filter((s) => s.count > 0);
   const visibleSurahs = showAllSurahs ? surahRows : surahsWithProgress;
 
