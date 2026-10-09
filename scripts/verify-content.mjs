@@ -12,7 +12,7 @@
 //   3. Option count is consistent within a module and equals 4.
 //   4. Question ids are unique across the whole pool.
 //
-// Content provenance check (WARN, counted, never fails the run):
+// Content provenance check:
 //   5. Real-verse membership. Every question's arabicText, after orthography
 //      normalization, must appear as a normalized substring of the authenticated
 //      `arabic` text of its cited `source` verse in verse-snapshots.json. This is
@@ -26,14 +26,10 @@
 //            fragment of it -> a real provenance mismatch for a maintainer to fix
 //            (wrong surah:ayah, wrong inflection, or non-contiguous words).
 //
-// Why 5 is WARN and not a hard FAIL: the Arabic in these files is immutable Quran
-// text. When arabicText does not match its cited verse the fix is an editorial,
-// source-of-truth decision about the Quran reference (correct the citation or the
-// fragment), not something this tool may auto-resolve, and not something that
-// should silently change. The script therefore surfaces every mismatch loudly and
-// counts it, while the structural checks above are the hard gate. This mirrors the
-// WARN-vs-FAIL split in verify-tajweed-colors.mjs, where verbatim reference values
-// are honored and the softer signal is surfaced, not enforced.
+// 5b fails the run: a question that shows Arabic its cited verse does not
+// contain would present a wrong Qur'an reference to learners. The fix is an
+// editorial one (correct the citation or remove the question), never automatic.
+// 5a stays a warning because it only means the verse has no offline snapshot.
 //
 // The normalization folds the orthographic differences between the Uthmani text in
 // the snapshots (alif-wasla, superscript dagger alif, shadda, quranic pause marks)
@@ -260,8 +256,9 @@ async function main() {
   if (fragmentMismatches.size > 0) {
     const totalQ = [...fragmentMismatches.values()].reduce((a, m) => a + m.ids.length, 0);
     const lines = [...fragmentMismatches.values()].map((m) => `${m.key} ${JSON.stringify(m.txt)} (x${m.ids.length}; e.g. ${m.ids[0]})`);
-    warn(
-      "arabicText not a fragment of its cited verse (provenance mismatch to fix)",
+    record(
+      "arabicText is a fragment of its cited verse",
+      false,
       `${fragmentMismatches.size} distinct case(s), ${totalQ} question(s): ${lines.join(" | ")}`,
     );
   }
