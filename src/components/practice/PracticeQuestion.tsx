@@ -62,7 +62,7 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
               aria-label={speaking ? t("speech.stop") : t("speech.read")}
               aria-pressed={speaking}
               className={cn(
-                "inline-flex items-center justify-center w-7 h-7 rounded-full transition-colors",
+                "inline-flex items-center justify-center w-11 h-11 -my-2 rounded-full transition-colors",
                 speaking
                   ? "bg-primary/20 text-primary dark:text-primary-light"
                   : "text-text-muted hover:text-primary hover:bg-primary/10",
@@ -105,7 +105,7 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
               onClick={() => handleSelect(option)}
               disabled={answered}
               className={cn(
-                "w-full text-left p-3 rounded-lg border-2 text-sm transition-colors min-h-[48px]",
+                "w-full text-start p-3 rounded-lg border-2 text-sm transition-colors min-h-[48px]",
                 !answered && "hover:border-primary/50 hover:bg-primary/5",
                 !answered && "border-border",
                 answered && isCorrect && "border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20",
