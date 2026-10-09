@@ -107,7 +107,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
               key={k}
               onClick={() => setFilter(k)}
               className={cn(
-                "px-3 py-2 text-xs rounded min-h-[36px] font-medium transition-colors",
+                "px-3 py-2 text-xs rounded min-h-[44px] font-medium transition-colors",
                 filter === k ? "bg-bg-card dark:bg-bg-card-dark text-primary dark:text-primary-light shadow-sm" : "text-text-muted hover:text-text"
               )}
               aria-pressed={filter === k}
@@ -205,7 +205,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                       <ArabicText text={s.nameArabic} quran size="sm" className="block text-primary dark:text-primary-light" />
                       <span
                         className={cn(
-                          "text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0",
+                          "text-[0.75rem] px-2 py-0.5 rounded-full font-medium shrink-0",
                           s.revelationPlace === "madinah"
                             ? "bg-gold/20 text-[#7A5E15] dark:text-gold-light"
                             : "bg-primary/10 text-primary dark:text-primary-light"
@@ -215,7 +215,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                       </span>
                     </div>
                     <p className="text-sm font-medium mt-0.5 truncate group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{s.nameSimple}</p>
-                    <p className="text-[11px] text-text-muted mt-1">
+                    <p className="text-[0.8125rem] text-text-muted mt-1">
                       {t("mushaf.versesCount").replace("{count}", isAr ? toArabicIndic(s.versesCount) : String(s.versesCount))}
                       <span className="mx-1.5 opacity-60">·</span>
                       {t("mushaf.pageNumber")} {isAr ? toArabicIndic(s.pages[0]) : s.pages[0]}
@@ -226,7 +226,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
               {canResume && (
                 <Link
                   href={`/mushaf/page/${resume.page}?v=${resume.verseKey}`}
-                  className="mt-3 ms-14 inline-flex items-center gap-1 self-start rounded-lg bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light text-[11px] font-medium px-2.5 py-1 hover:bg-primary/20 transition-colors"
+                  className="mt-3 ms-14 inline-flex items-center gap-1 self-start rounded-lg bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light text-[0.8125rem] font-medium px-2.5 py-1 hover:bg-primary/20 transition-colors"
                   aria-label={t("mushaf.resumeSurahHint")
                     .replace("{name}", surahName)
                     .replace("{page}", isAr ? toArabicIndic(resume.page) : String(resume.page))}
