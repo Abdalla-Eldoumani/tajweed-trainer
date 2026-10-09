@@ -34,6 +34,11 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - **Dark-theme muted text meets AA.** Muted text resolves from the theme variable instead of an opacity modifier.
 - **Quiz questions come only from the authored pool.** The fallback that built questions from lesson examples is removed.
 - **Next.js 16.4.0.** Picks up the framework's security fixes released this month. Vitest moves to 4.1.11. Dependencies are pinned to exact versions, and the bundle analyzer and the obsolete interest-cohort header are gone.
+- **Alegreya Sans for body text.** It replaces Inter and sits with the Spectral headings and the Amiri Arabic faces. The Latin type scale is a step larger, small text no longer drops below 0.6875rem, and figures are lining.
+- **Rub el hizb ornament.** The star marks on the mushaf frame and surah cartouche are one inline mark that follows the theme.
+- **Quieter cards.** Cards lose the drop shadow and take a gold border on hover. Rule cards are marked with a small diamond instead of a coloured bar.
+- **Layout fixes.** The lesson navigation divider no longer overlaps the buttons, makharij markers no longer collide with their labels, and the reader toolbar wraps instead of clipping.
+- **44px touch targets.** Buttons, the language toggle, sidebar links, settings rows, reader and overlay controls and the mini player meet the size, and the inline verse controls have a 44px hit area around a smaller glyph.
 
 ## 2.2.1 (2026-07-03)
 
