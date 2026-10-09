@@ -2,8 +2,8 @@ import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fix
 import wordsByChapter from "./fixtures/words-by-chapter.json";
 import { stripArabicDiacritics } from "../src/lib/word-compare";
 
-// E2E (TYPE-01/02/03): the typing-recall drill on /progress — the FOURTH keyboard
-// drill. The unit layer (08-01 word-compare) proves the pure exact / stripped
+// E2E: the typing-recall drill on /progress — the FOURTH keyboard
+// drill. The unit layer (word-compare) proves the pure exact / stripped
 // comparison; these prove the composed behavior a learner sees: type each word,
 // grade once, a wrong input that writes nothing, and the diacritic toggle flipping
 // a marks-only-different input.
@@ -65,7 +65,7 @@ test("types the verse word by word by exact match and records one grade", async 
   const input = region.getByRole("textbox", { name: INPUT_LABEL });
 
   // Type each word exactly; each match advances the word-progress line and clears
-  // the input (TYPE-01). fill (not pressSequentially) is atomic — no Arabic
+  // the input. fill (not pressSequentially) is atomic — no Arabic
   // combining-order fragility.
   for (let i = 0; i < WORDS_1_2.length; i++) {
     await expect(region.getByText(`Word ${i + 1} of ${WORDS_1_2.length}`)).toBeVisible();
@@ -113,7 +113,7 @@ test("a wrong input does not advance and mutates no content", async ({
   await expect(region.getByText(WRONG_FEEDBACK)).toBeVisible();
   await expect(region.getByText(`Word 1 of ${WORDS_1_2.length}`)).toBeVisible();
 
-  // TYPE-03: the wrong attempt writes nothing — no review entry, and the attempt
+  // the wrong attempt writes nothing — no review entry, and the attempt
   // never appears anywhere in the stored progress blob (the ONLY write in the
   // whole component is the eventual end-of-verse grade).
   const progress = await readProgress(page);
@@ -168,7 +168,7 @@ test("diacritic-insensitive ON: the same marks-only-different input advances", a
   const input = region.getByRole("textbox", { name: INPUT_LABEL });
 
   // The SAME marks-stripped input the OFF test rejected — with the toggle ON it IS
-  // accepted, so the drill advances and the input clears (TYPE-02).
+  // accepted, so the drill advances and the input clears.
   await input.fill(stripArabicDiacritics(WORDS_1_2[0]));
   await input.press("Enter");
 
