@@ -127,7 +127,7 @@ export function MushafBookmarks({ surahs }: MushafBookmarksProps) {
     <div className="space-y-2">
       <Link
         href="/mushaf"
-        className="inline-flex items-center gap-1 text-sm text-primary dark:text-primary-light hover:underline underline-offset-2"
+        className="inline-flex items-center gap-1 min-h-[44px] text-sm text-primary dark:text-primary-light hover:underline underline-offset-2"
       >
         <span aria-hidden="true">{isAr ? "→" : "←"}</span>
         {t("mushaf.bookmarksBack")}
