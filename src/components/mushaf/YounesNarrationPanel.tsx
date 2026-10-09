@@ -265,7 +265,7 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
             href="https://en.wikipedia.org/wiki/Warsh"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+            className="mt-4 inline-flex items-center gap-1.5 min-h-[44px] text-sm font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
           >
             {t("warsh.referenceLinkLabel")}
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -298,7 +298,7 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="inline-flex items-center gap-2 text-sm font-semibold text-text-muted hover:text-primary dark:hover:text-primary-light"
+        className="inline-flex items-center gap-2 min-h-[44px] text-sm font-semibold text-text-muted hover:text-primary dark:hover:text-primary-light"
       >
         <ChevronIcon open={open} />
         {t("warsh.entryTitle")}
@@ -312,7 +312,7 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <label className="flex flex-col gap-1.5 sm:flex-1">
-              <span className="text-[11px] text-text-muted">{t("warsh.surahSelectLabel")}</span>
+              <span className="text-[0.8125rem] text-text-muted">{t("warsh.surahSelectLabel")}</span>
               <select
                 value={surah}
                 onChange={(e) => {
