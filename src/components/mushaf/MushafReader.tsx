@@ -189,10 +189,9 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // so the page's per-verse add controls + markers and the playback surface's
   // chips + transport share one source. In-memory only, reader-scoped: it lives
   // as long as the user stays within one rendered reader view and is not
-  // persisted to storage (UI-SPEC B8; reload persistence, if ever wanted, would
-  // go through the consolidated storage.ts sanitizer, never an ad-hoc key). This
+  // persisted to storage. This
   // matches the established reader-local-state precedent (the collapsed-rail
-  // flag from plan 03): the zustand player store carries playback across pages,
+  // flag): the zustand player store carries playback across pages,
   // while reader-local React state resets on a route change.
   const selection = useVerseSelectionState();
   useEffect(() => setMounted(true), []);
@@ -358,7 +357,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   // its value is a surah genuinely on the page. A page lists its surahs in
   // data.surahsOnPage; use the first. The fallback chain only fires if that is
   // ever empty and still resolves to a real surah for the page, never an
-  // invented one (UI-SPEC A1). This is the single place the fallback lives.
+  // invented one. This is the single place the fallback lives.
   const currentSurahValue =
     data.surahsOnPage[0]?.number ?? surahForPage(page)?.number ?? data.verses[0]?.surah ?? 1;
   // Clamp the juz to 1..30 so the controlled select never holds a value with no
