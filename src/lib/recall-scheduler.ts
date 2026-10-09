@@ -6,7 +6,7 @@ import type { RecallGrade, ReviewBox, ReviewState, Sm2State } from "./types";
 // purpose (no React / next / storage import) so recall-scheduler.test.ts
 // exercises it directly, mirroring spaced-repetition.ts / khatmah.ts.
 //
-// A1 (locked): updated-EF' ordering. easeFactor is updated FIRST, then the
+// Updated-EF' ordering: easeFactor is updated FIRST, then the
 // interval is computed with the new EF' (`round(prev * EF')`). This is Wozniak's
 // original SuperMemo formulation and the only ordering that makes the four-button
 // interval preview distinct and monotonic (again < hard < good < easy).
