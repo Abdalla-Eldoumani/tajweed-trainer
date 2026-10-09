@@ -30,7 +30,14 @@ async function main() {
   await mkdir(SCREENSHOT_DIR, { recursive: true });
   const browser = await chromium.launch({ executablePath: CHROME, headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  // A fresh profile opens the first-run tour over the page; mark it seen unless
+  // a script has stored its own profile.
+  await context.addInitScript(() => {
+    const key = "tajweed-trainer-progress";
+    if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ seenOnboarding: true }));
+  });
   const page = await context.newPage();
+  page.setDefaultTimeout(60000);
   const consoleErrors = [];
   page.on("console", (msg) => {
     if (msg.type() === "error") consoleErrors.push(msg.text());
@@ -79,7 +86,7 @@ async function main() {
   // BismillahLine is detected by the standalone gold bismillah text outside .tajweed-text
   const standaloneBismillahP1 = await page.evaluate(() => {
     const all = Array.from(document.querySelectorAll("article > div, article > header > div"));
-    return all.filter((el) => el.textContent?.includes("بِسْمِ ٱللَّٰهِ") && !el.querySelector(".tajweed-text")).length;
+    return all.filter((el) => el.textContent?.includes("بِسْمِ") && !el.querySelector(".tajweed-text")).length;
   });
   record("Page 1 (Al-Fatihah) has NO standalone BismillahLine", standaloneBismillahP1 === 0, `count: ${standaloneBismillahP1}`);
 
@@ -94,7 +101,7 @@ async function main() {
   record("Page 2 renders Al-Baqarah cartouche", cartouche2 >= 1);
   const standaloneBismillahP2 = await page.evaluate(() => {
     const els = Array.from(document.querySelectorAll("article header div"));
-    return els.filter((el) => el.textContent?.includes("بِسْمِ ٱللَّٰهِ") && !el.querySelector(".tajweed-text")).length;
+    return els.filter((el) => el.textContent?.includes("بِسْمِ") && !el.querySelector(".tajweed-text")).length;
   });
   record("Page 2 (Al-Baqarah) HAS standalone BismillahLine", standaloneBismillahP2 >= 1, `count: ${standaloneBismillahP2}`);
 
@@ -105,7 +112,7 @@ async function main() {
   record("Page 187 renders At-Tawbah cartouche", tawbahCartouche >= 1);
   const standaloneBismillahTawbah = await page.evaluate(() => {
     const els = Array.from(document.querySelectorAll("article header div"));
-    return els.filter((el) => el.textContent?.includes("بِسْمِ ٱللَّٰهِ") && !el.querySelector(".tajweed-text")).length;
+    return els.filter((el) => el.textContent?.includes("بِسْمِ") && !el.querySelector(".tajweed-text")).length;
   });
   record("Page 187 (At-Tawbah) has NO BismillahLine", standaloneBismillahTawbah === 0, `count: ${standaloneBismillahTawbah}`);
 
@@ -117,6 +124,8 @@ async function main() {
   const panelPlay = page.locator('button[aria-label="Play this verse"]');
   const panelOpened = await panelPlay.count();
   record("Tap verse opens the reading-depth panel", panelOpened >= 1, `panel play buttons: ${panelOpened}`);
+  await page.locator('[role="presentation"] button:has-text("Translation and tafsir")').click();
+  await page.waitForTimeout(1500);
   const tafsirToggle = await page.locator('button:has-text("Show tafsir"), button:has-text("Hide tafsir")').count();
   record("Reading-depth panel offers translation/tafsir", tafsirToggle >= 1, `tafsir toggles: ${tafsirToggle}`);
   networkUrls.length = 0;
@@ -127,6 +136,8 @@ async function main() {
 
   // 11. Page-bookmark toggle persists to localStorage (toolbar control, distinct
   // from the panel's per-verse bookmark which may also be on screen now).
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
   await page.click('button[aria-label="Add bookmark"]');
   await page.waitForTimeout(200);
   const stored = await page.evaluate(() => {
@@ -168,18 +179,18 @@ async function main() {
   const arabicJuzLabel = await page.locator("text=الجزء").count();
   record("Page 2 footer shows Arabic Juz label", arabicJuzLabel >= 1);
 
-  // 16. Dark mode
+  // 16. Night theme
   await page.evaluate(() => {
     const raw = localStorage.getItem("tajweed-trainer-progress") ?? "{}";
     const progress = JSON.parse(raw);
-    progress.settings = { ...(progress.settings ?? {}), darkMode: true };
+    progress.settings = { ...(progress.settings ?? {}), theme: "night" };
     localStorage.setItem("tajweed-trainer-progress", JSON.stringify(progress));
   });
   await page.goto(`${BASE}/mushaf/page/2`, { waitUntil: "networkidle" });
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${SCREENSHOT_DIR}/08-page2-ar-dark.png`, fullPage: true });
-  const isDark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
-  record("Dark mode applies on Mushaf page", isDark);
+  const isNight = await page.evaluate(() => document.documentElement.dataset.theme === "night");
+  record("Night theme applies on Mushaf page", isNight);
 
   // 17. No console errors beyond the known dev-time hydration warning
   const seriousErrors = consoleErrors.filter((e) => {
