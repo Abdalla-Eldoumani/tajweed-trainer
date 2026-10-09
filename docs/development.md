@@ -44,15 +44,15 @@ Open `http://localhost:3000`. Hot reload applies TS, TSX, CSS, and JSON edits.
 Before a release, the security, performance, and accessibility pass should run
 clean:
 
-- **Security** — `npm audit --omit=dev --audit-level=high` reports 0
+- **Security**: `npm audit --omit=dev --audit-level=high` reports 0
   vulnerabilities in production dependencies, and `verify:audits` (via
   `verify-security.mjs`) confirms the CSP / `connect-src` / `media-src` in
   `next.config.mjs` still match the hosts the app calls. No new host or OAuth.
-- **Performance** — `npm run build` completes with no warnings; first-load JS per
+- **Performance**: `npm run build` completes with no warnings; first-load JS per
   route stays within the existing envelope (no regression from the memorization
-  suite — the heavy per-completion `MilestoneCertificate` canvas stays lazily
+  suite; the heavy per-completion `MilestoneCertificate` canvas stays lazily
   `dynamic`-loaded, and the question pool loads only after mount).
-- **Accessibility** — `npm run e2e` runs the axe WCAG 2 A/AA gate over the key
+- **Accessibility**: `npm run e2e` runs the axe WCAG 2 A/AA gate over the key
   routes with an empty accepted-violations baseline (`e2e/a11y.spec.ts`): every
   adjustable UI element meets AA, and the verified QUL tajweed letter colors (an
   immutable mushaf standard) are the only elements excluded from the generic
