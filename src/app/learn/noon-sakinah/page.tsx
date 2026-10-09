@@ -33,6 +33,17 @@ const RULE_COLORS: Record<string, string> = {
   "ikhfaa": tajHex("ikhafa"),
 };
 
+// The rule colour marks the row; the name stays in body ink because no single
+// hex reads at 4.5:1 as 13px text on all five theme grounds.
+function RuleName({ color, children }: { color: string; children: string }) {
+  return (
+    <td className="py-2 pe-4 font-medium">
+      <span className="inline-block size-2 rotate-45 me-2 align-middle" style={{ backgroundColor: color }} aria-hidden="true" />
+      {children}
+    </td>
+  );
+}
+
 export default function NoonSakinahPage() {
   const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("noon-sakinah");
   const { markLessonComplete, moduleProgress } = useProgress();
@@ -125,27 +136,27 @@ export default function NoonSakinahPage() {
               </thead>
               <tbody className="divide-y divide-gold-light/20 dark:divide-gold-dark/10">
                 <tr>
-                  <td className="py-2 pe-4 font-medium" style={{ color: RULE_COLORS["izhar-halqi"] }}>{isAr ? "الإظهار" : "Izhar"}</td>
+                  <RuleName color={RULE_COLORS["izhar-halqi"]}>{isAr ? "الإظهار" : "Izhar"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.izhar_letters} size="sm" /></td>
                   <td className="py-2 text-end">{noonData.summary_table.izhar_count}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pe-4 font-medium" style={{ color: RULE_COLORS["idgham"] }}>{isAr ? "الإدغام بغنّة" : "Idgham (with ghunnah)"}</td>
+                  <RuleName color={RULE_COLORS["idgham"]}>{isAr ? "الإدغام بغنّة" : "Idgham (with ghunnah)"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.idgham_with_ghunnah_letters} size="sm" /></td>
                   <td className="py-2 text-end">4</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pe-4 font-medium" style={{ color: tajHex("idgham_wo_ghunnah") }}>{isAr ? "الإدغام بلا غنّة" : "Idgham (no ghunnah)"}</td>
+                  <RuleName color={tajHex("idgham_wo_ghunnah")}>{isAr ? "الإدغام بلا غنّة" : "Idgham (no ghunnah)"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.idgham_without_ghunnah_letters} size="sm" /></td>
                   <td className="py-2 text-end">2</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pe-4 font-medium" style={{ color: RULE_COLORS["iqlab"] }}>{isAr ? "الإقلاب" : "Iqlab"}</td>
+                  <RuleName color={RULE_COLORS["iqlab"]}>{isAr ? "الإقلاب" : "Iqlab"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.iqlab_letters} size="sm" /></td>
                   <td className="py-2 text-end">{noonData.summary_table.iqlab_count}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pe-4 font-medium" style={{ color: RULE_COLORS["ikhfaa"] }}>{isAr ? "الإخفاء" : "Ikhfaa"}</td>
+                  <RuleName color={RULE_COLORS["ikhfaa"]}>{isAr ? "الإخفاء" : "Ikhfaa"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.ikhfaa_letters} size="sm" /></td>
                   <td className="py-2 text-end">{noonData.summary_table.ikhfaa_count}</td>
                 </tr>
