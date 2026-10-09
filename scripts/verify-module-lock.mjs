@@ -41,7 +41,14 @@ async function setLanguage(page, lang) {
 async function main() {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  // A fresh profile opens the first-run tour over the page; mark it seen unless
+  // a script has stored its own profile.
+  await context.addInitScript(() => {
+    const key = "tajweed-trainer-progress";
+    if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ seenOnboarding: true }));
+  });
   const page = await context.newPage();
+  page.setDefaultTimeout(60000);
   const consoleErrors = [];
   const failed404s = [];
   page.on("console", (msg) => {
