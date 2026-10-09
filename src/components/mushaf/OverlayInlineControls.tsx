@@ -104,8 +104,8 @@ export function OverlayInlineControls() {
       </div>
 
       {/* Translation source: the same resource list Settings uses, bound to
-          settings.translationId. Only the id is written; Phase 7 owns the
-          refetch correctness. */}
+          settings.translationId. Only the id is written; the reading-depth
+          panel owns the refetch. */}
       <label className="flex flex-col gap-1">
         <span className={labelClass}>{t("inlineControls.translation")}</span>
         <select
