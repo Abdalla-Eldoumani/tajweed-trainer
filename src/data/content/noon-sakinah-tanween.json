@@ -59,13 +59,13 @@
           "arabic": "مِنْ أَجْرٍ",
           "transliteration": "min ajr",
           "translation": "of reward",
-          "surah": 36,
-          "ayah": 21,
-          "surah_name_en": "Ya-Sin",
+          "surah": 26,
+          "ayah": 109,
+          "surah_name_en": "Ash-Shu'ara",
           "highlight_word": "مِنْ أَجْرٍ",
           "rule_applied": "Izhar — Noon Sakinah followed by Hamzah (ء)",
           "rule_applied_ar": "إظهار — نون ساكنة قبل الهمزة (ء)",
-          "surah_name_ar": "يس"
+          "surah_name_ar": "الشعراء"
         },
         {
           "arabic": "مِنْ عِلْمٍ",
@@ -277,13 +277,13 @@
           "arabic": "سَمِيعٌۢ بَصِيرٌ",
           "transliteration": "samee'um baseer",
           "translation": "All-Hearing, All-Seeing",
-          "surah": 17,
-          "ayah": 1,
-          "surah_name_en": "Al-Isra",
+          "surah": 22,
+          "ayah": 61,
+          "surah_name_en": "Al-Hajj",
           "highlight_word": "سَمِيعٌۢ بَصِيرٌ",
           "rule_applied": "Iqlab — Tanween followed by Baa (ب)",
           "rule_applied_ar": "إقلاب — تنوين قبل الباء (ب)",
-          "surah_name_ar": "الإسراء"
+          "surah_name_ar": "الحج"
         },
         {
           "arabic": "أَنۢبِئْهُمْ",
