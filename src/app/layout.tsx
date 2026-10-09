@@ -1,14 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Spectral, JetBrains_Mono, Amiri, Amiri_Quran } from "next/font/google";
+import { Alegreya_Sans, Spectral, JetBrains_Mono, Amiri, Amiri_Quran } from "next/font/google";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { RouteTransition } from "@/components/layout/RouteTransition";
 import { AppProvider } from "@/components/layout/AppProvider";
 import "./globals.css";
 
-const inter = Inter({
+// Humanist sans for body text. Its calligraphic stroke sits with Spectral and
+// Amiri, where a neutral grotesque would read as a different document.
+const alegreyaSans = Alegreya_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "700"],
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -84,7 +87,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${spectral.variable} ${jetbrainsMono.variable} ${amiri.variable} ${amiriQuran.variable} font-body bg-bg text-text dark:bg-bg-dark dark:text-text-dark antialiased`}
+        className={`${alegreyaSans.variable} ${spectral.variable} ${jetbrainsMono.variable} ${amiri.variable} ${amiriQuran.variable} font-body bg-bg text-text dark:bg-bg-dark dark:text-text-dark antialiased`}
       >
         <AppProvider>
           <div className="flex min-h-screen">
