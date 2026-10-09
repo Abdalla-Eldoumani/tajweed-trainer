@@ -84,7 +84,7 @@ export function ReciterCompare({ surah, ayah, surahName }: ReciterCompareProps) 
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-muted hover:text-primary dark:hover:text-primary-light"
+        className="inline-flex items-center gap-1.5 min-h-[44px] text-xs font-semibold text-text-muted hover:text-primary dark:hover:text-primary-light"
       >
         <ChevronIcon open={open} />
         {t("recompare.title")}
