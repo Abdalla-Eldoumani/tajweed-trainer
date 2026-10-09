@@ -196,7 +196,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
   const selection = useVerseSelectionState();
   useEffect(() => setMounted(true), []);
 
-  // B4 (loop on, navigate away): the whole-selection loop is a store flag that
+  // Loop on, then navigate away: the whole-selection loop is a store flag that
   // outlives this reader. When the reader unmounts (the user leaves the page),
   // turn the loop off so a selection does not keep looping forever in the
   // background once the user has moved on. This does not stop in-progress
@@ -629,9 +629,8 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
       )}
 
       {/* A plain verse tap opens the focused verse overlay (the auto-focused
-          "play this verse" plays it); the overlay replaces the old page-shrinking
-          docked panel, so the reading column stays full width and never reflows
-          to a second column. The overlay portals to the body but must sit
+          "play this verse" plays it); the reading column stays full width and
+          never reflows to a second column. The overlay portals to the body but must sit
           lexically inside VerseSelectionProvider so its range/repeat/loop/gap
           controls resolve the one selection (useVerseSelection throws otherwise).
           With the surface as an overlay, the global MiniPlayer is suppressed on
