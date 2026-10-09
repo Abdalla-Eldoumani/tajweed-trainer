@@ -40,7 +40,7 @@ type ScopeType = "surah" | "juz" | "range";
 type Phase = "pick" | "exam" | "summary";
 type Mark = "recalled" | "missed" | null;
 
-// The timed, no-peek, self-graded exam on /progress (EXAM-02). It is a
+// The timed, no-peek, self-graded exam on /progress. It is a
 // MEASUREMENT, not a teaching drill: pick a scope (surah / juz / range), run a
 // TIMED session over that scope's memorized verses with each verse HIDDEN
 // (no-peek) until the learner self-marks recalled / missed, reveal the text only
