@@ -282,7 +282,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: { en: "The Laam in الله (Allah) is heavy after Fathah or Dammah. Here قَالَ ends in Fathah → heavy Laam.", ar: "لام الجلالة مفخّمة بعد الفتحة أو الضمّة. وقَالَ تنتهي بفتحة → اللام مفخّمة.", lessonAnchor: "variable-letters" },
-    source: { surah: 2, ayah: 30, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 3, ayah: 55, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "tafkheem-medium-allah-kasrah",
