@@ -83,7 +83,7 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
               {fmtCount} {t("practice.hub.questions")}
             </span>
             {summary.quizzesTaken > 0 && (
-              <span aria-hidden className="text-text-muted/50">
+              <span aria-hidden className="text-text-muted">
                 {"•"}
               </span>
             )}
