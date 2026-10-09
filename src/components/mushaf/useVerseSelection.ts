@@ -61,9 +61,9 @@ export interface VerseSelection {
   toggle: (verseKey: string) => void;
   add: (verseKey: string) => void;
   remove: (verseKey: string) => void;
-  // Pick a contiguous range start + end; normalizes when end precedes start
-  // (B1). A one-verse range (from === to) is kept as-is and plays like single
-  // play (B2). Setting a range clears the hand-picked set.
+  // Pick a contiguous range start + end; normalizes when end precedes start.
+  // A one-verse range (from === to) is kept as-is and plays like single play.
+  // Setting a range clears the hand-picked set.
   setRange: (surah: number, start: number, end: number) => void;
   // The sub-verse word range for the overlay's word-range loop, or null when
   // none is picked. Independent of the set/range above (a single-verse drill).
@@ -99,7 +99,7 @@ function rangeToKeys(range: SelectionRange): string[] {
 }
 
 // The selection hook. Used directly by the provider in MushafReader; consumers
-// (MushafPage, PlaybackSurface) read it through the context below so the page
+// (MushafPage, VerseOverlay) read it through the context below so the page
 // markers and the surface chips share one source.
 export function useVerseSelectionState(): VerseSelection {
   const [set, setSet] = useState<string[]>([]);
@@ -190,7 +190,7 @@ export function useVerseSelectionState(): VerseSelection {
   };
 }
 
-// Shared context so MushafPage (markers + add control) and PlaybackSurface
+// Shared context so MushafPage (markers + add control) and VerseOverlay
 // (chips + transport) read one selection. MushafReader provides it; below the
 // provider every consumer sees the same state and a remove from a chip and a
 // toggle from a verse marker stay in lockstep.
