@@ -92,7 +92,7 @@ export function TagEditor({ verseKey }: TagEditorProps) {
           ))}
         </ul>
       ) : (
-        <p className="text-[11px] text-text-muted">{t("tags.empty")}</p>
+        <p className="text-[0.8125rem] text-text-muted">{t("tags.empty")}</p>
       )}
 
       <div className="flex items-center gap-2">
@@ -118,7 +118,7 @@ export function TagEditor({ verseKey }: TagEditorProps) {
         </button>
       </div>
 
-      <p className="text-[11px] text-text-muted">{t("tags.privacy")}</p>
+      <p className="text-[0.8125rem] text-text-muted">{t("tags.privacy")}</p>
     </div>
   );
 }
