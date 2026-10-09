@@ -23,11 +23,11 @@ export interface FollowAlongState {
 // reveal, the sub-verse control's labels) reads, so there is exactly one source
 // of the active word and one broad reader of the player's media time.
 //
-// CONST-02 (one engine, one time source): this hook only READS the existing
+// One engine, one time source: this hook only READS the existing
 // player. It adds no <audio> element and no wall-clock timer. The active word
 // derives from audio.currentTime, which advances in real recitation seconds and
 // is inherently independent of playbackRate, so the highlight stays aligned at
-// 0.5x / 0.75x / 1x with no scaling (FOLLOW-05).
+// 0.5x / 0.75x / 1x with no scaling.
 export function useFollowAlong(): FollowAlongState {
   // The playing verse key. Gated on status !== "idle" (NOT playing || loading)
   // so the active word stays put while paused — reveal mode needs revealed words
