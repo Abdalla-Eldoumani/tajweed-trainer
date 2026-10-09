@@ -275,7 +275,7 @@ export type ThemeName = "vellum" | "pearl" | "night" | "sepia" | "mihrab";
 
 // Per-theme rendered value for every tajweed class, keyed by the exact API class
 // name. These are retuned-per-ground renderings of the SAME verified reference
-// hues (.agent/TAJWEED_COLOR_REFERENCE.md): each rule keeps its conceptual hue
+// hues: each rule keeps its conceptual hue
 // in every theme; only lightness/saturation move so the color stays legible on
 // that theme's ground. No rule is reclassified, no color is invented, and no two
 // rules collide on any ground. Derivation:
