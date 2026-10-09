@@ -128,8 +128,8 @@ describe("prototype-pollution-key guard (ASVS: tampered backup cannot reach Obje
   });
 });
 
-describe("memorizationReviews: lossless Leitner -> SM-2 migration (SCHED-02)", () => {
-  // The migration map from the RESEARCH proof table: box N -> intervalDays.
+describe("memorizationReviews: lossless Leitner -> SM-2 migration", () => {
+  // The Leitner migration map: box N -> intervalDays.
   const LEITNER: Record<number, number> = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30 };
 
   it("migrates each box 1..5 to the exact SM-2 map, preserving nextDueDate / lastSeenDate / counts", () => {
@@ -410,7 +410,7 @@ describe("shouldRemindBackup / hasMeaningfulProgress", () => {
   });
 });
 
-describe("reviewIntervalModifier setting: default 1.0, clamp [0.5, 2.0] (SCHED-04)", () => {
+describe("reviewIntervalModifier setting: default 1.0, clamp [0.5, 2.0]", () => {
   // Exercised through the real sanitizeProgress -> sanitizeSettings so no new
   // export is added; sanitizeSettings itself stays module-private.
   const mod = (v: unknown) => sanitizeProgress({ settings: { reviewIntervalModifier: v } }).settings.reviewIntervalModifier;
@@ -444,13 +444,13 @@ describe("reviewIntervalModifier setting: default 1.0, clamp [0.5, 2.0] (SCHED-0
   });
 });
 
-describe("diacriticInsensitive setting: default false, boolean coercion (TYPE-02)", () => {
+describe("diacriticInsensitive setting: default false, boolean coercion", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSettings so no new
   // export is added; sanitizeSettings itself stays module-private. Byte-for-byte
   // the showTransliteration / showWordByWord boolean-coercion precedent.
   const di = (v: unknown) => sanitizeProgress({ settings: { diacriticInsensitive: v } }).settings.diacriticInsensitive;
 
-  it("defaults to false (canonical default and absent value = exact match per TYPE-01)", () => {
+  it("defaults to false (canonical default and absent value = exact match)", () => {
     expect(DEFAULT_SETTINGS.diacriticInsensitive).toBe(false);
     expect(sanitizeProgress({}).settings.diacriticInsensitive).toBe(false);
     expect(di(undefined)).toBe(false);
@@ -481,7 +481,7 @@ describe("diacriticInsensitive setting: default false, boolean coercion (TYPE-02
   });
 });
 
-describe("sessionPeekUsed + peekBudget (BLIND-03/BLIND-04)", () => {
+describe("sessionPeekUsed + peekBudget", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSessionPeeks /
   // sanitizeSettings and the shipped helpers; nothing here re-derives a sanitizer.
   const peeks = (v: unknown) => sanitizeProgress({ sessionPeekUsed: v }).sessionPeekUsed ?? {};
@@ -557,7 +557,7 @@ describe("sessionPeekUsed + peekBudget (BLIND-03/BLIND-04)", () => {
     expect(getSessionPeeks()).toEqual({});
   });
 
-  it("sessionPeekUsed survives an export -> clear -> import round-trip (BLIND-04 persistence)", () => {
+  it("sessionPeekUsed survives an export -> clear -> import round-trip (persistence)", () => {
     recordPeek("1:1");
     recordPeek("1:2");
     setSettings({ ...getSettings(), peekBudget: 7 });
@@ -581,7 +581,7 @@ describe("sessionPeekUsed + peekBudget (BLIND-03/BLIND-04)", () => {
   });
 });
 
-describe("newVerseCap setting: default 5, clamp [1, 10], round (REV-01)", () => {
+describe("newVerseCap setting: default 5, clamp [1, 10], round", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
   // export). Byte-for-byte the peekBudget clamp precedent, only the band anchor
   // differs (default 5 instead of 3).
@@ -602,7 +602,7 @@ describe("newVerseCap setting: default 5, clamp [1, 10], round (REV-01)", () => 
   });
 });
 
-describe("revisionRemindersEnabled setting: default false, boolean coercion (REV-04)", () => {
+describe("revisionRemindersEnabled setting: default false, boolean coercion", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
   // export). Byte-for-byte the showWordByWord / diacriticInsensitive boolean
   // coercion precedent.
@@ -640,7 +640,7 @@ describe("revisionRemindersEnabled setting: default false, boolean coercion (REV
   });
 });
 
-describe("revisionReciter setting: optional, coerced like reciter, falls back to browse (PROG-02)", () => {
+describe("revisionReciter setting: optional, coerced like reciter, falls back to browse", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
   // export). Coerced like `reciter` (normalize / migrate legacy) EXCEPT that an
   // unset or invalid value stays undefined so resolveRevisionReciter falls back
@@ -680,7 +680,7 @@ describe("revisionReciter setting: optional, coerced like reciter, falls back to
   });
 });
 
-describe("dailyNewVersesTracking: fixed-shape sanitizer, default { date: '', count: 0 } (REV-01)", () => {
+describe("dailyNewVersesTracking: fixed-shape sanitizer, default { date: '', count: 0 }", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeDailyNewVerses. This is
   // a fixed-shape object (not a keyed map), so there is no prototype-key vector to
   // test — only the shape / clamp / date-length bounds.
@@ -705,7 +705,7 @@ describe("dailyNewVersesTracking: fixed-shape sanitizer, default { date: '', cou
   });
 });
 
-describe("getNewVersesIntroducedToday: same-day count, stale -> 0 with NO write (REV-01)", () => {
+describe("getNewVersesIntroducedToday: same-day count, stale -> 0 with NO write", () => {
   it("returns the stored count when the stored day is today", () => {
     const now = new Date("2026-07-02T09:00:00");
     const today = now.toLocaleDateString("en-CA");
@@ -724,7 +724,7 @@ describe("getNewVersesIntroducedToday: same-day count, stale -> 0 with NO write 
   });
 });
 
-describe("recordNewVerseIntroduced: increments same-day, rolls the day (REV-01)", () => {
+describe("recordNewVerseIntroduced: increments same-day, rolls the day", () => {
   it("from an empty store sets { date: today, count: 1 }", () => {
     const now = new Date("2026-07-02T09:00:00");
     const today = now.toLocaleDateString("en-CA");
@@ -750,7 +750,7 @@ describe("recordNewVerseIntroduced: increments same-day, rolls the day (REV-01)"
   });
 });
 
-describe("dailyNewVersesTracking persistence: export/import round-trip + reset (REV-01)", () => {
+describe("dailyNewVersesTracking persistence: export/import round-trip + reset", () => {
   it("round-trips through export -> clear -> import", () => {
     const now = new Date("2026-07-02T09:00:00");
     const today = now.toLocaleDateString("en-CA");
@@ -770,7 +770,7 @@ describe("dailyNewVersesTracking persistence: export/import round-trip + reset (
   });
 });
 
-describe("memorizationStreak: fixed-shape sanitizer, default { currentStreak: 0, longestStreak: 0, lastRevisionDate: '' } (STAT-03)", () => {
+describe("memorizationStreak: fixed-shape sanitizer, default { currentStreak: 0, longestStreak: 0, lastRevisionDate: '' }", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeMemorizationStreak. Like
   // dailyNewVersesTracking this is a fixed-shape object (not a keyed map), so there
   // is no prototype-key vector to test — only the shape / clamp / date-length
@@ -819,7 +819,7 @@ describe("memorizationStreak: fixed-shape sanitizer, default { currentStreak: 0,
   });
 });
 
-describe("updateMemorizationStreak: day/timezone rollover, longest tracked (STAT-03)", () => {
+describe("updateMemorizationStreak: day/timezone rollover, longest tracked", () => {
   // Compute the expected today/yesterday strings from the SAME injected `now` via
   // toLocaleDateString("en-CA") so the assertions match the app clock in any TZ.
   it("from a fresh store sets currentStreak 1 / longestStreak 1 / lastRevisionDate today", () => {
@@ -858,7 +858,7 @@ describe("updateMemorizationStreak: day/timezone rollover, longest tracked (STAT
   });
 });
 
-describe("updateMemorizationStreak never touches the practice streak (STAT-03)", () => {
+describe("updateMemorizationStreak never touches the practice streak", () => {
   const PRACTICE_DEFAULT = { currentStreak: 0, longestStreak: 0, lastPracticeDate: "" };
 
   it("leaves the practice streak at its default after a revision-streak advance", () => {
@@ -880,7 +880,7 @@ describe("updateMemorizationStreak never touches the practice streak (STAT-03)",
   });
 });
 
-describe("memorizationStreak persistence: export/import round-trip + reset (STAT-03)", () => {
+describe("memorizationStreak persistence: export/import round-trip + reset", () => {
   it("round-trips through export -> clear -> import", () => {
     const day1 = new Date("2026-07-02T09:00:00");
     const day2 = new Date("2026-07-03T09:00:00");
@@ -900,7 +900,7 @@ describe("memorizationStreak persistence: export/import round-trip + reset (STAT
   });
 });
 
-describe("tikrarTarget setting: default 5, clamp [1, 20], round (EXAM-01)", () => {
+describe("tikrarTarget setting: default 5, clamp [1, 20], round", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSettings (no new
   // export). Byte-for-byte the peekBudget / newVerseCap clamp precedent, only the
   // band ceiling differs (20 instead of 10) and the default anchor is 5.
@@ -919,7 +919,7 @@ describe("tikrarTarget setting: default 5, clamp [1, 20], round (EXAM-01)", () =
   });
 });
 
-describe("sanitizeTikrarLog + logTikrarReps: cumulative across days, cap-on-new (EXAM-01)", () => {
+describe("sanitizeTikrarLog + logTikrarReps: cumulative across days, cap-on-new", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeTikrarLog and the
   // shipped logTikrarReps helper; nothing here re-derives a sanitizer.
   const tik = (v: unknown) => sanitizeProgress({ tikrarLog: v }).tikrarLog ?? {};
@@ -963,7 +963,7 @@ describe("sanitizeTikrarLog + logTikrarReps: cumulative across days, cap-on-new 
 
   it("logs a large real session in full, clamps only an absurd per-call value, no-ops 0, rejects a bad key", () => {
     logTikrarReps("2:255", 500);
-    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(500); // a real long session is NOT truncated (WR-02)
+    expect(getProgress().tikrarLog?.["2:255"].reps).toBe(500); // a real long session is NOT truncated
     logTikrarReps("2:255", 1500);
     expect(getProgress().tikrarLog?.["2:255"].reps).toBe(1500); // 500 + min(1500, MAX_TIKRAR_PER_CALL 1000)
     logTikrarReps("2:255", 0);
@@ -990,7 +990,7 @@ describe("sanitizeTikrarLog + logTikrarReps: cumulative across days, cap-on-new 
   });
 });
 
-describe("sanitizeExamLog + logExamResult: cap 100, most-recent-first, percent clamp (EXAM-02)", () => {
+describe("sanitizeExamLog + logExamResult: cap 100, most-recent-first, percent clamp", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeExamLog and the shipped
   // logExamResult helper; nothing here re-derives a sanitizer.
   const exam = (v: unknown) => sanitizeProgress({ examLog: v }).examLog ?? [];
@@ -1044,7 +1044,7 @@ describe("sanitizeExamLog + logExamResult: cap 100, most-recent-first, percent c
   });
 });
 
-describe("sanitizeSessionJournal + journal helpers + memorize-add tally (EXAM-03)", () => {
+describe("sanitizeSessionJournal + journal helpers + memorize-add tally", () => {
   // Exercised through the REAL sanitizeProgress -> sanitizeSessionJournal and the
   // shipped helpers; nothing here re-derives a sanitizer.
   const journal = (v: unknown) => sanitizeProgress({ sessionJournal: v }).sessionJournal ?? {};
@@ -1065,7 +1065,7 @@ describe("sanitizeSessionJournal + journal helpers + memorize-add tally (EXAM-03
     expect(out["2026-07-03"]).toEqual({ memorizeGoal: 0, reviseGoal: 0, memorized: 5, revised: 2 }); // 1e9 / -4 rejected to 0
   });
 
-  it("is a rolling window: keeps the most-recent 366 days and drops the OLDEST, never the newest (WR-03)", () => {
+  it("is a rolling window: keeps the most-recent 366 days and drops the OLDEST, never the newest", () => {
     const map: Record<string, unknown> = {};
     const days: string[] = [];
     const d = new Date("2024-01-01T00:00:00Z"); // start of a leap year, plenty of days ahead
@@ -1083,7 +1083,7 @@ describe("sanitizeSessionJournal + journal helpers + memorize-add tally (EXAM-03
     expect(out[days[34]]).toBeDefined(); // the 35th day is the oldest survivor (400 - 366)
   });
 
-  it("the write path evicts the oldest day so a full journal never refuses a new day (WR-03)", () => {
+  it("the write path evicts the oldest day so a full journal never refuses a new day", () => {
     // Seed a full journal of 366 consecutive OLD days, then set goals for today.
     const seed: Record<string, unknown> = {};
     const seedDays: string[] = [];
