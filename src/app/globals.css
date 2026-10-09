@@ -16,6 +16,7 @@
   --bg: #F5F1E8;
   --bg-card: #FCFAF3;
   --bg-subtle: #ECE5D3;
+  --bg-subtle-rgb: 236 229 211;
   --text: #131B2E;
   --text-muted: #555F77;
 
@@ -97,6 +98,7 @@
   --bg: #0A0F1C;
   --bg-card: #121A2E;
   --bg-subtle: #1A2336;
+  --bg-subtle-rgb: 26 35 54;
   --text: #EDEAE0;
   --text-muted: #99A2B6;
 
@@ -144,6 +146,7 @@
   --bg: #F5F1E8;
   --bg-card: #FCFAF3;
   --bg-subtle: #ECE5D3;
+  --bg-subtle-rgb: 236 229 211;
   --text: #131B2E;
   --text-muted: #555F77;
 
@@ -200,6 +203,7 @@
   --bg: #0A0F1C;
   --bg-card: #121A2E;
   --bg-subtle: #1A2336;
+  --bg-subtle-rgb: 26 35 54;
   --text: #EDEAE0;
   --text-muted: #99A2B6;
 
@@ -255,6 +259,7 @@
   --bg: #F4F6F8;
   --bg-card: #FFFFFF;
   --bg-subtle: #E7ECF1;
+  --bg-subtle-rgb: 231 236 241;
   --text: #1B2733;
   --text-muted: #5B6B7B;
 
@@ -310,6 +315,7 @@
   --bg: #1C1812;
   --bg-card: #26201A;
   --bg-subtle: #2F2820;
+  --bg-subtle-rgb: 47 40 32;
   --text: #ECE0CC;
   --text-muted: #B6A88C;
 
@@ -364,6 +370,7 @@
   --bg: #08110D;
   --bg-card: #0F1D17;
   --bg-subtle: #16261E;
+  --bg-subtle-rgb: 22 38 30;
   --text: #E6E9DF;
   --text-muted: #92A89A;
 
@@ -596,7 +603,7 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading), 'Spectral', serif;
+    font-family: var(--font-heading), 'Spectral', var(--font-amiri), serif;
     letter-spacing: -0.01em;
   }
 }
