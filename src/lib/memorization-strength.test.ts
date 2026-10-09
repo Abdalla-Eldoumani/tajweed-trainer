@@ -9,7 +9,7 @@ import {
 } from "@/lib/memorization-strength";
 import type { Sm2State } from "@/lib/types";
 
-// The STAT-01 / STAT-02 strength matrix. Every case asserts against the REAL
+// The strength matrix. Every case asserts against the REAL
 // memorization-strength exports; expected freshness / errorScore / scope
 // aggregates are written out literally and never re-derived from the functions
 // under test. `now` is a fixed instant so every derivation is deterministic (the
@@ -36,7 +36,7 @@ function sm2(partial: Partial<Sm2State>): Sm2State {
   };
 }
 
-describe("freshness - STAT-01 decay from the last recall to nextDueDate", () => {
+describe("freshness - decay from the last recall to nextDueDate", () => {
   it("returns 0 for a verse with no entry (never recalled)", () => {
     expect(freshness(undefined, NOW)).toBe(0);
   });
@@ -115,7 +115,7 @@ describe("hasBeenRecalled - unseen vs aged-to-red", () => {
   });
 });
 
-describe("errorScore / hasError - STAT-02 durable miss signal", () => {
+describe("errorScore / hasError - durable miss signal", () => {
   it("is 0 for a verse with no entry", () => {
     expect(errorScore(undefined)).toBe(0);
     expect(hasError(undefined)).toBe(false);
