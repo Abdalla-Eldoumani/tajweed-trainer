@@ -119,10 +119,16 @@ async function resolveSamplesBestEffort(samples) {
   }
 }
 
-async function runSettingsUiChecks() {
-  const browser = await chromium.launch({ executablePath: CHROME, headless: true });
+async function runSettingsUiChecks(browser) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  // A fresh profile opens the first-run tour over the page; mark it seen unless
+  // a script has stored its own profile.
+  await context.addInitScript(() => {
+    const key = "tajweed-trainer-progress";
+    if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ seenOnboarding: true }));
+  });
   const page = await context.newPage();
+  page.setDefaultTimeout(60000);
   const consoleErrors = [];
   page.on("console", (msg) => {
     if (msg.type() === "error") consoleErrors.push(msg.text());
@@ -195,8 +201,6 @@ async function runSettingsUiChecks() {
     (e) => !/hydration|Hydration|Text content|Expected server HTML|did not match|favicon|\.ico|Failed to load resource.*404/.test(e),
   );
   record("No serious console errors", serious.length === 0, serious.slice(0, 3).join(" | ") || "0 errors");
-
-  await browser.close();
 }
 
 async function main() {
@@ -209,10 +213,14 @@ async function main() {
 
   // Settings-UI checks need a dev server + Chromium. If either is missing
   // (common in a low-egress CI), report it as skipped, not a failure.
+  let browser;
   try {
-    await runSettingsUiChecks();
+    browser = await chromium.launch({ executablePath: CHROME, headless: true });
+    await runSettingsUiChecks(browser);
   } catch (err) {
     recordPartial("Settings-UI checks skipped", err?.message ?? "browser or dev server unavailable");
+  } finally {
+    await browser?.close();
   }
 
   const failed = results.filter((r) => !r.ok);
