@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { READER_PANEL_BREAKPOINT } from "@/lib/player-position";
 
 // Reports whether the viewport is at or above the reader's panel/sheet boundary
-// (READER_PANEL_BREAKPOINT): true = docked side panel, false = bottom sheet.
+// (READER_PANEL_BREAKPOINT): true = centered dialog, false = bottom sheet.
 // Returns null until the post-mount effect measures, so the first client paint
 // matches the empty server paint (no panel/sheet flash, no double surface during
 // hydration). One matchMedia query drives it; a resize across the boundary swaps
