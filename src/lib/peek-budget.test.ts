@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { peekRemaining, wasPeeked } from "@/lib/peek-budget";
 
-// The BLIND-03 peek-budget matrix. Every case asserts against the REAL
+// The peek-budget matrix. Every case asserts against the REAL
 // peek-budget exports — the expected values are written out literally and are
 // never re-derived from the function under test. `sessionPeekUsed` is a
 // Record<verseKey, count>; the verse keys here are structural ASCII "surah:ayah"
-// strings, not Quran content. Signatures are map-FIRST (the CONTEXT lock):
+// strings, not Quran content. Signatures are map-first:
 // peekRemaining(sessionPeekUsed, budget) and wasPeeked(sessionPeekUsed, verseKey).
 
-describe("peekRemaining - distinct-key budget decrement (BLIND-03)", () => {
+describe("peekRemaining - distinct-key budget decrement", () => {
   it("an empty map leaves the full budget", () => {
     expect(peekRemaining({}, 3)).toBe(3);
   });
@@ -38,7 +38,7 @@ describe("peekRemaining - distinct-key budget decrement (BLIND-03)", () => {
   });
 });
 
-describe("wasPeeked - a verse is peeked only with a stored count > 0 (BLIND-03)", () => {
+describe("wasPeeked - a verse is peeked only with a stored count > 0", () => {
   it("is true for a verse with a stored positive count", () => {
     expect(wasPeeked({ "1:1": 1 }, "1:1")).toBe(true);
   });
