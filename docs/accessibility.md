@@ -29,7 +29,7 @@ A statement of how the app supports assistive technology and varied input, writt
 
 ## Touch
 
-- Buttons, toolbar controls, settings rows, the mini player, and the reader's page buttons are at least 44 by 44 CSS pixels. Inline verse controls inside running text keep a smaller glyph with a 44 px tall hit area.
+- Buttons, text toggles, tag chips, bookmark pills, toolbar controls, settings rows, the mini player, the verse panel, and the reader's page buttons are at least 44 by 44 CSS pixels. Inline verse controls inside running text keep a smaller glyph with a 44 px tall hit area.
 
 ## Offline
 
