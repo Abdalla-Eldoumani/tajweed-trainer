@@ -17,6 +17,8 @@ const CHROME =
     : `${process.env.HOME}/.cache/ms-playwright/chromium-1208/chrome-linux/chrome`);
 const BASE = process.env.BASE_URL || "http://localhost:3000";
 const SCREENSHOT_DIR = "mushaf-screenshots";
+// Each surah card on the index links straight to the surah's first page.
+const SURAH_CARD = 'a.block.group[href^="/mushaf/page/"]';
 
 const results = [];
 function record(name, ok, details = "") {
@@ -43,29 +45,29 @@ async function main() {
   // 1. Mushaf index loads with 114 surah cards
   await page.goto(`${BASE}/mushaf`, { waitUntil: "networkidle" });
   await page.screenshot({ path: `${SCREENSHOT_DIR}/01-index.png`, fullPage: true });
-  const surahCardCount = await page.locator('a[href^="/mushaf/surah/"]').count();
+  const surahCardCount = await page.locator(SURAH_CARD).count();
   record("Index renders 114 surah cards", surahCardCount === 114, `actual: ${surahCardCount}`);
 
   // 2. Search filter narrows results
   await page.fill('input[type="search"]', "Fatihah");
   await page.waitForTimeout(200);
-  const searchCount = await page.locator('a[href^="/mushaf/surah/"]').count();
+  const searchCount = await page.locator(SURAH_CARD).count();
   record("Search 'Fatihah' filters to 1 surah", searchCount === 1, `actual: ${searchCount}`);
   await page.fill('input[type="search"]', "");
 
   // 3. Filter "Madinah surahs" reduces grid
   await page.click('button[aria-pressed="false"]:has-text("Madinah")');
   await page.waitForTimeout(200);
-  const madaniCount = await page.locator('a[href^="/mushaf/surah/"]').count();
+  const madaniCount = await page.locator(SURAH_CARD).count();
   record("Madinah filter shows ~28 surahs", madaniCount > 20 && madaniCount < 35, `actual: ${madaniCount}`);
   await page.click('button:has-text("All")');
 
-  // 4. Click Al-Fatihah → redirected to /mushaf/page/1
-  await page.click('a[href="/mushaf/surah/1"]');
+  // 4. Click Al-Fatihah → opens /mushaf/page/1
+  await page.locator(`${SURAH_CARD}[href="/mushaf/page/1"]`).first().click();
   await page.waitForURL(`${BASE}/mushaf/page/1`, { timeout: 5000 });
   await page.waitForLoadState("networkidle");
   await page.screenshot({ path: `${SCREENSHOT_DIR}/02-page1-fatihah.png`, fullPage: true });
-  record("Surah 1 link redirects to /mushaf/page/1", page.url() === `${BASE}/mushaf/page/1`);
+  record("Surah 1 card opens /mushaf/page/1", page.url() === `${BASE}/mushaf/page/1`);
 
   // 5. Page 1 has the mushaf-frame, surah-cartouche
   const hasFrame1 = await page.locator(".mushaf-frame").count();
