@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Module-lock verification: drives Chromium against the dev server and asserts the
-// module-lock enforcement works end-to-end across the gates listed in the plan.
+// module-lock enforcement works end-to-end across every unlock gate.
 // Mirrors the structure of verify-mushaf.mjs.
 
 import { chromium } from "playwright-core";
