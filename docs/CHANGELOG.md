@@ -12,35 +12,49 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - الصَّاخَّةُ (80:33) carries the damma the verse has.
 - `verify-content.mjs` now fails when a question's Arabic is not in its cited verse.
 
+### Corrected lesson wording
+
+- The ghunnah quiz now uses the four levels the lesson teaches. It had counted five ranks and ranked ikhfaa and iqlab differently from the lesson.
+- The mu'anaqah entry says you may stop at one of the two marks but not both; the English lesson had said you must. The marks قلى and صلى are spelled with alef maksura.
+- Fixed a wrong letter or label in four quiz items: the alif after the noon in آمَنَّا, noon sakinah (not tanween) in مِنْ ظَهِيرٍ, the word for temporary (عارضة) in the arji'oo question, and the letter count in the makharij explanation (the 28 letters plus hamzah).
+- Ikhfaa is described as the most common of the noon sakinah and tanween rules, not of all rules. Quran.com's tajweed markup counts 5,291 ikhfaa, 4,969 idgham and 562 iqlab.
+- Removed two claims that did not hold: an incomplete statement of when a sakin raa is heavy, and a circular clause about shortening the madd munfasil to four beats, since the lesson already gives the range as four to five.
+- Short notes on the lesson pages say that teachers differ on lip closeness in ikhfaa shafawi and iqlab, on the three levels of qalqalah and the ranking of the heavy letters, and that printed mushafs use different sets of waqf marks. They do not pick a side and point to a local imam or teacher.
+
 ### Fixed
 
 - **Quiz read-aloud skips Qur'anic words.** The read-aloud button no longer voices the vowelled Qur'anic words inside a prompt, since device voices misread them.
-- **Repetition counter counts the last listen.** In the tikrar (repetition) drill, an audio-led session that looped a verse N times counted only N−1 — the final listen ended the loop without registering. It now counts the full N. The manual count control was always accurate; this aligns the listen-along count with it.
+- **Repetition counter counts the last listen.** In the tikrar (repetition) drill, an audio-led session that looped a verse N times counted only N−1: the final listen ended the loop without registering. It now counts the full N. The manual count control was always accurate; this aligns the listen-along count with it.
 
 ### Changed
 
-- **Next.js 16.4.0.** Picks up the framework's security fixes released this month. Vitest moves to 4.1.11.
+- **A home page that opens on the next lesson.** The modules read as a ruled path with a status for each (not started, in progress, complete). The made-up study hours and lesson counts are gone, and overall completion is computed from completed modules.
+- **Verse links open the right page.** The daily verse, bookmarks, surah cards and lesson examples go straight to the mushaf page that holds the verse.
+- **Madd beat counts read correctly in Arabic.**
+- **Dark-theme muted text meets AA.** Muted text resolves from the theme variable instead of an opacity modifier.
+- **Quiz questions come only from the authored pool.** The fallback that built questions from lesson examples is removed.
+- **Next.js 16.4.0.** Picks up the framework's security fixes released this month. Vitest moves to 4.1.11. Dependencies are pinned to exact versions, and the bundle analyzer and the obsolete interest-cohort header are gone.
 
-## 2.2.1 — 2026-07-03
+## 2.2.1 (2026-07-03)
 
 A small polish release: accessibility, a playback performance fix, and a documentation-accuracy pass. No religious content was generated or edited.
 
 ### Fixed
 
-- **The remaining small gold badges meet AA.** The home learning-path step numbers, the learn-dashboard module tiles (icon and order numeral), and the progress-page mastery badge used a gold that sat below 4.5:1 on the light grounds; they now use the same contrast-scoped gold as the surah-index badges, clearing AA on every light theme. Purely a color-token change — no layout, wording, or content moved — and a source guard now holds it in place.
+- **The remaining small gold badges meet AA.** The home learning-path step numbers, the learn-dashboard module tiles (icon and order numeral), and the progress-page mastery badge used a gold that sat below 4.5:1 on the light grounds; they now use the same contrast-scoped gold as the surah-index badges, clearing AA on every light theme. Purely a color-token change (no layout, wording, or content moved), and a source guard now holds it in place.
 - **Audio controls no longer re-render on every playback tick.** Each per-verse play button tracked the playback clock even when it was not the verse being played, so a lesson page with many examples re-rendered every button several times a second during playback. They now derive their state so only the active control updates; behavior is unchanged.
 
 ### Changed
 
 - **Documentation and dependency housekeeping.** The reference documentation was brought back in line with the current code, and an unused test dependency was removed.
 
-## 2.2.0 — 2026-07-03
+## 2.2.0 (2026-07-03)
 
 A memorization milestone. The review side moved from a fixed schedule to a self-graded spaced-repetition model, and a full hifdh suite grew on top of it: chaining across verse, page, and juz seams; splitting a long verse into chunks; typing recall; audio-led and cover-the-page recall with a peek budget; a daily revision dashboard; freshness, error, and streak views; a repetition counter, a timed exam, and a session journal; and hizb and rub' al-hizb progress with a dedicated revision reciter. Underneath, the project gained a real automated test suite and a consolidated set of documentation, and closed with an accessibility, security, and performance pass. No religious content was generated or edited: every recall check compares your own input against the already-stored verified text, and verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
 
 ### Added
 
-- **Self-graded recall.** After revealing a verse in review you now rate your recall — again, hard, good, or easy — and an SM-2 scheduler sets the next due date from that rating instead of a fixed ladder. Existing review state carries over losslessly, a memorized verse with no review yet is due, and a balanced-interval modifier in Settings (default 1.0) widens or tightens the whole schedule.
+- **Self-graded recall.** After revealing a verse in review you now rate your recall (again, hard, good, or easy) and an SM-2 scheduler sets the next due date from that rating instead of a fixed ladder. Existing review state carries over losslessly, a memorized verse with no review yet is due, and a balanced-interval modifier in Settings (default 1.0) widens or tightens the whole schedule.
 - **Verse chaining.** A chaining drill cues the tail of one unit and asks you to recall the head of the next, across verse-to-verse, page, and juz seams, respecting the Bismillah exceptions and ending cleanly at the last verse. An audio variant plays the tail on the same audio engine.
 - **Segment memorization.** Split a long verse at word boundaries into chunks, drill each chunk, then chain them back together. A one-word verse offers no split, and a reciter without word timings degrades gracefully.
 - **Typing recall.** Type the next word and it is checked by exact match against the stored verse, with an optional diacritic-insensitive comparison that only affects the check and never rewrites the stored text.
@@ -57,14 +71,14 @@ A memorization milestone. The review side moved from a fixed schedule to a self-
 
 ### Fixed
 
-- **An honest accessibility baseline.** The end-to-end accessibility scan now excludes only the verified, immutable mushaf letter colors from the generic contrast rule — a standard, domain-fixed color set, not adjustable UI — while every other element stays under the full AA gate. The genuinely adjustable chrome that failed (the surah-index badges and number chips and the reader's jump-to hint) was corrected to AA, so the whole route map passes clean and deterministically.
+- **An honest accessibility baseline.** The end-to-end accessibility scan now excludes only the verified, immutable mushaf letter colors from the generic contrast rule (a standard, domain-fixed color set, not adjustable UI), while every other element stays under the full AA gate. The genuinely adjustable chrome that failed (the surah-index badges and number chips and the reader's jump-to hint) was corrected to AA, so the whole route map passes clean and deterministically.
 - **A stable weekday row.** The practice streak's weekday pills no longer hydrate a stale row when a prerendered page is opened after the week rolls over.
 
 ### Security
 
 - **A clean hardening pass.** The production dependency audit stays clear of high and critical advisories, the Content-Security-Policy and response-header cross-check stays green, and the CSP is unchanged. No user data leaves the device: memorization, review, the journal, and every other field the suite adds are local-only and are covered solely by the backup you choose to export.
 
-## 2.1.0 — 2026-06-23
+## 2.1.0 (2026-06-23)
 
 Post-2.0.0 reader refinements. No religious content was generated or edited.
 
@@ -87,14 +101,14 @@ Post-2.0.0 reader refinements. No religious content was generated or edited.
 
 - The unused glossary content file and several unused exports, for a leaner tree.
 
-## 2.0.0 — 2026-06-22
+## 2.0.0 (2026-06-22)
 
 A major release. The interface gained five art-directed manuscript themes and a deeper sense of paper and ink; the Mushaf reader's per-verse interaction was rebuilt around a single focused overlay; recitation gained a follow-along layer that highlights the word as it is read; and the progress side gained a forgetting-curve review, a most-missed rule-areas dashboard, and an on-device completion certificate. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
 
 ### Added
 
 - **Five themes.** Two light (vellum, pearl) and three dark (night, sepia, mihrab), the same manuscript seen in different light. A theme switcher in Settings previews each with live swatches and crossfades the page when you choose one. This replaces the old dark-mode on/off switch; an existing dark-mode preference carries over.
-- **The verse overlay.** Tapping a verse now opens one focused surface — a centered panel on a wide screen, a bottom sheet on a phone or tablet — that holds everything you can do to that verse: play it, play from here, memorize, bookmark, a private note, and its translation, on-demand tafsir, and word-by-word. The page itself stays a clean color-coded Mushaf with no inline buttons. Playback still runs through the one audio engine, with the always-visible mini-player as the transport.
+- **The verse overlay.** Tapping a verse now opens one focused surface (a centered panel on a wide screen, a bottom sheet on a phone or tablet) that holds everything you can do to that verse: play it, play from here, memorize, bookmark, a private note, and its translation, on-demand tafsir, and word-by-word. The page itself stays a clean color-coded Mushaf with no inline buttons. Playback still runs through the one audio engine, with the always-visible mini-player as the transport.
 - **Word-range and selection controls in the overlay.** Pick a contiguous range or a hand-picked set of verses and play them as one queue, with a per-verse repeat count, a whole-selection loop, and an inter-verse pause. For reciters with word timings you can also loop a single start-word to end-word range within one verse.
 - **Reciter A/B compare and record-and-compare.** Hear the same verse by two reciters back to back, or record your own recitation in the browser and replay it next to the reciter to judge by ear. The recording never leaves the device, is held only in memory, and is never scored.
 - **Follow-along.** For reciters that publish word timings, the recited word highlights in time over the verified coloring as the verse plays. A reveal-as-recited mode blurs the verse and uncovers each word as it is read, for memorization self-testing, and a reading-focus mode dims every verse but the active one. Reciters without timings simply show no highlight; nothing about the text is generated.
@@ -149,7 +163,7 @@ The Companion redesign, plus a production-hardening finalization. Every surface 
 - **Prototype-pollution guard.** Every keyed map in the localStorage sanitizer skips `__proto__`, `constructor`, and `prototype`, so a crafted backup cannot reach an object prototype.
 - **Reduced-motion and scroll-lock helpers.** JS-driven smooth scrolling is gated on `prefers-reduced-motion`, and stacked overlays coordinate a single ref-counted body-scroll lock.
 
-## 0.5.0 — 2026-06-12
+## 0.5.0 (2026-06-12)
 
 A guided learning path, a calmer quiz flow, a minimizable player, and a new visual identity, followed by five feature additions: word-synced highlighting, in-browser recitation self-compare, a per-module rule mastery view, a leaner build, and keyboard, screen-reader, and offline hardening. No religious content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
 
@@ -159,7 +173,7 @@ A guided learning path, a calmer quiz flow, a minimizable player, and a new visu
 - **Minimizable player pill.** The movable mini-player can collapse to a compact pill that keeps playback running, with the drag handle, a play and pause control, and the current verse label. Minimized state and position persist across navigation and reload, and the pill re-clamps to the viewport when its size changes.
 - **Word-synced highlighting.** In the reading panel's word-by-word view, the current word highlights as the reciter speaks, driven only by the per-reciter segment timestamps published alongside the verified audio. Reciters without segment data simply show no highlight; nothing about the text is generated.
 - **Recitation self-compare.** The verse reading panel can record your own recitation in the browser's memory so you can replay it next to the reciter and judge by ear. Nothing is uploaded, stored, or scored, the recording lives only in memory, and browsers without recording support hide the control.
-- **Rule mastery view.** The progress page shows per-module mastery — quizzes taken, best and latest score, items reviewed and mastered, and what is due — aggregated purely from your own saved progress, with an empty state for new users.
+- **Rule mastery view.** The progress page shows per-module mastery (quizzes taken, best and latest score, items reviewed and mastered, and what is due), aggregated purely from your own saved progress, with an empty state for new users.
 - **Offline notice.** A slim connectivity pill appears while you are offline and clears on reconnect. Lessons and the last Mushaf page you opened stay readable from cache after one visit.
 
 ### Changed
@@ -174,7 +188,7 @@ A guided learning path, a calmer quiz flow, a minimizable player, and a new visu
 - **Playback follows the last action.** Rapid reciter switches mid-playback and closing the player while a verse is still loading no longer resurrect audio or repaint the bar with stale errors: in-flight loads are dropped the moment the player stops or changes course.
 - **Stable first render.** All components share one tab-wide progress snapshot, so the sidebar, learn grid, and practice hub always agree about what is unlocked, and storage writes that land during a render no longer trigger React's setState-during-render warning. Settings persist from an effect instead of inside the state updater, so saves cannot run mid-render under StrictMode.
 
-## 0.4.0 — 2026-06-07
+## 0.4.0 (2026-06-07)
 
 Broader reciter choice, a movable audio player, a content-accuracy pass with a new offline check, and visual polish. No religious-content was generated or edited: verse text, translations, tafsir, tajweed coloring, and audio still come only from the verified Quran.com API or the bundled snapshots, and the app renders them rather than producing them.
 
@@ -196,9 +210,9 @@ Broader reciter choice, a movable audio player, a content-accuracy pass with a n
 
 - **Tafkheem coloring in the Mushaf.** No clean, verified per-letter tafkheem dataset was available without the app classifying tajweed itself, which this project does not do. Coloring is held back rather than approximated. The Tafkheem and Tarqeeq lesson covers the heavy and light letters and stands on its own.
 
-## 0.3.1 — 2026-06-01
+## 0.3.1 (2026-06-01)
 
-A security-hardening and bug-fix pass. No religious-content changes — verse text, translations, tafsir, and audio still come only from the verified Quran.com API.
+A security-hardening and bug-fix pass. No religious-content changes: verse text, translations, tafsir, and audio still come only from the verified Quran.com API.
 
 ### Fixed
 
@@ -223,9 +237,9 @@ A platform upgrade plus the production audio/asset fix and continuous playback. 
 
 ### Changed
 
-- **Framework upgrade**. Next.js 14.2 → 16.2.7 (builds run on Turbopack; `turbopack.root` is pinned in `next.config.mjs` so a stray parent lockfile is not inferred as the workspace root). React 18 → 19.2.7 (`react-dom` 19.2.7), `@types/react` → ^19, Node 24. Tailwind stays at 3.4.19 on purpose — Tailwind v4 is not required by Next 16 and would risk the tuned design.
+- **Framework upgrade**. Next.js 14.2 → 16.2.7 (builds run on Turbopack; `turbopack.root` is pinned in `next.config.mjs` so a stray parent lockfile is not inferred as the workspace root). React 18 → 19.2.7 (`react-dom` 19.2.7), `@types/react` → ^19, Node 24. Tailwind stays at 3.4.19 on purpose, since Tailwind v4 is not required by Next 16 and would risk the tuned design.
 - **ESLint 9 flat config**. `eslint.config.mjs` spreads `eslint-config-next/core-web-vitals`; `.eslintrc.json` was removed. The lint script is now `eslint .` (not `next lint`, which Next 16 deprecates). `package.json` scripts: `dev`, `build`, `start`, `lint`, `verify`, `verify:scripts`, `verify:ui`.
-- **Next 15+ async route APIs**. Dynamic-route `params` is now a Promise — awaited in server routes, unwrapped with React `use()` in client routes (`practice/[module]`). Segment `revalidate` exports use a literal number of seconds (e.g. `86400`, `604800`).
+- **Next 15+ async route APIs**. Dynamic-route `params` is now a Promise, awaited in server routes, unwrapped with React `use()` in client routes (`practice/[module]`). Segment `revalidate` exports use a literal number of seconds (e.g. `86400`, `604800`).
 - **Self-hosted fonts via `next/font`**. Inter, Plus Jakarta Sans, JetBrains Mono, Amiri, and Amiri Quran are all self-hosted; the render-blocking Google Fonts `<link>` in `layout.tsx` was removed. Tailwind `fontFamily` tokens reference the `next/font` CSS variables (`var(--font-quran)`, `var(--font-amiri)`, `var(--font-inter)`, etc.).
 - **CSP and response headers consolidated** into `next.config.mjs` as the single source; `vercel.json` is trimmed to just `framework` + `buildCommand` (its competing headers removed). `script-src` drops `'unsafe-eval'` in production (kept only in dev for HMR); `style-src`/`font-src` no longer list `fonts.googleapis.com`/`fonts.gstatic.com` (fonts are self-hosted); `connect-src 'self' https://api.quran.com`; `media-src 'self' https://verses.quran.com https://*.quranicaudio.com https://audio.qurancdn.com`.
 
@@ -239,7 +253,7 @@ A platform upgrade plus the production audio/asset fix and continuous playback. 
 
 - Per-ayah audio comes from the Quran.com API (`/recitations/{id}/by_ayah/{key}`); the returned path resolves to `verses.quran.com` or `*.quranicaudio.com` (e.g. `mirrors.quranicaudio.com`). 12 reciters in `src/lib/reciters.ts`.
 
-## 0.2.1 — 2026-05-02
+## 0.2.1 (2026-05-02)
 
 A second pass on the 0.2.0 branch that picks up the items the original release deliberately left out. Each item is wired with its own atomic commit and a smoke-tested verify script.
 
@@ -248,9 +262,9 @@ A second pass on the 0.2.0 branch that picks up the items the original release d
 - **Spaced repetition (Leitner)**. Every authored question is tracked by stable id under `progress.reviews`. A correct answer promotes one box (intervals 1, 3, 7, 14, 30 days; max box 5 = mastered); a wrong answer drops to box 1. New: `src/lib/spaced-repetition.ts`, `useReviews` hook, `/practice/review` route, `getDueQuestions(dueIds, count)`, Review Due tile on `/practice` (only renders when `due > 0`), Spaced Review stats card on `/progress`. `QuizSession` accepts a `mode: "random" | "review"` prop and writes through `recordReview` after every answer.
 - **Memorization tracker** in the Mushaf reader. Per-verse heart toggle persists to `progress.memorizedVerses` (capped at 6,236 unique `surah:ayah` keys, format-validated). `useMemorization()` hook keeps the UI in sync. The reader toolbar exposes an eye toggle that activates recall mode: every memorized verse on the visible page is blurred (`blur-md`, 60% opacity) with a per-verse Reveal pill. The recall toggle is in-session state, not persisted. Memorization stats card appears on `/progress` once any verse is marked.
 - **Global search** at `/search`. Cached index covers all 114 surahs, the 9 lesson modules, every rule (with subtypes), tafkheem subsections, makharij regions, and waqf symbols. Simple ranked search by tokenized substring across title, subtitle, and a denormalized haystack; minimum query length 2. Each hit links to its canonical route (`/learn/<module>#<anchor>` for rules, `/mushaf/surah/<n>` for surahs). New top-level nav entry with a search icon.
-- **TTS for question prompts** via the Web Speech API. A small speaker button next to each prompt reads the prompt text aloud (`ar-SA` or `en-US` based on the active locale, rate 0.95). Single-utterance: starting a new readout cancels any in-flight one. The button hides when the browser doesn't expose `speechSynthesis`. **Quranic verse text is never read by TTS** — only UI prompts.
+- **TTS for question prompts** via the Web Speech API. A small speaker button next to each prompt reads the prompt text aloud (`ar-SA` or `en-US` based on the active locale, rate 0.95). Single-utterance: starting a new readout cancels any in-flight one. The button hides when the browser doesn't expose `speechSynthesis`. **Quranic verse text is never read by TTS**, only UI prompts.
 - **Lesson section progress chip**. Each of the 9 lesson pages declares its anchor list, and `<LessonProgress moduleId sections>` mounts an `IntersectionObserver` (40% threshold) to mark sections read in `progress.readSections[moduleId]`. A fixed bottom-right chip shows "X / Y sections read" and links to the next unread anchor; it auto-hides when everything is read. New: `useReadSections` hook, `markSectionRead`, slug-validated against `^[a-z0-9][a-z0-9-]{0,80}$`, capped at 50 per module.
-- **Anonymous local analytics** with route and quiz instrumentation. `progress.analytics` is a 1000-event ring buffer keyed by a fixed `AnalyticsEventType` set (`route.view`, `quiz.start`, `quiz.finish`, `review.start`, `memorize.toggle`, `search.query`). Meta payloads are capped at 200 chars. `RouteAnalytics` (mounted in `AppProvider`) records a `route.view` on every navigation. `QuizSession` records `quiz.start` / `review.start` on entry and `quiz.finish` on completion. `/progress` adds an Insights card with quiz starts, finishes, and the top 5 most-visited routes. **Local-only — never transmitted.**
+- **Anonymous local analytics** with route and quiz instrumentation. `progress.analytics` is a 1000-event ring buffer keyed by a fixed `AnalyticsEventType` set (`route.view`, `quiz.start`, `quiz.finish`, `review.start`, `memorize.toggle`, `search.query`). Meta payloads are capped at 200 chars. `RouteAnalytics` (mounted in `AppProvider`) records a `route.view` on every navigation. `QuizSession` records `quiz.start` / `review.start` on entry and `quiz.finish` on completion. `/progress` adds an Insights card with quiz starts, finishes, and the top 5 most-visited routes. **Local only, never transmitted.**
 - **Backup and restore** in Settings. `exportProgress()` returns a pretty-printed JSON snapshot of the full sanitized progress object; `importProgress(payload)` parses, sanitizes, and replaces. The Settings UI offers Export (downloads `tajweed-trainer-backup-YYYY-MM-DD.json`) and Restore (file picker, soft-reload after success). Failure surfaces a localized error message.
 - **Installable PWA**. `app/manifest.ts` (Next.js metadata route) ships the web manifest with a regular and a maskable SVG icon. `public/sw.js` ships a service worker with strategies: network-first for HTML, cache-first for `/icon*` and `/_next/static/*`, stale-while-revalidate for `api.quran.com` and `api.alquran.cloud`, and cache-first with a 50-entry FIFO cap for `cdn.islamic.network` audio. The worker registers via `<PWARegister/>` mounted in `AppProvider` (production builds only). `app/layout.tsx` adds `themeColor`, `applicationName`, `appleWebApp`, and explicit `icons`.
 
@@ -272,7 +286,7 @@ A second pass on the 0.2.0 branch that picks up the items the original release d
 - `docs/i18n.md` updated to list the new translation namespaces (`review.*`, `memorize.*`, `search.*`, `speech.*`, `insights.*`, `learn.sectionsRead`, `settings.backup.*`, `mushaf.memorize*`).
 - `docs/development.md` documents `verify-newfeatures.mjs` and the new manual smoke checklist for offline / install behavior.
 
-## 0.2.0 — 2026-05-02
+## 0.2.0 (2026-05-02)
 
 ### Added
 
@@ -282,7 +296,7 @@ A second pass on the 0.2.0 branch that picks up the items the original release d
 - **Reciter expansion**. Settings page now shows a language-grouped `<select>` populated from `api.alquran.cloud /edition?format=audio&type=versebyverse`. The two built-in defaults (Husary, Alafasy) are always pinned at the front and rendered even when the API fails. Identifiers validated against `/^[a-z0-9._-]{1,64}$/`. List cached for 24h under `tajweed-trainer-reciters`. Persisted reciter is re-validated against the cached list with a husary fallback for unknown ids. New: `useReciters`, `fetchReciterEditions`, `validateReciterIdentifier`, `verify-reciters.mjs` (9/9).
 - **Post-answer feedback** in the practice flow. After answering, the rule name, the authored explanation, and a deep link to `/learn/<moduleId>#<lessonAnchor>` show before the auto-advance fires (3s window, up from 1.5s). Lesson pages have anchor wrappers on the matching sections so the URL fragment scrolls to the relevant card.
 - **Practice this module CTA** in `LessonNavigation`. Renders below the prev/next row when the module is unlocked. Hidden while locked. Linked into all nine lesson pages.
-- **Sanitizer smoke test** — `verify-sanitizer.mjs` (14/14) exercises the tajweed HTML sanitizer against canonical and adversarial inputs (script tags, iframe, onclick, disallowed classes, javascript: URIs, comments, CDATA).
+- **Sanitizer smoke test**: `verify-sanitizer.mjs` (14/14) exercises the tajweed HTML sanitizer against canonical and adversarial inputs (script tags, iframe, onclick, disallowed classes, javascript: URIs, comments, CDATA).
 
 ### Changed
 
@@ -295,7 +309,7 @@ A second pass on the 0.2.0 branch that picks up the items the original release d
 
 - `docs/api-integrations.md` extended with the editions endpoint, identifier validation contract, and a table of every storage cap.
 - `docs/architecture.md` updated to reflect the new routes, hooks, and library files.
-- New: `docs/CONTENT.md` — how to add new questions, lesson anchors, and verse snapshots.
+- New: `docs/CONTENT.md`, how to add new questions, lesson anchors, and verse snapshots.
 - README features list rewritten to match 0.2.0 capabilities.
 
 ### Out of scope (intentionally not added)
