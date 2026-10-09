@@ -23,6 +23,9 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 
 ### Fixed
 
+- **Restoring a file that is not a backup keeps your progress.** A JSON file with none of the saved keys used to be accepted and replaced stored progress with an empty set. It is now rejected with the usual error and nothing is overwritten.
+- **Theme-matched fills and readable lesson labels.** Subtle fills follow pearl, sepia and mihrab instead of one fixed colour, Arabic headings fall back to Amiri, and the lesson labels that fell below 4.5:1 now use body ink (the noon sakinah quick reference keeps its rule colour as a small mark).
+- **Example cards no longer scroll by a few pixels,** and their footer wraps on the narrowest phones.
 - **Quiz read-aloud skips Qur'anic words.** The read-aloud button no longer voices the vowelled Qur'anic words inside a prompt, since device voices misread them.
 - **Repetition counter counts the last listen.** In the tikrar (repetition) drill, an audio-led session that looped a verse N times counted only N−1: the final listen ended the loop without registering. It now counts the full N. The manual count control was always accurate; this aligns the listen-along count with it.
 
