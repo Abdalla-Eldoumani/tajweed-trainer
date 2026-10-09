@@ -85,8 +85,8 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-c",
     explanation: {
-      en: "Fifteen letters trigger Ikhfaa: ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك. This is the most common rule in the Quran.",
-      ar: "خمسة عشر حرفا يستوجب الإخفاء: ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك. وهو أكثر الأحكام ورودا في القرآن.",
+      en: "Fifteen letters trigger Ikhfaa: ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك. This is the most common of the Noon Sakinah and Tanween rules in the Quran.",
+      ar: "خمسة عشر حرفا يستوجب الإخفاء: ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك. وهو أكثر أحكام النون الساكنة والتنوين ورودا في القرآن.",
       lessonAnchor: "ikhfaa",
     },
     source: { surah: 30, ayah: 4, translationEditionId: null, provenance: PROVENANCE },
@@ -437,7 +437,7 @@ export const questions: Question[] = [
     arabicText: "مِنْ ظَهِيرٍ",
     englishGloss: "of a helper",
     options: [
-      { id: "opt-a", label: { en: "Ikhfaa — Tanween followed by Dhaa (ظ)", ar: "إخفاء — قبل الظاء (ظ)" } },
+      { id: "opt-a", label: { en: "Ikhfaa — Noon Sakinah before Dhaa (ظ)", ar: "إخفاء — قبل الظاء (ظ)" } },
       { id: "opt-b", label: { en: "Idgham with Ghunnah", ar: "إدغام بغنّة" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
@@ -614,7 +614,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "The lesson states explicitly: 'Ikhfaa is the most common rule in the Quran.' This makes sense given Ikhfaa's 15 letters versus Iqlab's 1, Izhar's 6, and Idgham's 6.",
+      en: "The lesson states explicitly: 'Ikhfaa is the most common of the Noon Sakinah and Tanween rules in the Quran.' This makes sense given Ikhfaa's 15 letters versus Iqlab's 1, Izhar's 6, and Idgham's 6.",
       ar: "نصّ الدرس على أنّ 'الإخفاء أكثر أحكام النون الساكنة والتنوين ورودا في القرآن'. ويوافق ذلك كثرة حروفه الخمسة عشر مقابل حرف الإقلاب الواحد وستّة لكلّ من الإظهار والإدغام.",
       lessonAnchor: "ikhfaa",
     },
