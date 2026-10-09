@@ -258,7 +258,7 @@ export function SegmentDrill() {
     }
   }, [effectiveKey, chunkSize, revisionReciter, verseMeta]);
 
-  // Per-chunk audio: play the verse (loading it as the queue head — Pitfall 6) and,
+  // Per-chunk audio: play the verse (loading it as the queue head) and,
   // when the segments align, loop just the chunk's [startMs..endMs] once via the
   // ONE player engine. When null/misaligned there are no bounds, so this is a plain
   // whole-verse play (degrade) — bounds are never fabricated. No second
