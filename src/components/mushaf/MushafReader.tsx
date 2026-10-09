@@ -374,19 +374,19 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             onClick={playFullSurah}
             aria-label={t("mushaf.playSurah")}
             title={t("mushaf.playSurah")}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary text-on-primary px-3 py-2 min-h-[44px] text-small font-medium hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary text-on-primary px-3 py-2 min-h-[44px] min-w-[44px] text-small font-medium hover:bg-primary-weak dark:bg-gold dark:text-ink dark:hover:bg-gold-deep transition-colors"
           >
             <PlaySolid />
             <span className="hidden sm:inline">{t("mushaf.playSurah")}</span>
           </button>
           <Link href={`/mushaf/page/${prevPage}`} aria-disabled={atStart} className={cn(atStart && "pointer-events-none opacity-40")}>
-            <Button variant="outline" size="sm" className="gap-1 min-h-[44px]" aria-label={t("mushaf.previousPage")}>
+            <Button variant="outline" size="sm" className="gap-1 min-h-[44px] min-w-[44px]" aria-label={t("mushaf.previousPage")}>
               <ChevronStart />
               <span className="hidden sm:inline">{t("mushaf.previousPage")}</span>
             </Button>
           </Link>
           <Link href={`/mushaf/page/${nextPage}`} aria-disabled={atEnd} className={cn(atEnd && "pointer-events-none opacity-40")}>
-            <Button variant="outline" size="sm" className="gap-1 min-h-[44px]" aria-label={t("mushaf.nextPage")}>
+            <Button variant="outline" size="sm" className="gap-1 min-h-[44px] min-w-[44px]" aria-label={t("mushaf.nextPage")}>
               <span className="hidden sm:inline">{t("mushaf.nextPage")}</span>
               <ChevronEnd />
             </Button>
