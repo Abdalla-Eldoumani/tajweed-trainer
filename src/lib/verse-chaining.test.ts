@@ -15,26 +15,26 @@ import {
   TOTAL_MUSHAF_PAGES,
 } from "@/lib/navigation";
 
-// The CHAIN-01/02/03 seam matrix. Every case asserts against the REAL
+// The seam matrix. Every case asserts against the REAL
 // verse-chaining exports (seams are never re-derived here); the JUZ_STARTS /
 // nextVerse / pageForJuz cross-checks come from the equally-real navigation
 // exports. The three terminal nulls (114:6, juz 30, page 604) are pinned so no
 // seam is ever fabricated for the last unit (Pitfall 1).
 
-describe("resolveVerseSeam - CHAIN-01 / CHAIN-03", () => {
-  it("mid-surah: 2:5 -> 2:6 (CHAIN-01)", () => {
+describe("resolveVerseSeam - verse seams", () => {
+  it("mid-surah: 2:5 -> 2:6", () => {
     expect(resolveVerseSeam(2, 5)).toEqual({ tail: "2:5", head: "2:6" });
   });
 
-  it("cross-surah with a preceding bismillah: 1:7 -> 2:1 (CHAIN-03)", () => {
+  it("cross-surah with a preceding bismillah: 1:7 -> 2:1", () => {
     expect(resolveVerseSeam(1, 7)).toEqual({ tail: "1:7", head: "2:1" });
   });
 
-  it("cross-surah into At-Tawbah (bismillahPre false): 8:75 -> 9:1 (CHAIN-03)", () => {
+  it("cross-surah into At-Tawbah (bismillahPre false): 8:75 -> 9:1", () => {
     expect(resolveVerseSeam(8, 75)).toEqual({ tail: "8:75", head: "9:1" });
   });
 
-  it("returns null at 114:6, the end of the Quran (CHAIN-03 terminal)", () => {
+  it("returns null at 114:6, the end of the Quran (terminal)", () => {
     expect(resolveVerseSeam(114, 6)).toBeNull();
   });
 
@@ -45,8 +45,8 @@ describe("resolveVerseSeam - CHAIN-01 / CHAIN-03", () => {
   });
 });
 
-describe("resolveJuzSeam - CHAIN-02 / CHAIN-03", () => {
-  it("juz 1 -> juz 2: {tail:2:141, head:2:142} (CHAIN-02)", () => {
+describe("resolveJuzSeam - juz seams", () => {
+  it("juz 1 -> juz 2: {tail:2:141, head:2:142}", () => {
     expect(resolveJuzSeam(1)).toEqual({ tail: "2:141", head: "2:142" });
   });
 
@@ -59,13 +59,13 @@ describe("resolveJuzSeam - CHAIN-02 / CHAIN-03", () => {
     }
   });
 
-  it("returns null for juz 30, which has no next juz (CHAIN-03 terminal)", () => {
+  it("returns null for juz 30, which has no next juz (terminal)", () => {
     expect(resolveJuzSeam(30)).toBeNull();
   });
 });
 
-describe("resolvePageSeam - CHAIN-02 / CHAIN-03", () => {
-  it("page 1 -> page 2: {tail:1:7, head:2:1} (CHAIN-02)", () => {
+describe("resolvePageSeam - page seams", () => {
+  it("page 1 -> page 2: {tail:1:7, head:2:1}", () => {
     expect(resolvePageSeam(1)).toEqual({ tail: "1:7", head: "2:1" });
   });
 
@@ -78,13 +78,13 @@ describe("resolvePageSeam - CHAIN-02 / CHAIN-03", () => {
     }
   });
 
-  it("returns null for page 604, which has no next page (CHAIN-03 terminal)", () => {
+  it("returns null for page 604, which has no next page (terminal)", () => {
     expect(resolvePageSeam(TOTAL_MUSHAF_PAGES)).toBeNull();
   });
 });
 
 describe("juz seams and page seams are derived independently", () => {
-  // 05-01 finding: the /juzs and /verses/by_page endpoints diverge for four juz.
+  // Finding: the /juzs and /verses/by_page endpoints diverge for four juz.
   // The juz that opens a page is not always the verse the page opens with, so a
   // juz seam and a page seam are NOT the same boundary — each is derived from its
   // own table. Assert the juz seam INTO juz J differs from the page seam INTO the
@@ -108,7 +108,7 @@ describe("juz seams and page seams are derived independently", () => {
 });
 
 describe("verseSeamsForMemorized", () => {
-  it("a memorized 114:6 yields no verse seam (CHAIN-03)", () => {
+  it("a memorized 114:6 yields no verse seam", () => {
     expect(verseSeamsForMemorized(new Set(["114:6"]))).toEqual([]);
   });
 
