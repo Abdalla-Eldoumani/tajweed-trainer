@@ -412,7 +412,10 @@
 }
 
 body {
-  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-family: var(--font-body), 'Alegreya Sans', sans-serif;
+  /* Alegreya Sans defaults to oldstyle figures, which read as lowercase o in
+     counters and scores. */
+  font-variant-numeric: lining-nums;
   background-color: var(--bg);
   color: var(--text);
 }
@@ -618,10 +621,11 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
     text-wrap: balance;
   }
 
-  /* Tabular figures for live counts so digits
-     keep a fixed width and do not jitter as a count updates. */
+  /* Tabular figures for live counts so digits keep a fixed width and do not
+     jitter as a count updates. Lining is repeated because this declaration
+     replaces the inherited value. */
   .tabular-nums {
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: lining-nums tabular-nums;
   }
 
   /* Apply the page-settle entrance. `both` holds the element at opacity 0 before
@@ -787,8 +791,21 @@ html, body {
    Mushaf Reader styling
    ============================================ */
 
+/* The rub el hizb: two overlaid squares, the eight-point mark that divides the
+   mushaf into hizb quarters. Gold ornament only, never a tajweed color, so the
+   frame ornaments stay decoupled from the verse palette. */
+:root {
+  --rub-el-hizb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23B68A2E' stroke-width='1.6'%3E%3Crect x='6' y='6' width='16' height='16'/%3E%3Crect x='6' y='6' width='16' height='16' transform='rotate(45 14 14)'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+[data-theme="night"],
+[data-theme="sepia"],
+[data-theme="mihrab"] {
+  --rub-el-hizb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23D8B25A' stroke-width='1.6'%3E%3Crect x='6' y='6' width='16' height='16'/%3E%3Crect x='6' y='6' width='16' height='16' transform='rotate(45 14 14)'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 /* Outer frame for a Mushaf page: a quiet double gold rule with one small
-   8-point star at the head corner. No multi-color band. */
+   rub el hizb at the head corner. No multi-color band. */
 .mushaf-frame {
   position: relative;
   background: var(--bg-card);
@@ -798,9 +815,8 @@ html, body {
 }
 
 .mushaf-frame::before {
-  /* The frame ornament: one quiet inner hairline rule, inset 6px. Uses
-     ornament/gold tokens only (never tajweed), so a palette change cannot
-     shift the frame. Replaces the old repeating multi-color band. */
+  /* The inner hairline rule, inset 6px. Uses ornament/gold tokens only (never
+     tajweed), so a palette change cannot shift the frame. */
   content: "";
   position: absolute;
   inset: 6px;
@@ -810,31 +826,20 @@ html, body {
 }
 
 .mushaf-frame::after {
-  /* A single 8-point star at the head corner, low opacity. Drawn in a gold
-     ornament hex, never a tajweed token, so the frame stays decoupled from the
-     verse palette. */
   content: "";
   position: absolute;
   top: 10px;
   inset-inline-start: 10px;
   width: 16px;
   height: 16px;
-  opacity: 0.45;
+  opacity: 0.6;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23B68A2E' stroke-width='1'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-[data-theme="night"] .mushaf-frame::after,
-[data-theme="sepia"] .mushaf-frame::after,
-[data-theme="mihrab"] .mushaf-frame::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23D8B25A' stroke-width='1'/%3E%3C/svg%3E");
+  background: var(--rub-el-hizb) center / contain no-repeat;
 }
 
 /* Surah cartouche: banner shown when a surah starts. Flat card surface with a
-   single gold hairline and a small 8-point star at each end. No gradient; the
-   star sits at low opacity so the surah name stays the focus. */
+   single gold hairline and a small rub el hizb at each end. No gradient; the
+   mark sits at low opacity so the surah name stays the focus. */
 .surah-cartouche {
   position: relative;
   text-align: center;
@@ -853,23 +858,12 @@ html, body {
   width: 22px;
   height: 22px;
   margin-top: -11px;
-  opacity: 0.5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23B68A2E' stroke-width='1'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
+  opacity: 0.6;
+  background: var(--rub-el-hizb) center / contain no-repeat;
 }
 
 .surah-cartouche::before { inset-inline-start: 8px; }
 .surah-cartouche::after { inset-inline-end: 8px; }
-
-[data-theme="night"] .surah-cartouche::before,
-[data-theme="night"] .surah-cartouche::after,
-[data-theme="sepia"] .surah-cartouche::before,
-[data-theme="sepia"] .surah-cartouche::after,
-[data-theme="mihrab"] .surah-cartouche::before,
-[data-theme="mihrab"] .surah-cartouche::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M14 4 L17 11 L24 12 L18 17 L20 24 L14 20 L8 24 L10 17 L4 12 L11 11 Z' fill='none' stroke='%23D8B25A' stroke-width='1'/%3E%3C/svg%3E");
-}
 
 /* Verses inside a Mushaf page render side-by-side as inline buttons.
    Restore tap-to-play affordance without breaking text justification. */
