@@ -6,7 +6,7 @@ import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
 import { cn, toArabicIndic } from "@/lib/utils";
 
-// The memorization revision streak (STAT-03): mirrors the practice StreakCounter
+// The memorization revision streak: mirrors the practice StreakCounter
 // but reads progress.memorizationStreak (the separate field the storage layer
 // tracks and the recall path updates on every graded verse). It carries a
 // DISTINCT label so it never reads as — or collides in an e2e locator with — the
@@ -17,7 +17,7 @@ export function RevisionStreakCounter() {
 
   // Store-derived UI gates on a mounted flag so the first client paint matches
   // the server's empty snapshot (streak 0), mirroring the directory rule and the
-  // practice StreakCounter idiom (T-10-09). The field is optional, so a safe
+  // practice StreakCounter idiom. The field is optional, so a safe
   // default covers the never-revised case too.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
