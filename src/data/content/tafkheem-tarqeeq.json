@@ -3,8 +3,8 @@
   "title_en": "Tafkheem & Tarqeeq (Heavy & Light Letters)",
   "title_ar": "التفخيم والترقيق",
   "category": "tafkheem-tarqeeq",
-  "introduction": "Arabic letters are categorized by their 'weight' in pronunciation. Tafkheem (heaviness) creates a full, thick sound with the back of the tongue raised. Tarqeeq (lightness) creates a thin, soft sound.",
-  "introduction_ar": "تنقسم الحروف العربية بحسب ثقلها وخفّتها في النطق. فالتفخيم تسمين الحرف بحيث يمتلئ الفم بصداه مع رفع مؤخّر اللسان. والترقيق تنحيف الحرف فيخرج صوتا رقيقا.",
+  "introduction": "Arabic letters are categorized by their 'weight' in pronunciation. Tafkheem (heaviness) creates a full, thick sound with the back of the tongue raised. Tarqeeq (lightness) creates a thin, soft sound. The five levels of heaviness listed for the always-heavy letters are one way of ranking them, and teachers rank them differently. A local imam or teacher can explain the scheme they use.",
+  "introduction_ar": "تنقسم الحروف العربية بحسب ثقلها وخفّتها في النطق. فالتفخيم تسمين الحرف بحيث يمتلئ الفم بصداه مع رفع مؤخّر اللسان. والترقيق تنحيف الحرف فيخرج صوتا رقيقا. والمراتب الخمس المذكورة لحروف الاستعلاء إحدى طرق ترتيبها، ويرتّبها المعلّمون بطرائق مختلفة. ويستطيع إمام أو معلّم قريب أن يشرح الطريقة التي يعتمدها.",
   "always_heavy": {
     "title_en": "Always Heavy Letters (Huroof Al-Isti'laa)",
     "title_ar": "حروف الاستعلاء",
