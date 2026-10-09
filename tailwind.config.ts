@@ -28,9 +28,10 @@ const config: Config = {
         // globals.css so all five themes render their own ground and ink, not
         // just a light/dark pair. Both the base and the -dark token resolve to
         // the same variable, so existing `dark:` utilities keep working and
-        // simply re-assert the themed value. Accent and fill tokens that take
-        // opacity modifiers (primary, gold, accent, bg-subtle) stay
-        // static hex so the `/<alpha>` utilities stay valid.
+        // simply re-assert the themed value. Accent tokens that take opacity
+        // modifiers (primary, gold, accent) stay static hex so the `/<alpha>`
+        // utilities stay valid; bg-subtle reads per-theme rgb channels so it
+        // follows the theme and still accepts an alpha.
         primary: {
           DEFAULT: "#1E4279",
           light: "#D9B45C",
@@ -53,8 +54,8 @@ const config: Config = {
         bg: {
           DEFAULT: "var(--bg)",
           card: "var(--bg-card)",
-          subtle: "#ECE5D3",
-          "subtle-dark": "#1A2336",
+          subtle: "rgb(var(--bg-subtle-rgb) / <alpha-value>)",
+          "subtle-dark": "rgb(var(--bg-subtle-rgb) / <alpha-value>)",
           dark: "var(--bg)",
           "card-dark": "var(--bg-card)",
         },
@@ -77,7 +78,7 @@ const config: Config = {
       fontFamily: {
         quran: ["var(--font-quran)", '"Amiri Quran"', '"Scheherazade New"', "serif"],
         arabic: ["var(--font-amiri)", "Amiri", "serif"],
-        heading: ["var(--font-heading)", "Spectral", "serif"],
+        heading: ["var(--font-heading)", "Spectral", "var(--font-amiri)", "serif"],
         body: ["var(--font-body)", '"Alegreya Sans"', "sans-serif"],
         mono: ["var(--font-mono)", '"JetBrains Mono"', "monospace"],
       },
