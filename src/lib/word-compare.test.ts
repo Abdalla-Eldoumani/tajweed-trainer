@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { stripArabicDiacritics, wordsMatch } from "@/lib/word-compare";
 
-// The TYPE-01 / TYPE-02 worked-value matrix. Every case asserts against the REAL
-// word-compare exports — the expected outputs are the literal strings VERIFIED in
-// 08-RESEARCH.md against the real captured Uthmani word data and Unicode
+// The worked-value matrix. Every case asserts against the REAL
+// word-compare exports. The expected outputs are literal strings checked
+// against the real captured Uthmani word data and Unicode
 // General_Category; they are never re-derived from the function under test.
 //
 // The strip removes ONLY Unicode general-category Mn (nonspacing combining marks).
@@ -68,7 +68,7 @@ describe("wordsMatch - exact by default, diacritic-insensitive is opt-in", () =>
     const typed = "  ٱلرَّحِيمِ  ";
     const stored = "ٱلرَّحِيمِ";
     wordsMatch(typed, stored, { diacriticInsensitive: true });
-    // Strings are immutable in JS, but this pins the read-only contract (TYPE-03):
+    // Strings are immutable in JS, but this pins the read-only contract:
     // the comparison strips COPIES; the sources are untouched.
     expect(typed).toBe("  ٱلرَّحِيمِ  ");
     expect(stored).toBe("ٱلرَّحِيمِ");
