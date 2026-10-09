@@ -1117,8 +1117,9 @@ export function shouldRemindBackup(progress: TajweedProgress, now: Date): boolea
 }
 
 // Replaces stored progress with the parsed payload after sanitization. Returns
-// false when the input isn't valid JSON or doesn't deserialize to an object;
-// the caller surfaces that failure to the user.
+// false when the input isn't valid JSON or isn't an object carrying at least
+// one saved key, so a stray JSON file can never sanitize to empty defaults and
+// overwrite real progress; the caller surfaces that failure to the user.
 export function importProgress(payload: string): boolean {
   if (!isBrowser()) return false;
   let parsed: unknown;
@@ -1127,6 +1128,7 @@ export function importProgress(payload: string): boolean {
   } catch {
     return false;
   }
+  if (!isObject(parsed) || !Object.keys(parsed).some((key) => key in DEFAULT_PROGRESS)) return false;
   const sanitized = sanitizeProgress(parsed);
   setProgress(sanitized);
   return true;
