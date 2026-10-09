@@ -74,7 +74,7 @@ Strict mode; avoid `any`. New types go in `src/lib/types.ts`. Optional `_ar` fie
 
 - Tailwind only (no CSS modules/styled-components); custom CSS lives in `src/app/globals.css` (tajweed colors, mushaf frame, ornaments).
 - Tailwind logical properties (`ms-*`, `me-*`, `border-s`, `border-e`) so RTL flips correctly.
-- Fonts: `font-quran` (Amiri Quran), `font-arabic` (Amiri), `font-heading` (Spectral), `font-mono` (JetBrains Mono), default body (Inter).
+- Fonts: `font-quran` (Amiri Quran), `font-arabic` (Amiri), `font-heading` (Spectral), `font-mono` (JetBrains Mono), default body (Alegreya Sans).
 
 ### State
 
