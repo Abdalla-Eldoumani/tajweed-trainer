@@ -15,7 +15,7 @@ import type { Recitation, TranslationResource, Theme } from "@/lib/types";
 import { withViewTransition } from "@/lib/motion";
 import { cn, toArabicIndic } from "@/lib/utils";
 
-// Literal anchor hexes per theme (DESIGN_SYSTEM_V2.md), used only to paint the
+// Literal anchor hexes per theme, used only to paint the
 // preview swatch: ground, ink, gold. These cannot be var(--bg)/var(--text)/
 // var(--gold) because exactly one [data-theme] is active on <html> at a time, so
 // the variables would render every swatch in the active theme. The order is the
@@ -184,7 +184,7 @@ export default function SettingsPage() {
     return r.id === DEFAULT_RECITER_ID ? `${styled} (${t("settings.recitersDefault")})` : styled;
   };
 
-  // Revision reciter (PROG-02): the recall / revision surfaces resolve their
+  // Revision reciter: the recall / revision surfaces resolve their
   // reciter through resolveRevisionReciter, which falls back to the browse reciter
   // when this override is unset (undefined). Its selector mirrors the browse
   // reciter's grouped-by-style shape (no search box — the grouped list is short
@@ -291,7 +291,7 @@ export default function SettingsPage() {
         </p>
       </Card>
 
-      {/* Revision reciter (PROG-02): a selector distinct from the browse reciter,
+      {/* Revision reciter: a selector distinct from the browse reciter,
           honored ONLY by the memorization revision / recall playback surfaces. The
           first "same as reading reciter" option writes undefined so the shared
           resolveRevisionReciter falls back to the browse reciter. */}
@@ -432,7 +432,7 @@ export default function SettingsPage() {
             />
           </label>
 
-          {/* Diacritic-insensitive typing recall (TYPE-02): a comparison-only
+          {/* Diacritic-insensitive typing recall: a comparison-only
               toggle the /progress typing drill reads. It NEVER changes stored or
               rendered verse text — only how a typed word is matched. */}
           <label className="flex items-center justify-between cursor-pointer">
@@ -546,7 +546,7 @@ export default function SettingsPage() {
         </div>
       </Card>
 
-      {/* New verses per day (murajaah daily NEW cap, REV-01). Presets sit inside
+      {/* New verses per day (murajaah daily NEW cap). Presets sit inside
           the storage clamp [1, 10]; the write funnels through updateSettings.
           Mirrors the recall-hint-budget radiogroup. Due reviews of known verses
           are never capped — only the new tail is. */}
@@ -573,7 +573,7 @@ export default function SettingsPage() {
         </div>
       </Card>
 
-      {/* Revision reminders (REV-04). Rendered ONLY when the Notification API is
+      {/* Revision reminders. Rendered ONLY when the Notification API is
           supported AND the app is installed (an uninstalled tab cannot show a
           reliable local reminder). Enabling requests permission from the toggle
           gesture; a denial keeps it off with honest copy. This is a LOCAL
