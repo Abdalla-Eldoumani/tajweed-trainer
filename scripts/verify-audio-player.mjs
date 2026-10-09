@@ -16,6 +16,7 @@ const host = read("src", "components", "ui", "PlayerHost.tsx");
 const mini = read("src", "components", "ui", "MiniPlayer.tsx");
 const storage = read("src", "lib", "storage.ts");
 const provider = read("src", "components", "layout", "AppProvider.tsx");
+const resumeCard = read("src", "components", "progress", "ResumeListeningCard.tsx");
 
 const results = [];
 function record(name, ok, details = "") {
@@ -25,11 +26,11 @@ function record(name, ok, details = "") {
 
 record("Store supports single and continuous modes", /"single"/.test(store) && /"continuous"/.test(store));
 
-const actions = ["playVerse", "playSurah", "toggle", "pause", "resume", "next", "prev", "seek", "setSpeed", "stop", "restore", "persist"];
+const actions = ["playVerse", "playSurah", "toggle", "pause", "resume", "next", "prev", "seek", "setSpeed", "stop", "persist"];
 const missing = actions.filter((a) => !new RegExp("\\b" + a + "\\s*:").test(store));
 record("Store exposes the full transport", missing.length === 0, missing.join(", "));
 
-record("Store persists and restores resume", /setPlayerResume\(/.test(store) && /getPlayerResume\(/.test(store));
+record("Store persists resume and the resume card reads it", /setPlayerResume\(/.test(store) && /getPlayerResume\(/.test(resumeCard));
 
 const resumeCall = (store.match(/setPlayerResume\(\{[\s\S]*?\}\)/) || [])[0] || "";
 const fields = ["surah", "ayah", "mode", "offset", "reciter"];
