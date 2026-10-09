@@ -75,7 +75,7 @@ export function WeakRulesSection() {
                   {moduleName(r.moduleId)}
                 </span>
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-[11px] text-accent tabular-nums">
+                  <span className="text-[0.8125rem] text-accent tabular-nums">
                     {t("weakRules.missedLabel").replace("{n}", num(r.missed))}
                   </span>
                   <Link
