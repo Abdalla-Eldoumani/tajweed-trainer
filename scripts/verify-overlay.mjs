@@ -44,7 +44,7 @@
 //  14. width switch    — VerseOverlay imports AND calls useIsDesktop, the one
 //      boundary that picks the centered panel (>=1024) vs the bottom sheet.
 //  15. swipe present    — SWIPE_CLOSE_THRESHOLD exists (the downward-drag close
-//      distance ported from the retired PlaybackSurface sheet).
+//      distance).
 //  16. swipe closes,    — the grab-handle pointer-up dismiss body references
 //      not stops         onClose and contains NO `stop`, so a swipe-down closes
 //      the overlay while audio KEEPS playing; AND `.stop(` appears EXACTLY ONCE
@@ -318,12 +318,11 @@ record(
 );
 
 // --- 16. swipe-dismiss closes the overlay, it does NOT stop audio ---
-// The single most important port adaptation: PlaybackSurface's sheet stopped the
-// player on close; the overlay's swipe must call onClose (close the overlay,
-// KEEP audio playing and the verse visible), never stop(). Scope the no-stop
+// The swipe must call onClose (close the overlay, KEEP audio playing and the
+// verse visible), never stop(). Scope the no-stop
 // assertion to the grab-handle pointer-up handler BODY, because the overlay
-// legitimately keeps exactly ONE st.stop() — the clearSelection sameQueue guard
-// lifted from PlaybackSurface, which is NOT the dismiss. A file-wide no-stop
+// legitimately keeps exactly ONE st.stop(), the clearSelection sameQueue guard,
+// which is NOT the dismiss. A file-wide no-stop
 // check would falsely fail on that line. So: (a) the dismiss handler body
 // references onClose and contains no `stop`, and (b) `.stop(` occurs EXACTLY
 // ONCE in the overlay (the clearSelection one), mirroring the occurrence-count
