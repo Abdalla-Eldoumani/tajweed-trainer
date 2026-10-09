@@ -61,7 +61,7 @@ interface DrillSession {
 
 type Phase = "picker" | "loading" | "error" | "session";
 
-// The tikrar (repetition) rep counter on /progress (EXAM-01). Pick a memorized
+// The tikrar (repetition) rep counter on /progress. Pick a memorized
 // verse, set a session target, loop it via the ONE audio engine, and count reps
 // toward the target — each session's reps ADD to the verse's cumulative cross-day
 // total through logTikrarReps, and the running total climbs live. It mirrors the
@@ -195,7 +195,7 @@ export function TikrarDrill() {
     pendingRef.current = { verseKey: "", reps: 0 };
   }, []);
 
-  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // The revision reciter: resolveRevisionReciter picks
   // settings.revisionReciter when set, else the browse settings.reciter. Passed as
   // opts.reciter so the tikrar loop matches the other revision surfaces; the
   // browse reader keeps settings.reciter.
