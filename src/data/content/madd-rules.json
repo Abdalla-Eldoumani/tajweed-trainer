@@ -117,8 +117,8 @@
       "beats": "4-5",
       "obligation": "Permissible (Jaiz)",
       "obligation_ar": "جائز",
-      "description": "When a Madd letter is at the END of one word and the NEXT word begins with a Hamzah. Elongated for 4-5 beats (Hafs allows shortening to 4).",
-      "description_ar": "إذا جاء حرف المدّ في آخر كلمة وكانت الكلمة التي بعدها تبدأ بهمزة. ومقداره أربع أو خمس حركات (ولحفص قصره إلى أربع).",
+      "description": "When a Madd letter is at the END of one word and the NEXT word begins with a Hamzah. Elongated for 4-5 beats.",
+      "description_ar": "إذا جاء حرف المدّ في آخر كلمة وكانت الكلمة التي بعدها تبدأ بهمزة. ومقداره أربع أو خمس حركات.",
       "trigger": "Madd letter at end of word + Hamzah at start of next word",
       "trigger_ar": "حرف مدّ في آخر كلمة وهمزة في أوّل الكلمة التي بعدها",
       "examples": [
