@@ -34,13 +34,13 @@ Routes: `/`, `/learn`, `/learn/[module]`, `/mushaf`, `/mushaf/page/[page]`, `/mu
 
 ## Platform and build
 
-- **Framework:** Next.js 16.2.9 on React 19.2.7 (`react-dom` 19.2.7). Turbopack builds; `turbopack.root` in `next.config.mjs` pins the workspace root.
+- **Framework:** Next.js 16.4.0 on React 19.2.7 (`react-dom` 19.2.7). Turbopack builds; `turbopack.root` in `next.config.mjs` pins the workspace root.
 - **TypeScript** strict, `@types/react` ^19. **Tailwind** stays at 3.4.19 on purpose (v4 deferred). Node 24.
 - **ESLint 9, flat config:** `eslint.config.mjs` spreads `eslint-config-next/core-web-vitals`. The lint script is `eslint .`, not the deprecated `next lint`. Scripts are listed in [development.md](development.md#scripts).
 - **Next 15+ async APIs:** dynamic route `params` is a Promise (see routes below); `export const revalidate` uses a literal seconds value (e.g. `86400`, `604800`).
 - **Fonts:** self-hosted via `next/font` (Inter, Spectral, JetBrains Mono, Amiri, Amiri Quran); no Google Fonts `<link>`. Tailwind `fontFamily` tokens map to the `next/font` variables.
 - **Headers / CSP:** all response headers and the CSP are assembled once in `next.config.mjs` (`headers()` applies them to every path); see [security.md](security.md#content-security-policy) for the directive table and origins.
-- Project version is **2.2.0**.
+- Project version is **2.2.1**.
 
 ## Layers
 
@@ -50,10 +50,10 @@ Routes: `/`, `/learn`, `/learn/[module]`, `/mushaf`, `/mushaf/page/[page]`, `/mu
 - **quran-api.ts**: wraps Quran.com v4. `getTajweedSurah(n)`, `getTajweedPage(n)`, `getChaptersIndex()` (bundled fallback), `getStartPageForSurah(n)`, all backed by `fetchWithCache` + `fetchWithRetry` (TTLs and retry policy in [api-integrations.md](api-integrations.md#caching)).
 - **audio-api.ts**: wraps Quran.com per-ayah audio and builds deterministic EveryAyah URLs for `ea-*` reciters. `fetchAudioUrl(surah, ayah, reciter)` (1-hour cache); `toSafeAudioUrl` normalizes to an https URL on an allowlisted host. Catalogue is static in `reciters.ts` (`RECITATIONS`, 42 Hafs: 12 Quran.com + 30 EveryAyah; `DEFAULT_RECITER_ID` is Al-Husary muallim). `normalizeReciterId()` migrates legacy alquran.cloud ids.
 - **tajweed-colors.ts**: CSS-class to hex map for every tajweed rule the API emits, with dark-mode variants. Used by `TajweedText` and `ColorLegend`.
-- **storage.ts**: SSR-safe localStorage wrapper and the only write funnel; reads run `sanitizeProgress`, writes emit through `progress-events.ts`. `getSettings`, `setSettings`, `getProgress`, `setProgress`. Beyond the core lesson/quiz/settings state, `TajweedProgress` carries the memorization, review, notes, bookmark, resume, khatmah, onboarding, and analytics fields, each sanitized and capped ([api-integrations.md](api-integrations.md#storage-caps-and-validation-contract) holds the full field list and caps). Keyed maps reject `__proto__`, `constructor`, `prototype`. Helpers: `getReviews/setReview`, `toggleMemorizedVerse/setMemorizedVerses`, `getReadSections/markSectionRead`, `getVerseNote/setVerseNote`, `getLastRead/getLastReadForSurah/setLastRead`, `getKhatmah/setKhatmah/clearKhatmah`, `getOnboardingSeen/setOnboardingSeen`, `getAnalytics/recordAnalyticsEvent`, `exportProgress/importProgress`, `getLastBackupAt/shouldRemindBackup`.
+- **storage.ts**: SSR-safe localStorage wrapper and the only write funnel; reads run `sanitizeProgress`, writes emit through `progress-events.ts`. `getSettings`, `setSettings`, `getProgress`, `setProgress`. Beyond the core lesson/quiz/settings state, `TajweedProgress` carries the memorization, review, notes, bookmark, resume, khatmah, onboarding, and analytics fields, each sanitized and capped ([api-integrations.md](api-integrations.md#storage-caps-and-validation-contract) holds the full field list and caps). Keyed maps reject `__proto__`, `constructor`, `prototype`. Helpers: `getReviews/setReview`, `toggleMemorizedVerse/setMemorizedVerses`, `getReadSections/markSectionRead`, `getVerseNote/setVerseNote`, `getLastRead/getLastReadForSurah/setLastRead`, `setKhatmah/clearKhatmah`, `getOnboardingSeen/setOnboardingSeen`, `getAnalytics/recordAnalyticsEvent`, `exportProgress/importProgress`, `shouldRemindBackup`.
 - **i18n.ts**: flat `key -> { en, ar }` dictionary, `t(key, lang)`, and `useTranslation()` -> `{ t, lang, isAr, dir }`.
 - **utils.ts**: `cn()`, `formatSurahReference(name | { en, ar }, surah, ayah, locale)`, `toArabicIndic(n)`.
-- **question-pool.ts**: flattens rule-file examples into a pool, builds `RULE_AR_MAP`, exposes `getRandomQuestions` with parallel `options` / `optionsAr`. Authored `src/data/questions/<module>.ts` take precedence. `getDueQuestions(dueIds, count)` feeds the review route; the practice hub reads last-quiz scores via `getModuleLastScore` in `practice-scores.ts`, kept out of `question-pool.ts` so the hub does not pull the content pool into the client bundle.
+- **question-pool.ts**: maps the authored `src/data/questions/<module>.ts` records to the quiz shape and exposes `getRandomQuestions`. Option order is a seeded shuffle keyed on the question id, so it is stable across server and client renders. `getDueQuestions(dueIds, count)` feeds the review route; the practice hub reads last-quiz scores via `getModuleLastScore` in `practice-scores.ts`, kept out of `question-pool.ts` so the hub does not pull the content pool into the client bundle.
 - **spaced-repetition.ts**: pure Leitner. `LEITNER_INTERVALS` (1/3/7/14/30 days); `nextStateForAnswer(prev, correct)` promotes one box (clamp `MASTERY_BOX = 5`) or resets to 1; `recordReview(questionId, correct)` writes through; `getDueQuestionIds` and `getReviewStats` are read-only.
 - **search.ts**: builds and caches the global search index (surahs, modules, rules with subtypes, tafkheem subsections, makharij regions, waqf symbols). `search(query, limit)` tokenized substring match with score ranking; minimum length 2.
 - **khatmah.ts**: pure pace math. `computeKhatmahPace(plan, currentPage, today)` (clamped snapshot) and `targetDateForDuration(startDate, days)`. Linear by mushaf page, no React/storage/next.
@@ -111,7 +111,7 @@ Next.js App Router (Next 16). Most pages are server components that hydrate into
 - **Practice / review:** `QuizSession` calls `recordReview(questionId, correct)` via `useReviews()` (delegating to `nextStateForAnswer` in `spaced-repetition.ts`, writing through `setReview`); `/practice` reads `useReviews().stats()` for the Review Due tile (when `due > 0`), and `/practice/review` runs `getDueQuestions(useReviews().dueIds(), 10)` through `<QuizSession mode="review"/>`.
 - **Memorization:** `useMemorization().toggle(verseKey)` -> `toggleMemorizedVerse(verseKey)`; the hook mirrors a local `Set<string>` for O(1) re-renders, and the toolbar eye flips an in-session `memorizationMode` (blur behind a Reveal pill).
 - **Lesson progress:** `LessonProgress` watches the page's sections with an `IntersectionObserver` (40% visibility) and calls `markSectionRead(moduleId, slug)`, showing `readCount` and a next-unread anchor, auto-hiding when all are read.
-- **Khatmah:** `KhatmahCard` on `/progress` reads `getKhatmah` and `lastRead.page`, calls `computeKhatmahPace` in `khatmah.ts`, and writes `setKhatmah` (which re-sanitizes).
+- **Khatmah:** `KhatmahCard` on `/progress` reads the plan and `lastRead.page` through `useKhatmah`, calls `computeKhatmahPace` in `khatmah.ts`, and writes `setKhatmah` (which re-sanitizes).
 
 ### Anonymous local analytics
 
