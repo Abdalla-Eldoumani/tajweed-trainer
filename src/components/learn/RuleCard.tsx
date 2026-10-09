@@ -53,18 +53,15 @@ export function RuleCard({
         className="w-full text-start flex items-start gap-3 min-h-[44px]"
         aria-expanded={expanded}
       >
-        {color && (
-          <span
-            className="w-1.5 self-stretch rounded-full shrink-0"
-            style={{ backgroundColor: color }}
-            aria-hidden="true"
-          />
-        )}
-
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <h3 className="font-heading font-semibold text-small">{primaryTitle}</h3>
+              <h3 className="flex items-center gap-2 font-heading font-semibold text-small">
+                {color && (
+                  <span className="size-2 rotate-45 shrink-0" style={{ backgroundColor: color }} aria-hidden="true" />
+                )}
+                {primaryTitle}
+              </h3>
               {isAr ? (
                 <p className="text-micro text-text-muted mt-0.5">{secondaryTitle}</p>
               ) : (
