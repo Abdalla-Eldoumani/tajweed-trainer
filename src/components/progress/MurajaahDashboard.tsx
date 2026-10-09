@@ -12,8 +12,8 @@ import { getNewVersesIntroducedToday } from "@/lib/storage";
 import { prefersReducedMotion } from "@/lib/reduced-motion";
 import { toArabicIndic } from "@/lib/utils";
 
-// Today's revision dashboard on /progress: the honest uncapped due count (REV-03),
-// the NEW / RECENT / CONSOLIDATED balance and the daily-new cap status (REV-01/02),
+// Today's revision dashboard on /progress: the honest uncapped due count,
+// the NEW / RECENT / CONSOLIDATED balance and the daily-new cap status,
 // and a CTA that scrolls to the ONE recall-review card (no second review
 // instance — the id anchor lives on the existing mount). It reads the SAME
 // composeToday the recall session snapshots, so overview and session never
@@ -72,7 +72,7 @@ export function MurajaahDashboard() {
       <h2 className="font-heading font-semibold text-h3">{t("murajaah.title")}</h2>
       <p className="mt-1 text-sm text-text-muted">{t("murajaah.description")}</p>
 
-      {/* The honest due headline (REV-03): the uncapped due total as a big red
+      {/* The honest due headline: the uncapped due total as a big red
           figure, with the day's new-verse intake as the quiet second truth. */}
       <div className="mt-4 flex items-baseline gap-2">
         <span className="font-heading text-display font-semibold leading-none tabular-nums text-red-600 dark:text-red-400">
@@ -82,7 +82,7 @@ export function MurajaahDashboard() {
       </div>
       <p className="mt-1 text-sm text-text-muted tabular-nums">{introducingNew}</p>
 
-      {/* The balanced breakdown (REV-01/02): new / recent / consolidated as slim
+      {/* The balanced breakdown: new / recent / consolidated as slim
           shares of the due total. All due recent + consolidated are surfaced; only
           the new tail is capped in the session. */}
       <div className="mt-5 space-y-3">
