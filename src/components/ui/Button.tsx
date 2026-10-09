@@ -40,7 +40,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           ...style,
         }}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center min-w-11 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           {
             // Filled actions read as lapis ink on vellum; on the night theme
             // they flip to gold leaf with navy ink, the manuscript's own
