@@ -144,7 +144,7 @@ export function resolveReciterIdOrNull(value: unknown): string | null {
   return null;
 }
 
-// Two display groups per the PRD: Mujawwad, and Murattal (which gathers
+// Two display groups: Mujawwad, and Murattal (which gathers
 // Murattal, Muallim, and the API's unspecified/null style, all measured
 // recitations). Each reciter still carries its exact style for display.
 export type ReciterStyleGroup = "mujawwad" | "murattal";
