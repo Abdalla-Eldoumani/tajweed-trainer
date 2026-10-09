@@ -1,6 +1,6 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E (BLIND-02): the cover-page recall toggle on the Mushaf reader. Cover mode
+// E2E: the cover-page recall toggle on the Mushaf reader. Cover mode
 // blurs EVERY verse on the page (not only memorized ones), a tap on a covered
 // verse reveals it in place (a FREE reveal that never opens the overlay), a tap
 // on a revealed verse opens the overlay as usual, and with cover mode off a tap
@@ -23,7 +23,7 @@ function overlayOf(page: import("@playwright/test").Page) {
   });
 }
 
-test("BLIND-02: cover mode blurs every verse; a covered tap reveals, a revealed tap opens the overlay", async ({
+test("cover mode blurs every verse; a covered tap reveals, a revealed tap opens the overlay", async ({
   page,
   consoleErrors,
 }) => {
