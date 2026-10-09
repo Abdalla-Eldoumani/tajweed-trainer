@@ -6,7 +6,7 @@ import {
 } from "@/lib/notification-gate";
 
 // notification-gate.ts is the pure fire-decision plus the SSR-safe capability
-// detectors for the local revision reminder (REV-04). shouldNotify takes plain
+// detectors for the local revision reminder. shouldNotify takes plain
 // booleans and a count in, so its whole truth table is exercised without any
 // browser Notification object. The two detectors read window / matchMedia
 // guarded like reduced-motion.ts and are stubbed the same way reduced-motion's
