@@ -1,6 +1,6 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E-01 + E2E-03: mark a verse memorized and confirm it surfaces as due in the
+// Mark a verse memorized and confirm it surfaces as due in the
 // /progress recall review, then reveal and grade it. A memorized verse with no
 // review entry is due immediately (the separate memorizationReviews keyspace),
 // so a seeded verse populates the review with no prior interaction. Selectors are
