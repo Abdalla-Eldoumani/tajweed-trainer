@@ -29,7 +29,7 @@
 //      reachable inside the real overlay, not just defined.
 //  11. inline bindings — OverlayInlineControls writes reciter, playbackSpeed, and
 //      translationId through updateSettings (the one funnel), so each control is
-//      two-way-bound to its setting (INLINE-01/02/03); a regression to local
+//      two-way-bound to its setting; a regression to local
 //      state drops a write and fails.
 //  12. inline one path — OverlayInlineControls READS settings.reciter /
 //      .playbackSpeed / .translationId (the store, not a local mirror) and adds
@@ -56,8 +56,8 @@
 //  18. verse stays      — the sheet box is a capped max-h-[..vh] with
 //      visible           overflow-y-auto (NOT full-height), so the verse it
 //      concerns stays readable above it and long verses scroll internally.
-//  19. touch targets    — zero min-h-[36px] remain in the overlay (MOBILE-02:
-//      the range stepper/loop/gap controls are >=44px for touch).
+//  19. touch targets    — zero min-h-[36px] remain in the overlay (the range
+//      stepper/loop/gap controls are >=44px for touch).
 //  20. dismissed flag   — MiniPlayer has a `dismissed` flag AND the `visible`
 //      expression includes `!dismissed`, so dismissing hides the bar without
 //      ending playback and it stays gone until new playback.
@@ -214,7 +214,7 @@ record(
     : `providerOpen=${providerOpen} overlayAt=${overlayAt} providerClose=${providerClose}`,
 );
 
-// --- The inline reciter / speed / translation-source controls (Phase 4) -------
+// --- The inline reciter / speed / translation-source controls -------
 // Read the inline-controls source too, so the binding checks below assert against
 // the component that actually writes settings, not just its presence in the
 // overlay. Stripped so a comment mention of updateSettings never satisfies a
@@ -238,7 +238,7 @@ record(
 );
 
 // --- 11. inline controls bind the one funnel: updateSettings for all 3 fields --
-// The INLINE-01/02/03 binding assertion. Each control writes its field through
+// The binding assertion. Each control writes its field through
 // updateSettings; tolerate whitespace inside the object literal. A control that
 // regressed to local state would drop its updateSettings({ <field> write here.
 const FIELD_WRITES = [
@@ -273,7 +273,7 @@ record(
 );
 
 // --- 13. the change-reciter-via-link seam is retired in the MAIN section ---
-// Phase 4 retired the old "Change reciter -> /settings" line above the transport:
+// The old "Change reciter -> /settings" line above the transport is retired:
 // the inline reciter control changes the reciter in place now. The ErrorLine's
 // recovery link (the same audio.changeReciter + href="/settings" pair) is kept on
 // purpose. Assert PRECISELY: the retired ReciterLine component is gone, AND
@@ -292,8 +292,7 @@ record(
 );
 
 // --- The sheet form: a width-selected bottom-sheet variant of the same shell ---
-// Phase 6 ported PlaybackSurface's bottom sheet into the overlay as a touch form
-// chosen by width; the panel is the >=1024 form. These checks lock the sheet's
+// The overlay carries a bottom sheet as a touch form chosen by width; the panel is the >=1024 form. These checks lock the sheet's
 // defining behaviors against the comment-stripped overlay source.
 
 // --- 14. width switch: the overlay imports AND calls useIsDesktop ---
@@ -369,12 +368,12 @@ record(
     : `cappedVh=${sheetCapped} overflowYAuto=${sheetScrolls}`,
 );
 
-// --- 19. MOBILE-02 touch targets: no sub-44px range controls remain ---
+// --- 19. touch targets: no sub-44px range controls remain ---
 // The lifted range stepper / loop / gap controls were bumped to >=44px for
 // touch; assert zero min-h-[36px] survive in the overlay.
 const hasSmallTargets = src.includes("min-h-[36px]");
 record(
-  "no sub-44px (min-h-[36px]) touch targets remain in the overlay (MOBILE-02)",
+  "no sub-44px (min-h-[36px]) touch targets remain in the overlay",
   !hasSmallTargets,
   hasSmallTargets ? "min-h-[36px] still present" : "no min-h-[36px]; range targets are >=44px",
 );
@@ -385,7 +384,7 @@ record(
 const miniPlayer = stripComments(read("src", "components", "ui", "MiniPlayer.tsx"));
 
 // --- 20. the dismissed flag is present AND gates visibility ---
-// MOBILE-03: dismissing hides the bar without ending playback (distinct from
+// dismissing hides the bar without ending playback (distinct from
 // "no audio"), so it must both exist and be in the `visible` expression. A
 // `dismissed` that is set but not read in `visible` would not actually hide the
 // bar, so require it inside the visible computation.
