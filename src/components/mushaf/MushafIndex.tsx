@@ -10,7 +10,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { getProgress } from "@/lib/storage";
-import { pageForSurah } from "@/lib/navigation";
+import { pageForVerse } from "@/lib/navigation";
 import { toArabicIndic, cn } from "@/lib/utils";
 import type { SurahHeader, VerseLocation } from "@/lib/types";
 
@@ -160,7 +160,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
               return (
                 <Link
                   key={vk}
-                  href={`/mushaf/page/${pageForSurah(sv)}?v=${vk}`}
+                  href={`/mushaf/page/${pageForVerse(sv, av)}?v=${vk}`}
                   className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light text-xs font-medium hover:bg-primary/20"
                 >
                   {label}
@@ -195,7 +195,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
           const surahName = isAr ? s.nameArabic : s.nameSimple;
           return (
             <Card key={s.number} className="h-full flex flex-col">
-              <Link href={`/mushaf/surah/${s.number}`} className="block group">
+              <Link href={`/mushaf/page/${s.pages[0]}`} className="block group">
                 <div className="flex items-start gap-3">
                   <div className="w-11 h-11 rounded-xl bg-gold-light/20 dark:bg-gold-dark/20 border border-gold-light/40 dark:border-gold-dark/30 flex items-center justify-center text-[#7A5E15] dark:text-gold-light text-sm font-bold font-arabic shrink-0">
                     {isAr ? toArabicIndic(s.number) : s.number}
