@@ -11,9 +11,9 @@ import type { Sm2State } from "@/lib/types";
 // must count it as due and toward total, and a review entry for an unmemorized
 // verse is ignored. The stats are never re-derived here.
 //
-// Phase 4 (04-02): memorizationReviews is now SM-2 (Sm2State), so the helper
-// builds an Sm2State and "mastered" is intervalDays >= 21, not box === 5. The
-// SCHED-03 semantics (no-entry verse is due + counted) are unchanged.
+// memorizationReviews is SM-2 (Sm2State), so the helper builds an Sm2State and
+// "mastered" is intervalDays >= 21, not box === 5. A verse with no entry is due
+// and counted.
 
 // A local-noon `now` keeps toIsoDate (which the source computes in local time)
 // stable across timezones; PAST/FUTURE sit far from any local date either way.
