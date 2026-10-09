@@ -29,7 +29,7 @@ import type { MushafPageData, ReciterId, SurahHeader } from "@/lib/types";
 // record-and-compare). Lazy-loaded so the reader's initial bundle does not carry
 // their fetch/canvas/MediaRecorder weight; each splits into its own chunk and
 // loads on first overlay open. The primary action row and transport stay eager
-// (CONST-02: verse-tap -> open -> play must be immediate). A tiny reduced-motion
+// (verse-tap -> open -> play must be immediate). A tiny reduced-motion
 // -safe placeholder holds space while the chunk arrives.
 const LazyLine = () => (
   <div
@@ -173,7 +173,7 @@ const LoadingIcon = () => (
 // deliberately NOT lifted: that is the retired docked/sheet presentation.
 
 // The reciter readout + "Change reciter" settings link that used to sit above the
-// transport was retired in Phase 4: OverlayInlineControls now shows the current
+// transport was retired: OverlayInlineControls now shows the current
 // reciter and changes it in place, so the link is no longer the way to do it. The
 // ErrorLine below keeps its own settings link as an error-recovery affordance.
 
@@ -871,7 +871,7 @@ export function VerseOverlay({
   // Panel (>=1024) vs bottom-sheet (<1024) chrome. null until the post-mount
   // measure resolves; while null the dialog is held at the closed/opacity-0
   // state below so neither form's chrome flashes on the first frame (a phone
-  // never sees a centered panel, the MOBILE-01 surface). matchMedia resolves in
+  // never sees a centered panel). matchMedia resolves in
   // the hook's mount effect right after first paint, so this is a one-frame
   // delay, not a wrong-form flash.
   const isDesktop = useIsDesktop();
@@ -1362,7 +1362,7 @@ export function VerseOverlay({
               reads the reciter and speed on the next play, and the reading-depth
               panel re-fetches when the translation id changes. This is the
               "reciter and speed and translation source" slot of the
-              DESIGN_SYSTEM_V2 content order, and it replaces the old "Change
+              content order, and it replaces the old "Change
               reciter -> /settings" link. No second <audio>, no second store. */}
           {valid && (
             <div className="mt-3 border-t border-border pt-4">
