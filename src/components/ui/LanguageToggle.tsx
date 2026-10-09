@@ -15,7 +15,7 @@ export function LanguageToggle({ className }: LanguageToggleProps) {
     <button
       onClick={() => updateSettings({ language: isAr ? "en" : "ar" })}
       className={cn(
-        "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors min-h-[36px]",
+        "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-colors min-h-[44px]",
         // Both call sites (sidebar, mobile header) sit on the illuminated
         // margin, so the pill is styled for that navy ground in both themes.
         "border-[var(--margin-line)] bg-[var(--margin-card)] text-[var(--margin-text)] hover:border-gold",
