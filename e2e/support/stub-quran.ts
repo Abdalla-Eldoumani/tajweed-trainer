@@ -22,12 +22,12 @@ export async function stubQuran(context: BrowserContext): Promise<void> {
     if (/\/verses\/by_key\//.test(url)) return route.fulfill({ path: fixture("verse-by-key.json") });
     // getWordsForChapter requests words=true: serve the captured word list (real
     // bytes, INCLUDING the trailing char_type_name:"end" ayah-number pseudo-word),
-    // so a memorized verse actually splits in the segment drill and the 06-02
+    // so a memorized verse actually splits in the segment drill and the
     // end-marker filter is provable end-to-end (WordByWord + SegmentDrill). The
     // tajweed-only by_chapter request (words=false, getTajweedSurah) and the
     // translations by_chapter request are unused paths here — the drills resolve
     // tajweed HTML from the bundled snapshot — so they fall through to the catch-all
-    // {} below, which also leaves fetchSegments' alignment degrading (SEG-03).
+    // {} below, which also leaves fetchSegments' alignment degrading.
     if (/\/verses\/by_chapter\//.test(url) && /[?&]words=true\b/.test(url)) {
       return route.fulfill({ path: fixture("words-by-chapter.json") });
     }
