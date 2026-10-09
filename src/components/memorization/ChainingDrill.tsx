@@ -113,7 +113,7 @@ function VerseLine({ verseKey, blurred }: { verseKey: string; blurred: boolean }
 // until reveal (two verses shown, only the head blurred). Grading records the
 // HEAD via useMemorizationReviews.recordReview into the shared memorizationReviews
 // SM-2 keyspace (no storage-schema change), so chaining feeds the same scheduler.
-// The audio-tail plays the TAIL verse on the one usePlayer engine (CHAIN-04).
+// The audio-tail plays the TAIL verse on the one usePlayer engine.
 export function ChainingDrill() {
   const { t, isAr } = useTranslation();
   const { memorized, mounted } = useMemorization();
@@ -192,7 +192,7 @@ export function ChainingDrill() {
       if (!currentSeam) return;
       // Record the HEAD (what was recalled) into the SM-2 keyspace; the scheduler
       // derives the next interval and due date from the rating. The head is
-      // recorded unconditionally (RESEARCH Open Question 1) — validated and
+      // recorded unconditionally — validated and
       // capped by the storage funnel, never surfaced for an unmemorized key.
       recordReview(currentSeam.head, g);
       setReviewed((n) => n + 1);
@@ -244,13 +244,13 @@ export function ChainingDrill() {
     return () => document.removeEventListener("keydown", onKey);
   }, [revealed, currentSeam, grade]);
 
-  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // The revision reciter: resolveRevisionReciter picks
   // settings.revisionReciter when set, else the browse settings.reciter. Passed as
   // opts.reciter so the chaining drill's audio-tail matches the other revision
   // surfaces; the browse reader keeps settings.reciter.
   const revisionReciter = resolveRevisionReciter(settings);
 
-  // Audio-tail (CHAIN-04): play the TAIL verse on its own (single mode), through
+  // Audio-tail: play the TAIL verse on its own (single mode), through
   // the one player engine — no second audio element, no fabricated audio. The
   // full tail verse is the baseline; the last-words sub-verse loop is deferred.
   const playTail = useCallback(() => {
