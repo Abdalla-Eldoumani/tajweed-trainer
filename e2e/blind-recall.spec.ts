@@ -1,14 +1,14 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 import type { Locator } from "@playwright/test";
 
-// E2E (BLIND-01/03/04): the audio-led (blind) mode, the costed per-session hint
+// E2E: the audio-led (blind) mode, the costed per-session hint
 // budget, the grade cap on a peeked verse (buttons AND keyboard AND focus), and
 // the reload/finish budget lifecycle — all on the /progress memorized-verse
-// review. The unit layer (07-01/07-02) proves the pure peek-budget math; these
+// review. The unit layer proves the pure peek-budget math; these
 // prove the learner-facing behavior. Audio-led mode is in-session React state
 // that cannot be seeded, so each test clicks the toggle; sessionPeekUsed IS
-// persisted, so it is asserted directly in localStorage (E2E-03). Every hint /
-// reveal / grade label is the distinct 07-03/07-04 i18n string so the review's
+// persisted, so it is asserted directly in localStorage. Every hint /
+// reveal / grade label is its own i18n string so the review's
 // locators never collide with the chaining / segment drills on the same page.
 
 const STORAGE_KEY = "tajweed-trainer-progress";
@@ -41,7 +41,7 @@ test.beforeEach(async ({ context }) => {
   });
 });
 
-test("BLIND-01: audio-led mode hides the verse, engages audio on Start, and Reveal shows it", async ({
+test("audio-led mode hides the verse, engages audio on Start, and Reveal shows it", async ({
   page,
   consoleErrors,
 }) => {
@@ -82,7 +82,7 @@ test("BLIND-01: audio-led mode hides the verse, engages audio on Start, and Reve
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("BLIND-03: each hint spends one budget unit, and the hint disables once the budget is gone", async ({
+test("each hint spends one budget unit, and the hint disables once the budget is gone", async ({
   page,
   consoleErrors,
 }) => {
@@ -117,7 +117,7 @@ test("BLIND-03: each hint spends one budget unit, and the hint disables once the
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("BLIND-03: a peeked verse caps at hard on the buttons, the keyboard, and the focus target", async ({
+test("a peeked verse caps at hard on the buttons, the keyboard, and the focus target", async ({
   page,
   consoleErrors,
 }) => {
@@ -161,7 +161,7 @@ test("BLIND-03: a peeked verse caps at hard on the buttons, the keyboard, and th
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("BLIND-04: a reload keeps the peek consumed (budget not refilled) and finishing clears it", async ({
+test("a reload keeps the peek consumed (budget not refilled) and finishing clears it", async ({
   page,
   context,
   consoleErrors,
