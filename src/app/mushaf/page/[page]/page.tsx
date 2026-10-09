@@ -9,8 +9,8 @@ interface MushafPageRouteProps {
 const TOTAL_PAGES = 604;
 
 export async function generateStaticParams() {
-  // Statically pre-render the most common entry points (first juz, last juz, surah starts on early pages)
-  const pages = [1, 2, 3, 4, 5, 22, 42, 62, 82, 102, 122, 142, 162, 182, 202, 222, 242, 262, 282, 302, 322, 342, 362, 382, 402, 422, 442, 462, 482, 502, 522, 542, 562, 582, 602, 604];
+  // Statically pre-render the most common entry points (the opening pages, the juz starting pages, the last pages)
+  const pages = [1, 2, 3, 4, 5, 22, 42, 62, 82, 102, 121, 142, 162, 182, 201, 222, 242, 262, 282, 302, 322, 342, 362, 382, 402, 422, 442, 462, 482, 502, 522, 542, 562, 582, 602, 604];
   return pages.map((p) => ({ page: String(p) }));
 }
 
