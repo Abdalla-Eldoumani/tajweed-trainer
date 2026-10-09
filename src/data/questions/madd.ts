@@ -441,13 +441,13 @@ export const questions: Question[] = [
     arabicText: "قَالُوا آمَنَّا",
     englishGloss: "they said: we believe",
     options: [
-      { id: "opt-a", label: { en: "Madd Badal (آ at start) AND Tabee'i (Alif after Meem)", ar: "مدّ بدل (آ في الأوّل) ومدّ طبيعي (ألف بعد الميم)" } },
+      { id: "opt-a", label: { en: "Madd Badal (آ at start) AND Tabee'i (Alif after Noon)", ar: "مدّ بدل (آ في الأوّل) ومدّ طبيعي (ألف بعد النون)" } },
       { id: "opt-b", label: { en: "Madd Muttasil twice", ar: "مدّ متّصل مرّتين" } },
       { id: "opt-c", label: { en: "Madd Lazim and Madd Leen", ar: "مدّ لازم ومدّ لين" } },
       { id: "opt-d", label: { en: "Only Munfasil", ar: "منفصل فقط" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "آمَنَّا starts with آ which is Madd Badal (Hamzah before Alif). After the Meem, the Alif before the (final) Alif also gets a Madd Tabee'i. The pair قَالُوا + آمَنَّا additionally has a Madd Munfasil between them.", ar: "آمَنَّا تبدأ بـآ (مدّ بدل، همزة قبل الألف). والألف بعد الميم مدّ طبيعي. وبين قَالُوا وآمَنَّا مدّ منفصل أيضا.", lessonAnchor: "madd-badal" },
+    explanation: { en: "آمَنَّا starts with آ which is Madd Badal (Hamzah before Alif). The final Alif after the Noon also gets a Madd Tabee'i. The pair قَالُوا + آمَنَّا additionally has a Madd Munfasil between them.", ar: "آمَنَّا تبدأ بـآ (مدّ بدل، همزة قبل الألف). والألف بعد النون مدّ طبيعي. وبين قَالُوا وآمَنَّا مدّ منفصل أيضا.", lessonAnchor: "madd-badal" },
     source: { surah: 2, ayah: 14, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -498,7 +498,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Both Jaiz", ar: "كلاهما جائز" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson labels Muttasil as 'Obligatory (Wajib)' and Munfasil as 'Permissible (Jaiz)'. Hafs allows shortening Munfasil to 4 beats.", ar: "صنّف الدرس المتّصل واجبا والمنفصل جائزا. ولحفص قصر المنفصل إلى أربع حركات.", lessonAnchor: "madd-munfasil" },
+    explanation: { en: "The lesson labels Muttasil as 'Obligatory (Wajib)' and Munfasil as 'Permissible (Jaiz)'.", ar: "صنّف الدرس المتّصل واجبا والمنفصل جائزا.", lessonAnchor: "madd-munfasil" },
     source: { surah: 110, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
