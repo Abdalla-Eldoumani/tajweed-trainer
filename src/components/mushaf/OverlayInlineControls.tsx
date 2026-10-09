@@ -55,7 +55,7 @@ export function OverlayInlineControls() {
   // (gold at night) accent, the rest are quiet gold-hairline outlines.
   const speedChip = (active: boolean) =>
     cn(
-      "min-w-[44px] min-h-[36px] px-3 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
+      "min-w-[44px] min-h-[44px] px-3 rounded-lg text-small font-medium tabular-nums border transition-colors motion-reduce:transition-none",
       active
         ? "bg-primary/15 text-primary dark:text-primary-light border-primary/40"
         : "bg-bg-card dark:bg-bg-card-dark text-text-muted border-gold-light/40 dark:border-gold-dark/30 hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark",
