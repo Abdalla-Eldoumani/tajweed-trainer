@@ -21,11 +21,11 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-xl p-5 sm:p-6 shadow-sm bg-bg-card border border-border dark:bg-bg-card-dark",
+          "rounded-xl p-5 sm:p-6 bg-bg-card border border-border dark:bg-bg-card-dark",
           // Elevated treatment: the shared elevation primitive (per-theme ink
           // page-lift shadow + the inset gold hairline), no glow.
           isElevated && "card-elevated",
-          hover && "transition-shadow hover:shadow-md cursor-pointer",
+          hover && "transition-colors hover:border-gold cursor-pointer",
           className
         )}
         {...props}
