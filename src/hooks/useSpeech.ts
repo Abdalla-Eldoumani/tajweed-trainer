@@ -23,9 +23,15 @@ export function useSpeech() {
 
   const speak = useCallback(
     (text: string, lang: "en" | "ar" = "en") => {
-      if (!supported || !text) return;
+      // Qur'anic words in prompts are fully vowelled, and device voices misread
+      // them, so any word carrying harakat is left out of what is spoken.
+      const spoken = text
+        .split(/\s+/)
+        .filter((word) => !/[\u064B-\u0650\u0652\u0670]/.test(word))
+        .join(" ");
+      if (!supported || !spoken) return;
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
+      const utterance = new SpeechSynthesisUtterance(spoken);
       utterance.lang = lang === "ar" ? "ar-SA" : "en-US";
       utterance.rate = 0.95;
       utterance.onstart = () => setSpeaking(true);
