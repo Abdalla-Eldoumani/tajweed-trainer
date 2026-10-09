@@ -65,7 +65,7 @@ record(
     /\[data-tajweed-drill="ikhafa"\][\s\S]*?var\(--tajweed-ikhafa\)/.test(css),
 );
 
-// --- Tap-a-letter rule popover (EXT-02) ---
+// --- Tap-a-letter rule popover ---
 // The rule popover opens on hover (mouse/pen) or a deliberate long-press
 // (touch), resolving the nearest <tajweed> ancestor to a known rule. The
 // resolution still runs first, so the popover only opens for a colored letter
