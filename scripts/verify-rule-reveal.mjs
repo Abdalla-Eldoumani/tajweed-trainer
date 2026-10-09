@@ -24,7 +24,7 @@
 //      import and a render match, so a stray import without a mount fails).
 //   5. drill intact    — globals.css still dims the verse under data-tajweed-drill
 //      and restores the selected rule's color (ghunnah and ikhafa at least), the
-//      single-rule drill (RULE-04) the phase confirms unchanged.
+//      single-rule drill the phase confirms unchanged.
 //
 // Mirrors scripts/verify-overlay.mjs in shape: the same read helper, the same
 // strip-block-then-line comment stripping, the same record reporter, and
@@ -129,7 +129,7 @@ const routeValues = [...ruleLinks.matchAll(/:\s*"(\/[^"]*)"/g)].map((m) => m[1])
 const badRoutes = routeValues.filter((r) => !r.startsWith("/learn/"));
 record("the rule-link map points only at /learn routes", badRoutes.length === 0, badRoutes.join(", "));
 
-// --- 4. the legend is surfaced in the reader (RULE-03) ------------------------
+// --- 4. the legend is surfaced in the reader ------------------------
 // Both an import and a JSX render, so a stray import with no mount (or a mount
 // with no import) fails rather than passing on one half.
 const importsLegend = /import\s*\{\s*ColorLegend\s*\}/.test(reader);
@@ -140,7 +140,7 @@ record(
   importsLegend && rendersLegend ? "ColorLegend imported and mounted in the reader" : `import=${importsLegend} render=${rendersLegend}`,
 );
 
-// --- 5. the single-rule drill is intact (RULE-04) ----------------------------
+// --- 5. the single-rule drill is intact ----------------------------
 // Reused verbatim from verify-study-tools.mjs: the dim rule is present and the
 // selected rule's color is restored for at least ghunnah and ikhafa.
 record("the drill dims the verse when data-tajweed-drill is set", /\[data-tajweed-drill\][\s\S]*?\.tajweed-text/.test(css));
