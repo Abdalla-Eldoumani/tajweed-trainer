@@ -30,7 +30,14 @@ function record(name, ok, details = "") {
 async function main() {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  // A fresh profile opens the first-run tour over the page; mark it seen unless
+  // a script has stored its own profile.
+  await context.addInitScript(() => {
+    const key = "tajweed-trainer-progress";
+    if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify({ seenOnboarding: true }));
+  });
   const page = await context.newPage();
+  page.setDefaultTimeout(60000);
 
   // ---- PWA endpoints ----
   const manifestResp = await page.goto(`${BASE}/manifest.webmanifest`, { waitUntil: "domcontentloaded" });
@@ -53,18 +60,23 @@ async function main() {
   await page.fill('input[type="search"]', "x");
   await page.waitForTimeout(200);
   const tooShortHint = await page.locator("body").innerText();
-  record("One-character query shows hint, not results", /letters or more|حرفان أو أكثر/.test(tooShortHint), "hint visible");
+  record("One-character query shows hint, not results", /at least 2 characters|حرفين على الأقل/.test(tooShortHint), "hint visible");
 
   // ---- Memorization tracker ----
   await page.goto(`${BASE}/mushaf/page/1`, { waitUntil: "networkidle" });
-  await page.evaluate(() => localStorage.removeItem("tajweed-trainer-progress"));
+  await page.evaluate(() => localStorage.setItem("tajweed-trainer-progress", JSON.stringify({ seenOnboarding: true })));
   await page.reload({ waitUntil: "networkidle" });
   await page.waitForTimeout(500);
-  // Find a heart-style memorization button. They render with svg path d="M20.84..."
-  const memorizeButtons = await page.locator('button[aria-label*="memorized"], button[aria-label*="حفظ"]').count();
-  record("Mushaf renders per-verse memorize buttons", memorizeButtons >= 1, `count: ${memorizeButtons}`);
+  // The per-verse memorize control lives in the verse panel that a tap opens.
+  await page.locator(".mushaf-verse").first().click();
+  await page.waitForTimeout(600);
+  const memorizeButton = page.locator(
+    '[role="presentation"] button[aria-label="Mark verse as memorized"], [role="presentation"] button[aria-label="تحديد الآية كمحفوظة"]',
+  );
+  const memorizeButtons = await memorizeButton.count();
+  record("Verse panel renders a memorize button", memorizeButtons >= 1, `count: ${memorizeButtons}`);
   if (memorizeButtons >= 1) {
-    await page.locator('button[aria-label*="Mark as memorized"], button[aria-label*="وضع علامة محفوظ"]').first().click();
+    await memorizeButton.first().click();
     await page.waitForTimeout(300);
     const memorized = await page.evaluate(() => {
       const raw = localStorage.getItem("tajweed-trainer-progress");
@@ -74,6 +86,8 @@ async function main() {
   } else {
     record("Toggling a verse persists it to memorizedVerses", false, "no buttons rendered");
   }
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
 
   // ---- Memorization mode ----
   const memorizeToggle = await page.locator('button[aria-label*="memorized verses"], button[aria-label*="وضع المراجعة"], button[aria-label*="recall mode"]').count();
@@ -88,8 +102,8 @@ async function main() {
   }
 
   // ---- Spaced repetition (after answering) ----
-  await page.evaluate(() => localStorage.removeItem("tajweed-trainer-progress"));
-  await page.goto(`${BASE}/practice/qalqalah`, { waitUntil: "networkidle" });
+  await page.evaluate(() => localStorage.setItem("tajweed-trainer-progress", JSON.stringify({ seenOnboarding: true })));
+  await page.goto(`${BASE}/practice/makharij`, { waitUntil: "networkidle" });
   await page.waitForFunction(() => Array.from(document.querySelectorAll("button")).some((b) => (b.textContent ?? "").trim().toLowerCase().includes("start")), { timeout: 15000 });
   await page.click('button:has-text("Start Quiz")');
   await page.waitForTimeout(400);
