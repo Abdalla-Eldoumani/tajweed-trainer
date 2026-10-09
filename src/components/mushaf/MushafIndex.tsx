@@ -127,7 +127,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
               <Link
                 key={p}
                 href={`/mushaf/page/${p}`}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gold/15 text-[#7A5E15] dark:text-gold-light text-xs font-medium hover:bg-gold/25"
+                className="inline-flex items-center gap-1 px-3 min-h-[44px] rounded-lg bg-gold/15 text-[#7A5E15] dark:text-gold-light text-xs font-medium hover:bg-gold/25"
               >
                 {t("mushaf.pageNumber")} {isAr ? toArabicIndic(p) : p}
               </Link>
@@ -145,7 +145,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
             <h2 className="font-heading text-sm font-semibold">{t("mushaf.verseBookmarks")}</h2>
             <Link
               href="/mushaf/bookmarks"
-              className="text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+              className="inline-flex items-center min-h-[44px] text-xs font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
             >
               {t("mushaf.bookmarksViewAll")}
             </Link>
@@ -161,7 +161,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                 <Link
                   key={vk}
                   href={`/mushaf/page/${pageForVerse(sv, av)}?v=${vk}`}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light text-xs font-medium hover:bg-primary/20"
+                  className="inline-flex items-center gap-1 px-3 min-h-[44px] rounded-lg bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light text-xs font-medium hover:bg-primary/20"
                 >
                   {label}
                 </Link>
@@ -170,7 +170,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
             {verseBookmarks.length > VERSE_BOOKMARK_PREVIEW && (
               <Link
                 href="/mushaf/bookmarks"
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark text-text-muted text-xs font-medium hover:text-text"
+                className="inline-flex items-center gap-1 px-3 min-h-[44px] rounded-lg bg-bg-subtle dark:bg-bg-subtle-dark text-text-muted text-xs font-medium hover:text-text"
               >
                 +{isAr ? toArabicIndic(verseBookmarks.length - VERSE_BOOKMARK_PREVIEW) : verseBookmarks.length - VERSE_BOOKMARK_PREVIEW}
               </Link>
@@ -226,7 +226,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
               {canResume && (
                 <Link
                   href={`/mushaf/page/${resume.page}?v=${resume.verseKey}`}
-                  className="mt-3 ms-14 inline-flex items-center gap-1 self-start rounded-lg bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light text-[0.8125rem] font-medium px-2.5 py-1 hover:bg-primary/20 transition-colors"
+                  className="mt-3 ms-14 inline-flex items-center gap-1 self-start rounded-lg bg-primary/10 dark:bg-primary-light/15 text-primary dark:text-primary-light text-[0.8125rem] font-medium px-2.5 min-h-[44px] hover:bg-primary/20 transition-colors"
                   aria-label={t("mushaf.resumeSurahHint")
                     .replace("{name}", surahName)
                     .replace("{page}", isAr ? toArabicIndic(resume.page) : String(resume.page))}
