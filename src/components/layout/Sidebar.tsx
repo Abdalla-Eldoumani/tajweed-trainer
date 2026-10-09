@@ -97,7 +97,7 @@ export function Sidebar() {
                     }
                   }}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    "flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-colors",
                     isActive
                       ? "bg-[var(--margin-active-bg)] text-[var(--margin-active)]"
                       : "text-[var(--margin-muted)] hover:bg-[var(--margin-hover-bg)] hover:text-[var(--margin-text)]"
@@ -115,7 +115,7 @@ export function Sidebar() {
                     <Link
                       href="/learn"
                       className={cn(
-                        "block px-3 py-1.5 rounded text-xs font-medium transition-colors",
+                        "flex items-center px-3 py-1.5 min-h-[44px] rounded text-xs font-medium transition-colors",
                         pathname === "/learn"
                           ? "text-[var(--margin-active)]"
                           : "text-[var(--margin-muted)] hover:text-[var(--margin-text)]"
@@ -131,7 +131,7 @@ export function Sidebar() {
                           key={m.id}
                           href={`/learn/${m.id}`}
                           className={cn(
-                            "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs transition-colors",
+                            "flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded text-xs transition-colors",
                             moduleActive
                               ? "text-[var(--margin-active)] font-medium"
                               : "text-[var(--margin-muted)] hover:text-[var(--margin-text)]"
@@ -171,7 +171,7 @@ export function Sidebar() {
                 href={href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] px-2 py-1 text-[10px] font-medium transition-colors",
+                  "flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] px-1 py-1 text-[0.6875rem] font-medium transition-colors",
                   isActive
                     ? "text-[var(--margin-active)]"
                     : "text-[var(--margin-muted)]"
