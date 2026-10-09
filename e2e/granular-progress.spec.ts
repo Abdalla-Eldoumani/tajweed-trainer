@@ -1,15 +1,15 @@
 import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fixtures";
 
-// E2E (PROG-01 + PROG-02): the two granular-progress requirements, proven end to
-// end against the real prod build.
-//   - PROG-01 Test A (render at zero): the hizb coverage rings render on /progress
+// E2E: the two granular-progress behaviors, proven end to end against the
+// real prod build.
+//   - Test A (render at zero): the hizb coverage rings render on /progress
 //     for a brand-new learner (no memorized verses) with hizb 1's ring reading 0%.
 //     This is the one memorization surface that shows at zero (mounted-only gate).
-//   - PROG-01 Test B (fills for a seeded scope): seeding all of Al-Fatihah (in hizb 1
+//   - Test B (fills for a seeded scope): seeding all of Al-Fatihah (in hizb 1
 //     / rub' 1) fills hizb 1's ring to a nonzero coverage, and the rub'-1 ring behind
 //     the disclosure likewise reads nonzero — proving coverage is derived from the
 //     memorized set over the captured hizb/rub' tables.
-//   - PROG-02 Test C (revision reciter honored): with a seeded revisionReciter ("7",
+//   - Test C (revision reciter honored): with a seeded revisionReciter ("7",
 //     Alafasy) distinct from the browse reciter ("12", Husary Muallim), a recall play
 //     from the memorized review fires the audio request for reciter 7 — proving the
 //     revision surface resolves the revision reciter, not the browse reciter.
@@ -25,7 +25,7 @@ import { test, expect, seedProgress, expectNoConsoleErrors } from "./support/fix
 // The hizb/rub' rings section on /progress (role=region, t("hizb.title") EN).
 const RINGS_REGION = "Hizb & rub' coverage";
 
-test("PROG-01: the hizb rings render at zero for a learner with nothing memorized", async ({
+test("the hizb rings render at zero for a learner with nothing memorized", async ({
   page,
   context,
   consoleErrors,
@@ -50,7 +50,7 @@ test("PROG-01: the hizb rings render at zero for a learner with nothing memorize
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("PROG-01: seeding all of Al-Fatihah fills the covering hizb and rub' rings", async ({
+test("seeding all of Al-Fatihah fills the covering hizb and rub' rings", async ({
   page,
   context,
   consoleErrors,
@@ -82,7 +82,7 @@ test("PROG-01: seeding all of Al-Fatihah fills the covering hizb and rub' rings"
   expectNoConsoleErrors(consoleErrors);
 });
 
-test("PROG-02: a recall play honors the seeded revision reciter, not the browse reciter", async ({
+test("a recall play honors the seeded revision reciter, not the browse reciter", async ({
   page,
   context,
   consoleErrors,
