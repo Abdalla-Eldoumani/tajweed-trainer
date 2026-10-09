@@ -114,8 +114,8 @@ export function PlayerHost() {
         return;
       }
       // The store's onEnded owns the advance decision; the host only decides
-      // whether to defer that call by the inter-verse gap (EDGE_CASES B6: a real
-      // timer, never silence baked into audio). At gap 0 the advance is immediate
+      // whether to defer that call by the inter-verse gap (a real timer,
+      // never silence baked into audio). At gap 0 the advance is immediate
       // and unchanged from before. Looping a single ayah (repeatOne) or sitting
       // at the queue end (stop) gets no gap; only a real move to a next item does.
       const st = get();
