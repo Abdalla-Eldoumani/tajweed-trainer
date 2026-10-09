@@ -48,7 +48,7 @@ export const ExampleCard = memo(function ExampleCard({ example, color }: Example
           </p>
         )}
 
-        {settings.showTranslation && (
+        {settings.showTranslation && translation && (
           <p className="text-center text-small text-text-muted italic">
             &ldquo;{translation}&rdquo;
           </p>
