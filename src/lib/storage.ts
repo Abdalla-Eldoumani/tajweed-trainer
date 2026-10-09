@@ -935,12 +935,8 @@ export function setWarshDisclaimerAck(value: boolean): void {
 // (field `khatmah`, not an ad-hoc key) so export / import / reset cover it; the
 // default-null in DEFAULT_PROGRESS makes resetProgress clear any plan. Reads and
 // writes go through the same sanitizer the store applies, so a malformed plan is
-// stored as null (no plan) rather than a broken one. All three setters write
+// stored as null (no plan) rather than a broken one. Both setters write
 // through setProgress, which fires the change bus.
-export function getKhatmah(): KhatmahPlan | null {
-  return getProgress().khatmah ?? null;
-}
-
 export function setKhatmah(plan: KhatmahPlan): void {
   if (!isBrowser()) return;
   const sanitized = sanitizeKhatmah(plan);
@@ -962,9 +958,6 @@ export function clearKhatmah(): void {
 // it; the default-[] in DEFAULT_PROGRESS makes resetProgress clear the records.
 // This records only that a milestone was reached and a certificate generated; it
 // NEVER stores the image.
-export function getCertificates(): CertificateRecord[] {
-  return getProgress().certificates ?? [];
-}
 
 // Append one milestone record, through the change bus. The record is re-validated
 // the same way the sanitizer validates a stored one (a malformed record is
@@ -1093,10 +1086,6 @@ export function exportProgress(): string {
   progress.lastBackupAt = new Date().toISOString();
   setProgress(progress);
   return JSON.stringify(progress, null, 2);
-}
-
-export function getLastBackupAt(): string {
-  return getProgress().lastBackupAt ?? "";
 }
 
 const BACKUP_REMINDER_DAYS = 30;
