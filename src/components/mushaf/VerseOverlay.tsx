@@ -289,7 +289,7 @@ function RangePicker({ data }: { data: MushafPageData }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+        className="inline-flex items-center gap-1.5 min-h-[44px] text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={cn("transition-transform motion-reduce:transition-none", open && "rotate-90")}>
           <polyline points="9 18 15 12 9 6" />
@@ -668,7 +668,7 @@ function SubVerseLoopControl({ surah, ayah }: { surah: number; ayah: number }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+        className="inline-flex items-center gap-1.5 min-h-[44px] text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={cn("transition-transform motion-reduce:transition-none", open && "rotate-90")}>
           <polyline points="9 18 15 12 9 6" />
@@ -773,7 +773,7 @@ function ReadingDepthSection({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
+        className="inline-flex items-center gap-1.5 min-h-[44px] text-small font-medium text-primary dark:text-primary-light hover:underline underline-offset-2"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={cn("transition-transform motion-reduce:transition-none", open && "rotate-90")}>
           <polyline points="9 18 15 12 9 6" />
@@ -1158,7 +1158,7 @@ export function VerseOverlay({
               onPointerMove={onHandlePointerMove}
               onPointerUp={onHandlePointerUp}
               onPointerCancel={onHandlePointerCancel}
-              className="flex items-center justify-center w-full h-11 -mb-2 touch-none"
+              className="flex items-center justify-center shrink-0 w-full h-11 -mb-2 touch-none"
             >
               <span
                 className="block w-9 h-1 rounded-full"
