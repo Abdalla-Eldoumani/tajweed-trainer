@@ -86,7 +86,7 @@ To add a verse not yet in-repo: add the example to the rule JSON with its exact 
 The most invasive content change:
 
 1. Add the rule entry to `src/data/content/<module>.json`; every entry needs `verified: true`.
-2. New module (not just a rule in an existing file): create the JSON file, add its top-level type in `src/lib/types.ts`, and add a `learning-path.json` entry. New field on an existing shape: just update `src/lib/types.ts`.
+2. New module (not just a rule in an existing file): create the JSON file and add a `learning-path.json` entry. TypeScript infers the shape from the JSON, so no type is declared.
 3. Render the rule in `src/app/learn/<module>/page.tsx`; a new module needs its own route importing the JSON and rendering rule cards.
 4. If the rule has a tajweed CSS class the API emits, add it to `src/lib/tajweed-colors.ts`.
 5. Add any new UI strings to `src/lib/i18n.ts`; add a new module to `nav-data.tsx` for the sidebar.
