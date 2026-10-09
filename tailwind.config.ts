@@ -24,12 +24,12 @@ const config: Config = {
       colors: {
         // Manuscript palette: lapis ink for interaction, gold leaf for
         // ornament, vellum ivory for ground. The ground and ink tokens (bg,
-        // bg-card, text) are driven by the per-theme CSS variables in
+        // bg-card, text, text-muted) are driven by the per-theme CSS variables in
         // globals.css so all five themes render their own ground and ink, not
         // just a light/dark pair. Both the base and the -dark token resolve to
         // the same variable, so existing `dark:` utilities keep working and
         // simply re-assert the themed value. Accent and fill tokens that take
-        // opacity modifiers (primary, gold, accent, bg-subtle, text-muted) stay
+        // opacity modifiers (primary, gold, accent, bg-subtle) stay
         // static hex so the `/<alpha>` utilities stay valid.
         primary: {
           DEFAULT: "#1E4279",
@@ -60,7 +60,7 @@ const config: Config = {
         },
         text: {
           DEFAULT: "var(--text)",
-          muted: "#555F77",
+          muted: "var(--text-muted)",
           dark: "var(--text)",
         },
         border: "var(--border)",
