@@ -101,15 +101,13 @@ export function useProgress() {
     doResetProgress();
   }, []);
 
+  // Each module is one lesson page, so overall completion is the share of
+  // modules whose lesson has been marked complete.
   const getOverallCompletion = useCallback(
-    (totalLessons: Record<string, number>): number => {
-      let completed = 0;
-      let total = 0;
-      for (const [moduleId, count] of Object.entries(totalLessons)) {
-        total += count;
-        completed += (progress.modules[moduleId]?.lessonsCompleted.length ?? 0);
-      }
-      return total === 0 ? 0 : Math.round((completed / total) * 100);
+    (moduleIds: readonly string[]): number => {
+      if (moduleIds.length === 0) return 0;
+      const done = moduleIds.filter((id) => (progress.modules[id]?.lessonsCompleted.length ?? 0) > 0).length;
+      return Math.round((done / moduleIds.length) * 100);
     },
     [progress]
   );
