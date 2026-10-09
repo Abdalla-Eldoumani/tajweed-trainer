@@ -110,7 +110,7 @@ export function MemorizedReview() {
   // Audio-led (blind) mode: in-session only (never persisted), default OFF so the
   // text-first flow stays the default. When ON, the verse text stays hidden by the
   // existing blur and the audio auto-plays on each advance so the learner recalls
-  // from sound, then Reveal shows the text to self-check (BLIND-01).
+  // from sound, then Reveal shows the text to self-check.
   const [audioLed, setAudioLed] = useState(false);
   // Latched end-of-session flag: set once the started queue exhausts, cleared only
   // by start(). Keeps a finished session from reverting (and refilling the hint
@@ -140,7 +140,7 @@ export function MemorizedReview() {
     setStarted(true);
   }, [composeToday, memorized]);
 
-  // Reconciliation (T-07-13 / AC-16): derive the active step by skipping, in
+  // Reconciliation: derive the active step by skipping, in
   // render, any queued verse no longer in the memorized Set (e.g. a bulk-unmark
   // landed mid-session). This is pure derivation (no effect mutates the index),
   // so a removed verse is never rendered or re-read and the session never throws.
@@ -164,7 +164,7 @@ export function MemorizedReview() {
     if (started && activeIndex >= queue.length) setEnded(true);
   }, [started, activeIndex, queue.length]);
 
-  // Peek/hint budget for this session (BLIND-03). `remaining` counts DISTINCT
+  // Peek/hint budget for this session. `remaining` counts DISTINCT
   // peeked verses against the budget; `peeked` marks THIS verse as capped at hard.
   // Computed here, above the keyboard effect, so the keys-1-4 handler honors the
   // cap too (a keyboard user must not bypass the disabled good/easy buttons).
@@ -220,7 +220,7 @@ export function MemorizedReview() {
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       const g = KEY_TO_GRADE[e.key];
       if (!g) return;
-      // Grade cap (BLIND-03): a verse peeked this session is capped at hard, so
+      // Grade cap: a verse peeked this session is capped at hard, so
       // keys 3/4 (good/easy) are a no-op for it, matching the disabled buttons.
       // Without this gate a keyboard user would bypass the visual cap.
       if (peeked && (g === "good" || g === "easy")) return;
@@ -231,7 +231,7 @@ export function MemorizedReview() {
     return () => document.removeEventListener("keydown", onKey);
   }, [revealed, currentKey, grade, peeked]);
 
-  // The revision reciter (PROG-02): resolveRevisionReciter picks
+  // The revision reciter: resolveRevisionReciter picks
   // settings.revisionReciter when set, else the browse settings.reciter. Passed as
   // opts.reciter below so this recall review can never diverge from the other
   // revision surfaces; the browse reader keeps settings.reciter.
@@ -268,7 +268,7 @@ export function MemorizedReview() {
     });
   }, [queue, activeIndex, memorized, revisionReciter, settings.playbackSpeed]);
 
-  // Audio-led auto-play (BLIND-01): while in audio-led mode, play the current
+  // Audio-led auto-play: while in audio-led mode, play the current
   // verse whenever a new one becomes active and is still hidden. The first play
   // rides the Start click and every later one rides the grade-button click that
   // changed currentKey, so the browser's autoplay policy is satisfied (the shared
@@ -278,13 +278,13 @@ export function MemorizedReview() {
     if (audioLed && started && !finished && currentKey && !revealed) playCurrent();
   }, [audioLed, started, finished, currentKey, revealed, playCurrent]);
 
-  // Reset-on-finish is the ONLY peek-budget reset (BLIND-04): clear the session
+  // Reset-on-finish is the ONLY peek-budget reset: clear the session
   // peek map once the session reaches `finished`, never in start(). A reload
   // mid-session drops the React session state and returns to Start, but the
   // persisted map stays, so a reload cannot refill the budget or un-cap a peeked
   // verse. Read getSessionPeeks() DIRECTLY (not the hook state) and key only on
   // `finished`, guarded by a non-empty check, so the change-bus re-read after the
-  // clear cannot re-fire this effect into a loop (RESEARCH Pitfall 4): after the
+  // clear cannot re-fire this effect into a loop: after the
   // clear the map is empty (guard blocks a repeat) and `finished` does not change.
   useEffect(() => {
     if (finished && Object.keys(getSessionPeeks()).length > 0) resetSessionPeeks();
@@ -435,7 +435,7 @@ export function MemorizedReview() {
           {gradeButtons.map(({ grade: g, labelKey, variant, className }) => {
             const label = t(labelKey);
             const intervalText = t("memorize.gradeIntervalDays").replace("{n}", num(intervals[g]));
-            // Grade cap (BLIND-03): a peeked verse can only be rated again/hard.
+            // Grade cap: a peeked verse can only be rated again/hard.
             // Disable good/easy, and attach the post-reveal focus (continueRef) to
             // hard instead of the disabled good so focus never falls to <body>.
             const capped = peeked && (g === "good" || g === "easy");
