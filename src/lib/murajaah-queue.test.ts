@@ -2,12 +2,12 @@ import { describe, it, expect } from "vitest";
 import { classifyVerse, composeDailyQueue } from "@/lib/murajaah-queue";
 import type { Sm2State } from "@/lib/types";
 
-// The REV-01 / REV-02 daily-queue matrix. Every case asserts against the REAL
+// The daily-queue matrix. Every case asserts against the REAL
 // murajaah-queue exports — the expected order, counts, newAllowed, newDue, and
 // dueTotal are written out literally and are never re-derived from the functions
 // under test. classifyVerse buckets a verse from its Sm2State; composeDailyQueue
-// surfaces every due recent + consolidated verse uncapped (REV-02) and caps only
-// the NEW tail at newVerseCap minus introduced-today (REV-01). Verse keys are
+// surfaces every due recent + consolidated verse uncapped and caps only
+// the NEW tail at newVerseCap minus introduced-today. Verse keys are
 // synthetic "s:a" placeholders, never authored Quran content.
 //
 // MASTERED_INTERVAL_DAYS is 21 (the SM-2 mature line, from recall-scheduler.ts):
@@ -68,7 +68,7 @@ const reviews: Record<string, Sm2State> = {
 // Interleaved so grouping is a real assertion, not an artifact of input order.
 const dueKeys = ["4:1", "2:1", "3:1", "4:2", "2:2", "3:2", "4:3", "4:4", "4:5", "4:6", "4:7"];
 
-describe("composeDailyQueue - REV-01 NEW-tail cap over REV-02 uncapped due", () => {
+describe("composeDailyQueue - NEW-tail cap over uncapped due", () => {
   it("caps only the NEW tail at 5, surfaces all recent + consolidated (cap 5, introduced 0)", () => {
     const result = composeDailyQueue({
       dueKeys,
@@ -95,7 +95,7 @@ describe("composeDailyQueue - REV-01 NEW-tail cap over REV-02 uncapped due", () 
     expect(result.dueTotal).toBe(11);
   });
 
-  it("REV-02: every due recent + consolidated is in order regardless of the cap", () => {
+  it("every due recent + consolidated is in order regardless of the cap", () => {
     // Cap 0 -> no NEW may enter, but all recent + consolidated still appear.
     const result = composeDailyQueue({
       dueKeys,
