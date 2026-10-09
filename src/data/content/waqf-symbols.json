@@ -3,8 +3,8 @@
   "title_en": "Waqf Symbols (Stopping Marks)",
   "title_ar": "علامات الوقف",
   "category": "waqf",
-  "introduction": "The Mushaf contains symbols that guide the reciter on where to stop, pause, or continue. These are not part of the Quran itself but were added by scholars to assist recitation.",
-  "introduction_ar": "في المصحف رموز توجّه القارئ إلى مواضع الوقف والابتداء والسكت. وهذه الرموز ليست من القرآن ذاته، بل أضافها العلماء لإعانة القارئ على حسن الأداء.",
+  "introduction": "The Mushaf contains symbols that guide the reciter on where to stop, pause, or continue. These are not part of the Quran itself but were added by scholars to assist recitation. Printed mushafs use different sets of these marks, so some marks here may not appear in your copy. A local imam or teacher can explain the set yours uses.",
+  "introduction_ar": "في المصحف رموز توجّه القارئ إلى مواضع الوقف والابتداء والسكت. وهذه الرموز ليست من القرآن ذاته، بل أضافها العلماء لإعانة القارئ على حسن الأداء. وتختلف مجموعة العلامات من مصحف مطبوع إلى آخر، فقد لا تجد بعض العلامات المذكورة هنا في نسختك. ويستطيع إمام أو معلّم قريب أن يشرح لك المجموعة التي يعتمدها مصحفك.",
   "symbols": [
     {
       "id": "waqf-lazim",
@@ -59,7 +59,7 @@
       "symbol": "∴ ∴",
       "title_en": "Mu'anaqah (Embrace/Tandem Stop)",
       "title_ar": "المعانقة",
-      "description": "Two stop marks placed on two nearby phrases — you must stop at ONE of them but NOT both. Stopping at both would break the meaning.",
+      "description": "Two stop marks placed on two nearby phrases. You may stop at ONE of them but NOT both. Stopping at both would break the meaning.",
       "description_ar": "علامتا وقف متجاورتان: يجوز الوقوف عند إحداهما دون الأخرى. والجمع بين الوقفين يُخلّ بالمعنى."
     },
     {
@@ -80,7 +80,7 @@
     },
     {
       "id": "waqf-aula",
-      "symbol": "قلي",
+      "symbol": "قلى",
       "title_en": "Al-Waqf Awla (Stopping is Better)",
       "title_ar": "الوقف أولى",
       "description": "Stopping is better than continuing, but continuing is still permissible.",
@@ -88,7 +88,7 @@
     },
     {
       "id": "wasl-aula",
-      "symbol": "صلي",
+      "symbol": "صلى",
       "title_en": "Al-Wasl Awla (Continuing is Better)",
       "title_ar": "الوصل أولى",
       "description": "Continuing is better than stopping, but stopping is still permissible.",
