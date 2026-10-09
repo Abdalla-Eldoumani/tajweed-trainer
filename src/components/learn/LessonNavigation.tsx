@@ -58,9 +58,9 @@ export function LessonNavigation({
   const nextText = pickLabel(nextLabel, isAr) ?? t("common.next");
 
   return (
-    <div className="pt-6 mt-6 space-y-4">
+    <div className="mt-6 space-y-4">
+      <div className="gold-divider" />
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="gold-divider absolute -top-px left-0 right-0" />
         <div className="w-full sm:w-auto">
           {prevHref && (
             <Link href={prevHref}>
