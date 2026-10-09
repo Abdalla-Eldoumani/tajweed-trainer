@@ -54,7 +54,7 @@ export default function WaqfPage() {
           <Card key={symbol.id} id={symbol.id} className="scroll-mt-20">
             <div className="flex items-start gap-4">
               <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gold-light/20 dark:bg-gold-dark/20 border border-gold-light/30 dark:border-gold-dark/30 shrink-0">
-                <ArabicText text={symbol.symbol} size="md" className="text-gold-dark dark:text-gold" />
+                <ArabicText text={symbol.symbol} size="md" className="text-text dark:text-gold" />
               </div>
               <div>
                 <h3 className="font-heading font-semibold text-small">{isAr ? symbol.title_ar : symbol.title_en}</h3>
