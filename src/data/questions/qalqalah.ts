@@ -81,7 +81,7 @@ export const questions: Question[] = [
       ar: "يجب أن تكون القلقلة نبرة خالصة. إلحاق حركة بها كالفتحة أو الكسرة أو الضمّة من الأخطاء الشائعة.",
       lessonAnchor: "qalqalah-mistakes",
     },
-    source: { surah: 6, ayah: 136, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 19, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "qalqalah-easy-sughra-echo",
@@ -105,7 +105,7 @@ export const questions: Question[] = [
       ar: "تعلّم القلقلة الصغرى بأنها خفيفة سريعة. والمبالغة فيها من الأخطاء الشائعة.",
       lessonAnchor: "qalqalah-sughra",
     },
-    source: { surah: 6, ayah: 136, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 19, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "qalqalah-easy-levels-count",
@@ -323,7 +323,7 @@ export const questions: Question[] = [
       ar: "الجيم ساكنة في وسط كلمة يَجْعَلُونَ، وهذا شرط القلقلة الصغرى.",
       lessonAnchor: "qalqalah-sughra",
     },
-    source: { surah: 6, ayah: 136, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 19, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "qalqalah-medium-yajaloon-letter",
@@ -347,7 +347,7 @@ export const questions: Question[] = [
       ar: "الجيم من حروف القلقلة الخمسة وهي ساكنة في هذه الكلمة.",
       lessonAnchor: "qalqalah-letters",
     },
-    source: { surah: 6, ayah: 136, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 19, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "qalqalah-medium-yalid-level",
@@ -604,7 +604,7 @@ export const questions: Question[] = [
       ar: "ذكر الدرس في الأخطاء الشائعة إلحاق حركة بالقلقلة، وقرّر أنها يجب أن تكون نبرة خالصة لا تشبه الفتحة أو الكسرة أو الضمّة.",
       lessonAnchor: "qalqalah-mistakes",
     },
-    source: { surah: 6, ayah: 136, translationEditionId: null, provenance: PROVENANCE },
+    source: { surah: 2, ayah: 19, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "qalqalah-hard-levels-distinguished-by",
