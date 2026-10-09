@@ -101,7 +101,7 @@ export function nextAfterEnded(s: EndedSnapshot): EndedDecision {
   }
 
   // 3. Whole-selection loop: advance through the queue and wrap to 0 at the end.
-  //    Distinct from repeatRange (PLAY-05); applies to any queue length.
+  //    Distinct from repeatRange; applies to any queue length.
   if (s.loopSelection && s.queueLength > 0) {
     if (s.index < s.queueLength - 1) {
       return { kind: "advance", index: s.index + 1 };
