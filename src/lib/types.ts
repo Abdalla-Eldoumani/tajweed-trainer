@@ -392,10 +392,10 @@ export interface UserSettings {
   showWordByWord?: boolean;
   // Comparison-only toggle for the typing-recall drill: when true, the typed word
   // is checked against the stored verse after stripping diacritics from both
-  // copies. Default false = exact match (per TYPE-01). Additive optional so old
+  // copies. Default false = exact match. Additive optional so old
   // backups still validate. NEVER changes what is stored or rendered.
   diacriticInsensitive?: boolean;
-  // The balanced SM-2 review-interval modifier (SCHED-04): scales the memorized-
+  // The balanced SM-2 review-interval modifier: scales the memorized-
   // verse next-due gaps. Default 1.0, clamped by sanitizeSettings to [0.5, 2.0]
   // (higher = longer gaps). Additive optional (mirrors translationId?) so old
   // backups without it still validate. Never touches the SM-2 easeFactor.
@@ -408,30 +408,30 @@ export interface UserSettings {
   // Collapsed state of the mini-player. Minimizing keeps playback running and
   // the pill draggable; only the explicit stop control dismisses the player.
   playerMinimized?: boolean;
-  // Per-session peek/hint budget for the memorized-verse recall review
-  // (BLIND-03): how many "I'm stuck, show me" hints the learner may spend in one
+  // Per-session peek/hint budget for the memorized-verse recall review:
+  // how many "I'm stuck, show me" hints the learner may spend in one
   // session before the hint control disables. Default 3, clamped by
   // sanitizeSettings to [1, 10]. Additive optional (mirrors reviewIntervalModifier?)
   // so old backups without it still validate. Scoped to the recall review; the
   // cover-page reveal is free and never spends this budget.
   peekBudget?: number;
   // Daily cap on how many NEW memorized verses the murajaah revision queue
-  // introduces (REV-01). Default 5, clamped by sanitizeSettings to [1, 10]. Caps
+  // introduces. Default 5, clamped by sanitizeSettings to [1, 10]. Caps
   // only the NEW tail of the daily queue; all due recent/consolidated verses are
-  // always surfaced (REV-02). Additive optional (mirrors peekBudget?) so old
+  // always surfaced. Additive optional (mirrors peekBudget?) so old
   // backups without it still validate.
   newVerseCap?: number;
-  // Opt-in flag for the local revision reminder (REV-04). Default false. When on
+  // Opt-in flag for the local revision reminder. Default false. When on
   // and the app is installed as a PWA with notification permission granted, a
   // best-effort LOCAL notification fires on app open when verses are due; it is
   // never a server push. Additive optional so old backups still validate.
   revisionRemindersEnabled?: boolean;
-  // Default per-session rep target for the tikrar drill (EXAM-01). Default 5,
+  // Default per-session rep target for the tikrar drill. Default 5,
   // clamped by sanitizeSettings to [1, 20]. Additive optional (mirrors newVerseCap?)
   // so old backups without it still validate. A UI-only default; the drill can
   // still override it per session.
   tikrarTarget?: number;
-  // Reciter used by the revision / recall surfaces (PROG-02), separate from the
+  // Reciter used by the revision / recall surfaces, separate from the
   // browse `reciter`. Unset/undefined means "same as the browse reciter" — the
   // sanitizer coerces it like `reciter` but drops an invalid value to undefined
   // (so it falls back to the browse reciter, NOT the default reciter). Resolved
@@ -522,7 +522,7 @@ export interface TajweedProgress {
   // the current recall-review session. Local-only, never transmitted; cleared on
   // the review's finish transition and by resetProgress, but survives a reload
   // mid-session so the budget stays consumed and peeked verses stay capped at
-  // "hard" (BLIND-04). Bounded and prototype-guarded by the storage sanitizer.
+  // "hard". Bounded and prototype-guarded by the storage sanitizer.
   // Additive optional for lossless migration.
   sessionPeekUsed?: Record<string, number>;
   analytics: AnalyticsEvent[];
@@ -555,14 +555,14 @@ export interface TajweedProgress {
   // Empty until the first backup. Drives the gentle backup reminder in Settings;
   // cleared by reset so the reminder logic restarts with progress.
   lastBackupAt?: string;
-  // How many NEW memorized verses were introduced to revision today (REV-01), so
+  // How many NEW memorized verses were introduced to revision today, so
   // the murajaah queue can enforce the daily newVerseCap. `date` is the local
   // day (YYYY-MM-DD, the toLocaleDateString("en-CA") convention); `count` rolls
   // to 1 on a new day. A fixed-shape object (NOT a keyed map), so no
   // prototype-key guard applies. Additive optional for lossless migration;
   // cleared by reset via the default clone.
   dailyNewVersesTracking?: { date: string; count: number };
-  // The memorization REVISION streak (STAT-03): consecutive local days on which
+  // The memorization REVISION streak: consecutive local days on which
   // the learner graded at least one memorized-verse recall. SEPARATE from
   // `streaks` above (the practice-quiz streak) — the two never read or write each
   // other. `lastRevisionDate` is the local day (YYYY-MM-DD, the
@@ -570,21 +570,21 @@ export interface TajweedProgress {
   // map), so no prototype-key guard applies. Additive optional for lossless
   // migration; cleared by reset via the default clone.
   memorizationStreak?: { currentStreak: number; longestStreak: number; lastRevisionDate: string };
-  // Cumulative tikrar (repetition) rep log per verse (EXAM-01): the running total
+  // Cumulative tikrar (repetition) rep log per verse: the running total
   // of reps logged for a verseKey plus the last rep's en-CA date, so the total
   // persists and GROWS ACROSS DAYS (a new day never resets it). Keyed map;
   // prototype-guarded, verseKey-validated, reps/date-clamped, and capped by the
   // storage sanitizer. Separate from the SM-2 `memorizationReviews` schedule.
   // Additive optional for lossless migration; cleared by reset via the default clone.
   tikrarLog?: Record<string, { reps: number; lastRepDate: string }>;
-  // A capped, most-recent-first log of timed no-peek exam attempts (EXAM-02):
+  // A capped, most-recent-first log of timed no-peek exam attempts:
   // each attempt's scope label, en-CA date, percent recalled, and total verses.
   // Never SM-2 (a measurement, not a revision — it touches neither the schedule
   // nor the streak). Coerced, malformed-dropped, and capped by the storage
   // sanitizer. Additive optional for lossless migration; cleared by reset via the
   // default clone.
   examLog?: { scope: string; dateIso: string; percent: number; total: number }[];
-  // The per-day session journal (EXAM-03), keyed by en-CA ISO day: the day's
+  // The per-day session journal, keyed by en-CA ISO day: the day's
   // memorize/revise goals plus the memorized/revised tallies. "Rides the backup"
   // by living here (exportProgress serializes it, importProgress re-sanitizes it —
   // no separate export path). Date-keyed map; prototype-guarded, date-key-validated,
