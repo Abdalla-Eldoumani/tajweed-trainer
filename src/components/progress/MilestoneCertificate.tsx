@@ -94,7 +94,7 @@ export function MilestoneCertificate() {
   }, [isAr]);
 
   // Build the localized lines the canvas draws. The lib holds no display copy;
-  // every string comes from i18n here (CONST-01).
+  // every string comes from i18n here.
   const certificateData = useMemo<CertificateData | null>(() => {
     if (!active) return null;
     const isJuz = active.kind === "juz";
