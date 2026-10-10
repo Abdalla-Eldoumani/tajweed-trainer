@@ -51,7 +51,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "قَالَ",
           "rule_applied": "Madd Tabee'i: Alif after Fathah, 2 beats",
-          "rule_applied_ar": "مدّ طبيعي — ألف بعد فتحة، حركتان",
+          "rule_applied_ar": "مدّ طبيعي: ألف بعد فتحة، حركتان",
           "surah_name_ar": "البقرة"
         },
         {
@@ -63,7 +63,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "يَقُولُونَ",
           "rule_applied": "Madd Tabee'i: Waw after Dammah, 2 beats",
-          "rule_applied_ar": "مدّ طبيعي — واو بعد ضمّة، حركتان",
+          "rule_applied_ar": "مدّ طبيعي: واو بعد ضمّة، حركتان",
           "surah_name_ar": "البقرة"
         }
       ],
@@ -91,7 +91,7 @@
           "surah_name_en": "An-Nasr",
           "highlight_word": "جَاءَ",
           "rule_applied": "Madd Muttasil: Alif followed by Hamzah in same word, 4-5 beats",
-          "rule_applied_ar": "مدّ واجب متّصل — ألف تليها همزة في الكلمة نفسها، أربع أو خمس حركات",
+          "rule_applied_ar": "مدّ واجب متّصل: ألف تليها همزة في الكلمة نفسها، أربع أو خمس حركات",
           "surah_name_ar": "النصر"
         },
         {
@@ -103,7 +103,7 @@
           "surah_name_en": "An-Nisa",
           "highlight_word": "سُوءَ",
           "rule_applied": "Madd Muttasil: Waw followed by Hamzah in same word, 4-5 beats",
-          "rule_applied_ar": "مدّ واجب متّصل — واو تليها همزة في الكلمة نفسها، أربع أو خمس حركات",
+          "rule_applied_ar": "مدّ واجب متّصل: واو تليها همزة في الكلمة نفسها، أربع أو خمس حركات",
           "surah_name_ar": "النساء"
         }
       ],
@@ -131,7 +131,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "بِمَا أُنْزِلَ",
           "rule_applied": "Madd Munfasil: Alif at end of first word, Hamzah at start of second, 4-5 beats",
-          "rule_applied_ar": "مدّ جائز منفصل — ألف في آخر الأولى وهمزة في أوّل الثانية، أربع أو خمس حركات",
+          "rule_applied_ar": "مدّ جائز منفصل: ألف في آخر الأولى وهمزة في أوّل الثانية، أربع أو خمس حركات",
           "surah_name_ar": "البقرة"
         },
         {
@@ -143,7 +143,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "قَالُوا آمَنَّا",
           "rule_applied": "Madd Munfasil: Waw at end of first word, Hamzah at start of second",
-          "rule_applied_ar": "مدّ جائز منفصل — واو في آخر الأولى وهمزة في أوّل الثانية",
+          "rule_applied_ar": "مدّ جائز منفصل: واو في آخر الأولى وهمزة في أوّل الثانية",
           "surah_name_ar": "البقرة"
         }
       ],
@@ -171,7 +171,7 @@
           "surah_name_en": "Al-Fatiha",
           "highlight_word": "الْعَالَمِينَ",
           "rule_applied": "Madd 'Arid: Yaa followed by temporary Sukoon when stopping, 2/4/6 beats",
-          "rule_applied_ar": "مدّ عارض للسكون — ياء يليها سكون عارض عند الوقف، حركتان أو أربع أو ستّ",
+          "rule_applied_ar": "مدّ عارض للسكون: ياء يليها سكون عارض عند الوقف، حركتان أو أربع أو ستّ",
           "surah_name_ar": "الفاتحة"
         },
         {
@@ -183,7 +183,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "الْمُفْلِحُونَ",
           "rule_applied": "Madd 'Arid: Waw followed by temporary Sukoon when stopping",
-          "rule_applied_ar": "مدّ عارض للسكون — واو يليها سكون عارض عند الوقف",
+          "rule_applied_ar": "مدّ عارض للسكون: واو يليها سكون عارض عند الوقف",
           "surah_name_ar": "البقرة"
         }
       ],
@@ -247,7 +247,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "آمَنُوا",
           "rule_applied": "Madd Badal: Hamzah preceded the Alif, 2 beats",
-          "rule_applied_ar": "مدّ بدل — همزة قبل الألف، حركتان",
+          "rule_applied_ar": "مدّ بدل: همزة قبل الألف، حركتان",
           "surah_name_ar": "البقرة"
         },
         {
@@ -259,7 +259,7 @@
           "surah_name_en": "Al-Fath",
           "highlight_word": "إِيمَانًا",
           "rule_applied": "Madd Badal: Hamzah preceded the Yaa, 2 beats",
-          "rule_applied_ar": "مدّ بدل — همزة قبل الياء، حركتان",
+          "rule_applied_ar": "مدّ بدل: همزة قبل الياء، حركتان",
           "surah_name_ar": "الفتح"
         }
       ],
@@ -287,7 +287,7 @@
           "surah_name_en": "Quraysh",
           "highlight_word": "قُرَيْشٍ",
           "rule_applied": "Madd Leen: Yaa Sakinah preceded by Fathah, elongated when stopping",
-          "rule_applied_ar": "مدّ لين — ياء ساكنة بعد فتحة، تُمدّ عند الوقف",
+          "rule_applied_ar": "مدّ لين: ياء ساكنة بعد فتحة، تُمدّ عند الوقف",
           "surah_name_ar": "قريش"
         },
         {
@@ -299,7 +299,7 @@
           "surah_name_en": "Quraysh",
           "highlight_word": "خَوْفٍ",
           "rule_applied": "Madd Leen: Waw Sakinah preceded by Fathah, elongated when stopping",
-          "rule_applied_ar": "مدّ لين — واو ساكنة بعد فتحة، تُمدّ عند الوقف",
+          "rule_applied_ar": "مدّ لين: واو ساكنة بعد فتحة، تُمدّ عند الوقف",
           "surah_name_ar": "قريش"
         }
       ],
