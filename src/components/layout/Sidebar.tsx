@@ -139,7 +139,7 @@ export function Sidebar() {
                 href={href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] px-1 py-1 text-[0.6875rem] font-medium transition-colors",
+                  "flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] px-1 py-1 text-micro font-medium transition-colors",
                   isActive
                     ? "text-[var(--margin-active)]"
                     : "text-[var(--margin-muted)]"
