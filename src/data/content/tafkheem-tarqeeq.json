@@ -56,8 +56,8 @@
         "name_ar": "ألف",
         "rule": "Follows the letter BEFORE it. If the preceding letter is heavy, Alif is heavy. If light, Alif is light. The examples below are written without their final vowel, which does not change this.",
         "rule_ar": "تتبع الحرف الذي قبلها. فإن كان مفخّما فُخِّمت، وإن كان مرقّقا رُقِّقت. والمثالان مكتوبان بلا حركة الحرف الأخير، ولا أثر لذلك في الحكم.",
-        "heavy_example": "صَالِحَات — the Alif after Saad (heavy) is heavy",
-        "light_example": "مَالِك — the Alif after Meem (light) is light"
+        "heavy_example": "صَالِحَات: the Alif after Saad (heavy) is heavy",
+        "light_example": "مَالِك: the Alif after Meem (light) is light"
       },
       {
         "arabic": "ل",
@@ -65,8 +65,8 @@
         "name_ar": "لام",
         "rule": "Always light EXCEPT in the name Allah (الله) when preceded by Fathah or Dammah.",
         "rule_ar": "مرقّقة دائما إلا في لفظ الجلالة (الله) إذا سبقها فتح أو ضمّ.",
-        "heavy_example": "قَالَ اللَّهُ — Laam is heavy (preceded by Fathah)",
-        "light_example": "بِسْمِ اللَّهِ — Laam is light (preceded by Kasrah)"
+        "heavy_example": "قَالَ اللَّهُ: Laam is heavy (preceded by Fathah)",
+        "light_example": "بِسْمِ اللَّهِ: Laam is light (preceded by Kasrah)"
       },
       {
         "arabic": "ر",
@@ -78,10 +78,10 @@
     ]
   },
   "common_mistakes": [
-    "Making ت (Taa) heavy like ط (Taa) — they sound similar but ط is heavy and ت is light",
-    "Making س (Seen) heavy like ص (Saad) — ص has full tafkheem, س does not",
+    "Making ت (Taa) heavy like ط (Taa). They sound similar but ط is heavy and ت is light",
+    "Making س (Seen) heavy like ص (Saad). ص has full tafkheem, س does not",
     "Not distinguishing ذ (Dhaal, light) from ظ (Dhaa, heavy)",
-    "Making the Laam in 'Allahumma' heavy when preceded by Kasrah (قُلِ اللَّهُمَّ — Laam is LIGHT here)"
+    "Making the Laam in 'Allahumma' heavy when preceded by Kasrah (قُلِ اللَّهُمَّ, where the Laam is LIGHT)"
   ],
   "common_mistakes_ar": [
     "تفخيم التاء (ت) كالطاء (ط) — رغم تشابه الصوت، الطاء مفخّمة والتاء مرقّقة",
