@@ -104,7 +104,7 @@ test("the uncapped due count shows on open on the dashboard and the home card", 
   // The dashboard headline shows the honest uncapped due total (3) with its caption.
   const panel = dashboard(page);
   await expect(panel.getByText("due for revision")).toBeVisible();
-  await expect(panel.locator("span.text-red-600")).toHaveText("3");
+  await expect(panel.locator("span.text-err")).toHaveText("3");
 
   // The balanced breakdown accounts for all three classes (1 each) — the
   // ProgressBar accessible names are unambiguous on the page.
@@ -138,7 +138,7 @@ test("every due recent and consolidated verse is surfaced with no cap", async ({
 
   const panel = dashboard(page);
   // The honest due total counts all seven, above the NEW cap — nothing is dropped.
-  await expect(panel.locator("span.text-red-600")).toHaveText("7");
+  await expect(panel.locator("span.text-err")).toHaveText("7");
   await expect(panel.getByRole("progressbar", { name: "Recent: 4" })).toBeVisible();
   await expect(panel.getByRole("progressbar", { name: "Consolidated: 3" })).toBeVisible();
   await expect(panel.getByRole("progressbar", { name: "New: 0" })).toBeVisible();
@@ -163,7 +163,7 @@ test("the NEW tail caps at the default 5 in the composed recall session", async 
 
   const panel = dashboard(page);
   // The dashboard shows the honest uncapped due count (7) ...
-  await expect(panel.locator("span.text-red-600")).toHaveText("7");
+  await expect(panel.locator("span.text-err")).toHaveText("7");
   await expect(panel.getByRole("progressbar", { name: "New: 7" })).toBeVisible();
   // ... but only 5 are admitted to today's session (caps the NEW tail) ...
   await expect(panel.getByText("Introducing 5 new today")).toBeVisible();
@@ -206,7 +206,7 @@ test("when the daily new cap is spent, the CTA does not dead-end on an empty ses
 
   const panel = dashboard(page);
   // The honest due total is still uncapped ...
-  await expect(panel.locator("span.text-red-600")).toHaveText("8");
+  await expect(panel.locator("span.text-err")).toHaveText("8");
   // ... but nothing new is admitted today, so there is no actionable session ...
   await expect(panel.getByText("Introducing 0 new today")).toBeVisible();
   await expect(panel.getByRole("button", { name: "Begin today's revision" })).toHaveCount(0);
@@ -244,7 +244,7 @@ test("the due count and dashboard work with notification permission never grante
   // The due count and the full dashboard still render regardless.
   const panel = dashboard(page);
   await expect(panel.getByRole("heading", { name: "Today's revision" })).toBeVisible();
-  await expect(panel.locator("span.text-red-600")).toHaveText("3");
+  await expect(panel.locator("span.text-err")).toHaveText("3");
 
   // And because the tab is not an installed standalone PWA, the Settings reminder
   // toggle is absent — the intended UX (a reminder is only offered where it can
