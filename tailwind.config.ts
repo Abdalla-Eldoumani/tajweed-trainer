@@ -110,7 +110,7 @@ const config: Config = {
         // right face without the named class. These names let SectionHeading
         // and pages pick a step without re-deriving line-height.
         xs: ["0.8125rem", { lineHeight: "1.2rem" }],
-        sm: ["0.9375rem", { lineHeight: "1.4rem" }],
+        sm: ["1rem", { lineHeight: "1.5rem" }],
         base: ["1.0625rem", { lineHeight: "1.65rem" }],
         display: ["2.5rem", { lineHeight: "1.15", letterSpacing: "-0.01em" }],
         h1: ["2rem", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
@@ -118,7 +118,7 @@ const config: Config = {
         h3: ["1.25rem", { lineHeight: "1.3" }],
         "body-lg": ["1.1875rem", { lineHeight: "1.6" }],
         body: ["1.0625rem", { lineHeight: "1.6" }],
-        small: ["0.9375rem", { lineHeight: "1.5" }],
+        small: ["1rem", { lineHeight: "1.5" }],
         micro: ["0.8125rem", { lineHeight: "1.4" }],
       },
     },
