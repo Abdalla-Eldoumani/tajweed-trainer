@@ -7,6 +7,7 @@ import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
+import { toArabicIndic } from "@/lib/utils";
 import tafkheemData from "@/data/content/tafkheem-tarqeeq.json";
 
 const SECTIONS = ["always-heavy", "always-light", "variable-letters"];
@@ -52,7 +53,7 @@ export default function TafkheemTarqeeqPage() {
           <ol className="space-y-1">
             {(isAr && tafkheemData.always_heavy.tafkheem_levels_ar ? tafkheemData.always_heavy.tafkheem_levels_ar : tafkheemData.always_heavy.tafkheem_levels).map((level, i) => (
               <li key={i} className="text-micro text-text-muted flex gap-2">
-                <span className="text-primary dark:text-primary-light font-bold shrink-0">{i + 1}.</span>
+                <span className="text-primary dark:text-primary-light font-bold shrink-0">{isAr ? toArabicIndic(i + 1) : i + 1}.</span>
                 {level}
               </li>
             ))}
