@@ -212,7 +212,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Tongue tip", ar: "طرف اللسان" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Kaaf is just forward of Qaaf: back of tongue against the HARD palate (Qaaf hits the soft palate). Both are tongue letters but at different points.", ar: "الكاف أمام مخرج القاف قليلا — أقصى اللسان مع الحنك الصلب. كلاهما من اللسان في موضعين متقاربين.", lessonAnchor: "al-lisan" },
+    explanation: { en: "Kaaf is just forward of Qaaf: back of tongue against the HARD palate (Qaaf hits the soft palate). Both are tongue letters but at different points.", ar: "الكاف أمام مخرج القاف قليلا: أقصى اللسان مع الحنك الصلب. كلاهما من اللسان في موضعين متقاربين.", lessonAnchor: "al-lisan" },
     source: { surah: 1, ayah: 4, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -246,7 +246,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Laam (ل)", ar: "اللام (ل)" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Daad (ض) is the most unique: it can emerge from either or both sides of the tongue against the upper molars. The lesson notes this as Daad's distinguishing feature.", ar: "الضاد (ض) أكثر الحروف تميّزا — تخرج من إحدى الحافتين أو كلتيهما مع الأضراس العليا، وهذا مما اختصّت به في الدرس.", lessonAnchor: "al-lisan" },
+    explanation: { en: "Daad (ض) is the most unique: it can emerge from either or both sides of the tongue against the upper molars. The lesson notes this as Daad's distinguishing feature.", ar: "الضاد (ض) أكثر الحروف تميّزا: تخرج من إحدى الحافتين أو كلتيهما مع الأضراس العليا، وهذا مما اختصّت به في الدرس.", lessonAnchor: "al-lisan" },
     source: { surah: 1, ayah: 7, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -463,10 +463,10 @@ export const questions: Question[] = [
     arabicText: "اللَّيْلِ",
     englishGloss: "the night",
     options: [
-      { id: "opt-a", label: { en: "Al-Lisan (the tongue): 10 points, 18 letters", ar: "اللسان — عشرة مخارج وثمانية عشر حرفا" } },
-      { id: "opt-b", label: { en: "Al-Halq (the throat): 3 points, 6 letters", ar: "الحلق — ثلاثة مخارج وستّة حروف" } },
-      { id: "opt-c", label: { en: "Al-Jawf: 1 point, 3 letters", ar: "الجوف — مخرج واحد وثلاثة حروف" } },
-      { id: "opt-d", label: { en: "Al-Khayshoom: 1 point", ar: "الخيشوم — مخرج واحد" } },
+      { id: "opt-a", label: { en: "Al-Lisan (the tongue): 10 points, 18 letters", ar: "اللسان: عشرة مخارج وثمانية عشر حرفا" } },
+      { id: "opt-b", label: { en: "Al-Halq (the throat): 3 points, 6 letters", ar: "الحلق: ثلاثة مخارج وستّة حروف" } },
+      { id: "opt-c", label: { en: "Al-Jawf: 1 point, 3 letters", ar: "الجوف: مخرج واحد وثلاثة حروف" } },
+      { id: "opt-d", label: { en: "Al-Khayshoom: 1 point", ar: "الخيشوم: مخرج واحد" } },
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Al-Lisan has 10 points and 18 letters, the largest region. Al-Halq is 3 points / 6 letters; Ash-Shafataan is 2 points / 4 letters; Al-Jawf and Al-Khayshoom are 1 point each.", ar: "اللسان عشرة مخارج وثمانية عشر حرفا، وهو أوسع المناطق. الحلق ثلاثة مخارج وستّة حروف، والشفتان مخرجان وأربعة حروف، والجوف والخيشوم مخرج واحد لكلّ منهما.", lessonAnchor: "al-lisan" },
