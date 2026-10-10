@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
 import { usePlayer } from "@/hooks/usePlayer";
@@ -379,18 +378,28 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
             <PlaySolid />
             <span className="hidden sm:inline">{t("mushaf.playSurah")}</span>
           </button>
-          <Link href={`/mushaf/page/${prevPage}`} aria-disabled={atStart} className={cn(atStart && "pointer-events-none opacity-40")}>
-            <Button variant="outline" size="sm" className="gap-1 min-h-[44px] min-w-[44px]" aria-label={t("mushaf.previousPage")}>
-              <ChevronStart />
-              <span className="hidden sm:inline">{t("mushaf.previousPage")}</span>
-            </Button>
-          </Link>
-          <Link href={`/mushaf/page/${nextPage}`} aria-disabled={atEnd} className={cn(atEnd && "pointer-events-none opacity-40")}>
-            <Button variant="outline" size="sm" className="gap-1 min-h-[44px] min-w-[44px]" aria-label={t("mushaf.nextPage")}>
-              <span className="hidden sm:inline">{t("mushaf.nextPage")}</span>
-              <ChevronEnd />
-            </Button>
-          </Link>
+          <ButtonLink
+            href={`/mushaf/page/${prevPage}`}
+            variant="outline"
+            size="sm"
+            aria-disabled={atStart}
+            aria-label={t("mushaf.previousPage")}
+            className={cn("gap-1 min-h-[44px] min-w-[44px]", atStart && "pointer-events-none opacity-40")}
+          >
+            <ChevronStart />
+            <span className="hidden sm:inline">{t("mushaf.previousPage")}</span>
+          </ButtonLink>
+          <ButtonLink
+            href={`/mushaf/page/${nextPage}`}
+            variant="outline"
+            size="sm"
+            aria-disabled={atEnd}
+            aria-label={t("mushaf.nextPage")}
+            className={cn("gap-1 min-h-[44px] min-w-[44px]", atEnd && "pointer-events-none opacity-40")}
+          >
+            <span className="hidden sm:inline">{t("mushaf.nextPage")}</span>
+            <ChevronEnd />
+          </ButtonLink>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
