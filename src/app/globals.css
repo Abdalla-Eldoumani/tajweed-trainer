@@ -87,6 +87,26 @@
     0 12px 28px -18px rgba(19, 27, 46, 0.20);
 }
 
+/* Status inks, written as rgb channels so they take an alpha. Three pigments
+   from the manuscript's own palette stand in for stock red, green and amber:
+   cinnabar for wrong, verdigris for right, burnt ochre for in between. Light
+   grounds take the deep pigment, dark grounds the lifted one; both clear 4.5:1
+   against the ground, the card and a 10% tint of themselves. Pearl inherits
+   the light values from :root. Tajweed letter colors are separate and fixed. */
+:root {
+  --ok-rgb: 42 106 74;
+  --err-rgb: 163 40 27;
+  --warn-rgb: 138 79 14;
+}
+
+[data-theme="night"],
+[data-theme="sepia"],
+[data-theme="mihrab"] {
+  --ok-rgb: 134 205 165;
+  --err-rgb: 242 155 139;
+  --warn-rgb: 232 168 98;
+}
+
 /* Reference baseline only -- NOT applied at runtime. Nothing sets the old
    dark-mode class anymore; the live night theme is the [data-theme="night"]
    block below. This block is retained as the shipped-dark baseline that
