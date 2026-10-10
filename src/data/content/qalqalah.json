@@ -38,7 +38,7 @@
     }
   ],
   "mnemonic_ar": "قُطْبُ جَدٍّ",
-  "mnemonic_en": "Remember: قُطْبُ جَدٍّ (Qutbu Jadd — 'axis of a grandfather')",
+  "mnemonic_en": "Remember: قُطْبُ جَدٍّ (Qutbu Jadd, 'axis of a grandfather')",
   "levels": [
     {
       "id": "qalqalah-sughra",
@@ -56,7 +56,7 @@
           "ayah": 27,
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "يَقْطَعُونَ",
-          "rule_applied": "Qalqalah Sughra — Qaaf (ق) with sukoon in middle of word",
+          "rule_applied": "Qalqalah Sughra: Qaaf (ق) with sukoon in middle of word",
           "rule_applied_ar": "قلقلة صغرى — قاف (ق) ساكنة في وسط الكلمة",
           "surah_name_ar": "البقرة"
         },
@@ -68,7 +68,7 @@
           "ayah": 19,
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "يَجْعَلُونَ",
-          "rule_applied": "Qalqalah Sughra — Jeem (ج) with sukoon in middle of word",
+          "rule_applied": "Qalqalah Sughra: Jeem (ج) with sukoon in middle of word",
           "rule_applied_ar": "قلقلة صغرى — جيم (ج) ساكنة في وسط الكلمة",
           "surah_name_ar": "البقرة"
         }
@@ -91,7 +91,7 @@
           "ayah": 3,
           "surah_name_en": "Al-Ikhlas",
           "highlight_word": "يَلِدْ",
-          "rule_applied": "Qalqalah Wusta — Daal (د) at end of word, mid-ayah",
+          "rule_applied": "Qalqalah Wusta: Daal (د) at end of word, mid-ayah",
           "rule_applied_ar": "قلقلة وسطى — دال (د) ساكنة في آخر الكلمة في وسط الآية",
           "surah_name_ar": "الإخلاص"
         }
@@ -114,7 +114,7 @@
           "ayah": 1,
           "surah_name_en": "Al-Falaq",
           "highlight_word": "الْفَلَقِ",
-          "rule_applied": "Qalqalah Kubra — Qaaf (ق) at end of ayah",
+          "rule_applied": "Qalqalah Kubra: Qaaf (ق) at end of ayah",
           "rule_applied_ar": "قلقلة كبرى — قاف (ق) في آخر الآية",
           "surah_name_ar": "الفلق"
         },
@@ -126,7 +126,7 @@
           "ayah": 1,
           "surah_name_en": "Al-Masad",
           "highlight_word": "وَتَبَّ",
-          "rule_applied": "Qalqalah Kubra — Baa (ب) at end of ayah (with shaddah, making it extra strong)",
+          "rule_applied": "Qalqalah Kubra: Baa (ب) at end of ayah (with shaddah, making it extra strong)",
           "rule_applied_ar": "قلقلة كبرى — باء (ب) في آخر الآية (مع الشدّة فتكون أقوى)",
           "surah_name_ar": "المسد"
         }
@@ -135,9 +135,9 @@
     }
   ],
   "common_mistakes": [
-    "Adding a vowel sound to the echo — Qalqalah should be a pure bounce, not 'ba' or 'bu' or 'bi'",
-    "Making the echo too strong in Sughra — it should be subtle",
-    "Making the echo too weak in Kubra — it should be clearly pronounced",
+    "Adding a vowel sound to the echo. Qalqalah should be a pure bounce, not 'ba' or 'bu' or 'bi'",
+    "Making the echo too strong in Sughra, where it should be subtle",
+    "Making the echo too weak in Kubra. It should be clearly pronounced",
     "Applying Qalqalah to letters that are NOT in the five (قطبجد)"
   ],
   "common_mistakes_ar": [
