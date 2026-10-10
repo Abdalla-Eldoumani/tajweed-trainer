@@ -18,7 +18,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "The middle of the tongue", ar: "وسط اللسان" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Ghunnah originates from the nasal cavity (khayshoom). You can test it by pinching your nose while making the sound — the vibration is the ghunnah.", ar: "الغنّة تخرج من الخيشوم. ويمكن اختبارها بإمساك الأنف عند نطق الصوت، والاهتزاز الذي يُحَسّ هو الغنّة.", lessonAnchor: "ghunnah-definition" },
+    explanation: { en: "Ghunnah originates from the nasal cavity (khayshoom). You can test it by pinching your nose while making the sound: the vibration is the ghunnah.", ar: "الغنّة تخرج من الخيشوم. ويمكن اختبارها بإمساك الأنف عند نطق الصوت، والاهتزاز الذي يُحَسّ هو الغنّة.", lessonAnchor: "ghunnah-definition" },
     source: { surah: 2, ayah: 6, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -63,7 +63,7 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "Mandatory — must hold 2 beats", ar: "واجبة — حركتان" } },
+      { id: "opt-a", label: { en: "Mandatory: must hold 2 beats", ar: "واجبة — حركتان" } },
       { id: "opt-b", label: { en: "Optional", ar: "اختيارية" } },
       { id: "opt-c", label: { en: "Forbidden", ar: "ممنوعة" } },
       { id: "opt-d", label: { en: "Only when stopping", ar: "فقط عند الوقف" } },
@@ -80,7 +80,7 @@ export const questions: Question[] = [
     arabicText: "ثُمَّ",
     englishGloss: "then",
     options: [
-      { id: "opt-a", label: { en: "Mandatory — must hold 2 beats", ar: "واجبة — حركتان" } },
+      { id: "opt-a", label: { en: "Mandatory: must hold 2 beats", ar: "واجبة — حركتان" } },
       { id: "opt-b", label: { en: "Optional", ar: "اختيارية" } },
       { id: "opt-c", label: { en: "Forbidden", ar: "ممنوعة" } },
       { id: "opt-d", label: { en: "Half a beat only", ar: "نصف حركة فقط" } },
@@ -131,13 +131,13 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "Pinch your nose — if the sound stops or muffles, you are producing ghunnah", ar: "أمسك أنفك — فإن انقطع الصوت أو خَفِيَ فأنت تنطقها بصحّة" } },
+      { id: "opt-a", label: { en: "Pinch your nose: if the sound stops or muffles, you are producing ghunnah", ar: "أمسك أنفك — فإن انقطع الصوت أو خَفِيَ فأنت تنطقها بصحّة" } },
       { id: "opt-b", label: { en: "Cover your mouth", ar: "غطِّ فمك" } },
       { id: "opt-c", label: { en: "Hold your breath", ar: "احبس نَفَسك" } },
       { id: "opt-d", label: { en: "Look in a mirror", ar: "انظر في المرآة" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson states that pinching the nose while saying 'mmm' or 'nnn' lets you feel the vibration — that vibration IS the ghunnah.", ar: "نصّ الدرس على إمكان اختبار الغنّة بإمساك الأنف عند نطق 'مْـ' أو 'نْـ'، والاهتزاز الذي يُحَسّ هو الغنّة.", lessonAnchor: "ghunnah-definition" },
+    explanation: { en: "The lesson states that pinching the nose while saying 'mmm' or 'nnn' lets you feel the vibration. That vibration IS the ghunnah.", ar: "نصّ الدرس على إمكان اختبار الغنّة بإمساك الأنف عند نطق 'مْـ' أو 'نْـ'، والاهتزاز الذي يُحَسّ هو الغنّة.", lessonAnchor: "ghunnah-definition" },
     source: { surah: 114, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -148,13 +148,13 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "Yes — both when stopping and continuing", ar: "نعم — في الوقف والوصل" } },
+      { id: "opt-a", label: { en: "Yes, both when stopping and continuing", ar: "نعم — في الوقف والوصل" } },
       { id: "opt-b", label: { en: "Only when continuing", ar: "في الوصل فقط" } },
       { id: "opt-c", label: { en: "Only when stopping", ar: "في الوقف فقط" } },
       { id: "opt-d", label: { en: "Only at the start of an ayah", ar: "في بداية الآية فقط" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Ghunnah on Noon/Meem Mushaddadah applies in BOTH cases — stopping and continuing.", ar: "الغنّة على النون والميم المشدّدتين تجب في حالتي الوقف والوصل.", lessonAnchor: "noon-mushaddad" },
+    explanation: { en: "Ghunnah on Noon/Meem Mushaddadah applies in BOTH cases: stopping and continuing.", ar: "الغنّة على النون والميم المشدّدتين تجب في حالتي الوقف والوصل.", lessonAnchor: "noon-mushaddad" },
     source: { surah: 114, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -165,13 +165,13 @@ export const questions: Question[] = [
     arabicText: "أُمَّةً",
     englishGloss: "a nation",
     options: [
-      { id: "opt-a", label: { en: "2 — Noon Mushaddadah and Meem Mushaddadah", ar: "اثنان — النون المشدّدة والميم المشدّدة" } },
+      { id: "opt-a", label: { en: "2 (Noon Mushaddadah and Meem Mushaddadah)", ar: "اثنان — النون المشدّدة والميم المشدّدة" } },
       { id: "opt-b", label: { en: "3", ar: "ثلاثة" } },
       { id: "opt-c", label: { en: "4", ar: "أربعة" } },
       { id: "opt-d", label: { en: "5", ar: "خمسة" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson presents 2 core ghunnah rules — Noon Mushaddadah and Meem Mushaddadah. Ghunnah also appears (in varying degrees) inside Idgham, Iqlab, and Ikhfaa, taught in their own modules.", ar: "للدرس حكمان للغنّة: النون المشدّدة والميم المشدّدة. وتظهر الغنّة أيضا (بدرجات متفاوتة) في الإدغام والإقلاب والإخفاء، وقد دُرست في أبوابها.", lessonAnchor: "ghunnah-prominence" },
+    explanation: { en: "The lesson presents 2 core ghunnah rules: Noon Mushaddadah and Meem Mushaddadah. Ghunnah also appears (in varying degrees) inside Idgham, Iqlab, and Ikhfaa, taught in their own modules.", ar: "للدرس حكمان للغنّة: النون المشدّدة والميم المشدّدة. وتظهر الغنّة أيضا (بدرجات متفاوتة) في الإدغام والإقلاب والإخفاء، وقد دُرست في أبوابها.", lessonAnchor: "ghunnah-prominence" },
     source: { surah: 2, ayah: 128, translationEditionId: null, provenance: PROVENANCE },
   },
 
@@ -207,7 +207,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "The Alif madd letter", ar: "حرف المدّ الألف" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "النَّاسِ has shaddah on the Noon (نّ) — Noon Mushaddadah requires ghunnah 2 beats.", ar: "في النَّاسِ شدّة على النون (نّ)، والنون المشدّدة تستوجب الغنّة بمقدار حركتين.", lessonAnchor: "noon-mushaddad" },
+    explanation: { en: "النَّاسِ has shaddah on the Noon (نّ). Noon Mushaddadah requires ghunnah 2 beats.", ar: "في النَّاسِ شدّة على النون (نّ)، والنون المشدّدة تستوجب الغنّة بمقدار حركتين.", lessonAnchor: "noon-mushaddad" },
     source: { surah: 114, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -224,7 +224,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "The Taa Marbuta", ar: "التاء المربوطة" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "أُمَّةً contains Meem with shaddah (مّ) — Meem Mushaddadah requires ghunnah for 2 beats.", ar: "في أُمَّةً ميم مشدّدة (مّ)، والميم المشدّدة تستوجب الغنّة بمقدار حركتين.", lessonAnchor: "meem-mushaddad" },
+    explanation: { en: "أُمَّةً contains Meem with shaddah (مّ), so Meem Mushaddadah requires ghunnah for 2 beats.", ar: "في أُمَّةً ميم مشدّدة (مّ)، والميم المشدّدة تستوجب الغنّة بمقدار حركتين.", lessonAnchor: "meem-mushaddad" },
     source: { surah: 2, ayah: 128, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -286,13 +286,13 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "Anywhere — beginning, middle, or end", ar: "في أيّ موضع — البداية أو الوسط أو الآخر" } },
+      { id: "opt-a", label: { en: "Anywhere: beginning, middle, or end", ar: "في أيّ موضع — البداية أو الوسط أو الآخر" } },
       { id: "opt-b", label: { en: "Only at the end", ar: "في آخر الكلمة فقط" } },
       { id: "opt-c", label: { en: "Only in the middle", ar: "في وسط الكلمة فقط" } },
       { id: "opt-d", label: { en: "Only at the start", ar: "في بداية الكلمة فقط" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The shaddah position alone determines ghunnah — wherever it sits in the word, ghunnah applies. Examples in the lesson: إِنَّ (end), النَّاسِ (after Laam), أُمَّةً (mid).", ar: "موضع الشدّة هو ما يحدّد الغنّة، أيّا كان موضعها في الكلمة. وأمثلة الدرس: إِنَّ (في الآخر) والنَّاسِ (بعد اللام) وأُمَّةً (في الوسط).", lessonAnchor: "noon-mushaddad" },
+    explanation: { en: "The shaddah position alone determines ghunnah: wherever it sits in the word, ghunnah applies. Examples in the lesson: إِنَّ (end), النَّاسِ (after Laam), أُمَّةً (mid).", ar: "موضع الشدّة هو ما يحدّد الغنّة، أيّا كان موضعها في الكلمة. وأمثلة الدرس: إِنَّ (في الآخر) والنَّاسِ (بعد اللام) وأُمَّةً (في الوسط).", lessonAnchor: "noon-mushaddad" },
     source: { surah: 114, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -337,8 +337,8 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "Yes — Noon Mushaddadah always carries ghunnah, stopping or continuing", ar: "نعم — النون المشدّدة فيها غنّة دائما في الوقف والوصل" } },
-      { id: "opt-b", label: { en: "No — ghunnah disappears when stopping", ar: "لا — تختفي الغنّة عند الوقف" } },
+      { id: "opt-a", label: { en: "Yes, Noon Mushaddadah always carries ghunnah, stopping or continuing", ar: "نعم — النون المشدّدة فيها غنّة دائما في الوقف والوصل" } },
+      { id: "opt-b", label: { en: "No, ghunnah disappears when stopping", ar: "لا — تختفي الغنّة عند الوقف" } },
       { id: "opt-c", label: { en: "Only on Saktah", ar: "في السكتة فقط" } },
       { id: "opt-d", label: { en: "Only when continuing to the next ayah", ar: "عند الوصل بالآية التالية فقط" } },
     ],
@@ -371,7 +371,7 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "The nasal cavity (khayshoom) — same for Noon and Meem ghunnah", ar: "الخيشوم — وهو واحد لغنّة النون وغنّة الميم" } },
+      { id: "opt-a", label: { en: "The nasal cavity (khayshoom), the same for Noon and Meem ghunnah", ar: "الخيشوم — وهو واحد لغنّة النون وغنّة الميم" } },
       { id: "opt-b", label: { en: "The two lips (شفتان)", ar: "الشفتان" } },
       { id: "opt-c", label: { en: "The throat", ar: "الحلق" } },
       { id: "opt-d", label: { en: "The middle of the tongue", ar: "وسط اللسان" } },
@@ -390,13 +390,13 @@ export const questions: Question[] = [
     arabicText: "إِنَّ",
     englishGloss: "indeed",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — full ghunnah is 2 beats", ar: "خطأ شائع — الغنّة التامّة حركتان" } },
+      { id: "opt-a", label: { en: "A common mistake: full ghunnah is 2 beats", ar: "خطأ شائع — الغنّة التامّة حركتان" } },
       { id: "opt-b", label: { en: "Acceptable in fast recitation", ar: "جائز في التلاوة السريعة" } },
       { id: "opt-c", label: { en: "Recommended", ar: "مستحسن" } },
       { id: "opt-d", label: { en: "Required when continuing", ar: "لازم عند الوصل" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson explicitly lists 'Not holding the ghunnah for a full 2 beats — rushing through it' as a common mistake.", ar: "نصّ الدرس على أنّ من الأخطاء الشائعة عدم إعطاء الغنّة حقّها من حركتين والإسراع فيها.", lessonAnchor: "noon-mushaddad" },
+    explanation: { en: "The lesson explicitly lists 'Not holding the Ghunnah for a full 2 beats (rushing through it)' as a common mistake.", ar: "نصّ الدرس على أنّ من الأخطاء الشائعة عدم إعطاء الغنّة حقّها من حركتين والإسراع فيها.", lessonAnchor: "noon-mushaddad" },
     source: { surah: 2, ayah: 6, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -407,7 +407,7 @@ export const questions: Question[] = [
     arabicText: "أُمَّةً",
     englishGloss: "a nation",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — proportion matters", ar: "خطأ شائع — الإفراط مذموم" } },
+      { id: "opt-a", label: { en: "A common mistake: proportion matters", ar: "خطأ شائع — الإفراط مذموم" } },
       { id: "opt-b", label: { en: "Required for clarity", ar: "لازم للوضوح" } },
       { id: "opt-c", label: { en: "Recommended for beginners", ar: "مستحسن للمبتدئين" } },
       { id: "opt-d", label: { en: "Required when stopping", ar: "لازم عند الوقف" } },
@@ -424,8 +424,8 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — ghunnah on Mushaddad applies stopping or continuing", ar: "خطأ شائع — غنّة المشدّد تجب في الوقف والوصل" } },
-      { id: "opt-b", label: { en: "Correct — stopping cancels ghunnah", ar: "صواب — الوقف يُلغي الغنّة" } },
+      { id: "opt-a", label: { en: "A common mistake: ghunnah on Mushaddad applies stopping or continuing", ar: "خطأ شائع — غنّة المشدّد تجب في الوقف والوصل" } },
+      { id: "opt-b", label: { en: "Correct: stopping cancels ghunnah", ar: "صواب — الوقف يُلغي الغنّة" } },
       { id: "opt-c", label: { en: "Required by the rule", ar: "مطلوب بالحكم" } },
       { id: "opt-d", label: { en: "Acceptable in Hafs only", ar: "مقبول في حفص فقط" } },
     ],
@@ -441,7 +441,7 @@ export const questions: Question[] = [
     arabicText: "إِنَّ",
     englishGloss: "indeed",
     options: [
-      { id: "opt-a", label: { en: "Both — it is an inherent attribute of Noon and Meem, but its prominence varies by tajweed rule", ar: "كلاهما — صفة لازمة للنون والميم، لكنّها تتفاوت بحسب الأحكام" } },
+      { id: "opt-a", label: { en: "Both: it is an inherent attribute of Noon and Meem, but its prominence varies by tajweed rule", ar: "كلاهما — صفة لازمة للنون والميم، لكنّها تتفاوت بحسب الأحكام" } },
       { id: "opt-b", label: { en: "Only an attribute", ar: "صفة فقط" } },
       { id: "opt-c", label: { en: "Only a rule", ar: "حكم فقط" } },
       { id: "opt-d", label: { en: "Neither", ar: "ولا واحد منهما" } },
@@ -492,8 +492,8 @@ export const questions: Question[] = [
     arabicText: "إِنَّ",
     englishGloss: "indeed",
     options: [
-      { id: "opt-a", label: { en: "No — Tanween's ghunnah follows the rule that applies to its hidden Noon (Izhar/Idgham/Iqlab/Ikhfaa). Mushaddadah is a separate, full-weight rule.", ar: "لا — تنوين النون يخضع لحكم النون الساكنة (إظهار/إدغام/إقلاب/إخفاء). والمشدّدة حكم مستقلّ بكامل الوزن." } },
-      { id: "opt-b", label: { en: "Yes — Tanween is always Mushaddad-strength", ar: "نعم — التنوين دائما بقوّة المشدّد" } },
+      { id: "opt-a", label: { en: "No, Tanween's ghunnah follows the rule that applies to its hidden Noon (Izhar/Idgham/Iqlab/Ikhfaa). Mushaddadah is a separate, full-weight rule.", ar: "لا — تنوين النون يخضع لحكم النون الساكنة (إظهار/إدغام/إقلاب/إخفاء). والمشدّدة حكم مستقلّ بكامل الوزن." } },
+      { id: "opt-b", label: { en: "Yes, Tanween is always Mushaddad-strength", ar: "نعم — التنوين دائما بقوّة المشدّد" } },
       { id: "opt-c", label: { en: "Tanween has no ghunnah", ar: "لا غنّة في التنوين" } },
       { id: "opt-d", label: { en: "Only at end of ayah", ar: "في آخر الآية فقط" } },
     ],
@@ -509,9 +509,9 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "No — ghunnah is exclusively an attribute of Noon and Meem", ar: "لا — الغنّة صفة خاصّة بالنون والميم" } },
-      { id: "opt-b", label: { en: "Yes — any letter can produce ghunnah", ar: "نعم — كلّ حرف يمكن أن يُنتج غنّة" } },
-      { id: "opt-c", label: { en: "Yes — Tanween produces ghunnah independently", ar: "نعم — التنوين يُنتج غنّة باستقلال" } },
+      { id: "opt-a", label: { en: "No, ghunnah is exclusively an attribute of Noon and Meem", ar: "لا — الغنّة صفة خاصّة بالنون والميم" } },
+      { id: "opt-b", label: { en: "Yes, any letter can produce ghunnah", ar: "نعم — كلّ حرف يمكن أن يُنتج غنّة" } },
+      { id: "opt-c", label: { en: "Yes, Tanween produces ghunnah independently", ar: "نعم — التنوين يُنتج غنّة باستقلال" } },
       { id: "opt-d", label: { en: "Only at end of ayah", ar: "في آخر الآية فقط" } },
     ],
     correctOptionId: "opt-a",
