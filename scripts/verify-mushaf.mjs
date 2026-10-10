@@ -150,12 +150,12 @@ async function main() {
   // 12. Navigate to page 604 (last page): next button disabled
   await page.goto(`${BASE}/mushaf/page/604`, { waitUntil: "networkidle" });
   await page.screenshot({ path: `${SCREENSHOT_DIR}/05-page604.png`, fullPage: true });
-  const nextDisabled = await page.locator('a[aria-disabled="true"]:has(button[aria-label*="ext"])').count();
+  const nextDisabled = await page.locator('a[aria-disabled="true"][aria-label*="ext"]').count();
   record("Page 604 has next disabled", nextDisabled >= 1);
 
   // 13. Page 1 has prev disabled
   await page.goto(`${BASE}/mushaf/page/1`, { waitUntil: "networkidle" });
-  const prevDisabled = await page.locator('a[aria-disabled="true"]').count();
+  const prevDisabled = await page.locator('a[aria-disabled="true"][aria-label*="rev"]').count();
   record("Page 1 has prev disabled", prevDisabled >= 1);
 
   // 14. Switch language to Arabic and verify Mushaf UI flips
