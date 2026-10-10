@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { useTranslation } from "@/lib/i18n";
 import { getOnboardingSeen, setOnboardingSeen } from "@/lib/storage";
 import { subscribeProgressChanged } from "@/lib/progress-events";
-import { cn } from "@/lib/utils";
+import { cn, toArabicIndic } from "@/lib/utils";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { Button } from "@/components/ui/Button";
 import { MedallionOrnament } from "@/components/ui/Ornament";
@@ -30,7 +30,8 @@ const STEPS = [
 // `open` prop, and anchors to the viewport center because a welcome reads better
 // centered than at the top third.
 export function OnboardingTour() {
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
   const panelRef = useRef<HTMLDivElement>(null);
   // The primary (Next / Start) control. Its element is stable across steps (only
   // the label changes on the last step), so it is the safe focus target on open
@@ -162,8 +163,8 @@ export function OnboardingTour() {
 
   const current = STEPS[step];
   const counter = t("onboarding.stepOf")
-    .replace("{current}", String(step + 1))
-    .replace("{total}", String(STEPS.length));
+    .replace("{current}", num(step + 1))
+    .replace("{total}", num(STEPS.length));
 
   const content = (
     <div role="presentation" inert={!open}>
