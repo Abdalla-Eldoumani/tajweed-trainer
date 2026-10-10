@@ -149,7 +149,7 @@ const translations: Record<string, { en: string; ar: string }> = {
   "review.title": { en: "Review Due", ar: "مراجعة مستحقّة" },
   "review.subtitle": {
     en: "Revisit questions on a spaced schedule. Missed answers come back tomorrow; mastered ones every 30 days.",
-    ar: "راجع الأسئلة وفق جدول متباعد. تعود الأخطاء غدا، وما أتقنته كل 30 يوما.",
+    ar: "راجع الأسئلة وفق جدول متباعد. تعود الأخطاء غدا، وما أتقنته كل ٣٠ يوما.",
   },
   "review.dueCount": {
     en: "{count} question(s) due for review.",
