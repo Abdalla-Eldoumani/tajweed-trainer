@@ -38,7 +38,7 @@
               "surah_name_en": "Al-Fatiha",
               "highlight_word": "الْحَمْدُ",
               "rule_applied": "Laam Qamariyyah: Laam pronounced, followed by Haa (ح)",
-              "rule_applied_ar": "لام قمرية — اللام واضحة قبل الحاء (ح)",
+              "rule_applied_ar": "لام قمرية: اللام واضحة قبل الحاء (ح)",
               "surah_name_ar": "الفاتحة"
             }
           ]
@@ -48,7 +48,7 @@
           "title_en": "Laam Shamsiyyah (Sun Letters)",
           "title_ar": "اللام الشمسية",
           "description": "The Laam is SILENT: written but not pronounced. It merges (Idgham) into the following letter, which gets a Shaddah. Occurs before 14 'sun' letters.",
-          "description_ar": "تُكتب اللام ولا تُنطق — تُدغم في الحرف الذي يليها، فيُشدَّد ذلك الحرف. وذلك قبل أربعة عشر حرفا من الحروف الشمسية.",
+          "description_ar": "تُكتب اللام ولا تُنطق: تُدغم في الحرف الذي يليها، فيُشدَّد ذلك الحرف. وذلك قبل أربعة عشر حرفا من الحروف الشمسية.",
           "letters": "ت ث د ذ ر ز س ش ص ض ط ظ ل ن",
           "letter_count": 14,
           "example_words": [
@@ -67,7 +67,7 @@
               "surah_name_en": "Al-Fatiha",
               "highlight_word": "الرَّحْمَنِ",
               "rule_applied": "Laam Shamsiyyah: Laam silent, merged into Raa (ر)",
-              "rule_applied_ar": "لام شمسية — اللام مدغمة في الراء (ر)",
+              "rule_applied_ar": "لام شمسية: اللام مدغمة في الراء (ر)",
               "surah_name_ar": "الفاتحة"
             }
           ]
@@ -145,7 +145,7 @@
           "condition_ar": "الراء الساكنة بعد كسرة عارضة",
           "example": "ارْجِعُوا",
           "note": "Heavy, because the Kasrah on Hamzat Al-Wasl is temporary",
-          "note_ar": "مفخّمة — لأنّ الكسرة على همزة الوصل عارضة"
+          "note_ar": "مفخّمة: لأنّ الكسرة على همزة الوصل عارضة"
         },
         {
           "condition": "Raa has Sukoon, preceded by an original Kasrah, with an Isti'la letter that has no Kasrah after it in the same word",
