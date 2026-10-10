@@ -29,3 +29,10 @@ const ARABIC_INDIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
 export function toArabicIndic(value: number | string): string {
   return String(value).replace(/\d/g, (d) => ARABIC_INDIC_DIGITS[Number(d)] ?? d);
 }
+
+// Playback speed as shown on a control: "0.75×", or "٠٫٧٥×" under the Arabic
+// locale (Arabic-Indic digits with the Arabic decimal separator).
+export function formatSpeed(speed: number, isAr: boolean): string {
+  const digits = String(speed);
+  return isAr ? `${toArabicIndic(digits).replace(".", "٫")}×` : `${digits}×`;
+}
