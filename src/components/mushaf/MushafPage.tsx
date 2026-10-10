@@ -77,7 +77,10 @@ interface MushafPageProps {
 }
 
 export function MushafPage({ data, memorizationMode = false, coverPageMode = false, targetVerseKey = null, onPlayVerse, onSelectVerse, followAlong = true, revealAsRecited = false, focusMode = false }: MushafPageProps) {
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
+  // Verse keys inside spoken labels follow the interface numerals.
+  const keyLabel = (surah: number, ayah: number) =>
+    isAr ? toArabicIndic(`${surah}:${ayah}`) : `${surah}:${ayah}`;
   const { isMemorized, mounted } = useMemorization();
   const { hasNote, mounted: notesMounted } = useVerseNotes();
   const { isSelected, toggle: toggleSelected, count: selectedCount, markedKeys } = useVerseSelection();
@@ -208,7 +211,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                       }
                       onPlayVerse?.(v.verseKey);
                     }}
-                    aria-label={`${t("mushaf.tapToHear")} (${v.surah}:${v.ayah})`}
+                    aria-label={`${t("mushaf.tapToHear")} (${keyLabel(v.surah, v.ayah)})`}
                     aria-current={isPlaying ? "true" : undefined}
                     className={cn(
                       "mushaf-verse",
@@ -267,7 +270,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                       e.stopPropagation();
                       onSelectVerse?.(v.verseKey);
                     }}
-                    aria-label={`${noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")} (${v.surah}:${v.ayah})`}
+                    aria-label={`${noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")} (${keyLabel(v.surah, v.ayah)})`}
                     title={noted ? `${t("mushaf.verseActions")}, ${t("notes.hasNote")}` : t("mushaf.verseActions")}
                     className="mushaf-verse-details relative before:absolute before:content-[''] before:-inset-y-[9px] before:-inset-x-[3px] ms-0.5 inline-flex items-center justify-center align-middle p-1.5 rounded-full text-text-muted hover:text-primary dark:hover:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1"
                   >
@@ -298,7 +301,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                       e.stopPropagation();
                       toggleSelected(v.verseKey);
                     }}
-                    aria-label={`${selected ? t("player.removeFromSelection") : t("player.addToSelection")} (${v.surah}:${v.ayah})`}
+                    aria-label={`${selected ? t("player.removeFromSelection") : t("player.addToSelection")} (${keyLabel(v.surah, v.ayah)})`}
                     aria-pressed={selected}
                     title={selected ? t("player.removeFromSelection") : t("player.addToSelection")}
                     className={cn(
@@ -315,7 +318,7 @@ export function MushafPage({ data, memorizationMode = false, coverPageMode = fal
                       type="button"
                       onClick={(e) => handleReveal(e, v.verseKey)}
                       aria-label={t("mushaf.memorizeReveal")}
-                      className="ms-1 inline-flex items-center justify-center text-[0.75rem] uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:text-primary-light align-middle"
+                      className="ms-1 inline-flex items-center justify-center text-micro uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary dark:text-primary-light align-middle"
                     >
                       {t("mushaf.memorizeReveal")}
                     </button>
