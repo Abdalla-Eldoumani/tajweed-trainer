@@ -79,7 +79,10 @@ const config: Config = {
         quran: ["var(--font-quran)", '"Amiri Quran"', '"Scheherazade New"', "serif"],
         arabic: ["var(--font-amiri)", "Amiri", "serif"],
         heading: ["var(--font-heading)", "Spectral", "var(--font-amiri)", "serif"],
-        body: ["var(--font-body)", '"Alegreya Sans"', "sans-serif"],
+        // Alegreya Sans is a Latin face. Arabic letters in a body run fall to
+        // Amiri glyph by glyph, so the Arabic UI reads in a Naskh hand rather
+        // than the system sans.
+        body: ["var(--font-body)", '"Alegreya Sans"', "var(--font-amiri)", "Amiri", "sans-serif"],
         mono: ["var(--font-mono)", '"JetBrains Mono"', "monospace"],
       },
       // Squarer corners than Tailwind's defaults: a manuscript page is a ruled
