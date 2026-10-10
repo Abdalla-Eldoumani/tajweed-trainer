@@ -29,9 +29,8 @@ const VIEWPORTS = [
   { name: "1440", width: 1440, height: 900 },
 ];
 
-// Routes for the responsive sweep. The "locked" entry hits /learn/madd which is
-// gated until the prerequisite (laam-raa) is unlocked, so it triggers the
-// LockedModuleScreen path.
+// Routes for the responsive sweep. /learn/madd is a later lesson that opens on
+// a fresh profile, so it stands in for a lesson deep in the learning path.
 const ROUTES = [
   { slug: "home", path: "/" },
   { slug: "learn-index", path: "/learn" },
@@ -45,7 +44,7 @@ const ROUTES = [
   { slug: "practice-mixed", path: "/practice/mixed" },
   { slug: "progress", path: "/progress" },
   { slug: "settings", path: "/settings" },
-  { slug: "learn-madd-locked", path: "/learn/madd", clearProgress: true },
+  { slug: "learn-madd", path: "/learn/madd" },
 ];
 
 async function main() {
@@ -66,12 +65,6 @@ async function main() {
 
     for (const route of ROUTES) {
       try {
-        if (route.clearProgress) {
-          // Land on a normal page first to gain access to localStorage, then
-          // wipe progress so the locked-module screen shows.
-          await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
-          await page.evaluate(() => localStorage.removeItem("tajweed-trainer-progress"));
-        }
         await page.goto(`${BASE}${route.path}`, { waitUntil: "networkidle", timeout: 20000 });
         // Give client-side hydration and dynamic-imported QuizSession time to mount.
         await page.waitForTimeout(700);
