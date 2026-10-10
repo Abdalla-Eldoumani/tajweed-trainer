@@ -77,7 +77,7 @@ export default function GhunnahPage() {
                 </div>
               </div>
               {typeof item.beats === "number" && (
-                <span className="text-micro text-text-muted shrink-0">{item.beats} {t("ghunnah.beats")}</span>
+                <span className="text-micro text-text-muted shrink-0">{isAr ? toArabicIndic(item.beats) : item.beats} {t("ghunnah.beats")}</span>
               )}
             </div>
           ))}
