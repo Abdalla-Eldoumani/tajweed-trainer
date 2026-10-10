@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ColorLegend } from "@/components/learn/ColorLegend";
@@ -48,12 +47,8 @@ export default function HomePage() {
         <p className="text-text-muted mt-4 max-w-md mx-auto">{t("home.subtitle")}</p>
         <p className="text-micro text-text-muted mt-2">{t("home.riwaya")}</p>
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link href={next ? `/learn/${next.id}` : "/learn"}>
-            <Button size="lg" className="min-w-40">{heroLabel}</Button>
-          </Link>
-          <Link href="/practice">
-            <Button variant="outline" size="lg" className="min-w-40">{t("nav.practice")}</Button>
-          </Link>
+          <ButtonLink href={next ? `/learn/${next.id}` : "/learn"} size="lg" className="min-w-40">{heroLabel}</ButtonLink>
+          <ButtonLink href="/practice" variant="outline" size="lg" className="min-w-40">{t("nav.practice")}</ButtonLink>
         </div>
       </header>
 
