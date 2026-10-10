@@ -8,6 +8,7 @@ import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
 import { useTranslation } from "@/lib/i18n";
+import { toArabicIndic } from "@/lib/utils";
 
 const MakhrajDiagram = dynamic(
   () => import("@/components/learn/MakhrajDiagram").then((mod) => ({ default: mod.MakhrajDiagram })),
@@ -122,8 +123,8 @@ export default function MakharijPage() {
 
       <Card variant="ornate" className="text-center">
         <p className="text-small text-text-muted">
-          <strong>{makharijData.total_points}</strong> {t("makharij.totalPoints")}{" "}
-          · <strong>{makharijData.total_letters}</strong> {t("makharij.totalLetters")}
+          <strong>{isAr ? toArabicIndic(makharijData.total_points) : makharijData.total_points}</strong> {t("makharij.totalPoints")}{" "}
+          · <strong>{isAr ? toArabicIndic(makharijData.total_letters) : makharijData.total_letters}</strong> {t("makharij.totalLetters")}
         </p>
       </Card>
 
