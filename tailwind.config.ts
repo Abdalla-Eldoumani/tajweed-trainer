@@ -64,6 +64,11 @@ const config: Config = {
           muted: "var(--text-muted)",
           dark: "var(--text)",
         },
+        // Status inks (right, wrong, in between); channels live in globals.css
+        // so they follow the theme and still accept an alpha.
+        ok: "rgb(var(--ok-rgb) / <alpha-value>)",
+        err: "rgb(var(--err-rgb) / <alpha-value>)",
+        warn: "rgb(var(--warn-rgb) / <alpha-value>)",
         border: "var(--border)",
         tajweed: {
           // Only text-tajweed-qalqalah is consumed (the qalqalah lesson letter).
