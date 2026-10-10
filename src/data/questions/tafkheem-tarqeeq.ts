@@ -203,8 +203,8 @@ export const questions: Question[] = [
     id: "tafkheem-medium-qabl-level",
     moduleId: "tafkheem-tarqeeq",
     difficulty: "medium",
-    prompt: { en: "On the Qaaf in قَبْل (Fathah, no Alif after), which tafkheem level applies?", ar: "على القاف في قَبْل (مفتوحة بدون ألف)، أيّ مرتبة تنطبق؟" },
-    arabicText: "قَبْل",
+    prompt: { en: "Using the five levels in this lesson, which level applies to the Qaaf in قَبْلُ (Fathah, no Alif after)?", ar: "بحسب المراتب الخمس في هذا الدرس، أيّ مرتبة تنطبق على القاف في قَبْلُ (مفتوحة بدون ألف)؟" },
+    arabicText: "قَبْلُ",
     englishGloss: "before",
     options: [
       { id: "opt-a", label: { en: "Level 2 — Fathah without Alif after", ar: "المرتبة الثانية — مفتوح بدون ألف بعده" } },
@@ -237,8 +237,8 @@ export const questions: Question[] = [
     id: "tafkheem-medium-yaqtaoon-level",
     moduleId: "tafkheem-tarqeeq",
     difficulty: "medium",
-    prompt: { en: "On the Qaaf in يَقْطَعُون (sakin), which tafkheem level applies?", ar: "على القاف الساكنة في يَقْطَعُون، أيّ مرتبة؟" },
-    arabicText: "يَقْطَعُون",
+    prompt: { en: "Using the five levels in this lesson, which level applies to the sakin Qaaf in يَقْطَعُونَ?", ar: "بحسب المراتب الخمس في هذا الدرس، أيّ مرتبة تنطبق على القاف الساكنة في يَقْطَعُونَ؟" },
+    arabicText: "يَقْطَعُونَ",
     englishGloss: "they cut",
     options: [
       { id: "opt-a", label: { en: "Level 4 — Sukoon", ar: "الرابعة — ساكن" } },
@@ -339,7 +339,7 @@ export const questions: Question[] = [
     id: "tafkheem-medium-saad-strongest",
     moduleId: "tafkheem-tarqeeq",
     difficulty: "medium",
-    prompt: { en: "Which Saad shows the STRONGEST tafkheem: in صَالِحَات, in صَدَقَ, in صُورَة, in صِيَام, or in الصِّرَاطَ?", ar: "أيّ صاد فيها أقوى تفخيم: في صَالِحَات أم صَدَقَ أم صُورَة أم صِيَام أم الصِّرَاطَ؟" },
+    prompt: { en: "Using the five levels in this lesson, which Saad shows the STRONGEST tafkheem: in صَالِحَات, in صَدَقَ, in صُورَة, in صِيَام, or in الصِّرَاطَ?", ar: "بحسب المراتب الخمس في هذا الدرس، أيّ صاد فيها أقوى تفخيم: في صَالِحَات أم صَدَقَ أم صُورَة أم صِيَام أم الصِّرَاطَ؟" },
     arabicText: "صَالِحَات",
     englishGloss: "good deeds",
     options: [
