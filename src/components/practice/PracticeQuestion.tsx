@@ -108,8 +108,8 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
                 "w-full text-start p-3 rounded-lg border-2 text-sm transition-colors min-h-[48px]",
                 !answered && "hover:border-primary/50 hover:bg-primary/5",
                 !answered && "border-border",
-                answered && isCorrect && "border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20",
-                answered && isSelected && !isCorrect && "border-red-600 bg-red-50 dark:border-red-500 dark:bg-red-900/20",
+                answered && isCorrect && "border-ok bg-ok/10",
+                answered && isSelected && !isCorrect && "border-err bg-err/10",
                 answered && !isSelected && !isCorrect && "border-border opacity-50"
               )}
               role="radio"
@@ -118,8 +118,8 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
               <span className="flex items-center gap-2">
                 <span className={cn(
                   "w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs shrink-0",
-                  answered && isCorrect && "border-green-600 text-green-600 dark:border-green-500 dark:text-green-500",
-                  answered && isSelected && !isCorrect && "border-red-600 text-red-600 dark:border-red-500 dark:text-red-500",
+                  answered && isCorrect && "border-ok text-ok",
+                  answered && isSelected && !isCorrect && "border-err text-err",
                   !answered && "border-border"
                 )}>
                   {answered && isCorrect && "\u2713"}
@@ -138,15 +138,15 @@ export function PracticeQuestion({ question, questionNumber, totalQuestions, onA
           className={cn(
             "rounded-lg border-2 p-3 space-y-2",
             wasCorrect
-              ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-              : "border-red-500 bg-red-50 dark:bg-red-900/20",
+              ? "border-ok bg-ok/10"
+              : "border-err bg-err/10",
           )}
         >
           <div className="flex items-center gap-2">
             <span
               className={cn(
                 "text-xs font-semibold uppercase tracking-wide",
-                wasCorrect ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400",
+                wasCorrect ? "text-ok" : "text-err",
               )}
             >
               {wasCorrect ? t("practice.feedback.correct") : t("practice.feedback.incorrect")}
