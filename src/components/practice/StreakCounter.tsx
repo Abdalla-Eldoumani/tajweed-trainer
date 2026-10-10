@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+import { cn, toArabicIndic } from "@/lib/utils";
 
 export function StreakCounter() {
   const { progress } = useProgress();
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
   const { currentStreak, longestStreak, lastPracticeDate } = progress.streaks;
 
   // The 7-day weekday row derives from new Date(). A prerendered / or /progress is
@@ -50,12 +51,12 @@ export function StreakCounter() {
       <h2 className="font-heading font-semibold text-sm mb-3">{t("practice.streak")}</h2>
       <div className="flex items-center gap-4 sm:gap-6">
         <div className="text-center">
-          <div className="text-h1 font-bold text-primary dark:text-primary-light tabular-nums">{currentStreak}</div>
+          <div className="text-h1 font-bold text-primary dark:text-primary-light tabular-nums">{num(currentStreak)}</div>
           <p className="text-xs text-text-muted">{t("practice.currentStreak")}</p>
         </div>
         <div className="w-px h-12 bg-gold-light/30 dark:bg-gold-dark/20" />
         <div className="text-center">
-          <div className="text-h1 font-bold text-accent tabular-nums">{longestStreak}</div>
+          <div className="text-h1 font-bold text-accent tabular-nums">{num(longestStreak)}</div>
           <p className="text-xs text-text-muted">{t("practice.longestStreak")}</p>
         </div>
       </div>
@@ -65,7 +66,7 @@ export function StreakCounter() {
           <div
             key={i}
             className={cn(
-              "w-8 h-8 rounded flex items-center justify-center text-[0.75rem] font-medium",
+              "w-8 h-8 rounded flex items-center justify-center text-micro font-medium",
               day.isPracticed
                 ? "bg-primary/20 text-primary dark:bg-primary-light/20 dark:text-primary-light"
                 : day.isToday
