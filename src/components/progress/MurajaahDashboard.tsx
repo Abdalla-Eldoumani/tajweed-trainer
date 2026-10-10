@@ -75,7 +75,7 @@ export function MurajaahDashboard() {
       {/* The honest due headline: the uncapped due total as a big red
           figure, with the day's new-verse intake as the quiet second truth. */}
       <div className="mt-4 flex items-baseline gap-2">
-        <span className="font-heading text-display font-semibold leading-none tabular-nums text-red-600 dark:text-red-400">
+        <span className="font-heading text-display font-semibold leading-none tabular-nums text-err">
           {num(q.dueTotal)}
         </span>
         <span className="text-body text-text-muted">{dueLabel}</span>
