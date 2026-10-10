@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { useTranslation } from "@/lib/i18n";
 
 // Route-segment error boundary. Catches render/runtime errors in any page and
@@ -28,9 +27,7 @@ export default function Error({
       <p className="text-sm text-text-muted mb-6 max-w-sm">{t("error.body")}</p>
       <div className="flex gap-3">
         <Button onClick={() => reset()}>{t("error.retry")}</Button>
-        <Link href="/">
-          <Button variant="outline">{t("error.goHome")}</Button>
-        </Link>
+        <ButtonLink href="/" variant="outline">{t("error.goHome")}</ButtonLink>
       </div>
     </div>
   );
