@@ -74,6 +74,9 @@ export default function TafkheemTarqeeqPage() {
               </li>
             ))}
           </ol>
+          <p className="text-small text-text-muted mt-3 italic">
+            {isAr ? tafkheemData.always_heavy.levels_note_ar : tafkheemData.always_heavy.levels_note}
+          </p>
         </div>
       </Card>
 
