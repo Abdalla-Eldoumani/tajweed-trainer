@@ -3,8 +3,8 @@
   "title_en": "Waqf Symbols (Stopping Marks)",
   "title_ar": "علامات الوقف",
   "category": "waqf",
-  "introduction": "The Mushaf contains symbols that guide the reciter on where to stop, pause, or continue. These are not part of the Quran itself but were added by scholars to assist recitation. Printed mushafs use different sets of these marks, so some marks here may not appear in your copy. A local imam or teacher can explain the set yours uses.",
-  "introduction_ar": "في المصحف رموز توجّه القارئ إلى مواضع الوقف والابتداء والسكت. وهذه الرموز ليست من القرآن ذاته، بل أضافها العلماء لإعانة القارئ على حسن الأداء. وتختلف مجموعة العلامات من مصحف مطبوع إلى آخر، فقد لا تجد بعض العلامات المذكورة هنا في نسختك. ويستطيع إمام أو معلّم قريب أن يشرح لك المجموعة التي يعتمدها مصحفك.",
+  "introduction": "The Mushaf contains symbols that guide the reciter on where to stop, pause, or continue. These are not part of the Quran itself but were added by scholars to assist recitation. Printed mushafs use different sets of these marks, so some marks here may not appear in your copy. The marks ط, ز and ص are among the six that al-Sajawandi (died 560 AH) set out in his book Ilal al-Wuquf, and printings that follow his system, such as the Turkish and Pakistani mushafs, use them. The Madinah Mushaf follows the Azhar set instead, and the printed Warsh and Qalun mushafs use a single stop mark, ص. A local imam or teacher can explain the set yours uses.",
+  "introduction_ar": "في المصحف رموز توجّه القارئ إلى مواضع الوقف والابتداء والسكت. وهذه الرموز ليست من القرآن ذاته، بل أضافها العلماء لإعانة القارئ على حسن الأداء. وتختلف مجموعة العلامات من مصحف مطبوع إلى آخر، فقد لا تجد بعض العلامات المذكورة هنا في نسختك. وعلامات ط وز وص من العلامات الست التي وضعها السجاوندي (ت ٥٦٠ هـ) في كتابه علل الوقوف، وتستعملها المصاحف التي تتبع طريقته، كالمصحف التركي والمصحف الباكستاني. ويتبع مصحف المدينة النبوية علامات الأزهر، وأمّا مصحفا ورش وقالون المطبوعان ففي كلٍّ منهما علامة وقف واحدة هي ص. ويستطيع إمام أو معلّم قريب أن يشرح لك المجموعة التي يعتمدها مصحفك.",
   "symbols": [
     {
       "id": "waqf-lazim",
