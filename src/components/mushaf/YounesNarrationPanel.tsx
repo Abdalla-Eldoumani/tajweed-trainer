@@ -8,7 +8,7 @@ import { getYounesSurahUrl } from "@/lib/mp3quran-url";
 import { toSafeAudioUrl } from "@/lib/media-url";
 import { clampSurah } from "@/lib/validate";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
-import { cn } from "@/lib/utils";
+import { cn, toArabicIndic } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { ArabicText } from "@/components/ui/ArabicText";
 import type { SurahHeader } from "@/lib/types";
@@ -328,7 +328,7 @@ export function YounesNarrationPanel({ surahs }: YounesNarrationPanelProps) {
               >
                 {surahOptions.map((s) => (
                   <option key={s.number} value={s.number}>
-                    {s.number}. {isAr ? s.nameArabic : s.nameSimple}
+                    {isAr ? toArabicIndic(s.number) : s.number}. {isAr ? s.nameArabic : s.nameSimple}
                   </option>
                 ))}
               </select>
