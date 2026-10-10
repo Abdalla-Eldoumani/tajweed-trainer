@@ -419,7 +419,7 @@
 }
 
 body {
-  font-family: var(--font-body), 'Alegreya Sans', sans-serif;
+  font-family: var(--font-body), 'Alegreya Sans', var(--font-amiri), 'Amiri', sans-serif;
   /* Alegreya Sans defaults to oldstyle figures, which read as lowercase o in
      counters and scores. */
   font-variant-numeric: lining-nums;
