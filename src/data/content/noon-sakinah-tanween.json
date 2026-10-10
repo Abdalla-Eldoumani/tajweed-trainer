@@ -64,7 +64,7 @@
           "surah_name_en": "Ash-Shu'ara",
           "highlight_word": "مِنْ أَجْرٍ",
           "rule_applied": "Izhar: Noon Sakinah followed by Hamzah (ء)",
-          "rule_applied_ar": "إظهار — نون ساكنة قبل الهمزة (ء)",
+          "rule_applied_ar": "إظهار: نون ساكنة قبل الهمزة (ء)",
           "surah_name_ar": "الشعراء"
         },
         {
@@ -76,7 +76,7 @@
           "surah_name_en": "An-Najm",
           "highlight_word": "مِنْ عِلْمٍ",
           "rule_applied": "Izhar: Noon Sakinah followed by 'Ayn (ع)",
-          "rule_applied_ar": "إظهار — نون ساكنة قبل العين (ع)",
+          "rule_applied_ar": "إظهار: نون ساكنة قبل العين (ع)",
           "surah_name_ar": "النجم"
         },
         {
@@ -88,7 +88,7 @@
           "surah_name_en": "Al-An'am",
           "highlight_word": "يَنْهَوْنَ",
           "rule_applied": "Izhar: Noon Sakinah followed by Haa (هـ) within one word",
-          "rule_applied_ar": "إظهار — نون ساكنة قبل الهاء (هـ) في كلمة واحدة",
+          "rule_applied_ar": "إظهار: نون ساكنة قبل الهاء (هـ) في كلمة واحدة",
           "surah_name_ar": "الأنعام"
         },
         {
@@ -100,7 +100,7 @@
           "surah_name_en": "At-Tawbah",
           "highlight_word": "جُرُفٍ هَارٍ",
           "rule_applied": "Izhar: Tanween followed by Haa (هـ)",
-          "rule_applied_ar": "إظهار — تنوين قبل الهاء (هـ)",
+          "rule_applied_ar": "إظهار: تنوين قبل الهاء (هـ)",
           "surah_name_ar": "التوبة"
         }
       ],
@@ -110,9 +110,9 @@
         "Not distinguishing between ح (Haa) and هـ (Haa). Both trigger Izhar but have different makhraj"
       ],
       "common_mistakes_ar": [
-        "إضافة الغنّة — الإظهار يجب أن يكون واضحا تامّا بلا أي غنّة",
+        "إضافة الغنّة: الإظهار يجب أن يكون واضحا تامّا بلا أي غنّة",
         "إدغام صوت النون في الحرف الذي بعدها",
-        "عدم التمييز بين الحاء (ح) والهاء (هـ) — كلاهما يستوجب الإظهار لكن مخرجاهما مختلفان"
+        "عدم التمييز بين الحاء (ح) والهاء (هـ): كلاهما يستوجب الإظهار لكن مخرجاهما مختلفان"
       ],
       "verified": true
     },
@@ -164,7 +164,7 @@
               "surah_name_en": "Al-Baqarah",
               "highlight_word": "مَن يَقُولُ",
               "rule_applied": "Idgham with Ghunnah: Noon Sakinah followed by Yaa (ي)",
-              "rule_applied_ar": "إدغام بغنّة — نون ساكنة قبل الياء (ي)",
+              "rule_applied_ar": "إدغام بغنّة: نون ساكنة قبل الياء (ي)",
               "surah_name_ar": "البقرة"
             },
             {
@@ -176,7 +176,7 @@
               "surah_name_en": "Ash-Shura",
               "highlight_word": "مِن وَلِيٍّ",
               "rule_applied": "Idgham with Ghunnah: Noon Sakinah followed by Waw (و)",
-              "rule_applied_ar": "إدغام بغنّة — نون ساكنة قبل الواو (و)",
+              "rule_applied_ar": "إدغام بغنّة: نون ساكنة قبل الواو (و)",
               "surah_name_ar": "الشورى"
             }
           ]
@@ -209,7 +209,7 @@
               "surah_name_en": "Al-Baqarah",
               "highlight_word": "مِن رَّبِّهِمْ",
               "rule_applied": "Idgham without Ghunnah: Noon Sakinah followed by Raa (ر)",
-              "rule_applied_ar": "إدغام بلا غنّة — نون ساكنة قبل الراء (ر)",
+              "rule_applied_ar": "إدغام بلا غنّة: نون ساكنة قبل الراء (ر)",
               "surah_name_ar": "البقرة"
             },
             {
@@ -221,7 +221,7 @@
               "surah_name_en": "Al-Kahf",
               "highlight_word": "مِن لَّدُنْهُ",
               "rule_applied": "Idgham without Ghunnah: Noon Sakinah followed by Laam (ل)",
-              "rule_applied_ar": "إدغام بلا غنّة — نون ساكنة قبل اللام (ل)",
+              "rule_applied_ar": "إدغام بلا غنّة: نون ساكنة قبل اللام (ل)",
               "surah_name_ar": "الكهف"
             }
           ]
@@ -237,9 +237,9 @@
         "Not merging completely: the Noon sound must disappear entirely"
       ],
       "common_mistakes_ar": [
-        "تطبيق الإدغام في كلمة واحدة (مثل: قراءة دُنْيَا بالإدغام — وهذا خطأ)",
-        "إضافة الغنّة مع اللام والراء — وكلاهما إدغام بلا غنّة",
-        "عدم استكمال الإدغام — يجب أن يختفي صوت النون كلّيّا"
+        "تطبيق الإدغام في كلمة واحدة (مثل: قراءة دُنْيَا بالإدغام: وهذا خطأ)",
+        "إضافة الغنّة مع اللام والراء: وكلاهما إدغام بلا غنّة",
+        "عدم استكمال الإدغام: يجب أن يختفي صوت النون كلّيّا"
       ],
       "verified": true
     },
@@ -270,7 +270,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "مِنۢ بَعْدِ",
           "rule_applied": "Iqlab: Noon Sakinah followed by Baa (ب), Noon becomes Meem",
-          "rule_applied_ar": "إقلاب — نون ساكنة قبل الباء (ب)، تُقلب النون ميما",
+          "rule_applied_ar": "إقلاب: نون ساكنة قبل الباء (ب)، تُقلب النون ميما",
           "surah_name_ar": "البقرة"
         },
         {
@@ -282,7 +282,7 @@
           "surah_name_en": "Al-Hajj",
           "highlight_word": "سَمِيعٌۢ بَصِيرٌ",
           "rule_applied": "Iqlab: Tanween followed by Baa (ب)",
-          "rule_applied_ar": "إقلاب — تنوين قبل الباء (ب)",
+          "rule_applied_ar": "إقلاب: تنوين قبل الباء (ب)",
           "surah_name_ar": "الحج"
         },
         {
@@ -294,7 +294,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "أَنۢبِئْهُمْ",
           "rule_applied": "Iqlab: Noon Sakinah followed by Baa (ب) within one word",
-          "rule_applied_ar": "إقلاب — نون ساكنة قبل الباء (ب) في كلمة واحدة",
+          "rule_applied_ar": "إقلاب: نون ساكنة قبل الباء (ب) في كلمة واحدة",
           "surah_name_ar": "البقرة"
         }
       ],
@@ -305,8 +305,8 @@
       ],
       "common_mistakes_ar": [
         "نطق الميم نطقا تامّا واضحا بدلا من إخفائها",
-        "إطباق الشفتين تماما — الشفتان تتقاربان فحسب ولا تنغلقان",
-        "إغفال الغنّة — يجب الحفاظ عليها بمقدار حركتين"
+        "إطباق الشفتين تماما: الشفتان تتقاربان فحسب ولا تنغلقان",
+        "إغفال الغنّة: يجب الحفاظ عليها بمقدار حركتين"
       ],
       "verified": true
     },
@@ -407,7 +407,7 @@
           "surah_name_en": "Ar-Rum",
           "highlight_word": "مِنْ قَبْلُ",
           "rule_applied": "Ikhfaa: Noon Sakinah followed by Qaaf (ق)",
-          "rule_applied_ar": "إخفاء — نون ساكنة قبل القاف (ق)",
+          "rule_applied_ar": "إخفاء: نون ساكنة قبل القاف (ق)",
           "surah_name_ar": "الروم"
         },
         {
@@ -419,7 +419,7 @@
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "أَنْتُمْ",
           "rule_applied": "Ikhfaa: Noon Sakinah followed by Taa (ت) within one word",
-          "rule_applied_ar": "إخفاء — نون ساكنة قبل التاء (ت) في كلمة واحدة",
+          "rule_applied_ar": "إخفاء: نون ساكنة قبل التاء (ت) في كلمة واحدة",
           "surah_name_ar": "البقرة"
         },
         {
@@ -431,7 +431,7 @@
           "surah_name_en": "Al-Isra",
           "highlight_word": "مَنْصُورًا",
           "rule_applied": "Ikhfaa: Noon Sakinah followed by Saad (ص) within one word",
-          "rule_applied_ar": "إخفاء — نون ساكنة قبل الصاد (ص) في كلمة واحدة",
+          "rule_applied_ar": "إخفاء: نون ساكنة قبل الصاد (ص) في كلمة واحدة",
           "surah_name_ar": "الإسراء"
         },
         {
@@ -443,7 +443,7 @@
           "surah_name_en": "Saba",
           "highlight_word": "مِنْ ظَهِيرٍ",
           "rule_applied": "Ikhfaa: Noon Sakinah followed by Dhaa (ظ)",
-          "rule_applied_ar": "إخفاء — نون ساكنة قبل الظاء (ظ)",
+          "rule_applied_ar": "إخفاء: نون ساكنة قبل الظاء (ظ)",
           "surah_name_ar": "سبإ"
         }
       ],
@@ -454,10 +454,10 @@
         "Tongue touching the articulation point of the Noon. It should hover near the following letter's position"
       ],
       "common_mistakes_ar": [
-        "النطق بالنون نطقا واضحا (كالإظهار) — بل يجب إخفاؤها",
-        "الإدغام التامّ (كالإدغام) — صوت النون يجب أن يبقى موجودا خفيّا",
+        "النطق بالنون نطقا واضحا (كالإظهار): بل يجب إخفاؤها",
+        "الإدغام التامّ (كالإدغام): صوت النون يجب أن يبقى موجودا خفيّا",
         "عدم تعديل صفة الغنّة بحسب تفخيم أو ترقيق الحرف الذي بعدها",
-        "تلامس اللسان مع مخرج النون — بل ينبغي أن يكون قريبا من مخرج الحرف الذي بعدها"
+        "تلامس اللسان مع مخرج النون: بل ينبغي أن يكون قريبا من مخرج الحرف الذي بعدها"
       ],
       "verified": true
     }
