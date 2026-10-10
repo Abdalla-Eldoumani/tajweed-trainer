@@ -6,29 +6,29 @@
 // theme crossfade, the reduced-motion instant swap, the clean AR/EN first-render
 // console) are confirmed by the Playwright gate; this locks the structure so it
 // cannot silently regress. It checks:
-//   1. motion tokens  — :root defines the four durations and three easing curves
+//   1. motion tokens: :root defines the four durations and three easing curves
 //      with their exact values, and the durations are not duplicated into any
 //      [data-theme] block (theme-independent, so they belong in :root once).
-//   2. route-enter     — a .route-enter class drives the page turn off
+//   2. route-enter: a .route-enter class drives the page turn off
 //      var(--motion-page) AND the prefers-reduced-motion block disables it.
-//   3. theme-fade      — the .theme-fade color transitions exist off
+//   3. theme-fade: the .theme-fade color transitions exist off
 //      var(--motion-page) AND the reduced-motion block turns them off. It is a
 //      color transition, not a view transition, so the page keeps taking clicks
 //      while the theme eases.
-//   4. helper          — src/lib/motion.ts exports withThemeFade, adds and
+//   4. helper: src/lib/motion.ts exports withThemeFade, adds and
 //      removes the .theme-fade class on <html>, never calls the View
 //      Transitions API (which hit-tests the page as a snapshot), and calls
 //      prefersReducedMotion; settings/page uses the helper so the crossfade
 //      cannot disappear.
-//   5. hydration fix   — Sidebar and Header each carry suppressHydrationWarning,
+//   5. hydration fix: Sidebar and Header each carry suppressHydrationWarning,
 //      and never on a wrapping <aside>/<header>/<h1>/<nav>/<Link> (single text
 //      node only, never a blanket suppression).
-//   6. no-abandoned-path — layout.tsx (comment-stripped) has no
+//   6. no-abandoned-path: layout.tsx (comment-stripped) has no
 //      unstable_ViewTransition and no "use client" (it stays a server
 //      component), and next.config.mjs has no experimental viewTransition flag.
 //      A CSP non-regression check confirms connect-src still names only
 //      'self' https://api.quran.com (the motion work needs no new origin).
-//   7. settings mounted-gate — SettingsProvider exposes DEFAULT_SETTINGS until
+//   7. settings mounted-gate: SettingsProvider exposes DEFAULT_SETTINGS until
 //      mounted (so the first client render matches the server's no-localStorage
 //      default) and SettingsSync gates both <html> writes on mounted (so it
 //      never clobbers the pre-paint bootstrap). This is the real fix for the
