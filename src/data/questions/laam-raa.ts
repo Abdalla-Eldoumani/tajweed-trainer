@@ -52,7 +52,7 @@ export const questions: Question[] = [
     englishGloss: "all praise",
     options: [
       { id: "opt-a", label: { en: "Pronounced clearly with sukoon", ar: "تُنطق نطقا واضحا ساكنة" } },
-      { id: "opt-b", label: { en: "Silent — merged into the following letter", ar: "ساكنة لا تُنطق — تُدغم في الحرف التالي" } },
+      { id: "opt-b", label: { en: "Silent: merged into the following letter", ar: "ساكنة لا تُنطق — تُدغم في الحرف التالي" } },
       { id: "opt-c", label: { en: "Replaced by a hamzah", ar: "تُبدل همزة" } },
       { id: "opt-d", label: { en: "Doubled with shaddah", ar: "تُشدّد" } },
     ],
@@ -68,13 +68,13 @@ export const questions: Question[] = [
     arabicText: "الرَّحْمَنِ",
     englishGloss: "the Most Gracious",
     options: [
-      { id: "opt-a", label: { en: "Silent — merged (Idgham) into the following letter, which gets shaddah", ar: "تُدغم في الحرف التالي فيُشدَّد، ولا تُنطق اللام" } },
+      { id: "opt-a", label: { en: "Silent: merged (Idgham) into the following letter, which gets shaddah", ar: "تُدغم في الحرف التالي فيُشدَّد، ولا تُنطق اللام" } },
       { id: "opt-b", label: { en: "Pronounced clearly with sukoon", ar: "تُنطق ساكنة واضحة" } },
       { id: "opt-c", label: { en: "Pronounced with a kasrah", ar: "تُنطق مكسورة" } },
       { id: "opt-d", label: { en: "Replaced by a meem", ar: "تُبدل ميما" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Before Shamsiyyah letters, the Laam is silent and merges into the following letter, which receives a shaddah (e.g., الرَّحْمَنِ — Laam silent, Raa with shaddah).", ar: "قبل الحروف الشمسية تُدغم اللام في الحرف الذي يليها فيُشدَّد، ولا تُنطق اللام (كالرَّحْمَنِ — اللام مدغمة والراء مشدّدة).", lessonAnchor: "laam-shamsiyyah" },
+    explanation: { en: "Before Shamsiyyah letters, the Laam is silent and merges into the following letter, which receives a shaddah (e.g., الرَّحْمَنِ, where the Laam is silent and the Raa has shaddah).", ar: "قبل الحروف الشمسية تُدغم اللام في الحرف الذي يليها فيُشدَّد، ولا تُنطق اللام (كالرَّحْمَنِ — اللام مدغمة والراء مشدّدة).", lessonAnchor: "laam-shamsiyyah" },
     source: { surah: 1, ayah: 3, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -91,7 +91,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "خُصَّ ضَغْطٍ قِظْ", ar: "خُصَّ ضَغْطٍ قِظْ" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson lists 'ابغ حجك وخف عقيمه' as the Qamariyyah mnemonic — its letters spell out the 14 moon letters.", ar: "ذكر الدرس ضابط الحروف القمرية: 'ابغ حجك وخف عقيمه'، وتجد حروف القمرية في حروف هذه العبارة.", lessonAnchor: "laam-qamariyyah" },
+    explanation: { en: "The lesson lists 'ابغ حجك وخف عقيمه' as the Qamariyyah mnemonic. Its letters spell out the 14 moon letters.", ar: "ذكر الدرس ضابط الحروف القمرية: 'ابغ حجك وخف عقيمه'، وتجد حروف القمرية في حروف هذه العبارة.", lessonAnchor: "laam-qamariyyah" },
     source: { surah: 1, ayah: 2, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -122,7 +122,7 @@ export const questions: Question[] = [
       { id: "opt-a", label: { en: "When preceded by Kasrah (e.g., بِسْمِ اللَّهِ)", ar: "إذا سبقتها كسرة (كبِسْمِ اللَّهِ)" } },
       { id: "opt-b", label: { en: "When preceded by Fathah", ar: "إذا سبقتها فتحة" } },
       { id: "opt-c", label: { en: "When preceded by Dammah", ar: "إذا سبقتها ضمّة" } },
-      { id: "opt-d", label: { en: "Never — always heavy", ar: "لا تكون مرقّقة — دائما مفخّمة" } },
+      { id: "opt-d", label: { en: "Never: always heavy", ar: "لا تكون مرقّقة — دائما مفخّمة" } },
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Kasrah before Allah's name lightens the Laam (e.g., بِسْمِ اللَّهِ, لِلَّهِ).", ar: "تُرقّق لام الجلالة بعد الكسرة (كبِسْمِ اللَّهِ، ولِلَّهِ).", lessonAnchor: "laam-lafzul-jalalah" },
@@ -189,7 +189,7 @@ export const questions: Question[] = [
     arabicText: "الْحَمْدُ",
     englishGloss: "all praise",
     options: [
-      { id: "opt-a", label: { en: "Laam Qamariyyah — followed by Haa (ح), a moon letter", ar: "لام قمرية — قبل الحاء (ح) وهي قمرية" } },
+      { id: "opt-a", label: { en: "Laam Qamariyyah: followed by Haa (ح), a moon letter", ar: "لام قمرية — قبل الحاء (ح) وهي قمرية" } },
       { id: "opt-b", label: { en: "Laam Shamsiyyah", ar: "لام شمسية" } },
       { id: "opt-c", label: { en: "Laam Tafkheem (heavy)", ar: "لام مفخّمة" } },
       { id: "opt-d", label: { en: "Laam Tarqeeq (light)", ar: "لام مرقّقة" } },
@@ -206,7 +206,7 @@ export const questions: Question[] = [
     arabicText: "الرَّحْمَنِ",
     englishGloss: "the Most Gracious",
     options: [
-      { id: "opt-a", label: { en: "Laam Shamsiyyah — Laam silent, merged into Raa (which is shamsiyyah)", ar: "لام شمسية — اللام مدغمة في الراء (الشمسية)" } },
+      { id: "opt-a", label: { en: "Laam Shamsiyyah: Laam silent, merged into Raa (which is shamsiyyah)", ar: "لام شمسية — اللام مدغمة في الراء (الشمسية)" } },
       { id: "opt-b", label: { en: "Laam Qamariyyah", ar: "لام قمرية" } },
       { id: "opt-c", label: { en: "Laam of Allah", ar: "لام لفظ الجلالة" } },
       { id: "opt-d", label: { en: "Laam Tarqeeq", ar: "لام مرقّقة" } },
@@ -223,7 +223,7 @@ export const questions: Question[] = [
     arabicText: "بِسْمِ اللَّهِ",
     englishGloss: "in the name of Allah",
     options: [
-      { id: "opt-a", label: { en: "Light — preceded by Kasrah (مِ)", ar: "مرقّقة — مسبوقة بكسرة (مِ)" } },
+      { id: "opt-a", label: { en: "Light: preceded by Kasrah (مِ)", ar: "مرقّقة — مسبوقة بكسرة (مِ)" } },
       { id: "opt-b", label: { en: "Heavy", ar: "مفخّمة" } },
       { id: "opt-c", label: { en: "Variable", ar: "متغيّرة" } },
       { id: "opt-d", label: { en: "Silent", ar: "ساكنة لا تُنطق" } },
@@ -274,7 +274,7 @@ export const questions: Question[] = [
     arabicText: "رَبِّ",
     englishGloss: "Lord",
     options: [
-      { id: "opt-a", label: { en: "Heavy — Raa with Fathah is always heavy", ar: "مفخّمة — الراء المفتوحة مفخّمة دائما" } },
+      { id: "opt-a", label: { en: "Heavy: Raa with Fathah is always heavy", ar: "مفخّمة — الراء المفتوحة مفخّمة دائما" } },
       { id: "opt-b", label: { en: "Light", ar: "مرقّقة" } },
       { id: "opt-c", label: { en: "Variable", ar: "متغيّرة" } },
       { id: "opt-d", label: { en: "Silent", ar: "ساكنة لا تُنطق" } },
@@ -291,7 +291,7 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "Laam Shamsiyyah — followed by Noon (a sun letter)", ar: "لام شمسية — قبل النون (شمسية)" } },
+      { id: "opt-a", label: { en: "Laam Shamsiyyah: followed by Noon (a sun letter)", ar: "لام شمسية — قبل النون (شمسية)" } },
       { id: "opt-b", label: { en: "Laam Qamariyyah", ar: "لام قمرية" } },
       { id: "opt-c", label: { en: "Laam of Allah", ar: "لام لفظ الجلالة" } },
       { id: "opt-d", label: { en: "No Laam rule", ar: "لا حكم لاميّ" } },
@@ -308,8 +308,8 @@ export const questions: Question[] = [
     arabicText: "الْفَجْرِ",
     englishGloss: "the dawn",
     options: [
-      { id: "opt-a", label: { en: "Heavy — Sakinah preceded by Sukoon, with the Sukoon's letter preceded by Fathah/Dammah", ar: "مفخّمة — ساكنة بعد ساكن مسبوق بفتحة أو ضمّة" } },
-      { id: "opt-b", label: { en: "Light — Kasrah on the Raa", ar: "مرقّقة — كسرة على الراء" } },
+      { id: "opt-a", label: { en: "Heavy: Sakinah preceded by Sukoon, with the Sukoon's letter preceded by Fathah/Dammah", ar: "مفخّمة — ساكنة بعد ساكن مسبوق بفتحة أو ضمّة" } },
+      { id: "opt-b", label: { en: "Light: Kasrah on the Raa", ar: "مرقّقة — كسرة على الراء" } },
       { id: "opt-c", label: { en: "Variable", ar: "متغيّرة" } },
       { id: "opt-d", label: { en: "Silent", ar: "ساكنة لا تُنطق" } },
     ],
@@ -359,7 +359,7 @@ export const questions: Question[] = [
     arabicText: "مَالِكِ",
     englishGloss: "Master",
     options: [
-      { id: "opt-a", label: { en: "Light — Laam is always light EXCEPT in الله after Fathah/Dammah", ar: "مرقّقة — اللام مرقّقة دائما إلا في لفظ الجلالة بعد فتح أو ضمّ" } },
+      { id: "opt-a", label: { en: "Light: Laam is always light EXCEPT in الله after Fathah/Dammah", ar: "مرقّقة — اللام مرقّقة دائما إلا في لفظ الجلالة بعد فتح أو ضمّ" } },
       { id: "opt-b", label: { en: "Heavy", ar: "مفخّمة" } },
       { id: "opt-c", label: { en: "Variable", ar: "متغيّرة" } },
       { id: "opt-d", label: { en: "Silent", ar: "ساكنة" } },
@@ -395,7 +395,7 @@ export const questions: Question[] = [
     arabicText: "الْحَمْدُ",
     englishGloss: "all praise",
     options: [
-      { id: "opt-a", label: { en: "14 sun + 14 moon = 28 — every Arabic letter falls into one category", ar: "أربع عشرة شمسية + أربع عشرة قمرية = ٢٨ — كلّ حرف عربي ينتمي إلى إحداهما" } },
+      { id: "opt-a", label: { en: "14 sun + 14 moon = 28, so every Arabic letter falls into one category", ar: "أربع عشرة شمسية + أربع عشرة قمرية = ٢٨ — كلّ حرف عربي ينتمي إلى إحداهما" } },
       { id: "opt-b", label: { en: "10 sun + 18 moon", ar: "١٠ شمسية + ١٨ قمرية" } },
       { id: "opt-c", label: { en: "7 sun + 21 moon", ar: "٧ شمسية + ٢١ قمرية" } },
       { id: "opt-d", label: { en: "All 28 are sun letters", ar: "الجميع شمسية" } },
@@ -412,13 +412,13 @@ export const questions: Question[] = [
     arabicText: "قُلِ اللَّهُمَّ",
     englishGloss: "Say: O Allah",
     options: [
-      { id: "opt-a", label: { en: "Light — preceded by a Kasrah on the Laam of قُلِ", ar: "مرقّقة — مسبوقة بكسرة على اللام في قُلِ" } },
-      { id: "opt-b", label: { en: "Heavy — قُلِ ends in a Dammah originally", ar: "مفخّمة — قُلِ أصلها بضمّة" } },
+      { id: "opt-a", label: { en: "Light: preceded by a Kasrah on the Laam of قُلِ", ar: "مرقّقة — مسبوقة بكسرة على اللام في قُلِ" } },
+      { id: "opt-b", label: { en: "Heavy: قُلِ ends in a Dammah originally", ar: "مفخّمة — قُلِ أصلها بضمّة" } },
       { id: "opt-c", label: { en: "Variable", ar: "متغيّرة" } },
       { id: "opt-d", label: { en: "Silent", ar: "ساكنة لا تُنطق" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson explicitly lists this as a common mistake: making the Laam in 'Allahumma' heavy when preceded by Kasrah (قُلِ اللَّهُمَّ — Laam is LIGHT here, since it follows a Kasrah).", ar: "ذكر الدرس صراحة من الأخطاء الشائعة تفخيم لام الجلالة في 'اللَّهُمَّ' بعد الكسرة. الصحيح أنها مرقّقة هنا لمجيء الكسرة قبلها.", lessonAnchor: "laam-lafzul-jalalah" },
+    explanation: { en: "The lesson explicitly lists this as a common mistake: making the Laam in 'Allahumma' heavy when preceded by Kasrah (قُلِ اللَّهُمَّ: the Laam is LIGHT here, since it follows a Kasrah).", ar: "ذكر الدرس صراحة من الأخطاء الشائعة تفخيم لام الجلالة في 'اللَّهُمَّ' بعد الكسرة. الصحيح أنها مرقّقة هنا لمجيء الكسرة قبلها.", lessonAnchor: "laam-lafzul-jalalah" },
     source: { surah: 3, ayah: 26, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -446,7 +446,7 @@ export const questions: Question[] = [
     arabicText: "بِسْمِ اللَّهِ",
     englishGloss: "in the name of Allah",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — Kasrah preceding lightens the Laam", ar: "خطأ شائع — الكسرة قبلها تُرقّقها" } },
+      { id: "opt-a", label: { en: "A common mistake: Kasrah preceding lightens the Laam", ar: "خطأ شائع — الكسرة قبلها تُرقّقها" } },
       { id: "opt-b", label: { en: "Required in some recitations", ar: "لازم في بعض الروايات" } },
       { id: "opt-c", label: { en: "Acceptable when stopping", ar: "جائز عند الوقف" } },
       { id: "opt-d", label: { en: "Required in Hafs", ar: "لازم في حفص" } },
@@ -481,12 +481,12 @@ export const questions: Question[] = [
     englishGloss: "the people",
     options: [
       { id: "opt-a", label: { en: "Because it is the definite article 'Al-' graphically; the Idgham is a phonetic rule, not a spelling change", ar: "لأنّها أداة التعريف 'الـ' كتابة، والإدغام حكم نطقي لا تغيير إملائي" } },
-      { id: "opt-b", label: { en: "By accident — early scribes forgot to remove it", ar: "خطأ من النسّاخ القدماء" } },
+      { id: "opt-b", label: { en: "By accident: early scribes forgot to remove it", ar: "خطأ من النسّاخ القدماء" } },
       { id: "opt-c", label: { en: "It is sometimes pronounced", ar: "تُنطق أحيانا" } },
       { id: "opt-d", label: { en: "Different mushafs differ", ar: "تختلف المصاحف في كتابتها" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson states explicitly: 'The Laam is SILENT — written but not pronounced. It merges (Idgham) into the following letter.' Spelling preserves the morpheme; pronunciation applies the merge.", ar: "نصّ الدرس: 'تُكتب اللام ولا تُنطق — تُدغم في الحرف الذي يليها'. فالكتابة تحفظ بنية الكلمة (أداة التعريف)، والنطق يطبّق الإدغام.", lessonAnchor: "laam-shamsiyyah" },
+    explanation: { en: "The lesson states explicitly: 'The Laam is SILENT: written but not pronounced. It merges (Idgham) into the following letter.' Spelling preserves the morpheme; pronunciation applies the merge.", ar: "نصّ الدرس: 'تُكتب اللام ولا تُنطق — تُدغم في الحرف الذي يليها'. فالكتابة تحفظ بنية الكلمة (أداة التعريف)، والنطق يطبّق الإدغام.", lessonAnchor: "laam-shamsiyyah" },
     source: { surah: 114, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -514,7 +514,7 @@ export const questions: Question[] = [
     arabicText: "بِسْمِ اللَّهِ",
     englishGloss: "in the name of Allah",
     options: [
-      { id: "opt-a", label: { en: "Both اللَّهُ and اللَّهُمَّ — same rule based on the preceding vowel", ar: "اللَّهُ واللَّهُمَّ كلتاهما — الحكم بحسب الحركة قبلها" } },
+      { id: "opt-a", label: { en: "Both اللَّهُ and اللَّهُمَّ: same rule based on the preceding vowel", ar: "اللَّهُ واللَّهُمَّ كلتاهما — الحكم بحسب الحركة قبلها" } },
       { id: "opt-b", label: { en: "Only الله, not اللهم", ar: "الله فقط دون اللهم" } },
       { id: "opt-c", label: { en: "Only at the start of an ayah", ar: "في بداية الآية فقط" } },
       { id: "opt-d", label: { en: "Only when stopping", ar: "عند الوقف فقط" } },
@@ -531,9 +531,9 @@ export const questions: Question[] = [
     arabicText: "فِرْعَوْنَ",
     englishGloss: "Pharaoh",
     options: [
-      { id: "opt-a", label: { en: "Heavy — because of the Dammah after it", ar: "مفخّمة — للضمّة بعدها" } },
-      { id: "opt-b", label: { en: "Light — sakin Raa preceded by an original Kasrah, with no isti'la letter following", ar: "مرقّقة — راء ساكنة بعد كسرة أصلية ولا حرف استعلاء بعدها" } },
-      { id: "opt-c", label: { en: "Heavy — all sakin Raa are heavy", ar: "مفخّمة — كلّ راء ساكنة مفخّمة" } },
+      { id: "opt-a", label: { en: "Heavy: because of the Dammah after it", ar: "مفخّمة — للضمّة بعدها" } },
+      { id: "opt-b", label: { en: "Light: sakin Raa preceded by an original Kasrah, with no isti'la letter following", ar: "مرقّقة — راء ساكنة بعد كسرة أصلية ولا حرف استعلاء بعدها" } },
+      { id: "opt-c", label: { en: "Heavy: all sakin Raa are heavy", ar: "مفخّمة — كلّ راء ساكنة مفخّمة" } },
       { id: "opt-d", label: { en: "It varies by reciter", ar: "تختلف بحسب القارئ" } },
     ],
     correctOptionId: "opt-b",
@@ -552,9 +552,9 @@ export const questions: Question[] = [
     arabicText: "ارْجِعُوا",
     englishGloss: "go back",
     options: [
-      { id: "opt-a", label: { en: "Light — there is a Kasrah before it", ar: "مرقّقة — لوجود كسرة قبلها" } },
-      { id: "opt-b", label: { en: "Light — every sakin Raa is light", ar: "مرقّقة — كلّ راء ساكنة مرقّقة" } },
-      { id: "opt-c", label: { en: "Heavy — the Kasrah on Hamzat Al-Wasl is temporary, so it does not cause Tarqeeq", ar: "مفخّمة — الكسرة على همزة الوصل عارضة فلا توجب الترقيق" } },
+      { id: "opt-a", label: { en: "Light: there is a Kasrah before it", ar: "مرقّقة — لوجود كسرة قبلها" } },
+      { id: "opt-b", label: { en: "Light: every sakin Raa is light", ar: "مرقّقة — كلّ راء ساكنة مرقّقة" } },
+      { id: "opt-c", label: { en: "Heavy: the Kasrah on Hamzat Al-Wasl is temporary, so it does not cause Tarqeeq", ar: "مفخّمة — الكسرة على همزة الوصل عارضة فلا توجب الترقيق" } },
       { id: "opt-d", label: { en: "It varies by reciter", ar: "تختلف بحسب القارئ" } },
     ],
     correctOptionId: "opt-c",
