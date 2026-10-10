@@ -29,11 +29,11 @@ Open `http://localhost:3000`. Hot reload applies TS, TSX, CSS, and JSON edits.
 | `npm run coverage` | `vitest run --coverage`: the suite plus v8 coverage, gated by the thresholds in `vitest.config.ts`. |
 | `npm run verify` | Non-browser gate: `tsc --noEmit`, `eslint .`, `vitest run --coverage` (thresholds enforced), then `npm run verify:audits`. |
 | `npm run verify:audits` | Headless data and source-parity audits (no browser): tajweed color and theme parity, content accuracy, lesson coloring, navigation and reading wiring, security config, and the component-structure guards (overlay, rule reveal, follow-along, motion, accessibility, onboarding). |
-| `npm run verify:ui` | Playwright browser suites: module lock, Mushaf, new features, questions, reciters, audio player. |
+| `npm run verify:ui` | Playwright browser suites: lesson access, Mushaf, new features, questions, reciters, audio player. |
 | `node scripts/fetch-surah-names.mjs` | One-shot: pulls `/chapters`, patches `surah_name_ar` into rule examples. |
 | `node scripts/prefetch-tajweed-snapshots.mjs` | One-shot: snapshots tajweed HTML for lesson verses into `src/data/verse-snapshots.json`. |
 | `node scripts/verify-mushaf.mjs` | End-to-end browser test of the Mushaf reader. |
-| `node scripts/verify-module-lock.mjs` | Browser test of module gating. |
+| `node scripts/verify-lesson-access.mjs` | Browser test that every lesson and quiz opens on a fresh profile and progress still records. |
 | `node scripts/verify-questions.mjs` | Browser test of the practice hub and authored questions. |
 | `node scripts/verify-reciters.mjs` | Browser test of the reciter selector. |
 | `node scripts/verify-accessibility.mjs` | Source-level accessibility guards, no browser (see [accessibility.md](accessibility.md)). |
