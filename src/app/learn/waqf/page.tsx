@@ -5,10 +5,7 @@ import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
-import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
-import { useModuleLock } from "@/hooks/useModuleLock";
-import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import waqfData from "@/data/content/waqf-symbols.json";
 
@@ -19,23 +16,9 @@ const SECTIONS = [
 ];
 
 export default function WaqfPage() {
-  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("waqf");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("waqf");
   const { t, isAr } = useTranslation();
-
-  if (!mounted) return <LearnLoading />;
-  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
-    return (
-      <LockedModuleScreen
-        moduleTitleEn={waqfData.title_en}
-        moduleTitleAr={waqfData.title_ar}
-        prereqId={prereqId}
-        prereqTitleEn={prereqTitleEn}
-        prereqTitleAr={prereqTitleAr}
-      />
-    );
-  }
 
   return (
     <div className="space-y-8">
