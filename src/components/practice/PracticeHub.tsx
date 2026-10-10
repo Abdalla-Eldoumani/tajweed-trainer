@@ -7,6 +7,7 @@ import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { MODULES } from "@/components/layout/nav-data";
 import { getModuleLastScore } from "@/lib/practice-scores";
+import { toArabicIndic } from "@/lib/utils";
 
 interface PracticeHubProps {
   // Per-module question counts, computed server-side from the question pool so
@@ -34,6 +35,20 @@ export function PracticeHub({ counts, totalQuestions }: PracticeHubProps) {
       <StreakCounter />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {reviewStats.due > 0 && (
+          <PracticeModuleCard
+            href="/practice/review"
+            titleEn={`Review Due (${reviewStats.due})`}
+            titleAr={`مراجعة مستحقّة (${toArabicIndic(reviewStats.due)})`}
+            questionCount={reviewStats.due}
+            summary={reviewSummary}
+            accent="review"
+            description={{ en: t("practice.hub.reviewDesc"), ar: t("practice.hub.reviewDesc") }}
+            badge={{ en: t("practice.hub.reviewBadge"), ar: t("practice.hub.reviewBadge") }}
+            wide
+            className="sm:col-span-2"
+          />
+        )}
         <PracticeModuleCard
           href="/practice/mixed"
           titleEn="Mixed Review"
@@ -44,21 +59,6 @@ export function PracticeHub({ counts, totalQuestions }: PracticeHubProps) {
           description={{ en: t("practice.hub.mixedDesc"), ar: t("practice.hub.mixedDesc") }}
           badge={{ en: t("practice.hub.mixedBadge"), ar: t("practice.hub.mixedBadge") }}
         />
-        {reviewStats.due > 0 && (
-          <PracticeModuleCard
-            href="/practice/review"
-            titleEn={`Review Due (${reviewStats.due})`}
-            titleAr={`مراجعة مستحقّة (${reviewStats.due})`}
-            questionCount={reviewStats.due}
-            summary={reviewSummary}
-            accent="review"
-            description={{ en: t("practice.hub.reviewDesc"), ar: t("practice.hub.reviewDesc") }}
-            badge={{ en: t("practice.hub.reviewBadge"), ar: t("practice.hub.reviewBadge") }}
-          />
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {MODULES.map((mod) => {
           const count = counts[mod.id] ?? 0;
           if (count === 0) return null;
