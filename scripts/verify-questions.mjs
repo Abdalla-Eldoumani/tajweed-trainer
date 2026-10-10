@@ -25,8 +25,8 @@ function record(name, ok, details = "") {
 async function main() {
   const browser = await chromium.launch({ executablePath: CHROME, headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-  // A fresh profile opens the first-run tour and locks every module after the
-  // first, so seed one with the tour seen and every prerequisite quiz done.
+  // A fresh profile opens the first-run tour, so seed one with the tour seen
+  // and every earlier module finished.
   await context.addInitScript(() => {
     const key = "tajweed-trainer-progress";
     if (localStorage.getItem(key)) return;
@@ -144,7 +144,7 @@ async function main() {
   );
 
   // 6c. lesson page shows a "Practice this module" CTA below
-  //     LessonNavigation. Use makharij (no prereq, never locked).
+  //     LessonNavigation. Use makharij, the first module.
   await page.goto(`${BASE}/learn/makharij`, { waitUntil: "networkidle" });
   await page.waitForTimeout(500);
   const practiceCtaCount = await page.locator(`a[href="/practice/makharij"]`).count();
