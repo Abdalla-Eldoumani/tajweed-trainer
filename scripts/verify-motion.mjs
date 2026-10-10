@@ -11,13 +11,15 @@
 //      [data-theme] block (theme-independent, so they belong in :root once).
 //   2. route-enter     — a .route-enter class drives the page turn off
 //      var(--motion-page) AND the prefers-reduced-motion block disables it.
-//   3. view-transition — the ::view-transition-old/new(root) cross-fade exists
-//      off var(--motion-page) AND the reduced-motion block zeroes the
-//      ::view-transition-* animation duration.
-//   4. helper          — src/lib/motion.ts exports withViewTransition, reads the
-//      genuine document.startViewTransition, feature-detects it with a typeof
-//      ... === "function" guard, and calls prefersReducedMotion; settings/page
-//      actually uses the helper so the real API call cannot disappear.
+//   3. theme-fade      — the .theme-fade color transitions exist off
+//      var(--motion-page) AND the reduced-motion block turns them off. It is a
+//      color transition, not a view transition, so the page keeps taking clicks
+//      while the theme eases.
+//   4. helper          — src/lib/motion.ts exports withThemeFade, adds and
+//      removes the .theme-fade class on <html>, never calls the View
+//      Transitions API (which hit-tests the page as a snapshot), and calls
+//      prefersReducedMotion; settings/page uses the helper so the crossfade
+//      cannot disappear.
 //   5. hydration fix   — Sidebar and Header each carry suppressHydrationWarning,
 //      and never on a wrapping <aside>/<header>/<h1>/<nav>/<Link> (single text
 //      node only, never a blanket suppression).
@@ -182,51 +184,43 @@ record(
   routeEnterDisabled ? "route-enter animation off under reduced motion" : "no .route-enter off-switch in a reduced-motion block",
 );
 
-// --- 3. ::view-transition root cross-fade + its reduced-motion zeroing ---
-const vtOldBlock = blockFor(cssNoComments, "::view-transition-old(root)");
-const vtNewBlock = blockFor(cssNoComments, "::view-transition-new(root)");
-const vtOldOk = /animation:[^;]*var\(--motion-page\)/.test(vtOldBlock);
-const vtNewOk = /animation:[^;]*var\(--motion-page\)/.test(vtNewBlock);
+// --- 3. .theme-fade color transitions + their reduced-motion off-switch ---
+const fadeBlock = blockFor(cssNoComments, ".theme-fade");
+const fadeUsesPageToken = (fadeBlock.match(/var\(--motion-page\)/g) ?? []).length >= 3;
 record(
-  "::view-transition-old/new(root) cross-fade references var(--motion-page)",
-  vtOldOk && vtNewOk,
-  vtOldOk && vtNewOk
-    ? "both root pseudo-elements animate off the page token"
-    : `old=${vtOldOk ? "ok" : "missing"} new=${vtNewOk ? "ok" : "missing"}`,
+  ".theme-fade color transitions reference var(--motion-page)",
+  fadeUsesPageToken,
+  fadeUsesPageToken ? "colors, borders and fills ease off the page token" : `found "${norm(fadeBlock) || "no .theme-fade rule"}"`,
 );
 
-// Inside a reduced-motion block, the ::view-transition-* animation is zeroed.
-// Match the universal-selector form (old/new/group(*)) with a zeroed duration.
-const vtZeroed = /::view-transition-(old|new|group)\(\*\)[\s\S]*?animation-duration:\s*0s/.test(reducedJoined);
+const fadeZeroed = /\.theme-fade[^{]*\{[^}]*transition:\s*none/.test(reducedJoined);
 record(
-  "prefers-reduced-motion zeroes the ::view-transition animation duration",
-  vtZeroed,
-  vtZeroed ? "::view-transition-*(*) duration zeroed under reduced motion" : "no ::view-transition zeroing in a reduced-motion block",
+  "prefers-reduced-motion turns the .theme-fade transitions off",
+  fadeZeroed,
+  fadeZeroed ? ".theme-fade transitions are none under reduced motion" : "no .theme-fade off-switch in a reduced-motion block",
 );
 
-// --- 4. the withViewTransition helper: export, genuine API, feature-detect,
+// --- 4. the withThemeFade helper: export, class toggle, no view transition,
 //        reduced-motion gate; plus the real use site in settings ---
-const exportsHelper = /export\s+function\s+withViewTransition\b/.test(motionSrc);
-const usesGenuineApi = /document[\s\S]*startViewTransition|startViewTransition/.test(motionSrc) && motionSrc.includes("startViewTransition");
-const featureDetected =
-  motionSrc.includes("typeof") &&
-  motionSrc.includes("startViewTransition") &&
-  (motionSrc.includes('=== "function"') || motionSrc.includes("=== 'function'"));
-const callsReducedMotion = /prefersReducedMotion\s*\(/.test(motionSrc);
-const helperOk = exportsHelper && usesGenuineApi && featureDetected && callsReducedMotion;
+const motionCode = motionSrc.replace(/\/\/.*$/gm, "");
+const exportsHelper = /export\s+function\s+withThemeFade\b/.test(motionCode);
+const togglesClass = motionCode.includes('classList.add("theme-fade")') && motionCode.includes('classList.remove("theme-fade")');
+const noViewTransition = !motionCode.includes("startViewTransition");
+const callsReducedMotion = /prefersReducedMotion\s*\(/.test(motionCode);
+const helperOk = exportsHelper && togglesClass && noViewTransition && callsReducedMotion;
 record(
-  "withViewTransition feature-detects document.startViewTransition and gates on prefersReducedMotion",
+  "withThemeFade toggles .theme-fade, avoids the View Transitions API and gates on prefersReducedMotion",
   helperOk,
   helperOk
-    ? "exports the helper, reads the genuine API behind a typeof guard, honors reduced motion"
-    : `export=${exportsHelper} api=${usesGenuineApi} typeofGuard=${featureDetected} reducedMotion=${callsReducedMotion}`,
+    ? "exports the helper, toggles the class on <html>, honors reduced motion"
+    : `export=${exportsHelper} classToggle=${togglesClass} noViewTransition=${noViewTransition} reducedMotion=${callsReducedMotion}`,
 );
 
-const settingsUsesHelper = settingsSrc.includes("withViewTransition");
+const settingsUsesHelper = settingsSrc.includes("withThemeFade");
 record(
-  "settings/page.tsx imports and uses withViewTransition",
+  "settings/page.tsx imports and uses withThemeFade",
   settingsUsesHelper,
-  settingsUsesHelper ? "the theme handler drives the View Transitions API" : "withViewTransition not referenced in settings/page.tsx",
+  settingsUsesHelper ? "the theme handler drives the crossfade" : "withThemeFade not referenced in settings/page.tsx",
 );
 
 // --- 5. wordmark hydration fix: present, single node only, never blanket ---
