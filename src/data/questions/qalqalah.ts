@@ -806,10 +806,10 @@ export const questions: Question[] = [
     arabicText: "الْفَلَقِ",
     englishGloss: "the daybreak",
     options: [
-      { id: "opt-a", label: { en: "Sughra: ق always gives the minor level", ar: "الصغرى — القاف تعطي المرتبة الصغرى دائما" } },
-      { id: "opt-b", label: { en: "Wusta: it falls in the middle of the surah", ar: "الوسطى — لوقوعها في وسط السورة" } },
-      { id: "opt-c", label: { en: "Kubra: it is a qalqalah letter made sakin by stopping at the end of the ayah", ar: "الكبرى — حرف قلقلة سكن بالوقف في آخر الآية" } },
-      { id: "opt-d", label: { en: "None: qalqalah needs an original sukoon", ar: "لا قلقلة — لأنها تحتاج سكونا أصليّا" } },
+      { id: "opt-a", label: { en: "Sughra: ق always gives the minor level", ar: "الصغرى: القاف تعطي المرتبة الصغرى دائما" } },
+      { id: "opt-b", label: { en: "Wusta: it falls in the middle of the surah", ar: "الوسطى: لوقوعها في وسط السورة" } },
+      { id: "opt-c", label: { en: "Kubra: it is a qalqalah letter made sakin by stopping at the end of the ayah", ar: "الكبرى: حرف قلقلة سكن بالوقف في آخر الآية" } },
+      { id: "opt-d", label: { en: "None: qalqalah needs an original sukoon", ar: "لا قلقلة: لأنها تحتاج سكونا أصليّا" } },
     ],
     correctOptionId: "opt-c",
     explanation: {
