@@ -476,9 +476,9 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
    withViewTransition() helper drives (currently the theme change in settings).
    Reduced motion disables both for an instant swap; browsers without the View
    Transitions API are handled in the helper, which feature-detects and just
-   applies the update. The theme swap uses the short duration and lets pointer
-   events through the transition overlay, so a tap during the crossfade lands on
-   the page instead of being swallowed by the snapshot. */
+   applies the update. The transition overlay lets pointer events through, so a
+   tap during the crossfade lands on the page instead of being swallowed by the
+   snapshot. */
 @keyframes route-enter {
   from {
     opacity: 0;
@@ -522,11 +522,11 @@ body, .bg-bg-card, .dark\:bg-bg-card-dark {
 }
 
 ::view-transition-old(root) {
-  animation: route-fade-out var(--motion-short) var(--ease-out) both;
+  animation: route-fade-out var(--motion-page) var(--ease-out) both;
 }
 
 ::view-transition-new(root) {
-  animation: route-fade-in var(--motion-short) var(--ease-out) both;
+  animation: route-fade-in var(--motion-page) var(--ease-out) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
