@@ -500,10 +500,10 @@ export const questions: Question[] = [
       { id: "opt-a", label: { en: "Preceded by an ORIGINAL kasrah, OR by a Yaa Maddiyyah (when stopping)", ar: "مسبوقة بكسرة أصلية، أو بياء مدّيّة (عند الوقف)" } },
       { id: "opt-b", label: { en: "Preceded by Fathah", ar: "مسبوقة بفتحة" } },
       { id: "opt-c", label: { en: "Preceded by Dammah", ar: "مسبوقة بضمّة" } },
-      { id: "opt-d", label: { en: "Preceded by another sakin letter", ar: "مسبوقة بحرف ساكن آخر" } },
+      { id: "opt-d", label: { en: "Preceded by a sakin letter other than Yaa that follows a Fathah or Dammah (when stopping)", ar: "مسبوقة بحرف ساكن غير الياء قبله فتحة أو ضمّة (عند الوقف)" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson lists these TWO Tarqeeq cases for sakin Raa: (1) preceded by Kasrah Asliyyah (e.g., فِرْعَوْنَ); (2) preceded by Yaa Maddiyyah (e.g., قَدِيرٌ when stopping).", ar: "ذكر الدرس حالتين لترقيق الراء الساكنة: ١) بعد كسرة أصلية (كفِرْعَوْنَ)، ٢) بعد ياء مدّيّة (كقَدِيرٌ عند الوقف).", lessonAnchor: "raa-rules" },
+    explanation: { en: "The lesson lists these Tarqeeq cases for sakin Raa: (1) preceded by Kasrah Asliyyah with no Isti'la letter after it in the same word (e.g., فِرْعَوْنَ); (2) preceded by Yaa Maddiyyah, when stopping (e.g., قَدِيرٌ); (3) preceded by another sakin letter that follows a Kasrah, when stopping (e.g., ٱلذِّكْرِ). A sakin letter other than Yaa that follows a Fathah or Dammah gives a heavy Raa when stopping, as in الْفَجْرِ.", ar: "ذكر الدرس هذه الحالات لترقيق الراء الساكنة: ١) بعد كسرة أصلية ولا يليها حرف استعلاء في الكلمة نفسها (كفِرْعَوْنَ)، ٢) بعد ياء مدّيّة عند الوقف (كقَدِيرٌ)، ٣) بعد حرف ساكن قبله كسرة عند الوقف (كٱلذِّكْرِ). أما الحرف الساكن (غير الياء) الذي قبله فتحة أو ضمّة فتكون الراء بعده مفخّمة عند الوقف، كما في الْفَجْرِ.", lessonAnchor: "raa-rules" },
     source: { surah: 79, ayah: 17, translationEditionId: null, provenance: PROVENANCE },
   },
   {
