@@ -4,10 +4,7 @@ import { RuleCard } from "@/components/learn/RuleCard";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
-import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
-import { useModuleLock } from "@/hooks/useModuleLock";
-import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import { getColorForClass } from "@/lib/tajweed-colors";
 import meemData from "@/data/content/meem-sakinah.json";
@@ -26,23 +23,9 @@ const RULE_COLORS: Record<string, string> = {
 };
 
 export default function MeemSakinahPage() {
-  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("meem-sakinah");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("meem-sakinah");
   const { t, isAr } = useTranslation();
-
-  if (!mounted) return <LearnLoading />;
-  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
-    return (
-      <LockedModuleScreen
-        moduleTitleEn={meemData.title_en}
-        moduleTitleAr={meemData.title_ar}
-        prereqId={prereqId}
-        prereqTitleEn={prereqTitleEn}
-        prereqTitleAr={prereqTitleAr}
-      />
-    );
-  }
 
   return (
     <div className="space-y-8">
