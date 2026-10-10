@@ -133,13 +133,16 @@ export function Sidebar() {
               : pathname.startsWith(href);
             const label = isAr ? item.labelAr : item.label;
 
+            // The 13px size is an arbitrary value on purpose: tailwind-merge
+            // does not know the custom text-micro token, reads it as a colour,
+            // and drops it next to the text colour below.
             return (
               <Link
                 key={href}
                 href={href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-1 min-h-[44px] px-1 py-1 text-micro font-medium transition-colors",
+                  "flex min-w-0 flex-1 flex-col items-center justify-center gap-1 min-h-[44px] px-0.5 py-1 text-[0.8125rem] font-medium transition-colors",
                   isActive
                     ? "text-[var(--margin-active)]"
                     : "text-[var(--margin-muted)]"
