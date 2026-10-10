@@ -8,6 +8,7 @@ import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
+import { toArabicIndic } from "@/lib/utils";
 import { getColorForClass } from "@/lib/tajweed-colors";
 import laamRaaData from "@/data/content/laam-raa-rules.json";
 
@@ -55,7 +56,7 @@ export default function LaamRaaPage() {
             <p className="text-micro text-text-muted mt-2">{isAr && st.description_ar ? st.description_ar : st.description}</p>
 
             <div className="mt-3">
-              <p className="text-micro font-medium mb-1">{t("module.letters")} ({st.letter_count}):</p>
+              <p className="text-micro font-medium mb-1">{t("module.letters")} ({isAr ? toArabicIndic(st.letter_count) : st.letter_count}):</p>
               <ArabicText text={st.letters} size="sm" />
             </div>
 
