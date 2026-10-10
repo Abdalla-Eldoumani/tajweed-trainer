@@ -20,9 +20,6 @@ interface PracticeModuleCardProps {
   accent?: "default" | "mixed" | "review";
   description?: { en: string; ar?: string };
   badge?: { en: string; ar?: string };
-  // A locked module's quiz is shown but not enterable; the hint explains the
-  // unlock condition. Mirrors the gating on /learn and /practice/[module].
-  locked?: boolean;
 }
 
 function scoreColor(score: number): string {
@@ -40,7 +37,6 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
   accent = "default",
   description,
   badge,
-  locked = false,
 }: PracticeModuleCardProps) {
   const { t, isAr, lang } = useTranslation();
   const title = isAr ? titleAr : titleEn;
@@ -59,7 +55,7 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
       : "";
 
   const card = (
-      <Card hover={!locked} className={`relative h-full ${accentClasses} ${locked ? "opacity-60" : ""}`}>
+      <Card hover className={`relative h-full ${accentClasses}`}>
         {badgeText && (
           <span className="absolute top-3 end-3 text-[0.75rem] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light">
             {badgeText}
@@ -105,32 +101,14 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
                 <span className="text-text-muted">{t("practice.hub.notStarted")}</span>
               )}
             </div>
-            {locked ? (
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-text-muted">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-                {t("learn.locked")}
-              </span>
-            ) : (
-              <span className="text-xs font-medium text-primary dark:text-primary-light">
-                {summary.lastScore !== null ? t("practice.hub.continue") : t("practice.hub.start")}
-                <span aria-hidden className="ms-1">{isAr ? "←" : "→"}</span>
-              </span>
-            )}
+            <span className="text-xs font-medium text-primary dark:text-primary-light">
+              {summary.lastScore !== null ? t("practice.hub.continue") : t("practice.hub.start")}
+              <span aria-hidden className="ms-1">{isAr ? "←" : "→"}</span>
+            </span>
           </div>
-
-          {locked && (
-            <p className="text-[0.8125rem] text-text-muted">{t("practice.hub.lockedHint")}</p>
-          )}
         </div>
       </Card>
   );
-
-  if (locked) {
-    return <div aria-disabled="true">{card}</div>;
-  }
 
   return (
     <Link href={href} className="block">
