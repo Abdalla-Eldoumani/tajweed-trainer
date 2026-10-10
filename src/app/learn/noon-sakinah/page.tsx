@@ -8,6 +8,7 @@ import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
+import { toArabicIndic } from "@/lib/utils";
 import { getColorForClass } from "@/lib/tajweed-colors";
 import noonData from "@/data/content/noon-sakinah-tanween.json";
 
@@ -45,6 +46,7 @@ export default function NoonSakinahPage() {
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("noon-sakinah");
   const { t, isAr } = useTranslation();
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
 
   return (
     <div className="space-y-8">
@@ -121,27 +123,27 @@ export default function NoonSakinahPage() {
                 <tr>
                   <RuleName color={RULE_COLORS["izhar-halqi"]}>{isAr ? "الإظهار" : "Izhar"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.izhar_letters} size="sm" /></td>
-                  <td className="py-2 text-end">{noonData.summary_table.izhar_count}</td>
+                  <td className="py-2 text-end">{num(noonData.summary_table.izhar_count)}</td>
                 </tr>
                 <tr>
                   <RuleName color={RULE_COLORS["idgham"]}>{isAr ? "الإدغام بغنّة" : "Idgham (with ghunnah)"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.idgham_with_ghunnah_letters} size="sm" /></td>
-                  <td className="py-2 text-end">4</td>
+                  <td className="py-2 text-end">{num(4)}</td>
                 </tr>
                 <tr>
                   <RuleName color={tajHex("idgham_wo_ghunnah")}>{isAr ? "الإدغام بلا غنّة" : "Idgham (no ghunnah)"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.idgham_without_ghunnah_letters} size="sm" /></td>
-                  <td className="py-2 text-end">2</td>
+                  <td className="py-2 text-end">{num(2)}</td>
                 </tr>
                 <tr>
                   <RuleName color={RULE_COLORS["iqlab"]}>{isAr ? "الإقلاب" : "Iqlab"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.iqlab_letters} size="sm" /></td>
-                  <td className="py-2 text-end">{noonData.summary_table.iqlab_count}</td>
+                  <td className="py-2 text-end">{num(noonData.summary_table.iqlab_count)}</td>
                 </tr>
                 <tr>
                   <RuleName color={RULE_COLORS["ikhfaa"]}>{isAr ? "الإخفاء" : "Ikhfaa"}</RuleName>
                   <td className="py-2 pe-4"><ArabicText text={noonData.summary_table.ikhfaa_letters} size="sm" /></td>
-                  <td className="py-2 text-end">{noonData.summary_table.ikhfaa_count}</td>
+                  <td className="py-2 text-end">{num(noonData.summary_table.ikhfaa_count)}</td>
                 </tr>
               </tbody>
             </table>
