@@ -10,7 +10,7 @@ Tajweed is an oral science traced through chains of recitation back to the Proph
 
 1. **No fabricated tajweed content.** Rules, letter classifications, and Quranic examples live in pre-reviewed JSON under `src/data/content/`, each example carrying a surah:ayah reference. The app renders this data and never generates, edits, paraphrases, translates, or classifies it. See [docs/content-schema.md](docs/content-schema.md) and [docs/content-audit.md](docs/content-audit.md).
 2. **Color-coded text comes from the API.** The Quran.com Foundation `text_uthmani_tajweed` field carries the full color markup, sanitized at the boundary and rendered as-is, never mixed with user text. See [docs/api-integrations.md](docs/api-integrations.md).
-3. **Hafs 'an 'Asim for the text and the rules.** No mixing of qira'aat; beat counts and letter sets follow Hafs. The single Warsh recitation on the surah index is a separate listening option behind a disclaimer, and it never touches the Hafs text or the per-verse player.
+3. **Hafs 'an 'Asim for the text and the rules.** No mixing of qira'aat; beat counts and letter sets follow Hafs. The single Warsh ‘an Nāfi‘ recitation on the surah index is a separate listening option behind a disclaimer. The lessons teach Hafs, and the recitation never touches the Hafs text or the per-verse player.
 4. **When in doubt, omit.** It is better to fall back to English than to ship an unreviewed translation.
 
 The same rule is why per-letter tafkheem coloring is not shipped: the API emits no tafkheem class for those letters, and there is no verified per-letter dataset to drive it without the app classifying tajweed itself.
