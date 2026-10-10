@@ -13,7 +13,7 @@ import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
 import type { Recitation, TranslationResource, Theme } from "@/lib/types";
 import { withViewTransition } from "@/lib/motion";
-import { cn, toArabicIndic } from "@/lib/utils";
+import { cn, formatSpeed, toArabicIndic } from "@/lib/utils";
 
 // Literal anchor hexes per theme, used only to paint the
 // preview swatch: ground, ink, gold. These cannot be var(--bg)/var(--text)/
@@ -330,9 +330,8 @@ export default function SettingsPage() {
               className={segChip(settings.playbackSpeed === speed)}
               role="radio"
               aria-checked={settings.playbackSpeed === speed}
-              aria-label={`${speed}x speed`}
             >
-              {speed}x
+              {formatSpeed(speed, isAr)}
             </button>
           ))}
         </div>
