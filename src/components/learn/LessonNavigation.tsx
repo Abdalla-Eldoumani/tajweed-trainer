@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/lib/i18n";
-import { useModuleLock } from "@/hooks/useModuleLock";
 
 type LocaleLabel = string | { en: string; ar?: string };
 
@@ -15,8 +14,7 @@ interface LessonNavigationProps {
   onMarkComplete?: () => void;
   isComplete?: boolean;
   // When set, renders a "Practice this module" CTA below the row that links to
-  // /practice/<id>. The CTA is suppressed while the module is still locked,
-  // matching the gating behavior in /learn/<id>.
+  // /practice/<id>.
   practiceModuleId?: string;
 }
 
@@ -49,10 +47,7 @@ export function LessonNavigation({
   practiceModuleId,
 }: LessonNavigationProps) {
   const { t, isAr } = useTranslation();
-  // Pass an empty string when no practice module is set so the hook still
-  // runs unconditionally (React rules-of-hooks), but the result is unused.
-  const lockState = useModuleLock(practiceModuleId ?? "");
-  const showPracticeCta = !!practiceModuleId && lockState.mounted && !lockState.locked;
+  const showPracticeCta = !!practiceModuleId;
 
   const prevText = pickLabel(prevLabel, isAr) ?? t("common.previous");
   const nextText = pickLabel(nextLabel, isAr) ?? t("common.next");
