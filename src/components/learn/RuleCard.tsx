@@ -126,11 +126,11 @@ export function RuleCard({
 
           {mistakes && mistakes.length > 0 && (
             <div>
-              <h4 className="text-micro font-semibold text-red-600 dark:text-red-400 mb-2">{t("module.commonMistakes")}</h4>
+              <h4 className="text-micro font-semibold text-err mb-2">{t("module.commonMistakes")}</h4>
               <ul className="space-y-1">
                 {mistakes.map((mistake, i) => (
                   <li key={i} className="text-micro text-text-muted flex gap-2">
-                    <svg className="w-3.5 h-3.5 text-red-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <svg className="w-3.5 h-3.5 text-err shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                       <circle cx="12" cy="12" r="10" />
                       <line x1="15" y1="9" x2="9" y2="15" />
                       <line x1="9" y1="9" x2="15" y2="15" />
