@@ -181,7 +181,7 @@ export function BulkMemorizationEntry({
               >
                 {SURAHS.map((s) => (
                   <option key={s.number} value={s.number}>
-                    {s.number}. {isAr ? s.nameArabic : s.nameSimple}
+                    {num(s.number)}. {isAr ? s.nameArabic : s.nameSimple}
                   </option>
                 ))}
               </select>
@@ -220,7 +220,7 @@ export function BulkMemorizationEntry({
                 >
                   {SURAHS.map((s) => (
                     <option key={s.number} value={s.number}>
-                      {s.number}. {isAr ? s.nameArabic : s.nameSimple}
+                      {num(s.number)}. {isAr ? s.nameArabic : s.nameSimple}
                     </option>
                   ))}
                 </select>
