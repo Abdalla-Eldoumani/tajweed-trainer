@@ -205,7 +205,7 @@ export function MushafIndex({ surahs }: MushafIndexProps) {
                       <ArabicText text={s.nameArabic} quran size="sm" className="block text-primary dark:text-primary-light" />
                       <span
                         className={cn(
-                          "text-[0.75rem] px-2 py-0.5 rounded-full font-medium shrink-0",
+                          "text-micro px-2 py-0.5 rounded-full font-medium shrink-0",
                           s.revelationPlace === "madinah"
                             ? "bg-gold/20 text-[#7A5E15] dark:text-gold-light"
                             : "bg-primary/10 text-primary dark:text-primary-light"
