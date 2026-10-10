@@ -14,7 +14,7 @@ How the app is wired together, top-down.
 |  Hooks over localStorage (SSR-safe): useSettings,         |
 |    useProgress, useReviews, useMemorization,              |
 |    useReadSections, useAnalytics; plus useSpeech          |
-|    (Web Speech), useModuleLock, useTranslation            |
+|    (Web Speech), useTranslation                           |
 |                                                           |
 |  Audio: one reused <audio> via usePlayer (zustand)        |
 |         + PlayerHost; MiniPlayer carries transport        |
