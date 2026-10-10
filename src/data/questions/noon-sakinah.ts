@@ -57,7 +57,7 @@ export const questions: Question[] = [
     arabicText: "مِنۢ بَعْدِ",
     englishGloss: "after",
     options: [
-      { id: "opt-a", label: { en: "1 — only Baa (ب)", ar: "حرف واحد فقط — الباء" } },
+      { id: "opt-a", label: { en: "1: only Baa (ب)", ar: "حرف واحد فقط — الباء" } },
       { id: "opt-b", label: { en: "2", ar: "٢" } },
       { id: "opt-c", label: { en: "6", ar: "٦" } },
       { id: "opt-d", label: { en: "15", ar: "١٥" } },
@@ -204,14 +204,14 @@ export const questions: Question[] = [
     arabicText: "يَنْهَوْنَ",
     englishGloss: "they forbid",
     options: [
-      { id: "opt-a", label: { en: "No — Izhar must be completely clear, no ghunnah at all", ar: "لا — الإظهار يجب أن يكون واضحا بلا غنّة" } },
-      { id: "opt-b", label: { en: "Yes — 2 beats of ghunnah", ar: "نعم — حركتان من الغنّة" } },
-      { id: "opt-c", label: { en: "Yes — 1 beat of ghunnah", ar: "نعم — حركة واحدة" } },
+      { id: "opt-a", label: { en: "No, Izhar must be completely clear, no ghunnah at all", ar: "لا — الإظهار يجب أن يكون واضحا بلا غنّة" } },
+      { id: "opt-b", label: { en: "Yes, 2 beats of ghunnah", ar: "نعم — حركتان من الغنّة" } },
+      { id: "opt-c", label: { en: "Yes, 1 beat of ghunnah", ar: "نعم — حركة واحدة" } },
       { id: "opt-d", label: { en: "Only when stopping at end of ayah", ar: "فقط عند الوقف على آخر الآية" } },
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "Izhar means 'clear pronunciation'. The Noon must be completely clear with NO ghunnah — adding ghunnah is a common mistake.",
+      en: "Izhar means 'clear pronunciation'. The Noon must be completely clear with NO ghunnah, and adding ghunnah is a common mistake.",
       ar: "الإظهار يعني النطق الواضح. تُنطق النون نطقا واضحا تامّا بلا غنّة، وإضافة الغنّة من الأخطاء الشائعة.",
       lessonAnchor: "izhar-halqi",
     },
@@ -234,7 +234,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "The Noon Sakinah is followed by Hamzah (ء), one of the six throat letters. Izhar applies — the Noon is pronounced clearly without nasalization.",
+      en: "The Noon Sakinah is followed by Hamzah (ء), one of the six throat letters. Izhar applies, so the Noon is pronounced clearly without nasalization.",
       ar: "تأتي النون الساكنة قبل الهمزة (ء) وهي من حروف الحلق الستّة، فيطبَّق الإظهار: تُنطق النون نطقا واضحا بلا غنّة.",
       lessonAnchor: "izhar-halqi",
     },
@@ -248,7 +248,7 @@ export const questions: Question[] = [
     arabicText: "مِنْ عِلْمٍ",
     englishGloss: "of knowledge",
     options: [
-      { id: "opt-a", label: { en: "Izhar — followed by 'Ayn (ع)", ar: "إظهار — قبل العين (ع)" } },
+      { id: "opt-a", label: { en: "Izhar: followed by 'Ayn (ع)", ar: "إظهار — قبل العين (ع)" } },
       { id: "opt-b", label: { en: "Idgham with Ghunnah", ar: "إدغام بغنّة" } },
       { id: "opt-c", label: { en: "Ikhfaa", ar: "إخفاء" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
@@ -269,14 +269,14 @@ export const questions: Question[] = [
     arabicText: "يَنْهَوْنَ",
     englishGloss: "they forbid",
     options: [
-      { id: "opt-a", label: { en: "Izhar — Noon Sakinah followed by Haa (هـ) within one word", ar: "إظهار — نون ساكنة قبل الهاء (هـ) في كلمة واحدة" } },
-      { id: "opt-b", label: { en: "Idgham — within one word", ar: "إدغام داخل الكلمة" } },
+      { id: "opt-a", label: { en: "Izhar: Noon Sakinah followed by Haa (هـ) within one word", ar: "إظهار — نون ساكنة قبل الهاء (هـ) في كلمة واحدة" } },
+      { id: "opt-b", label: { en: "Idgham: within one word", ar: "إدغام داخل الكلمة" } },
       { id: "opt-c", label: { en: "Ikhfaa", ar: "إخفاء" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "Haa (هـ) is a throat letter. Izhar applies whether within a single word or across two words — unlike Idgham, which only works between two separate words.",
+      en: "Haa (هـ) is a throat letter. Izhar applies whether within a single word or across two words, unlike Idgham, which only works between two separate words.",
       ar: "الهاء من حروف الحلق. والإظهار يطبَّق سواء كان في كلمة واحدة أو بين كلمتين، بخلاف الإدغام الذي لا يكون إلا بين كلمتين.",
       lessonAnchor: "izhar-halqi",
     },
@@ -290,7 +290,7 @@ export const questions: Question[] = [
     arabicText: "جُرُفٍ هَارٍ",
     englishGloss: "an unstable cliff",
     options: [
-      { id: "opt-a", label: { en: "Izhar — Tanween followed by Haa (هـ)", ar: "إظهار — تنوين قبل الهاء (هـ)" } },
+      { id: "opt-a", label: { en: "Izhar: Tanween followed by Haa (هـ)", ar: "إظهار — تنوين قبل الهاء (هـ)" } },
       { id: "opt-b", label: { en: "Idgham", ar: "إدغام" } },
       { id: "opt-c", label: { en: "Iqlab", ar: "إقلاب" } },
       { id: "opt-d", label: { en: "Ikhfaa", ar: "إخفاء" } },
@@ -311,7 +311,7 @@ export const questions: Question[] = [
     arabicText: "مَن يَقُولُ",
     englishGloss: "who says",
     options: [
-      { id: "opt-a", label: { en: "Idgham with Ghunnah — Yaa is in يَنْمُو", ar: "إدغام بغنّة — الياء من حروف يَنْمُو" } },
+      { id: "opt-a", label: { en: "Idgham with Ghunnah: Yaa is in يَنْمُو", ar: "إدغام بغنّة — الياء من حروف يَنْمُو" } },
       { id: "opt-b", label: { en: "Idgham without Ghunnah", ar: "إدغام بلا غنّة" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Ikhfaa", ar: "إخفاء" } },
@@ -332,7 +332,7 @@ export const questions: Question[] = [
     arabicText: "مِن وَلِيٍّ",
     englishGloss: "of a protector",
     options: [
-      { id: "opt-a", label: { en: "Idgham with Ghunnah — Waw is in يَنْمُو", ar: "إدغام بغنّة — الواو من حروف يَنْمُو" } },
+      { id: "opt-a", label: { en: "Idgham with Ghunnah: Waw is in يَنْمُو", ar: "إدغام بغنّة — الواو من حروف يَنْمُو" } },
       { id: "opt-b", label: { en: "Idgham without Ghunnah", ar: "إدغام بلا غنّة" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Ikhfaa", ar: "إخفاء" } },
@@ -353,7 +353,7 @@ export const questions: Question[] = [
     arabicText: "مِن رَّبِّهِمْ",
     englishGloss: "from their Lord",
     options: [
-      { id: "opt-a", label: { en: "Idgham without Ghunnah — Raa", ar: "إدغام بلا غنّة — الراء" } },
+      { id: "opt-a", label: { en: "Idgham without Ghunnah: Raa", ar: "إدغام بلا غنّة — الراء" } },
       { id: "opt-b", label: { en: "Idgham with Ghunnah", ar: "إدغام بغنّة" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
@@ -374,7 +374,7 @@ export const questions: Question[] = [
     arabicText: "مِن لَّدُنْهُ",
     englishGloss: "from Himself",
     options: [
-      { id: "opt-a", label: { en: "Idgham without Ghunnah — Laam", ar: "إدغام بلا غنّة — اللام" } },
+      { id: "opt-a", label: { en: "Idgham without Ghunnah: Laam", ar: "إدغام بلا غنّة — اللام" } },
       { id: "opt-b", label: { en: "Idgham with Ghunnah", ar: "إدغام بغنّة" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Ikhfaa", ar: "إخفاء" } },
@@ -395,7 +395,7 @@ export const questions: Question[] = [
     arabicText: "مِنۢ بَعْدِ",
     englishGloss: "after",
     options: [
-      { id: "opt-a", label: { en: "Iqlab — Noon becomes hidden Meem before Baa", ar: "إقلاب — تُقلب النون ميما مخفاة قبل الباء" } },
+      { id: "opt-a", label: { en: "Iqlab: Noon becomes hidden Meem before Baa", ar: "إقلاب — تُقلب النون ميما مخفاة قبل الباء" } },
       { id: "opt-b", label: { en: "Idgham", ar: "إدغام" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Ikhfaa", ar: "إخفاء" } },
@@ -416,7 +416,7 @@ export const questions: Question[] = [
     arabicText: "مَنْصُورًا",
     englishGloss: "aided/victorious",
     options: [
-      { id: "opt-a", label: { en: "Ikhfaa — Noon Sakinah followed by Saad (ص)", ar: "إخفاء — نون ساكنة قبل الصاد (ص)" } },
+      { id: "opt-a", label: { en: "Ikhfaa: Noon Sakinah followed by Saad (ص)", ar: "إخفاء — نون ساكنة قبل الصاد (ص)" } },
       { id: "opt-b", label: { en: "Idgham", ar: "إدغام" } },
       { id: "opt-c", label: { en: "Iqlab", ar: "إقلاب" } },
       { id: "opt-d", label: { en: "Izhar", ar: "إظهار" } },
@@ -437,7 +437,7 @@ export const questions: Question[] = [
     arabicText: "مِنْ ظَهِيرٍ",
     englishGloss: "of a helper",
     options: [
-      { id: "opt-a", label: { en: "Ikhfaa — Noon Sakinah before Dhaa (ظ)", ar: "إخفاء — قبل الظاء (ظ)" } },
+      { id: "opt-a", label: { en: "Ikhfaa: Noon Sakinah before Dhaa (ظ)", ar: "إخفاء — قبل الظاء (ظ)" } },
       { id: "opt-b", label: { en: "Idgham with Ghunnah", ar: "إدغام بغنّة" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
@@ -458,7 +458,7 @@ export const questions: Question[] = [
     arabicText: "مِنْ قَبْلُ",
     englishGloss: "before",
     options: [
-      { id: "opt-a", label: { en: "Ikhfaa — Noon Sakinah followed by Qaaf (ق)", ar: "إخفاء — قبل القاف (ق)" } },
+      { id: "opt-a", label: { en: "Ikhfaa: Noon Sakinah followed by Qaaf (ق)", ar: "إخفاء — قبل القاف (ق)" } },
       { id: "opt-b", label: { en: "Iqlab", ar: "إقلاب" } },
       { id: "opt-c", label: { en: "Izhar", ar: "إظهار" } },
       { id: "opt-d", label: { en: "Idgham", ar: "إدغام" } },
@@ -505,7 +505,7 @@ export const questions: Question[] = [
       { id: "opt-a", label: { en: "Because Idgham only applies between two separate words; دُنْيَا is one word", ar: "لأنّ الإدغام لا يكون إلا بين كلمتين، ودُنْيَا كلمة واحدة" } },
       { id: "opt-b", label: { en: "Because Yaa is exempt in this word", ar: "لأنّ الياء مستثناة في هذه الكلمة" } },
       { id: "opt-c", label: { en: "Because the word is in the 30th juz", ar: "لأنّ الكلمة في جزء عمّ" } },
-      { id: "opt-d", label: { en: "There is no exception — it should be Idgham", ar: "لا استثناء — الحكم إدغام" } },
+      { id: "opt-d", label: { en: "There is no exception: it should be Idgham", ar: "لا استثناء — الحكم إدغام" } },
     ],
     correctOptionId: "opt-a",
     explanation: {
@@ -530,7 +530,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "The Meem in Iqlab is HIDDEN (mukhfaa). The lips approach but do not fully meet — pressing them shut creates a clear Meem, which is a common mistake.",
+      en: "The Meem in Iqlab is HIDDEN (mukhfaa). The lips approach but do not fully meet. Pressing them shut creates a clear Meem, which is a common mistake.",
       ar: "الميم في الإقلاب مخفاة. الشفتان تتقاربان دون انطباق تامّ، وإطباقهما يُنتج ميما واضحة، وهذا من الأخطاء الشائعة.",
       lessonAnchor: "iqlab",
     },
@@ -565,7 +565,7 @@ export const questions: Question[] = [
     arabicText: "مَنْصُورًا",
     englishGloss: "aided/victorious",
     options: [
-      { id: "opt-a", label: { en: "Saad (ص) is heavy (mufakhham), Taa (ت) is light — the ghunnah takes on the quality of the following letter", ar: "الصاد مفخّمة والتاء مرقّقة — تأخذ الغنّة صفة الحرف الذي بعدها" } },
+      { id: "opt-a", label: { en: "Saad (ص) is heavy (mufakhham), Taa (ت) is light, so the ghunnah takes on the quality of the following letter", ar: "الصاد مفخّمة والتاء مرقّقة — تأخذ الغنّة صفة الحرف الذي بعدها" } },
       { id: "opt-b", label: { en: "There is no difference", ar: "لا فرق بينهما" } },
       { id: "opt-c", label: { en: "Saad triggers Iqlab, Taa triggers Ikhfaa", ar: "الصاد تستوجب الإقلاب والتاء تستوجب الإخفاء" } },
       { id: "opt-d", label: { en: "Only Tanween triggers heavy ghunnah", ar: "التنوين وحده يستوجب الغنّة المفخّمة" } },
@@ -586,8 +586,8 @@ export const questions: Question[] = [
     arabicText: "مِن لَّدُنْهُ",
     englishGloss: "from Himself",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — Idgham with Laam/Raa is WITHOUT ghunnah", ar: "خطأ شائع — الإدغام في اللام والراء بلا غنّة" } },
-      { id: "opt-b", label: { en: "Correct — all Idgham carries ghunnah", ar: "صواب — كلّ إدغام بغنّة" } },
+      { id: "opt-a", label: { en: "A common mistake: Idgham with Laam/Raa is WITHOUT ghunnah", ar: "خطأ شائع — الإدغام في اللام والراء بلا غنّة" } },
+      { id: "opt-b", label: { en: "Correct: all Idgham carries ghunnah", ar: "صواب — كلّ إدغام بغنّة" } },
       { id: "opt-c", label: { en: "Correct only when stopping", ar: "صواب عند الوقف فقط" } },
       { id: "opt-d", label: { en: "Required by Hafs recitation", ar: "واجب في رواية حفص" } },
     ],
@@ -607,10 +607,10 @@ export const questions: Question[] = [
     arabicText: "أَنْتُمْ",
     englishGloss: "you (plural)",
     options: [
-      { id: "opt-a", label: { en: "Ikhfaa — its 15 letters are by far the most numerous", ar: "الإخفاء — لكثرة حروفه (خمسة عشر حرفا)" } },
-      { id: "opt-b", label: { en: "Iqlab — only one letter", ar: "الإقلاب — حرف واحد" } },
-      { id: "opt-c", label: { en: "Izhar — six letters", ar: "الإظهار — ستّة حروف" } },
-      { id: "opt-d", label: { en: "Idgham — six letters", ar: "الإدغام — ستّة حروف" } },
+      { id: "opt-a", label: { en: "Ikhfaa: its 15 letters are by far the most numerous", ar: "الإخفاء — لكثرة حروفه (خمسة عشر حرفا)" } },
+      { id: "opt-b", label: { en: "Iqlab: only one letter", ar: "الإقلاب — حرف واحد" } },
+      { id: "opt-c", label: { en: "Izhar: six letters", ar: "الإظهار — ستّة حروف" } },
+      { id: "opt-d", label: { en: "Idgham: six letters", ar: "الإدغام — ستّة حروف" } },
     ],
     correctOptionId: "opt-a",
     explanation: {
@@ -628,7 +628,7 @@ export const questions: Question[] = [
     arabicText: "جُرُفٍ هَارٍ",
     englishGloss: "an unstable cliff",
     options: [
-      { id: "opt-a", label: { en: "Tanween follows the SAME four rules — it produces the same 'n' sound", ar: "يخضع التنوين للأحكام الأربعة ذاتها لأنّه يُنطق نونا" } },
+      { id: "opt-a", label: { en: "Tanween follows the SAME four rules: it produces the same 'n' sound", ar: "يخضع التنوين للأحكام الأربعة ذاتها لأنّه يُنطق نونا" } },
       { id: "opt-b", label: { en: "Tanween has its own separate rules", ar: "للتنوين أحكام مستقلّة" } },
       { id: "opt-c", label: { en: "Tanween only triggers Izhar", ar: "التنوين يستوجب الإظهار فقط" } },
       { id: "opt-d", label: { en: "Tanween is exempt from these rules", ar: "التنوين مستثنى من هذه الأحكام" } },
@@ -650,7 +650,7 @@ export const questions: Question[] = [
     englishGloss: "an unstable cliff",
     options: [
       { id: "opt-a", label: { en: "Ikhfaa", ar: "إخفاء" } },
-      { id: "opt-b", label: { en: "Izhar — هـ is a throat letter", ar: "إظهار — الهاء من حروف الحلق" } },
+      { id: "opt-b", label: { en: "Izhar: هـ is a throat letter", ar: "إظهار — الهاء من حروف الحلق" } },
       { id: "opt-c", label: { en: "Idgham with Ghunnah", ar: "إدغام بغنّة" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
     ],
@@ -687,12 +687,12 @@ export const questions: Question[] = [
     id: "noon-new-ikhfa-antum-one-word",
     moduleId: "noon-sakinah",
     difficulty: "medium",
-    prompt: { en: "In أَنْتُمْ (2:85), the Noon Sakinah and ت sit in one word — what is the rule?", ar: "في أَنْتُمْ (٢:٨٥)، اجتمعت النون الساكنة والتاء في كلمة واحدة — ما الحكم؟" },
+    prompt: { en: "In أَنْتُمْ (2:85), the Noon Sakinah and ت sit in one word. What is the rule?", ar: "في أَنْتُمْ (٢:٨٥)، اجتمعت النون الساكنة والتاء في كلمة واحدة — ما الحكم؟" },
     arabicText: "أَنْتُمْ",
     englishGloss: "you (plural)",
     options: [
-      { id: "opt-a", label: { en: "Ikhfaa — ت is one of the 15 Ikhfaa letters, and Ikhfaa applies within or across words", ar: "إخفاء — التاء من حروف الإخفاء الخمسة عشر، والإخفاء يقع داخل الكلمة وبين الكلمتين" } },
-      { id: "opt-b", label: { en: "Izhar Mutlaq — it is one word", ar: "إظهار مطلق — لأنّها كلمة واحدة" } },
+      { id: "opt-a", label: { en: "Ikhfaa: ت is one of the 15 Ikhfaa letters, and Ikhfaa applies within or across words", ar: "إخفاء — التاء من حروف الإخفاء الخمسة عشر، والإخفاء يقع داخل الكلمة وبين الكلمتين" } },
+      { id: "opt-b", label: { en: "Izhar Mutlaq: it is one word", ar: "إظهار مطلق — لأنّها كلمة واحدة" } },
       { id: "opt-c", label: { en: "Idgham", ar: "إدغام" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
     ],
