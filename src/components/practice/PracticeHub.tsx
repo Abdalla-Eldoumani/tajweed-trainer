@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { StreakCounter } from "@/components/practice/StreakCounter";
 import { PracticeModuleCard } from "@/components/practice/PracticeModuleCard";
 import { useTranslation } from "@/lib/i18n";
@@ -8,7 +7,6 @@ import { useProgress } from "@/hooks/useProgress";
 import { useReviews } from "@/hooks/useReviews";
 import { MODULES } from "@/components/layout/nav-data";
 import { getModuleLastScore } from "@/lib/practice-scores";
-import { getLockedModuleIds } from "@/lib/module-unlock";
 
 interface PracticeHubProps {
   // Per-module question counts, computed server-side from the question pool so
@@ -22,15 +20,6 @@ export function PracticeHub({ counts, totalQuestions }: PracticeHubProps) {
   const { progress } = useProgress();
   const { stats } = useReviews();
   const reviewStats = stats();
-
-  // Locks render only after mount so the server HTML and the first client
-  // paint agree; the route itself gates regardless.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const lockedModuleIds = useMemo(() => {
-    if (!mounted) return new Set<string>();
-    return getLockedModuleIds(progress);
-  }, [mounted, progress]);
 
   const mixedSummary = getModuleLastScore(progress, "mixed");
   const reviewSummary = getModuleLastScore(progress, "review");
@@ -82,7 +71,6 @@ export function PracticeHub({ counts, totalQuestions }: PracticeHubProps) {
               titleAr={mod.labelAr}
               questionCount={count}
               summary={summary}
-              locked={lockedModuleIds.has(mod.id)}
             />
           );
         })}
