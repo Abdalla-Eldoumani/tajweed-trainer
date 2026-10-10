@@ -104,11 +104,11 @@ export default function TafkheemTarqeeqPage() {
 
       {tafkheemData.common_mistakes.length > 0 && (
         <Card>
-          <h2 className="font-heading font-semibold text-h2 text-red-600 dark:text-red-400 mb-3">{t("module.commonMistakes")}</h2>
+          <h2 className="font-heading font-semibold text-h2 text-err mb-3">{t("module.commonMistakes")}</h2>
           <ul className="space-y-2">
             {(isAr && tafkheemData.common_mistakes_ar ? tafkheemData.common_mistakes_ar : tafkheemData.common_mistakes).map((mistake, i) => (
               <li key={i} className="text-small text-text-muted flex gap-2">
-                <span className="text-red-500 shrink-0">x</span>
+                <span className="text-err shrink-0">x</span>
                 {mistake}
               </li>
             ))}
