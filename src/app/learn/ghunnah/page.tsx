@@ -7,6 +7,7 @@ import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
+import { toArabicIndic } from "@/lib/utils";
 import { getColorForClass } from "@/lib/tajweed-colors";
 import ghunnahData from "@/data/content/ghunnah.json";
 
@@ -66,7 +67,7 @@ export default function GhunnahPage() {
           {ghunnahData.ghunnah_prominence_ranking.map((item) => (
             <div key={item.level} className="flex items-start gap-3 text-small">
               <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light flex items-center justify-center text-micro font-bold">
-                {item.level}
+                {isAr ? toArabicIndic(item.level) : item.level}
               </span>
               <div className="flex-1">
                 <span className="font-medium">{isAr && item.maratib_ar ? item.maratib_ar : item.maratib_en}</span>
