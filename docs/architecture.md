@@ -63,7 +63,7 @@ Routes: `/`, `/learn`, `/learn/[module]`, `/mushaf`, `/mushaf/page/[page]`, `/mu
 - **player-engine.ts**: pure playback-queue and advance arithmetic behind `usePlayer` (next/prev index, range and set queues, repeat/loop/gap). No React or `<audio>`.
 - **player-position.ts**: mini-player clamp math and overlay offsets (`sheetBottomOffset`, `keyboardBottomOffset`), plus `READER_PANEL_BREAKPOINT` (1024) read by `useIsDesktop`.
 - **follow-along.ts**: pure helpers mapping playback time to the active word index from per-reciter timestamps, with `rangeBounds` resolving a word range to a millisecond span.
-- **motion.ts**: `withViewTransition()`, a feature-detected, reduced-motion-gated wrapper over the View Transitions API. No animation library.
+- **motion.ts**: `withThemeFade()`, a reduced-motion-gated wrapper that eases a theme change with a CSS color transition on `<html>`. It avoids the View Transitions API, which stops the page taking clicks while it runs. No animation library.
 - **memorization-scope.ts**: pure verse-scope enumeration and breakdown math (per-surah, per-juz, against 6,236).
 - **memorization-review.ts**: the forgetting-curve schedule for memorized verses, separate from the quiz Leitner boxes.
 - **weak-rules.ts**: aggregates quiz history into the most-missed rule areas. Read-only.
@@ -127,7 +127,7 @@ Next.js App Router (Next 16). Most pages are server components that hydrate into
 
 ### Settings sync
 
-`SettingsProvider` reads localStorage on mount (after hydration). `SettingsSync` (in `AppProvider.tsx`) mirrors `settings.language` to `document.documentElement.lang` / `dir` and `settings.theme` to `data-theme` on `<html>` (one of five themes). A pre-paint inline script in `layout.tsx` sets theme/dir/lang before first paint (no flash); the sync applies later changes, and a theme change crossfades through the View Transitions API. Components read via `useSettings()`; `updateSettings(partial)` writes to state and localStorage.
+`SettingsProvider` reads localStorage on mount (after hydration). `SettingsSync` (in `AppProvider.tsx`) mirrors `settings.language` to `document.documentElement.lang` / `dir` and `settings.theme` to `data-theme` on `<html>` (one of five themes). A pre-paint inline script in `layout.tsx` sets theme/dir/lang before first paint (no flash); the sync applies later changes, and a theme change eases through a CSS color transition. Components read via `useSettings()`; `updateSettings(partial)` writes to state and localStorage.
 
 ## Invariants
 
