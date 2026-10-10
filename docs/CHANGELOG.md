@@ -41,7 +41,7 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - **Makharij diagram labels are larger and follow the language.** They stay above 13px from a 320px screen up and show the Arabic names under the Arabic interface, with the diagram trimmed to its drawing.
 - **Status colours come from the theme.** Success, error and warning text use three themed inks instead of stock Tailwind red, green and blue.
 - **The axe check runs on every theme.** It covers nine routes in all five themes and both languages.
-- **Clicks work during the theme change.** The crossfade is shorter and no longer intercepts pointer events.
+- **Clicks work during the theme change.** The page eases between themes with a colour transition instead of a browser view transition, which had made the whole page ignore clicks while it ran.
 - **The two bookmark labels differ.** The page bookmark reads "Bookmark this page" and "Remove page bookmark"; the verse bookmark keeps its own label.
 - **The practice hub fills its rows.** Mixed Review joins the module grid and Review Due, when present, takes a full row.
 
