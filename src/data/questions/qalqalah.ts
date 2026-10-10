@@ -1,7 +1,7 @@
 import type { Question } from "@/lib/types";
 
 // Provenance note. Every Arabic and English string in this file is reused
-// verbatim from src/data/content/qalqalah.json examples — the maintainer's
+// verbatim from src/data/content/qalqalah.json examples, the maintainer's
 // pre-verified content. No verse text was authored from memory or pulled from
 // the API for this module; reuse covered all 30 questions. translationEditionId
 // is null because the existing translations were authored by the maintainer,
@@ -10,7 +10,7 @@ import type { Question } from "@/lib/types";
 const PROVENANCE = "src/data/content/qalqalah.json";
 
 export const questions: Question[] = [
-  // EASY (10) — definitions, basic identification.
+  // EASY (10): definitions, basic identification.
   {
     id: "qalqalah-easy-letters-count",
     moduleId: "qalqalah",
@@ -53,7 +53,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "Qalqalah Sughra is the lightest level — the echo is subtle and quick because the letter is in the middle of a word.",
+      en: "Qalqalah Sughra is the lightest level: the echo is subtle and quick because the letter is in the middle of a word.",
       ar: "القلقلة الصغرى هي أخفّ المراتب لأن الحرف يقع في وسط الكلمة، فتكون القلقلة فيها خفيفة سريعة.",
       lessonAnchor: "qalqalah-sughra",
     },
@@ -77,7 +77,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "Qalqalah must be a pure bounce — adding a vowel-like sound (such as 'ba', 'bu', or 'bi') is a common mistake.",
+      en: "Qalqalah must be a pure bounce, and adding a vowel-like sound (such as 'ba', 'bu', or 'bi') is a common mistake.",
       ar: "يجب أن تكون القلقلة نبرة خالصة. إلحاق حركة بها كالفتحة أو الكسرة أو الضمّة من الأخطاء الشائعة.",
       lessonAnchor: "qalqalah-mistakes",
     },
@@ -149,7 +149,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-a",
     explanation: {
-      en: "Qalqalah Wusta is the middle degree — moderate in strength, between Sughra and Kubra.",
+      en: "Qalqalah Wusta is the middle degree, moderate in strength, between Sughra and Kubra.",
       ar: "القلقلة الوسطى متوسّطة بين الصغرى والكبرى.",
       lessonAnchor: "qalqalah-wusta",
     },
@@ -252,7 +252,7 @@ export const questions: Question[] = [
     source: { surah: 111, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
 
-  // MEDIUM (12) — identification within examples, two-step reasoning.
+  // MEDIUM (12): identification within examples, two-step reasoning.
   {
     id: "qalqalah-medium-yaqtaoon-level",
     moduleId: "qalqalah",
@@ -454,7 +454,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-c",
     explanation: {
-      en: "Qaaf (ق) is the last letter of the ayah, so stopping makes it sakin and triggers Qalqalah Kubra — the strongest level.",
+      en: "Qaaf (ق) is the last letter of the ayah, so stopping makes it sakin and triggers Qalqalah Kubra, the strongest level.",
       ar: "القاف آخر حرف في الآية، فبالوقف تسكن وتقع عليها القلقلة الكبرى وهي أقوى المراتب.",
       lessonAnchor: "qalqalah-kubra",
     },
@@ -557,7 +557,7 @@ export const questions: Question[] = [
     source: { surah: 111, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
 
-  // HARD (8) — edge cases, exceptions, multi-rule reasoning.
+  // HARD (8): edge cases, exceptions, multi-rule reasoning.
   {
     id: "qalqalah-hard-qaf-with-vowel",
     moduleId: "qalqalah",
@@ -569,10 +569,10 @@ export const questions: Question[] = [
     arabicText: "يَقْطَعُونَ",
     englishGloss: "they cut",
     options: [
-      { id: "opt-a", label: { en: "Yes — Qaaf is always qalqalah", ar: "نعم، القاف تُقلقل دائما" } },
-      { id: "opt-b", label: { en: "No — qalqalah requires the letter to have a sukoon", ar: "لا، تشترط القلقلة سكون الحرف" } },
+      { id: "opt-a", label: { en: "Yes, Qaaf is always qalqalah", ar: "نعم، القاف تُقلقل دائما" } },
+      { id: "opt-b", label: { en: "No, qalqalah requires the letter to have a sukoon", ar: "لا، تشترط القلقلة سكون الحرف" } },
       { id: "opt-c", label: { en: "Yes, but only if at end of word", ar: "نعم، لكن إذا كانت في آخر الكلمة فقط" } },
-      { id: "opt-d", label: { en: "No — Qaaf is not a qalqalah letter", ar: "لا، القاف ليست من حروف القلقلة" } },
+      { id: "opt-d", label: { en: "No, Qaaf is not a qalqalah letter", ar: "لا، القاف ليست من حروف القلقلة" } },
     ],
     correctOptionId: "opt-b",
     explanation: {
@@ -593,14 +593,14 @@ export const questions: Question[] = [
     arabicText: "يَجْعَلُونَ",
     englishGloss: "they make",
     options: [
-      { id: "opt-a", label: { en: "Correct — qalqalah always carries the kasra of the next letter", ar: "صواب، فالقلقلة تحمل كسرة الحرف التالي دائما" } },
-      { id: "opt-b", label: { en: "Correct — Sughra is allowed to take a vowel", ar: "صواب، الصغرى يُسمح فيها بالحركة" } },
-      { id: "opt-c", label: { en: "A common mistake — qalqalah must be a pure bounce, not a vowel sound", ar: "خطأ شائع، القلقلة نبرة خالصة لا تشبه الحركة" } },
-      { id: "opt-d", label: { en: "A common mistake — only Kubra should bounce, not Sughra", ar: "خطأ شائع، القلقلة لا تقع إلا في الكبرى" } },
+      { id: "opt-a", label: { en: "Correct: qalqalah always carries the kasra of the next letter", ar: "صواب، فالقلقلة تحمل كسرة الحرف التالي دائما" } },
+      { id: "opt-b", label: { en: "Correct: Sughra is allowed to take a vowel", ar: "صواب، الصغرى يُسمح فيها بالحركة" } },
+      { id: "opt-c", label: { en: "A common mistake: qalqalah must be a pure bounce, not a vowel sound", ar: "خطأ شائع، القلقلة نبرة خالصة لا تشبه الحركة" } },
+      { id: "opt-d", label: { en: "A common mistake: only Kubra should bounce, not Sughra", ar: "خطأ شائع، القلقلة لا تقع إلا في الكبرى" } },
     ],
     correctOptionId: "opt-c",
     explanation: {
-      en: "The lesson lists 'Adding a vowel sound to the echo' as a common mistake. Qalqalah must be a pure bounce — not 'ba', 'bu', or 'bi'.",
+      en: "The lesson lists 'Adding a vowel sound to the echo' as a common mistake. Qalqalah must be a pure bounce, not 'ba', 'bu', or 'bi'.",
       ar: "ذكر الدرس في الأخطاء الشائعة إلحاق حركة بالقلقلة، وقرّر أنها يجب أن تكون نبرة خالصة لا تشبه الفتحة أو الكسرة أو الضمّة.",
       lessonAnchor: "qalqalah-mistakes",
     },
@@ -691,7 +691,7 @@ export const questions: Question[] = [
     options: [
       { id: "opt-a", label: { en: "Even stronger than usual", ar: "أقوى وأظهر" } },
       { id: "opt-b", label: { en: "Lighter than usual", ar: "أخفّ" } },
-      { id: "opt-c", label: { en: "Cancelled — shaddah removes qalqalah", ar: "ملغاة، فالشدّة تُسقط القلقلة" } },
+      { id: "opt-c", label: { en: "Cancelled: shaddah removes qalqalah", ar: "ملغاة، فالشدّة تُسقط القلقلة" } },
       { id: "opt-d", label: { en: "Identical to a regular Kubra", ar: "كقلقلة الكبرى المعتادة تماما" } },
     ],
     correctOptionId: "opt-a",
@@ -713,11 +713,11 @@ export const questions: Question[] = [
     arabicText: "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
     englishGloss: "May the hands of Abu Lahab perish, and may he perish",
     options: [
-      { id: "opt-a", label: { en: "Correct — Kaaf shares Qaaf's bounce", ar: "صواب، الكاف كالقاف في القلقلة" } },
+      { id: "opt-a", label: { en: "Correct: Kaaf shares Qaaf's bounce", ar: "صواب، الكاف كالقاف في القلقلة" } },
       {
         id: "opt-b",
         label: {
-          en: "A common mistake — only the five letters قطبجد qalqalah",
+          en: "A common mistake: only the five letters قطبجد qalqalah",
           ar: "خطأ شائع، لا تُقلقل إلا الحروف الخمسة قطبجد",
         },
       },
@@ -743,11 +743,11 @@ export const questions: Question[] = [
     arabicText: "يَقْطَعُونَ",
     englishGloss: "they cut",
     options: [
-      { id: "opt-a", label: { en: "Recommended — louder is clearer", ar: "مستحسن، فإظهارها أوضح" } },
+      { id: "opt-a", label: { en: "Recommended: louder is clearer", ar: "مستحسن، فإظهارها أوضح" } },
       {
         id: "opt-b",
         label: {
-          en: "A common mistake — Sughra should be subtle, not as strong as Kubra",
+          en: "A common mistake: Sughra should be subtle, not as strong as Kubra",
           ar: "خطأ شائع، فالصغرى ينبغي أن تكون خفيفة لا كالكبرى",
         },
       },
@@ -776,11 +776,11 @@ export const questions: Question[] = [
       {
         id: "opt-a",
         label: {
-          en: "A common mistake — Kubra must be clearly pronounced, not weak",
+          en: "A common mistake: Kubra must be clearly pronounced, not weak",
           ar: "خطأ شائع، فالقلقلة الكبرى يجب أن تكون واضحة قويّة لا ضعيفة",
         },
       },
-      { id: "opt-b", label: { en: "Recommended — Kubra is meant to be subtle", ar: "مستحسن، فالكبرى تكون خفيفة" } },
+      { id: "opt-b", label: { en: "Recommended: Kubra is meant to be subtle", ar: "مستحسن، فالكبرى تكون خفيفة" } },
       {
         id: "opt-c",
         label: { en: "Acceptable when continuing without stopping", ar: "مقبول عند الوصل دون الوقف" },
@@ -806,10 +806,10 @@ export const questions: Question[] = [
     arabicText: "الْفَلَقِ",
     englishGloss: "the daybreak",
     options: [
-      { id: "opt-a", label: { en: "Sughra — ق always gives the minor level", ar: "الصغرى — القاف تعطي المرتبة الصغرى دائما" } },
-      { id: "opt-b", label: { en: "Wusta — it falls in the middle of the surah", ar: "الوسطى — لوقوعها في وسط السورة" } },
-      { id: "opt-c", label: { en: "Kubra — it is a qalqalah letter made sakin by stopping at the end of the ayah", ar: "الكبرى — حرف قلقلة سكن بالوقف في آخر الآية" } },
-      { id: "opt-d", label: { en: "None — qalqalah needs an original sukoon", ar: "لا قلقلة — لأنها تحتاج سكونا أصليّا" } },
+      { id: "opt-a", label: { en: "Sughra: ق always gives the minor level", ar: "الصغرى — القاف تعطي المرتبة الصغرى دائما" } },
+      { id: "opt-b", label: { en: "Wusta: it falls in the middle of the surah", ar: "الوسطى — لوقوعها في وسط السورة" } },
+      { id: "opt-c", label: { en: "Kubra: it is a qalqalah letter made sakin by stopping at the end of the ayah", ar: "الكبرى — حرف قلقلة سكن بالوقف في آخر الآية" } },
+      { id: "opt-d", label: { en: "None: qalqalah needs an original sukoon", ar: "لا قلقلة — لأنها تحتاج سكونا أصليّا" } },
     ],
     correctOptionId: "opt-c",
     explanation: {
