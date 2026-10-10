@@ -34,7 +34,7 @@ export const questions: Question[] = [
     arabicText: "الْحَمْدُ",
     englishGloss: "all praise",
     options: [
-      { id: "opt-a", label: { en: "Waqf Lazim: must stop", ar: "الوقف اللازم — يجب الوقوف" } },
+      { id: "opt-a", label: { en: "Waqf Lazim: must stop", ar: "الوقف اللازم: يجب الوقوف" } },
       { id: "opt-b", label: { en: "Waqf Mutlaq", ar: "الوقف المطلق" } },
       { id: "opt-c", label: { en: "Waqf Jaiz", ar: "الوقف الجائز" } },
       { id: "opt-d", label: { en: "La (do not stop)", ar: "لا تقف" } },
@@ -51,7 +51,7 @@ export const questions: Question[] = [
     arabicText: "الرَّحْمَنِ",
     englishGloss: "the Most Gracious",
     options: [
-      { id: "opt-a", label: { en: "NOT stop here: continue to the next natural stopping point", ar: "عدم الوقف عندها — يُتابَع إلى أقرب موضع مناسب" } },
+      { id: "opt-a", label: { en: "NOT stop here: continue to the next natural stopping point", ar: "عدم الوقف عندها: يُتابَع إلى أقرب موضع مناسب" } },
       { id: "opt-b", label: { en: "Stop mandatorily", ar: "الوقف الواجب" } },
       { id: "opt-c", label: { en: "Pause without breathing", ar: "السكوت بلا تنفّس" } },
       { id: "opt-d", label: { en: "Repeat the verse", ar: "إعادة الآية" } },
@@ -68,7 +68,7 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "Saktah: pause briefly (~2 beats) WITHOUT taking a breath", ar: "السكتة — سكتة لطيفة بمقدار حركتين دون تنفّس" } },
+      { id: "opt-a", label: { en: "Saktah: pause briefly (~2 beats) WITHOUT taking a breath", ar: "السكتة: سكتة لطيفة بمقدار حركتين دون تنفّس" } },
       { id: "opt-b", label: { en: "Stop and breathe", ar: "الوقف والتنفّس" } },
       { id: "opt-c", label: { en: "Stop mandatorily", ar: "الوقف الواجب" } },
       { id: "opt-d", label: { en: "Continue without pause", ar: "الوصل دون توقّف" } },
@@ -85,7 +85,7 @@ export const questions: Question[] = [
     arabicText: "أَحَدٌ",
     englishGloss: "One",
     options: [
-      { id: "opt-a", label: { en: "It drops: Tanween becomes silent when stopping", ar: "يسقط — يُحذف صوت النون عند الوقف" } },
+      { id: "opt-a", label: { en: "It drops: Tanween becomes silent when stopping", ar: "يسقط: يُحذف صوت النون عند الوقف" } },
       { id: "opt-b", label: { en: "It is doubled", ar: "يُضاعف" } },
       { id: "opt-c", label: { en: "It is held longer", ar: "يُمدّ أطول" } },
       { id: "opt-d", label: { en: "It becomes a Meem", ar: "يُقلب ميما" } },
@@ -121,7 +121,7 @@ export const questions: Question[] = [
     options: [
       { id: "opt-a", label: { en: "ONE of the two markers, but NOT both", ar: "إحدى العلامتين لا كلتاهما" } },
       { id: "opt-b", label: { en: "Both markers", ar: "كلتا العلامتين" } },
-      { id: "opt-c", label: { en: "Neither marker: continue", ar: "لا واحدة منهما — يُوصل" } },
+      { id: "opt-c", label: { en: "Neither marker: continue", ar: "لا واحدة منهما: يُوصل" } },
       { id: "opt-d", label: { en: "The first one only", ar: "الأولى فقط" } },
     ],
     correctOptionId: "opt-a",
@@ -136,8 +136,8 @@ export const questions: Question[] = [
     arabicText: "الرَّحْمَنِ",
     englishGloss: "the Most Gracious",
     options: [
-      { id: "opt-a", label: { en: "Waqf Mutlaq: better to stop, meaning is complete", ar: "الوقف المطلق — الوقف أَولى لأنّ المعنى تامّ" } },
-      { id: "opt-b", label: { en: "Waqf Lazim: must stop", ar: "الوقف اللازم — وجوب الوقف" } },
+      { id: "opt-a", label: { en: "Waqf Mutlaq: better to stop, meaning is complete", ar: "الوقف المطلق: الوقف أَولى لأنّ المعنى تامّ" } },
+      { id: "opt-b", label: { en: "Waqf Lazim: must stop", ar: "الوقف اللازم: وجوب الوقف" } },
       { id: "opt-c", label: { en: "Waqf Mujaawaz", ar: "المجاوز" } },
       { id: "opt-d", label: { en: "La (do not stop)", ar: "لا تقف" } },
     ],
@@ -153,8 +153,8 @@ export const questions: Question[] = [
     arabicText: "الْحَمْدُ",
     englishGloss: "all praise",
     options: [
-      { id: "opt-a", label: { en: "Waqf Jaiz: both stopping and continuing are acceptable", ar: "الوقف الجائز — الوقف والوصل سواء" } },
-      { id: "opt-b", label: { en: "Waqf Lazim: must stop", ar: "اللازم — وجوب الوقف" } },
+      { id: "opt-a", label: { en: "Waqf Jaiz: both stopping and continuing are acceptable", ar: "الوقف الجائز: الوقف والوصل سواء" } },
+      { id: "opt-b", label: { en: "Waqf Lazim: must stop", ar: "اللازم: وجوب الوقف" } },
       { id: "opt-c", label: { en: "La (do not stop)", ar: "لا تقف" } },
       { id: "opt-d", label: { en: "Saktah", ar: "السكتة" } },
     ],
@@ -291,7 +291,7 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "No breath is taken: the pause is silent but breathing continues across it", ar: "لا تنفّس فيها — السكوت مع استمرار حبس النفس" } },
+      { id: "opt-a", label: { en: "No breath is taken: the pause is silent but breathing continues across it", ar: "لا تنفّس فيها: السكوت مع استمرار حبس النفس" } },
       { id: "opt-b", label: { en: "Saktah is longer than a stop", ar: "السكتة أطول من الوقف" } },
       { id: "opt-c", label: { en: "Saktah is louder", ar: "السكتة أعلى صوتا" } },
       { id: "opt-d", label: { en: "Saktah requires whispering the next word", ar: "تتطلّب السكتة همسا في الكلمة التالية" } },
@@ -325,7 +325,7 @@ export const questions: Question[] = [
     arabicText: "الْفَلَقِ",
     englishGloss: "the daybreak",
     options: [
-      { id: "opt-a", label: { en: "Sukoon: the vowel/tanween drops", ar: "سكون — تسقط الحركة أو التنوين" } },
+      { id: "opt-a", label: { en: "Sukoon: the vowel/tanween drops", ar: "سكون: تسقط الحركة أو التنوين" } },
       { id: "opt-b", label: { en: "Shaddah", ar: "شدّة" } },
       { id: "opt-c", label: { en: "Madd", ar: "مدّ" } },
       { id: "opt-d", label: { en: "Tanween", ar: "تنوين" } },
@@ -342,7 +342,7 @@ export const questions: Question[] = [
     arabicText: "الْفَلَقِ",
     englishGloss: "the daybreak",
     options: [
-      { id: "opt-a", label: { en: "Qalqalah Kubra: the strongest echoing", ar: "قلقلة كبرى — أقوى القلقلات" } },
+      { id: "opt-a", label: { en: "Qalqalah Kubra: the strongest echoing", ar: "قلقلة كبرى: أقوى القلقلات" } },
       { id: "opt-b", label: { en: "No qalqalah", ar: "لا قلقلة" } },
       { id: "opt-c", label: { en: "Qalqalah Sughra", ar: "قلقلة صغرى" } },
       { id: "opt-d", label: { en: "Idgham", ar: "إدغام" } },
@@ -376,7 +376,7 @@ export const questions: Question[] = [
     arabicText: "الْحَمْدُ",
     englishGloss: "all praise",
     options: [
-      { id: "opt-a", label: { en: "Waqf Lazim (مـ): must stop", ar: "الوقف اللازم (مـ) — وجوب الوقف" } },
+      { id: "opt-a", label: { en: "Waqf Lazim (مـ): must stop", ar: "الوقف اللازم (مـ): وجوب الوقف" } },
       { id: "opt-b", label: { en: "Waqf Mutlaq (ط)", ar: "الوقف المطلق (ط)" } },
       { id: "opt-c", label: { en: "Waqf Jaiz (ج)", ar: "الوقف الجائز (ج)" } },
       { id: "opt-d", label: { en: "Waqf Mujaawaz (ز)", ar: "المجاوز (ز)" } },
@@ -412,7 +412,7 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "A mistake: stopping at both breaks the meaning", ar: "خطأ — الجمع بين الوقفين يُخلّ بالمعنى" } },
+      { id: "opt-a", label: { en: "A mistake: stopping at both breaks the meaning", ar: "خطأ: الجمع بين الوقفين يُخلّ بالمعنى" } },
       { id: "opt-b", label: { en: "Recommended", ar: "مستحسن" } },
       { id: "opt-c", label: { en: "Required", ar: "واجب" } },
       { id: "opt-d", label: { en: "Acceptable in Hafs", ar: "مقبول في حفص" } },
@@ -429,10 +429,10 @@ export const questions: Question[] = [
     arabicText: "أَحَدٌ",
     englishGloss: "One",
     options: [
-      { id: "opt-a", label: { en: "أَحَدْ: the Tanween becomes silent and the Daal becomes sakin (with qalqalah)", ar: "أَحَدْ — يسقط التنوين وتُسكّن الدال (مع القلقلة)" } },
-      { id: "opt-b", label: { en: "أَحَدُن: Tanween fully pronounced", ar: "أَحَدُن — التنوين كامل" } },
-      { id: "opt-c", label: { en: "أَحَدْ: Tanween silent, no qalqalah", ar: "أَحَدْ — تنوين ساقط بلا قلقلة" } },
-      { id: "opt-d", label: { en: "أَحَدُو: Tanween becomes Waw", ar: "أَحَدُو — التنوين واو" } },
+      { id: "opt-a", label: { en: "أَحَدْ: the Tanween becomes silent and the Daal becomes sakin (with qalqalah)", ar: "أَحَدْ: يسقط التنوين وتُسكّن الدال (مع القلقلة)" } },
+      { id: "opt-b", label: { en: "أَحَدُن: Tanween fully pronounced", ar: "أَحَدُن: التنوين كامل" } },
+      { id: "opt-c", label: { en: "أَحَدْ: Tanween silent, no qalqalah", ar: "أَحَدْ: تنوين ساقط بلا قلقلة" } },
+      { id: "opt-d", label: { en: "أَحَدُو: Tanween becomes Waw", ar: "أَحَدُو: التنوين واو" } },
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Two effects combine: Tanween drops (effect 1), the Daal becomes sakin (effect 3), and qalqalah on Daal triggers (effect 4) since Daal is a qalqalah letter.", ar: "تجتمع آثار: يسقط التنوين (الأثر الأوّل)، وتُسكّن الدال (الأثر الثالث)، وتقع عليها القلقلة (الأثر الرابع) لكونها من حروف القلقلة.", lessonAnchor: "stopping-effects" },
@@ -446,7 +446,7 @@ export const questions: Question[] = [
     arabicText: "الْفَلَقِ",
     englishGloss: "the daybreak",
     options: [
-      { id: "opt-a", label: { en: "5: Tanween drop, Ta Marbuta→Ha, sukoon, qalqalah, possible Madd 'Arid", ar: "خمسة — سقوط التنوين، وقلب التاء المربوطة هاء، والسكون، والقلقلة، واحتمال المدّ العارض" } },
+      { id: "opt-a", label: { en: "5: Tanween drop, Ta Marbuta→Ha, sukoon, qalqalah, possible Madd 'Arid", ar: "خمسة: سقوط التنوين، وقلب التاء المربوطة هاء، والسكون، والقلقلة، واحتمال المدّ العارض" } },
       { id: "opt-b", label: { en: "3", ar: "ثلاثة" } },
       { id: "opt-c", label: { en: "7", ar: "سبعة" } },
       { id: "opt-d", label: { en: "10", ar: "عشرة" } },
@@ -480,7 +480,7 @@ export const questions: Question[] = [
     arabicText: "النَّاسِ",
     englishGloss: "the people",
     options: [
-      { id: "opt-a", label: { en: "A mistake: Saktah requires holding the breath, NOT breathing", ar: "خطأ — السكتة بحبس النفس لا التنفّس" } },
+      { id: "opt-a", label: { en: "A mistake: Saktah requires holding the breath, NOT breathing", ar: "خطأ: السكتة بحبس النفس لا التنفّس" } },
       { id: "opt-b", label: { en: "Required", ar: "لازم" } },
       { id: "opt-c", label: { en: "Recommended", ar: "مستحسن" } },
       { id: "opt-d", label: { en: "Acceptable", ar: "جائز" } },
