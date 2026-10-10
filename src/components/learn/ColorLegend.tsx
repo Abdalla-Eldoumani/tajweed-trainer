@@ -34,8 +34,9 @@ function dedupeByColor(colors: TajweedColor[]): TajweedColor[] {
 // the --tajweed-${cssClass} variable (theme-aware, never a hard-coded hex) so
 // the legend cannot disagree with the same rule in a verse. The specimen sits on
 // a bg-subtle chip with a gold hairline; without it the pale grays and light
-// blues wash out on vellum.
-function LegendEntry({ color }: { color: TajweedColor }) {
+// blues wash out on vellum. The English name sits beside it only in the English
+// interface; the Arabic interface already shows the rule's name in the chip.
+function LegendEntry({ color, showEnglish }: { color: TajweedColor; showEnglish: boolean }) {
   return (
     <li className="flex items-center gap-2 min-w-0">
       <span
@@ -46,13 +47,13 @@ function LegendEntry({ color }: { color: TajweedColor }) {
       >
         {color.nameAr}
       </span>
-      <span className="text-small truncate">{color.nameEn}</span>
+      {showEnglish && <span className="text-small truncate">{color.nameEn}</span>}
     </li>
   );
 }
 
 export function ColorLegend() {
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
   const byGroup = getColorsByGroup();
   const groups = TAJWEED_GROUP_ORDER.filter((g) => GROUP_LABEL[g] && byGroup[g].length > 0);
 
@@ -69,7 +70,7 @@ export function ColorLegend() {
             </h3>
             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2" role="list">
               {dedupeByColor(byGroup[group]).map((c) => (
-                <LegendEntry key={c.cssClass} color={c} />
+                <LegendEntry key={c.cssClass} color={c} showEnglish={!isAr} />
               ))}
             </ul>
           </section>
