@@ -219,7 +219,7 @@ export function MemorizationHeatmap() {
                   <span
                     className={cn(
                       "text-micro tabular-nums",
-                      isRed ? "text-red-600 dark:text-red-400" : "text-text-muted",
+                      isRed ? "text-err" : "text-text-muted",
                     )}
                   >
                     {num(row.ss.count)}
