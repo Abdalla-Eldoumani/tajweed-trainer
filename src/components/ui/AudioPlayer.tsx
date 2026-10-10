@@ -3,7 +3,7 @@
 import { usePlayer } from "@/hooks/usePlayer";
 import { useSettings } from "@/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+import { cn, formatSpeed } from "@/lib/utils";
 import type { ReciterId } from "@/lib/types";
 
 interface AudioPlayerProps {
@@ -19,7 +19,7 @@ interface AudioPlayerProps {
 // mode through the one shared audio element and surfaces it in the mini-player.
 export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, className }: AudioPlayerProps) {
   const { settings, updateSettings } = useSettings();
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
   const status = usePlayer((s) => s.status);
   const isThis = usePlayer((s) => {
     const c = s.queue[s.index];
@@ -94,12 +94,12 @@ export function AudioPlayer({ surah, ayah, reciter, surahName, compact = false, 
       <select
         value={settings.playbackSpeed}
         onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
-        className="text-xs bg-transparent border border-border rounded px-1.5 py-1"
+        className="text-xs bg-transparent border border-border rounded px-1.5 py-1 min-h-[44px]"
         aria-label={t("player.speed")}
       >
-        <option value="0.5">0.5x</option>
-        <option value="0.75">0.75x</option>
-        <option value="1">1.0x</option>
+        <option value="0.5">{formatSpeed(0.5, isAr)}</option>
+        <option value="0.75">{formatSpeed(0.75, isAr)}</option>
+        <option value="1">{formatSpeed(1, isAr)}</option>
       </select>
     </div>
   );
