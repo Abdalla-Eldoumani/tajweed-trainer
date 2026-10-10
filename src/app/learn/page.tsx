@@ -3,14 +3,13 @@
 import { ModuleCard } from "@/components/learn/ModuleCard";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
-import { isModuleUnlocked } from "@/lib/module-unlock";
 import learningPath from "@/data/content/learning-path.json";
 import type { LearningModule } from "@/lib/types";
 
 const modules = learningPath.modules as LearningModule[];
 
 export default function LearnPage() {
-  const { progress, moduleProgress } = useProgress();
+  const { moduleProgress } = useProgress();
   const { t } = useTranslation();
 
   return (
@@ -32,7 +31,6 @@ export default function LearnPage() {
                 module={module}
                 lessonDone={modProgress.lessonsCompleted.length > 0}
                 quizScore={scores.length > 0 ? scores[scores.length - 1].score : null}
-                locked={!isModuleUnlocked(progress, module.id)}
               />
             </li>
           );
