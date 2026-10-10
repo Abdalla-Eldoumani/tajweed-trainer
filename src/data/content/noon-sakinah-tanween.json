@@ -53,7 +53,7 @@
         }
       ],
       "mnemonic_ar": "هَمْزٌ هَاءٌ عَيْنٌ حَاءٌ غَيْنٌ خَاءٌ",
-      "mnemonic_en": "All six are throat letters (Huroof Halqiyyah) — they come from the deepest part of the throat to the opening.",
+      "mnemonic_en": "All six are throat letters (Huroof Halqiyyah). They come from the deepest part of the throat to the opening.",
       "examples": [
         {
           "arabic": "مِنْ أَجْرٍ",
@@ -63,7 +63,7 @@
           "ayah": 109,
           "surah_name_en": "Ash-Shu'ara",
           "highlight_word": "مِنْ أَجْرٍ",
-          "rule_applied": "Izhar — Noon Sakinah followed by Hamzah (ء)",
+          "rule_applied": "Izhar: Noon Sakinah followed by Hamzah (ء)",
           "rule_applied_ar": "إظهار — نون ساكنة قبل الهمزة (ء)",
           "surah_name_ar": "الشعراء"
         },
@@ -75,7 +75,7 @@
           "ayah": 28,
           "surah_name_en": "An-Najm",
           "highlight_word": "مِنْ عِلْمٍ",
-          "rule_applied": "Izhar — Noon Sakinah followed by 'Ayn (ع)",
+          "rule_applied": "Izhar: Noon Sakinah followed by 'Ayn (ع)",
           "rule_applied_ar": "إظهار — نون ساكنة قبل العين (ع)",
           "surah_name_ar": "النجم"
         },
@@ -87,7 +87,7 @@
           "ayah": 26,
           "surah_name_en": "Al-An'am",
           "highlight_word": "يَنْهَوْنَ",
-          "rule_applied": "Izhar — Noon Sakinah followed by Haa (هـ) within one word",
+          "rule_applied": "Izhar: Noon Sakinah followed by Haa (هـ) within one word",
           "rule_applied_ar": "إظهار — نون ساكنة قبل الهاء (هـ) في كلمة واحدة",
           "surah_name_ar": "الأنعام"
         },
@@ -99,15 +99,15 @@
           "ayah": 109,
           "surah_name_en": "At-Tawbah",
           "highlight_word": "جُرُفٍ هَارٍ",
-          "rule_applied": "Izhar — Tanween followed by Haa (هـ)",
+          "rule_applied": "Izhar: Tanween followed by Haa (هـ)",
           "rule_applied_ar": "إظهار — تنوين قبل الهاء (هـ)",
           "surah_name_ar": "التوبة"
         }
       ],
       "common_mistakes": [
-        "Adding ghunnah (nasalization) — Izhar must be completely clear",
+        "Adding ghunnah (nasalization), when Izhar must be completely clear",
         "Merging the Noon sound into the following letter",
-        "Not distinguishing between ح (Haa) and هـ (Haa) — both trigger Izhar but have different makhraj"
+        "Not distinguishing between ح (Haa) and هـ (Haa). Both trigger Izhar but have different makhraj"
       ],
       "common_mistakes_ar": [
         "إضافة الغنّة — الإظهار يجب أن يكون واضحا تامّا بلا أي غنّة",
@@ -151,7 +151,7 @@
               "transliteration": "w"
             }
           ],
-          "mnemonic_en": "Letters of Idgham with Ghunnah: يَنْمُو (yanmoo — 'it grows')",
+          "mnemonic_en": "Letters of Idgham with Ghunnah: يَنْمُو (yanmoo, 'it grows')",
           "description": "The Noon Sakinah/Tanween merges into the following letter WITH a 2-beat nasal sound (ghunnah).",
           "description_ar": "تُدغَم النون الساكنة أو التنوين في الحرف الذي بعدها مع بقاء الغنّة بمقدار حركتين.",
           "examples": [
@@ -163,7 +163,7 @@
               "ayah": 8,
               "surah_name_en": "Al-Baqarah",
               "highlight_word": "مَن يَقُولُ",
-              "rule_applied": "Idgham with Ghunnah — Noon Sakinah followed by Yaa (ي)",
+              "rule_applied": "Idgham with Ghunnah: Noon Sakinah followed by Yaa (ي)",
               "rule_applied_ar": "إدغام بغنّة — نون ساكنة قبل الياء (ي)",
               "surah_name_ar": "البقرة"
             },
@@ -175,7 +175,7 @@
               "ayah": 31,
               "surah_name_en": "Ash-Shura",
               "highlight_word": "مِن وَلِيٍّ",
-              "rule_applied": "Idgham with Ghunnah — Noon Sakinah followed by Waw (و)",
+              "rule_applied": "Idgham with Ghunnah: Noon Sakinah followed by Waw (و)",
               "rule_applied_ar": "إدغام بغنّة — نون ساكنة قبل الواو (و)",
               "surah_name_ar": "الشورى"
             }
@@ -208,7 +208,7 @@
               "ayah": 5,
               "surah_name_en": "Al-Baqarah",
               "highlight_word": "مِن رَّبِّهِمْ",
-              "rule_applied": "Idgham without Ghunnah — Noon Sakinah followed by Raa (ر)",
+              "rule_applied": "Idgham without Ghunnah: Noon Sakinah followed by Raa (ر)",
               "rule_applied_ar": "إدغام بلا غنّة — نون ساكنة قبل الراء (ر)",
               "surah_name_ar": "البقرة"
             },
@@ -220,7 +220,7 @@
               "ayah": 2,
               "surah_name_en": "Al-Kahf",
               "highlight_word": "مِن لَّدُنْهُ",
-              "rule_applied": "Idgham without Ghunnah — Noon Sakinah followed by Laam (ل)",
+              "rule_applied": "Idgham without Ghunnah: Noon Sakinah followed by Laam (ل)",
               "rule_applied_ar": "إدغام بلا غنّة — نون ساكنة قبل اللام (ل)",
               "surah_name_ar": "الكهف"
             }
@@ -232,9 +232,9 @@
       "critical_condition": "Idgham ONLY occurs when the Noon Sakinah/Tanween and the Idgham letter are in TWO SEPARATE WORDS. If they are within one word, the rule is Izhar Mutlaq (absolute clarity). There are only four such words in the entire Quran: دُنْيَا، بُنْيَان، صِنْوَان، قِنْوَان.",
       "critical_condition_ar": "لا يقع الإدغام إلا إذا كانت النون الساكنة أو التنوين والحرف المدغَم فيه في كلمتين منفصلتين. وإذا اجتمعا في كلمة واحدة فالحكم هو الإظهار المطلق. وقد وردت أربع كلمات فقط في القرآن الكريم: دُنْيَا، بُنْيَان، صِنْوَان، قِنْوَان.",
       "common_mistakes": [
-        "Applying Idgham within a single word (e.g., reading دُنْيَا with Idgham — this is WRONG)",
-        "Adding ghunnah with Laam and Raa — these two are WITHOUT ghunnah",
-        "Not merging completely — the Noon sound must disappear entirely"
+        "Applying Idgham within a single word (e.g., reading دُنْيَا with Idgham is WRONG)",
+        "Adding ghunnah with Laam and Raa, since these two are WITHOUT ghunnah",
+        "Not merging completely: the Noon sound must disappear entirely"
       ],
       "common_mistakes_ar": [
         "تطبيق الإدغام في كلمة واحدة (مثل: قراءة دُنْيَا بالإدغام — وهذا خطأ)",
@@ -269,7 +269,7 @@
           "ayah": 27,
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "مِنۢ بَعْدِ",
-          "rule_applied": "Iqlab — Noon Sakinah followed by Baa (ب), Noon becomes Meem",
+          "rule_applied": "Iqlab: Noon Sakinah followed by Baa (ب), Noon becomes Meem",
           "rule_applied_ar": "إقلاب — نون ساكنة قبل الباء (ب)، تُقلب النون ميما",
           "surah_name_ar": "البقرة"
         },
@@ -281,7 +281,7 @@
           "ayah": 61,
           "surah_name_en": "Al-Hajj",
           "highlight_word": "سَمِيعٌۢ بَصِيرٌ",
-          "rule_applied": "Iqlab — Tanween followed by Baa (ب)",
+          "rule_applied": "Iqlab: Tanween followed by Baa (ب)",
           "rule_applied_ar": "إقلاب — تنوين قبل الباء (ب)",
           "surah_name_ar": "الحج"
         },
@@ -293,15 +293,15 @@
           "ayah": 33,
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "أَنۢبِئْهُمْ",
-          "rule_applied": "Iqlab — Noon Sakinah followed by Baa (ب) within one word",
+          "rule_applied": "Iqlab: Noon Sakinah followed by Baa (ب) within one word",
           "rule_applied_ar": "إقلاب — نون ساكنة قبل الباء (ب) في كلمة واحدة",
           "surah_name_ar": "البقرة"
         }
       ],
       "common_mistakes": [
         "Pronouncing a full, clear Meem instead of a hidden Meem",
-        "Pressing the lips fully together — the lips should only come close, not fully shut",
-        "Forgetting the ghunnah — must hold for 2 beats"
+        "Pressing the lips fully together. The lips should only come close, not fully shut",
+        "Forgetting the ghunnah, which must be held for 2 beats"
       ],
       "common_mistakes_ar": [
         "نطق الميم نطقا تامّا واضحا بدلا من إخفائها",
@@ -315,7 +315,7 @@
       "order": 4,
       "title_en": "Ikhfaa (Concealment)",
       "title_ar": "الإخفاء الحقيقي",
-      "description": "When Noon Sakinah or Tanween is followed by any of 15 remaining letters, the Noon/Tanween is 'hidden' — pronounced with a light nasal sound (ghunnah) for 2 beats. The tongue prepares for the position of the following letter.",
+      "description": "When Noon Sakinah or Tanween is followed by any of 15 remaining letters, the Noon/Tanween is 'hidden', pronounced with a light nasal sound (ghunnah) for 2 beats. The tongue prepares for the position of the following letter.",
       "description_ar": "إذا وقعت النون الساكنة أو التنوين قبل أحد الحروف الخمسة عشر الباقية، أُخفيت النون أو التنوين، فتُنطق بصوت أنفي (غنّة) بمقدار حركتين، ويستعدّ اللسان لمخرج الحرف الذي بعدها.",
       "arabic_definition": "النطق بالنون الساكنة أو التنوين بصفة بين الإظهار والإدغام مع بقاء الغنة",
       "letters": [
@@ -395,7 +395,7 @@
           "transliteration": "k"
         }
       ],
-      "description_detailed": "Ikhfaa is the most common of the Noon Sakinah and Tanween rules in the Quran. The quality of the ghunnah (nasal sound) varies — it takes on a heavier or lighter quality depending on whether the following letter is heavy (mufakhham) or light (muraqqaq). For example, Ikhfaa before ط (heavy letter) has a heavier ghunnah than Ikhfaa before ت (light letter).",
+      "description_detailed": "Ikhfaa is the most common of the Noon Sakinah and Tanween rules in the Quran. The quality of the ghunnah (nasal sound) varies. It takes on a heavier or lighter quality depending on whether the following letter is heavy (mufakhham) or light (muraqqaq). For example, Ikhfaa before ط (heavy letter) has a heavier ghunnah than Ikhfaa before ت (light letter).",
       "description_detailed_ar": "الإخفاء أكثر أحكام النون الساكنة والتنوين ورودا في القرآن. وتتغيّر صفة الغنّة تفخيما أو ترقيقا بحسب الحرف الذي يأتي بعدها: فإذا كان مفخّما (كالطاء) كانت الغنّة أثقل، وإذا كان مرقّقا (كالتاء) كانت أرقّ.",
       "examples": [
         {
@@ -406,7 +406,7 @@
           "ayah": 4,
           "surah_name_en": "Ar-Rum",
           "highlight_word": "مِنْ قَبْلُ",
-          "rule_applied": "Ikhfaa — Noon Sakinah followed by Qaaf (ق)",
+          "rule_applied": "Ikhfaa: Noon Sakinah followed by Qaaf (ق)",
           "rule_applied_ar": "إخفاء — نون ساكنة قبل القاف (ق)",
           "surah_name_ar": "الروم"
         },
@@ -418,7 +418,7 @@
           "ayah": 85,
           "surah_name_en": "Al-Baqarah",
           "highlight_word": "أَنْتُمْ",
-          "rule_applied": "Ikhfaa — Noon Sakinah followed by Taa (ت) within one word",
+          "rule_applied": "Ikhfaa: Noon Sakinah followed by Taa (ت) within one word",
           "rule_applied_ar": "إخفاء — نون ساكنة قبل التاء (ت) في كلمة واحدة",
           "surah_name_ar": "البقرة"
         },
@@ -430,7 +430,7 @@
           "ayah": 33,
           "surah_name_en": "Al-Isra",
           "highlight_word": "مَنْصُورًا",
-          "rule_applied": "Ikhfaa — Noon Sakinah followed by Saad (ص) within one word",
+          "rule_applied": "Ikhfaa: Noon Sakinah followed by Saad (ص) within one word",
           "rule_applied_ar": "إخفاء — نون ساكنة قبل الصاد (ص) في كلمة واحدة",
           "surah_name_ar": "الإسراء"
         },
@@ -442,16 +442,16 @@
           "ayah": 22,
           "surah_name_en": "Saba",
           "highlight_word": "مِنْ ظَهِيرٍ",
-          "rule_applied": "Ikhfaa — Noon Sakinah followed by Dhaa (ظ)",
+          "rule_applied": "Ikhfaa: Noon Sakinah followed by Dhaa (ظ)",
           "rule_applied_ar": "إخفاء — نون ساكنة قبل الظاء (ظ)",
           "surah_name_ar": "سبإ"
         }
       ],
       "common_mistakes": [
-        "Pronouncing the Noon too clearly (like Izhar) — it must be hidden",
-        "Merging completely (like Idgham) — the Noon sound should still be faintly present",
+        "Pronouncing the Noon too clearly (like Izhar), when it must be hidden",
+        "Merging completely (like Idgham): the Noon sound should still be faintly present",
         "Not adjusting the ghunnah quality for heavy vs. light following letters",
-        "Tongue touching the articulation point of the Noon — it should hover near the following letter's position"
+        "Tongue touching the articulation point of the Noon. It should hover near the following letter's position"
       ],
       "common_mistakes_ar": [
         "النطق بالنون نطقا واضحا (كالإظهار) — بل يجب إخفاؤها",
