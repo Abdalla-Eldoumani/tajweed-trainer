@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { useTranslation } from "@/lib/i18n";
 
 type LocaleLabel = string | { en: string; ar?: string };
@@ -58,12 +57,10 @@ export function LessonNavigation({
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="w-full sm:w-auto">
           {prevHref && (
-            <Link href={prevHref}>
-              <Button variant="ghost" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
-                <ChevronStartIcon />
-                {prevText}
-              </Button>
-            </Link>
+            <ButtonLink href={prevHref} variant="ghost" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
+              <ChevronStartIcon />
+              {prevText}
+            </ButtonLink>
           )}
         </div>
 
@@ -81,23 +78,19 @@ export function LessonNavigation({
           )}
 
           {nextHref && (
-            <Link href={nextHref} className="w-full sm:w-auto">
-              <Button variant="outline" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
-                {nextText}
-                <ChevronEndIcon />
-              </Button>
-            </Link>
+            <ButtonLink href={nextHref} variant="outline" size="sm" className="w-full sm:w-auto min-h-[44px] gap-2">
+              {nextText}
+              <ChevronEndIcon />
+            </ButtonLink>
           )}
         </div>
       </div>
 
       {showPracticeCta && (
-        <Link href={`/practice/${practiceModuleId}`} className="block">
-          <Button variant="primary" size="md" className="w-full min-h-[44px] gap-2">
-            {t("learn.practiceThisModule")}
-            <ChevronEndIcon />
-          </Button>
-        </Link>
+        <ButtonLink href={`/practice/${practiceModuleId}`} variant="primary" size="md" className="w-full min-h-[44px] gap-2">
+          {t("learn.practiceThisModule")}
+          <ChevronEndIcon />
+        </ButtonLink>
       )}
     </div>
   );
