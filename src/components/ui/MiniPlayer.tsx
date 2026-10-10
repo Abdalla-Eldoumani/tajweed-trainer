@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePlayer } from "@/hooks/usePlayer";
 import { useTranslation } from "@/lib/i18n";
+import { formatSpeed, toArabicIndic } from "@/lib/utils";
 import { ayahCountForSurah } from "@/lib/navigation";
 import { getPlayerPosition, setPlayerPosition, getPlayerMinimized, setPlayerMinimized } from "@/lib/storage";
 import {
@@ -129,7 +130,9 @@ const SlidersIcon = () => (
 // AppProvider so it stays put across route changes. The expandable study panel
 // holds the repeat and sleep-timer controls (study tools).
 export function MiniPlayer() {
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
+  const num = (n: number) => (isAr ? toArabicIndic(n) : String(n));
+  const clock = (seconds: number) => (isAr ? toArabicIndic(fmt(seconds)) : fmt(seconds));
   const [mounted, setMounted] = useState(false);
   const [showStudy, setShowStudy] = useState(false);
   // Collapsed pill state. Minimizing keeps playback and the drag handle; only
@@ -521,7 +524,7 @@ export function MiniPlayer() {
               >
                 {REPEAT_OPTIONS.map((n) => (
                   <option key={n} value={n}>
-                    {n === 0 ? t("player.off") : `${t("player.times")}${n}`}
+                    {n === 0 ? t("player.off") : `${t("player.times")}${num(n)}`}
                   </option>
                 ))}
               </select>
@@ -550,7 +553,7 @@ export function MiniPlayer() {
                   className="rounded-lg border border-gold-light/30 dark:border-gold-dark/20 bg-bg-card dark:bg-bg-card-dark px-1.5 py-1 min-h-[44px]"
                 >
                   {[2, 3, 5, 10].map((n) => (
-                    <option key={n} value={n}>{`${t("player.times")}${n}`}</option>
+                    <option key={n} value={n}>{`${t("player.times")}${num(n)}`}</option>
                   ))}
                 </select>
                 <button
@@ -573,7 +576,7 @@ export function MiniPlayer() {
               >
                 <option value="">{t("player.off")}</option>
                 {SLEEP_MINUTES.map((m) => (
-                  <option key={m} value={m}>{`${m} ${t("player.min")}`}</option>
+                  <option key={m} value={m}>{`${num(m)} ${t("player.min")}`}</option>
                 ))}
                 <option value="surah">{t("player.sleepEndOfSurah")}</option>
               </select>
@@ -692,7 +695,7 @@ export function MiniPlayer() {
                 }}
                 aria-label={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
                 title={mode === "continuous" ? t("player.modeToSingle") : t("player.modeToContinuous")}
-                className="shrink-0 text-[0.75rem] uppercase tracking-wide rounded px-1.5 py-0.5 min-h-[44px] min-w-[44px] text-primary dark:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
+                className="shrink-0 text-micro uppercase tracking-wide rounded px-1.5 py-0.5 min-h-[44px] min-w-[44px] text-primary dark:text-primary-light hover:bg-bg-subtle dark:hover:bg-bg-subtle-dark"
               >
                 {mode === "continuous" ? t("player.modeContinuous") : t("player.modeSingle")}
               </button>
@@ -709,9 +712,9 @@ export function MiniPlayer() {
               aria-label={t("player.seek")}
               className="w-full h-11 accent-primary dark:accent-gold"
             />
-            <div className="flex items-center justify-between text-[0.75rem] text-text-muted tabular-nums">
-              <span>{fmt(currentTime)}</span>
-              <span>{fmt(duration)}</span>
+            <div className="flex items-center justify-between text-micro text-text-muted tabular-nums">
+              <span>{clock(currentTime)}</span>
+              <span>{clock(duration)}</span>
             </div>
           </div>
 
@@ -738,7 +741,7 @@ export function MiniPlayer() {
           >
             {SPEEDS.map((sp) => (
               <option key={sp} value={sp}>
-                {sp}×
+                {formatSpeed(sp, isAr)}
               </option>
             ))}
           </select>
