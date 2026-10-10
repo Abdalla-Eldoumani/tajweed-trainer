@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { cn, formatSurahReference, toArabicIndic } from "@/lib/utils";
+import { cn, formatSpeed, formatSurahReference, toArabicIndic } from "@/lib/utils";
 
 // New coverage for the small shared utilities.
 
@@ -50,5 +50,17 @@ describe("formatSurahReference", () => {
 
   it("falls back to the English name under ar when no Arabic name is given", () => {
     expect(formatSurahReference({ en: "Al-Fatihah" }, 1, 1, "ar")).toBe("Al-Fatihah (١:١)");
+  });
+});
+
+describe("formatSpeed", () => {
+  it("writes a Western multiplier in English", () => {
+    expect(formatSpeed(0.75, false)).toBe("0.75×");
+    expect(formatSpeed(1, false)).toBe("1×");
+  });
+
+  it("writes Arabic-Indic digits and the Arabic decimal separator in Arabic", () => {
+    expect(formatSpeed(0.75, true)).toBe("٠٫٧٥×");
+    expect(formatSpeed(1, true)).toBe("١×");
   });
 });
