@@ -7,9 +7,6 @@ import { ArabicText } from "@/components/ui/ArabicText";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
-import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
-import { useModuleLock } from "@/hooks/useModuleLock";
-import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 
 const MakhrajDiagram = dynamic(
@@ -33,26 +30,10 @@ import makharijData from "@/data/content/makharij.json";
 const SECTIONS = ["makharij-overview", ...makharijData.regions.map((r) => r.id)];
 
 export default function MakharijPage() {
-  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("makharij");
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("makharij");
   const { t, isAr } = useTranslation();
-
-  // Render the loading skeleton during the brief hydration window so a locked
-  // URL never flashes module content before useModuleLock resolves.
-  if (!mounted) return <LearnLoading />;
-  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
-    return (
-      <LockedModuleScreen
-        moduleTitleEn={makharijData.title_en}
-        moduleTitleAr={makharijData.title_ar}
-        prereqId={prereqId}
-        prereqTitleEn={prereqTitleEn}
-        prereqTitleAr={prereqTitleAr}
-      />
-    );
-  }
 
   const activeRegion = makharijData.regions.find((r) => r.id === selectedRegion);
 
