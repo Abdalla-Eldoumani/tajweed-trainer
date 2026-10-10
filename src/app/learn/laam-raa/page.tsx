@@ -127,7 +127,7 @@ export default function LaamRaaPage() {
             <div className="space-y-2">
               {raaSection.tarqeeq_cases.map((c, i) => (
                 <div key={i} className="flex items-start gap-2 text-micro p-2 rounded bg-bg-subtle dark:bg-bg-subtle-dark">
-                  <span className="text-blue-500 shrink-0 font-bold">&darr;</span>
+                  <span className="text-text-muted shrink-0 font-bold">&darr;</span>
                   <div>
                     <p className="font-medium">{isAr && c.condition_ar ? c.condition_ar : c.condition}</p>
                     <p className="text-text-muted mt-0.5">
