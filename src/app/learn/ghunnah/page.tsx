@@ -5,10 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { SectionBanner } from "@/components/ui/SectionBanner";
 import { LessonNavigation } from "@/components/learn/LessonNavigation";
 import { LessonProgress } from "@/components/learn/LessonProgress";
-import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 import { useProgress } from "@/hooks/useProgress";
-import { useModuleLock } from "@/hooks/useModuleLock";
-import LearnLoading from "../loading";
 import { useTranslation } from "@/lib/i18n";
 import { getColorForClass } from "@/lib/tajweed-colors";
 import ghunnahData from "@/data/content/ghunnah.json";
@@ -23,23 +20,9 @@ const SECTIONS = [
 ];
 
 export default function GhunnahPage() {
-  const { locked, mounted, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock("ghunnah");
   const { markLessonComplete, moduleProgress } = useProgress();
   const progress = moduleProgress("ghunnah");
   const { t, isAr } = useTranslation();
-
-  if (!mounted) return <LearnLoading />;
-  if (locked && prereqId && prereqTitleEn && prereqTitleAr) {
-    return (
-      <LockedModuleScreen
-        moduleTitleEn={ghunnahData.title_en}
-        moduleTitleAr={ghunnahData.title_ar}
-        prereqId={prereqId}
-        prereqTitleEn={prereqTitleEn}
-        prereqTitleAr={prereqTitleAr}
-      />
-    );
-  }
 
   return (
     <div className="space-y-8">
