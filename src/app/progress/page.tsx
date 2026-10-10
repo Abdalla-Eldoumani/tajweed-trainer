@@ -139,7 +139,7 @@ export default function ProgressPage() {
               <p className="text-xs text-text-muted">{t("review.statsMastered")}</p>
             </div>
             <div>
-              <div className="text-h2 font-bold text-red-600 dark:text-red-400 tabular-nums">
+              <div className="text-h2 font-bold text-err tabular-nums">
                 {reviewStats.due}
               </div>
               <p className="text-xs text-text-muted">{t("review.statsDue")}</p>
@@ -220,7 +220,7 @@ export default function ProgressPage() {
                 <p className="text-xs text-text-muted">{t("memorize.reviewMastered")}</p>
               </div>
               <div>
-                <div className="text-h2 font-bold text-red-600 dark:text-red-400 tabular-nums">
+                <div className="text-h2 font-bold text-err tabular-nums">
                   {num(memorizationReviewStats.due)}
                 </div>
                 <p className="text-xs text-text-muted">{t("memorize.reviewDueNow")}</p>
@@ -433,8 +433,8 @@ export default function ProgressPage() {
         </p>
         {showResetConfirm ? (
           <div className="flex items-center gap-3">
-            <p className="text-sm text-red-600 dark:text-red-400">{t("progress.areYouSure")}</p>
-            <Button variant="primary" size="sm" onClick={handleReset} className="bg-red-600 hover:bg-red-700">
+            <p className="text-sm text-err">{t("progress.areYouSure")}</p>
+            <Button variant="outline" size="sm" onClick={handleReset} className="border-err text-err hover:bg-err/10">
               {t("progress.yesReset")}
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setShowResetConfirm(false)}>
