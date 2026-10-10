@@ -1121,16 +1121,16 @@ const translations: Record<string, { en: string; ar: string }> = {
   // states what the app shows and how this entry behaves, and links out to an
   // external reference. It must never explain what the Warsh narration is or
   // describe its rules. The AR side is a translation of this operational copy.
-  "warsh.entryTitle": { en: "Listen in another narration (Warsh)", ar: "الاستماع برواية أخرى (ورش)" },
+  "warsh.entryTitle": { en: "Listen in another narration (Warsh ‘an Nāfi‘)", ar: "الاستماع برواية أخرى (ورش عن نافع)" },
   "warsh.entrySubtitle": {
-    en: "Per surah only. For this narration, per-verse playback is not available.",
-    ar: "لكل سورة فقط. في هذه الرواية، التشغيل لكل آية غير متاح.",
+    en: "Per surah only. For this narration, per-verse playback is not available. The lessons in this app teach Hafs an Asim.",
+    ar: "لكل سورة فقط. في هذه الرواية، التشغيل لكل آية غير متاح. والدروس في هذا التطبيق تعلّم رواية حفص عن عاصم.",
   },
   "warsh.reciter": { en: "Reciter: Younes Souilass (Warsh ‘an Nāfi‘)", ar: "القارئ: يونس سويلص (ورش عن نافع)" },
   "warsh.disclaimerTitle": { en: "A different narration", ar: "رواية مختلفة" },
   "warsh.disclaimerBody": {
-    en: "This is the Warsh narration. The Arabic text and tajweed colouring shown in this app are for Hafs an Asim and do not match this recitation. This app is built for Hafs an Asim. Per-verse playback is not available for this narration.",
-    ar: "هذه رواية ورش. النصّ العربي وتلوين التجويد المعروضان في هذا التطبيق لرواية حفص عن عاصم ولا يطابقان هذه التلاوة. هذا التطبيق مبني على رواية حفص عن عاصم. التشغيل لكل آية غير متاح في هذه الرواية.",
+    en: "This is the Warsh ‘an Nāfi‘ narration. The Arabic text, the tajweed colouring and the lessons in this app are for Hafs an Asim and do not match this recitation. This app is built for Hafs an Asim. Per-verse playback is not available for this narration.",
+    ar: "هذه رواية ورش عن نافع. النصّ العربي وتلوين التجويد والدروس في هذا التطبيق لرواية حفص عن عاصم ولا تطابق هذه التلاوة. هذا التطبيق مبني على رواية حفص عن عاصم. التشغيل لكل آية غير متاح في هذه الرواية.",
   },
   "warsh.referenceLinkLabel": { en: "Learn more about the Qira'at and Warsh", ar: "اعرف المزيد عن القراءات ورواية ورش" },
   "warsh.acknowledge": { en: "I understand", ar: "فهمت" },
