@@ -70,7 +70,7 @@ export function MasterySection() {
                   )}
                   {r.mastered > 0 && <span>{num(r.mastered)} {t("mastery.mastered")}</span>}
                   {r.due > 0 && <span className="text-accent">{num(r.due)} {t("mastery.due")}</span>}
-                  <span className={`px-2 py-0.5 rounded-full text-[0.75rem] font-medium ${LEVEL_TONE[r.level]}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-micro font-medium ${LEVEL_TONE[r.level]}`}>
                     {t(`mastery.level.${r.level}`)}
                   </span>
                 </div>
