@@ -104,7 +104,7 @@ npm test
 
 # Browser tests (dev server running)
 node scripts/verify-mushaf.mjs               # 23/23
-node scripts/verify-module-lock.mjs          # 14/14
+node scripts/verify-lesson-access.mjs        # 10/10
 node scripts/verify-questions.mjs            # 19/19
 node scripts/verify-reciters.mjs             # 17/17 hard (live-resolution probes non-fatal)
 ```
