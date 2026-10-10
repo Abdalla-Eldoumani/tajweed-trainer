@@ -248,7 +248,7 @@ export default function SearchPage() {
                               <ArabicText text={r.title.ar.replace(/^\d+\.\s*/, "")} size="sm" className="text-text-muted" />
                             )}
                           </div>
-                          <span className="text-[0.75rem] uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light shrink-0">
+                          <span className="text-micro uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light shrink-0">
                             {isAr ? KIND_LABEL[r.kind].ar : KIND_LABEL[r.kind].en}
                           </span>
                         </div>
