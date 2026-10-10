@@ -148,6 +148,13 @@
           "note_ar": "مفخّمة — لأنّ الكسرة على همزة الوصل عارضة"
         },
         {
+          "condition": "Raa has Sukoon, preceded by an original Kasrah, with an Isti'la letter that has no Kasrah after it in the same word",
+          "condition_ar": "الراء الساكنة بعد كسرة أصلية، ويليها في الكلمة نفسها حرف استعلاء غير مكسور",
+          "example": "مِرْصَادًا",
+          "note": "Heavy, because the Isti'la letter Saad follows in the same word (An-Naba 78:21). The Qur'an has five such words: قِرْطَاسٍ (6:7), إِرْصَادًا (9:107), فِرْقَةٍ (9:122), مِرْصَادًا (78:21) and الْمِرْصَادِ (89:14). When the Isti'la letter has a Kasrah, as in فِرْقٍ (26:63), teachers accept both ways.",
+          "note_ar": "مفخّمة لأنّ حرف الاستعلاء (الصاد) يليها في الكلمة نفسها (النبأ ٧٨:٢١). وفي القرآن خمس كلمات من هذا النوع: قِرْطَاسٍ (٦:٧)، وَإِرْصَادًا (٩:١٠٧)، فِرْقَةٍ (٩:١٢٢)، مِرْصَادًا (٧٨:٢١)، الْمِرْصَادِ (٨٩:١٤). وإذا كان حرف الاستعلاء مكسورا كما في فِرْقٍ (٢٦:٦٣) فللعلماء في الراء وجهان."
+        },
+        {
           "condition": "Raa has Sukoon, preceded by Sukoon after Fathah/Dammah",
           "condition_ar": "الراء الساكنة بعد ساكن مسبوق بفتحة أو ضمّة",
           "example": "الْفَجْرِ (when stopping)",
@@ -167,8 +174,8 @@
           "condition": "Raa has Sukoon, preceded by Kasrah Asliyyah (original)",
           "condition_ar": "الراء الساكنة بعد كسرة أصلية",
           "example": "فِرْعَوْنَ",
-          "note": "Light",
-          "note_ar": "مرقّقة"
+          "note": "Light, unless an Isti'la letter follows in the same word (see the heavy cases)",
+          "note_ar": "مرقّقة، إلا إذا وليها حرف استعلاء في الكلمة نفسها (انظر حالات التفخيم)"
         },
         {
           "condition": "Raa has Sukoon, preceded by Yaa Maddiyyah",
@@ -176,6 +183,13 @@
           "example": "قَدِيرٌ (when stopping)",
           "note": "Light",
           "note_ar": "مرقّقة"
+        },
+        {
+          "condition": "Raa has Sukoon because you stop on it, after a sakin letter that is not Yaa or an Isti'la letter, and that letter follows a Kasrah",
+          "condition_ar": "الراء الساكنة عند الوقف بعد حرف ساكن ليس ياء ولا حرف استعلاء، وقبل ذلك الحرف كسرة",
+          "example": "ٱلذِّكْرِ",
+          "note": "Light when you stop on it (Sad 38:1).",
+          "note_ar": "مرقّقة عند الوقف عليها (ص ٣٨:١)."
         }
       ]
     }
