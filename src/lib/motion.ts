@@ -1,27 +1,30 @@
-// Wraps a state update in the browser's View Transitions API so the swap
-// crossfades instead of cutting. Two guards keep it safe everywhere: it
-// feature-detects document.startViewTransition (Firefox and older Safari lack
-// it, and must still apply the update with no error), and it honors
-// prefersReducedMotion (a reduced-motion user gets an instant change, no
-// animation). When either guard fails it just calls update() synchronously, so
-// the caller's state change always happens regardless of support.
+// Wraps a state update so a theme change eases between colors instead of
+// cutting. The easing is a color transition on the whole tree, switched on by a
+// class on <html> for the length of the swap. It is not the View Transitions
+// API: while a view transition runs, the browser hit-tests the page as one
+// snapshot and every click or tap lands on <html> until the fade ends, which
+// made the controls on the settings page unresponsive for about half a second
+// after each theme change. A color transition leaves the page live throughout.
+// A reduced-motion user gets the instant swap, and the update always runs.
 import { prefersReducedMotion } from "./reduced-motion";
 
-// startViewTransition is not in the installed DOM lib types yet, so read it
-// through a narrow local shape rather than augmenting the global Document.
-type ViewTransitionDocument = Document & {
-  startViewTransition?: (callback: () => void) => unknown;
-};
+// The fade runs for the page motion token (420ms) once React has committed the
+// new theme, so the class stays on a little longer than the transition itself.
+const FADE_WINDOW_MS = 600;
 
-export function withViewTransition(update: () => void): void {
+let clearTimer: ReturnType<typeof setTimeout> | undefined;
+
+export function withThemeFade(update: () => void): void {
   if (typeof document === "undefined" || prefersReducedMotion()) {
     update();
     return;
   }
-  const start = (document as ViewTransitionDocument).startViewTransition;
-  if (typeof start === "function") {
-    start.call(document, update);
-    return;
-  }
+  const root = document.documentElement;
+  root.classList.add("theme-fade");
   update();
+  if (clearTimer !== undefined) clearTimeout(clearTimer);
+  clearTimer = setTimeout(() => {
+    root.classList.remove("theme-fade");
+    clearTimer = undefined;
+  }, FADE_WINDOW_MS);
 }

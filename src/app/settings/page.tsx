@@ -12,7 +12,7 @@ import { RECITATIONS, DEFAULT_RECITER_ID, styleGroup, normalizeReciterId, type R
 import { getResourceTranslations, getResourceTafsirs } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, CURATED_TAFSIRS, mergeResources } from "@/lib/reading-resources";
 import type { Recitation, TranslationResource, Theme } from "@/lib/types";
-import { withViewTransition } from "@/lib/motion";
+import { withThemeFade } from "@/lib/motion";
 import { cn, formatSpeed, toArabicIndic } from "@/lib/utils";
 
 // Literal anchor hexes per theme, used only to paint the
@@ -383,7 +383,7 @@ export default function SettingsPage() {
                   name="theme"
                   value={value}
                   checked={active}
-                  onChange={() => withViewTransition(() => updateSettings({ theme: value }))}
+                  onChange={() => withThemeFade(() => updateSettings({ theme: value }))}
                   className="accent-primary dark:accent-gold"
                   aria-label={t(labelKey)}
                 />
