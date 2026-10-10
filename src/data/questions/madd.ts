@@ -12,10 +12,10 @@ export const questions: Question[] = [
     arabicText: "قَالَ",
     englishGloss: "he said",
     options: [
-      { id: "opt-a", label: { en: "3 — Alif (ا), Waw (و), Yaa (ي)", ar: "ثلاثة — الألف والواو والياء" } },
+      { id: "opt-a", label: { en: "3: Alif (ا), Waw (و), Yaa (ي)", ar: "ثلاثة — الألف والواو والياء" } },
       { id: "opt-b", label: { en: "5", ar: "خمسة" } },
       { id: "opt-c", label: { en: "7", ar: "سبعة" } },
-      { id: "opt-d", label: { en: "1 — only Alif", ar: "واحد — الألف فقط" } },
+      { id: "opt-d", label: { en: "1: only Alif", ar: "واحد — الألف فقط" } },
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Three madd letters: Alif (ا), Waw (و), Yaa (ي). Each requires a specific preceding vowel.", ar: "حروف المدّ ثلاثة: الألف والواو والياء. ولكلّ حرف منها حركة مناسبة قبله.", lessonAnchor: "madd-letters" },
@@ -114,13 +114,13 @@ export const questions: Question[] = [
     arabicText: "الصَّاخَّةُ",
     englishGloss: "the deafening blast",
     options: [
-      { id: "opt-a", label: { en: "6 beats — always", ar: "ستّ حركات لزوما" } },
+      { id: "opt-a", label: { en: "6 beats: always", ar: "ستّ حركات لزوما" } },
       { id: "opt-b", label: { en: "2 beats", ar: "حركتان" } },
       { id: "opt-c", label: { en: "4-5 beats", ar: "أربع أو خمس حركات" } },
       { id: "opt-d", label: { en: "Variable 2/4/6", ar: "متفاوت ٢/٤/٦" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Madd Lazim is always exactly 6 beats — the longest madd. It is obligatory (Wajib).", ar: "المدّ اللازم ستّ حركات دائما، وهو أطول المدود وأوجبها.", lessonAnchor: "madd-lazim" },
+    explanation: { en: "Madd Lazim is always exactly 6 beats, the longest madd. It is obligatory (Wajib).", ar: "المدّ اللازم ستّ حركات دائما، وهو أطول المدود وأوجبها.", lessonAnchor: "madd-lazim" },
     source: { surah: 80, ayah: 33, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -165,7 +165,7 @@ export const questions: Question[] = [
     arabicText: "قَالَ",
     englishGloss: "he said",
     options: [
-      { id: "opt-a", label: { en: "Because the madd letter cannot exist without it — it is the basic, innate elongation", ar: "لأنّه الأصل الذي لا تقوم ذات حرف المدّ إلا به" } },
+      { id: "opt-a", label: { en: "Because the madd letter cannot exist without it. It is the basic, innate elongation", ar: "لأنّه الأصل الذي لا تقوم ذات حرف المدّ إلا به" } },
       { id: "opt-b", label: { en: "Because it is the longest", ar: "لأنّه أطولها" } },
       { id: "opt-c", label: { en: "Because it is optional", ar: "لأنّه اختياري" } },
       { id: "opt-d", label: { en: "Because nature requires it", ar: "لأنّ الطبيعة تستلزمه" } },
@@ -184,7 +184,7 @@ export const questions: Question[] = [
     arabicText: "قَالَ",
     englishGloss: "he said",
     options: [
-      { id: "opt-a", label: { en: "Madd Tabee'i — Alif after Fathah, no Hamzah/Sukoon after, 2 beats", ar: "مدّ طبيعي — ألف بعد فتحة، بلا همزة أو سكون بعدها، حركتان" } },
+      { id: "opt-a", label: { en: "Madd Tabee'i: Alif after Fathah, no Hamzah/Sukoon after, 2 beats", ar: "مدّ طبيعي — ألف بعد فتحة، بلا همزة أو سكون بعدها، حركتان" } },
       { id: "opt-b", label: { en: "Madd Muttasil", ar: "مدّ متّصل" } },
       { id: "opt-c", label: { en: "Madd Lazim", ar: "مدّ لازم" } },
       { id: "opt-d", label: { en: "Madd Badal", ar: "مدّ بدل" } },
@@ -201,7 +201,7 @@ export const questions: Question[] = [
     arabicText: "جَاءَ",
     englishGloss: "he came",
     options: [
-      { id: "opt-a", label: { en: "Madd Wajib Muttasil — Alif followed by Hamzah in same word", ar: "مدّ واجب متّصل — ألف تليها همزة في الكلمة ذاتها" } },
+      { id: "opt-a", label: { en: "Madd Wajib Muttasil: Alif followed by Hamzah in same word", ar: "مدّ واجب متّصل — ألف تليها همزة في الكلمة ذاتها" } },
       { id: "opt-b", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-c", label: { en: "Madd Munfasil", ar: "مدّ منفصل" } },
       { id: "opt-d", label: { en: "Madd Badal", ar: "مدّ بدل" } },
@@ -218,7 +218,7 @@ export const questions: Question[] = [
     arabicText: "سُوءَ",
     englishGloss: "evil",
     options: [
-      { id: "opt-a", label: { en: "Madd Muttasil — Waw followed by Hamzah in same word", ar: "مدّ متّصل — واو تليها همزة في الكلمة نفسها" } },
+      { id: "opt-a", label: { en: "Madd Muttasil: Waw followed by Hamzah in same word", ar: "مدّ متّصل — واو تليها همزة في الكلمة نفسها" } },
       { id: "opt-b", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-c", label: { en: "Madd Munfasil", ar: "مدّ منفصل" } },
       { id: "opt-d", label: { en: "Madd Lazim", ar: "مدّ لازم" } },
@@ -235,7 +235,7 @@ export const questions: Question[] = [
     arabicText: "بِمَا أُنْزِلَ",
     englishGloss: "in what was revealed",
     options: [
-      { id: "opt-a", label: { en: "Madd Munfasil — Alif at end of first word + Hamzah at start of second", ar: "مدّ منفصل — ألف في آخر الأولى وهمزة في أوّل الثانية" } },
+      { id: "opt-a", label: { en: "Madd Munfasil: Alif at end of first word + Hamzah at start of second", ar: "مدّ منفصل — ألف في آخر الأولى وهمزة في أوّل الثانية" } },
       { id: "opt-b", label: { en: "Madd Muttasil", ar: "مدّ متّصل" } },
       { id: "opt-c", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-d", label: { en: "Madd Lazim", ar: "مدّ لازم" } },
@@ -252,7 +252,7 @@ export const questions: Question[] = [
     arabicText: "قَالُوا آمَنَّا",
     englishGloss: "they said: we believe",
     options: [
-      { id: "opt-a", label: { en: "Madd Munfasil — Waw at end of first word + Hamzah at start of second", ar: "مدّ منفصل — واو في آخر الأولى وهمزة في أوّل الثانية" } },
+      { id: "opt-a", label: { en: "Madd Munfasil: Waw at end of first word + Hamzah at start of second", ar: "مدّ منفصل — واو في آخر الأولى وهمزة في أوّل الثانية" } },
       { id: "opt-b", label: { en: "Madd Muttasil", ar: "مدّ متّصل" } },
       { id: "opt-c", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-d", label: { en: "Madd Badal", ar: "مدّ بدل" } },
@@ -269,10 +269,10 @@ export const questions: Question[] = [
     arabicText: "الْعَالَمِينَ",
     englishGloss: "the worlds",
     options: [
-      { id: "opt-a", label: { en: "Madd 'Arid lil-Sukoon — 2/4/6 beats", ar: "مدّ عارض للسكون — حركتان أو أربع أو ستّ" } },
-      { id: "opt-b", label: { en: "Madd Tabee'i — 2 beats", ar: "مدّ طبيعي — حركتان" } },
-      { id: "opt-c", label: { en: "Madd Lazim — 6 beats", ar: "مدّ لازم — ستّ" } },
-      { id: "opt-d", label: { en: "Madd Muttasil — 4-5 beats", ar: "مدّ متّصل — أربع أو خمس" } },
+      { id: "opt-a", label: { en: "Madd 'Arid lil-Sukoon: 2/4/6 beats", ar: "مدّ عارض للسكون — حركتان أو أربع أو ستّ" } },
+      { id: "opt-b", label: { en: "Madd Tabee'i: 2 beats", ar: "مدّ طبيعي — حركتان" } },
+      { id: "opt-c", label: { en: "Madd Lazim: 6 beats", ar: "مدّ لازم — ستّ" } },
+      { id: "opt-d", label: { en: "Madd Muttasil: 4-5 beats", ar: "مدّ متّصل — أربع أو خمس" } },
     ],
     correctOptionId: "opt-a",
     explanation: { en: "Yaa + temporary sukoon caused by stopping → Madd 'Arid lil-Sukoon. 2/4/6 beats by reciter's choice. If continuing, it would be Madd Tabee'i (2).", ar: "ياء بعدها سكون عارض للوقف → مدّ عارض للسكون. حركتان أو أربع أو ستّ بالتخيير. وإن وُصل فطبيعي بحركتين.", lessonAnchor: "madd-arid" },
@@ -303,7 +303,7 @@ export const questions: Question[] = [
     arabicText: "الصَّاخَّةُ",
     englishGloss: "the deafening blast",
     options: [
-      { id: "opt-a", label: { en: "Madd Lazim Kalimi Muthaqqal — Alif followed by shaddah in same word, 6 beats", ar: "مدّ لازم كلمي مثقّل — ألف يليها مشدّد في الكلمة، ستّ حركات" } },
+      { id: "opt-a", label: { en: "Madd Lazim Kalimi Muthaqqal: Alif followed by shaddah in same word, 6 beats", ar: "مدّ لازم كلمي مثقّل — ألف يليها مشدّد في الكلمة، ستّ حركات" } },
       { id: "opt-b", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-c", label: { en: "Madd Muttasil", ar: "مدّ متّصل" } },
       { id: "opt-d", label: { en: "Madd 'Arid", ar: "مدّ عارض" } },
@@ -320,7 +320,7 @@ export const questions: Question[] = [
     arabicText: "آلْآنَ",
     englishGloss: "now",
     options: [
-      { id: "opt-a", label: { en: "Madd Lazim Kalimi Mukhaffaf — madd letter + sukoon (no shaddah) in same word, 6 beats", ar: "مدّ لازم كلمي مخفّف — حرف مدّ + سكون (لا شدّة) في الكلمة، ستّ حركات" } },
+      { id: "opt-a", label: { en: "Madd Lazim Kalimi Mukhaffaf: madd letter + sukoon (no shaddah) in same word, 6 beats", ar: "مدّ لازم كلمي مخفّف — حرف مدّ + سكون (لا شدّة) في الكلمة، ستّ حركات" } },
       { id: "opt-b", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-c", label: { en: "Madd Muttasil", ar: "مدّ متّصل" } },
       { id: "opt-d", label: { en: "Madd Munfasil", ar: "مدّ منفصل" } },
@@ -337,7 +337,7 @@ export const questions: Question[] = [
     arabicText: "آمَنُوا",
     englishGloss: "they believed",
     options: [
-      { id: "opt-a", label: { en: "Madd Badal — Hamzah preceded the Alif", ar: "مدّ بدل — همزة قبل الألف" } },
+      { id: "opt-a", label: { en: "Madd Badal: Hamzah preceded the Alif", ar: "مدّ بدل — همزة قبل الألف" } },
       { id: "opt-b", label: { en: "Madd Muttasil", ar: "مدّ متّصل" } },
       { id: "opt-c", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-d", label: { en: "Madd Lazim", ar: "مدّ لازم" } },
@@ -354,7 +354,7 @@ export const questions: Question[] = [
     arabicText: "قُرَيْشٍ",
     englishGloss: "Quraysh",
     options: [
-      { id: "opt-a", label: { en: "Madd Leen — Yaa Sakinah after Fathah, when stopping", ar: "مدّ لين — ياء ساكنة بعد فتحة، عند الوقف" } },
+      { id: "opt-a", label: { en: "Madd Leen: Yaa Sakinah after Fathah, when stopping", ar: "مدّ لين — ياء ساكنة بعد فتحة، عند الوقف" } },
       { id: "opt-b", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-c", label: { en: "Madd Lazim", ar: "مدّ لازم" } },
       { id: "opt-d", label: { en: "Madd 'Arid", ar: "مدّ عارض" } },
@@ -371,7 +371,7 @@ export const questions: Question[] = [
     arabicText: "خَوْفٍ",
     englishGloss: "fear",
     options: [
-      { id: "opt-a", label: { en: "Madd Leen — Waw Sakinah after Fathah, when stopping", ar: "مدّ لين — واو ساكنة بعد فتحة، عند الوقف" } },
+      { id: "opt-a", label: { en: "Madd Leen: Waw Sakinah after Fathah, when stopping", ar: "مدّ لين — واو ساكنة بعد فتحة، عند الوقف" } },
       { id: "opt-b", label: { en: "Madd Tabee'i", ar: "مدّ طبيعي" } },
       { id: "opt-c", label: { en: "Madd Muttasil", ar: "مدّ متّصل" } },
       { id: "opt-d", label: { en: "Madd Lazim", ar: "مدّ لازم" } },
@@ -430,7 +430,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "They only appear in Surah Quraysh", ar: "لا تردان إلا في سورة قريش" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "True madd letters have matching vowels: Alif/Fathah, Waw/Dammah, Yaa/Kasrah. Leen letters are Waw/Yaa SAKINAH preceded by Fathah — they soften (يَلِين) the sound but don't elongate naturally.", ar: "حروف المدّ لها حركات مجانسة: ألف/فتحة، واو/ضمّة، ياء/كسرة. أمّا حرفا اللين فهما الواو والياء الساكنتان بعد فتحة، تُليّنان الصوت لا تمدّانه طبيعيا.", lessonAnchor: "madd-leen" },
+    explanation: { en: "True madd letters have matching vowels: Alif/Fathah, Waw/Dammah, Yaa/Kasrah. Leen letters are Waw/Yaa SAKINAH preceded by Fathah. They soften (يَلِين) the sound but don't elongate naturally.", ar: "حروف المدّ لها حركات مجانسة: ألف/فتحة، واو/ضمّة، ياء/كسرة. أمّا حرفا اللين فهما الواو والياء الساكنتان بعد فتحة، تُليّنان الصوت لا تمدّانه طبيعيا.", lessonAnchor: "madd-leen" },
     source: { surah: 106, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -458,9 +458,9 @@ export const questions: Question[] = [
     arabicText: "الْعَالَمِينَ",
     englishGloss: "the worlds",
     options: [
-      { id: "opt-a", label: { en: "Madd Tabee'i — 2 beats. The 'Arid only applies when stopping.", ar: "مدّ طبيعي — حركتان. والعارض إنّما يُمدّ عند الوقف." } },
-      { id: "opt-b", label: { en: "Still Madd 'Arid — 6 beats", ar: "يبقى عارضا — ستّ حركات" } },
-      { id: "opt-c", label: { en: "Madd Lazim — 6 beats", ar: "مدّ لازم — ستّ حركات" } },
+      { id: "opt-a", label: { en: "Madd Tabee'i: 2 beats. The 'Arid only applies when stopping.", ar: "مدّ طبيعي — حركتان. والعارض إنّما يُمدّ عند الوقف." } },
+      { id: "opt-b", label: { en: "Still Madd 'Arid: 6 beats", ar: "يبقى عارضا — ستّ حركات" } },
+      { id: "opt-c", label: { en: "Madd Lazim: 6 beats", ar: "مدّ لازم — ستّ حركات" } },
       { id: "opt-d", label: { en: "No madd applies", ar: "لا مدّ" } },
     ],
     correctOptionId: "opt-a",
@@ -475,13 +475,13 @@ export const questions: Question[] = [
     arabicText: "آلْآنَ",
     englishGloss: "now",
     options: [
-      { id: "opt-a", label: { en: "Twice — only in آلْآنَ in Surah Yunus", ar: "مرّتين فقط — في كلمة آلْآنَ في سورة يونس" } },
+      { id: "opt-a", label: { en: "Twice: only in آلْآنَ in Surah Yunus", ar: "مرّتين فقط — في كلمة آلْآنَ في سورة يونس" } },
       { id: "opt-b", label: { en: "Once", ar: "مرّة واحدة" } },
       { id: "opt-c", label: { en: "Hundreds of times", ar: "مئات المرّات" } },
-      { id: "opt-d", label: { en: "Never — it is theoretical", ar: "لم يقع — وهو نظري" } },
+      { id: "opt-d", label: { en: "Never: it is theoretical", ar: "لم يقع — وهو نظري" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson explicitly states: 'Very rare — occurs only in آلْآنَ (twice in Surah Yunus)'.", ar: "نصّ الدرس على ذلك: 'لم يقع في القرآن إلا في كلمة آلْآنَ (مرّتين في سورة يونس)'.", lessonAnchor: "madd-lazim" },
+    explanation: { en: "The lesson explicitly states: 'Very rare. Occurs only in آلْآنَ (twice in Surah Yunus).'", ar: "نصّ الدرس على ذلك: 'لم يقع في القرآن إلا في كلمة آلْآنَ (مرّتين في سورة يونس)'.", lessonAnchor: "madd-lazim" },
     source: { surah: 10, ayah: 51, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -526,10 +526,10 @@ export const questions: Question[] = [
     arabicText: "جَاءَ",
     englishGloss: "he came",
     options: [
-      { id: "opt-a", label: { en: "2 beats — it stays Madd Tabee'i", ar: "حركتان — يبقى مدّا طبيعيا" } },
-      { id: "opt-b", label: { en: "6 beats — Madd Lazim", ar: "ستّ حركات — مدّ لازم" } },
-      { id: "opt-c", label: { en: "4-5 beats — a Hamzah follows the madd letter in the same word (Wajib Muttasil)", ar: "أربع أو خمس حركات — همزة تلي حرف المدّ في الكلمة ذاتها (واجب متّصل)" } },
-      { id: "opt-d", label: { en: "2-4-6 beats — Madd 'Arid", ar: "حركتان أو أربع أو ستّ — مدّ عارض" } },
+      { id: "opt-a", label: { en: "2 beats, since it stays Madd Tabee'i", ar: "حركتان — يبقى مدّا طبيعيا" } },
+      { id: "opt-b", label: { en: "6 beats (Madd Lazim)", ar: "ستّ حركات — مدّ لازم" } },
+      { id: "opt-c", label: { en: "4-5 beats, since a Hamzah follows the madd letter in the same word (Wajib Muttasil)", ar: "أربع أو خمس حركات — همزة تلي حرف المدّ في الكلمة ذاتها (واجب متّصل)" } },
+      { id: "opt-d", label: { en: "2-4-6 beats (Madd 'Arid)", ar: "حركتان أو أربع أو ستّ — مدّ عارض" } },
     ],
     correctOptionId: "opt-c",
     explanation: {
@@ -548,7 +548,7 @@ export const questions: Question[] = [
     englishGloss: "they believed",
     options: [
       { id: "opt-a", label: { en: "Madd Muttasil, 4-5 beats", ar: "مدّ متّصل، أربع أو خمس حركات" } },
-      { id: "opt-b", label: { en: "Madd Badal, 2 beats — Hamzah precedes the madd letter (Muttasil has it after)", ar: "مدّ بدل، حركتان — الهمزة قبل حرف المدّ (والمتّصل بعده)" } },
+      { id: "opt-b", label: { en: "Madd Badal, 2 beats: Hamzah precedes the madd letter (Muttasil has it after)", ar: "مدّ بدل، حركتان — الهمزة قبل حرف المدّ (والمتّصل بعده)" } },
       { id: "opt-c", label: { en: "Madd Munfasil, 4-5 beats", ar: "مدّ منفصل، أربع أو خمس حركات" } },
       { id: "opt-d", label: { en: "Madd Lazim, 6 beats", ar: "مدّ لازم، ستّ حركات" } },
     ],
