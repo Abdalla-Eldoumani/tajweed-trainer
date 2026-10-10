@@ -37,7 +37,7 @@
               "ayah": 2,
               "surah_name_en": "Al-Fatiha",
               "highlight_word": "الْحَمْدُ",
-              "rule_applied": "Laam Qamariyyah — Laam pronounced, followed by Haa (ح)",
+              "rule_applied": "Laam Qamariyyah: Laam pronounced, followed by Haa (ح)",
               "rule_applied_ar": "لام قمرية — اللام واضحة قبل الحاء (ح)",
               "surah_name_ar": "الفاتحة"
             }
@@ -47,7 +47,7 @@
           "id": "laam-shamsiyyah",
           "title_en": "Laam Shamsiyyah (Sun Letters)",
           "title_ar": "اللام الشمسية",
-          "description": "The Laam is SILENT — written but not pronounced. It merges (Idgham) into the following letter, which gets a Shaddah. Occurs before 14 'sun' letters.",
+          "description": "The Laam is SILENT: written but not pronounced. It merges (Idgham) into the following letter, which gets a Shaddah. Occurs before 14 'sun' letters.",
           "description_ar": "تُكتب اللام ولا تُنطق — تُدغم في الحرف الذي يليها، فيُشدَّد ذلك الحرف. وذلك قبل أربعة عشر حرفا من الحروف الشمسية.",
           "letters": "ت ث د ذ ر ز س ش ص ض ط ظ ل ن",
           "letter_count": 14,
@@ -66,7 +66,7 @@
               "ayah": 3,
               "surah_name_en": "Al-Fatiha",
               "highlight_word": "الرَّحْمَنِ",
-              "rule_applied": "Laam Shamsiyyah — Laam silent, merged into Raa (ر)",
+              "rule_applied": "Laam Shamsiyyah: Laam silent, merged into Raa (ر)",
               "rule_applied_ar": "لام شمسية — اللام مدغمة في الراء (ر)",
               "surah_name_ar": "الفاتحة"
             }
@@ -144,7 +144,7 @@
           "condition": "Raa has Sukoon, preceded by Kasrah 'Aaridah (temporary)",
           "condition_ar": "الراء الساكنة بعد كسرة عارضة",
           "example": "ارْجِعُوا",
-          "note": "Heavy — the Kasrah on Hamzat Al-Wasl is temporary",
+          "note": "Heavy, because the Kasrah on Hamzat Al-Wasl is temporary",
           "note_ar": "مفخّمة — لأنّ الكسرة على همزة الوصل عارضة"
         },
         {
