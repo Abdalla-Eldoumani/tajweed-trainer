@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArabicText } from "@/components/ui/ArabicText";
 import { Card } from "@/components/ui/Card";
 import { useTranslation } from "@/lib/i18n";
-import { toArabicIndic } from "@/lib/utils";
+import { cn, toArabicIndic } from "@/lib/utils";
 import type { ModuleScoreSummary } from "@/lib/practice-scores";
 
 interface PracticeModuleCardProps {
@@ -20,6 +20,10 @@ interface PracticeModuleCardProps {
   accent?: "default" | "mixed" | "review";
   description?: { en: string; ar?: string };
   badge?: { en: string; ar?: string };
+  // Lays the tile out as one row (details left, score and action right) for
+  // the full-width slot above the module grid.
+  wide?: boolean;
+  className?: string;
 }
 
 function scoreColor(score: number): string {
@@ -37,6 +41,8 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
   accent = "default",
   description,
   badge,
+  wide = false,
+  className,
 }: PracticeModuleCardProps) {
   const { t, isAr, lang } = useTranslation();
   const title = isAr ? titleAr : titleEn;
@@ -57,40 +63,47 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
   const card = (
       <Card hover className={`relative h-full ${accentClasses}`}>
         {badgeText && (
-          <span className="absolute top-3 end-3 text-[0.75rem] font-medium uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light">
+          <span className="absolute top-3 end-3 text-micro font-medium uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:bg-primary-light/15 dark:text-primary-light">
             {badgeText}
           </span>
         )}
 
-        <div className="flex flex-col h-full gap-3">
-          <div>
-            <h3 className="font-heading font-semibold text-base">{title}</h3>
-            {isAr ? (
-              <p className="text-xs text-text-muted mt-0.5">{subtitle}</p>
-            ) : (
-              <ArabicText text={subtitle} size="sm" className="text-text-muted mt-0.5" />
-            )}
-          </div>
+        <div className={cn("flex flex-col h-full gap-3", wide && "sm:flex-row sm:items-center sm:gap-8")}>
+          <div className="flex flex-1 flex-col gap-3 self-stretch">
+            <div>
+              <h3 className="font-heading font-semibold text-base">{title}</h3>
+              {isAr ? (
+                <p className="text-xs text-text-muted mt-0.5">{subtitle}</p>
+              ) : (
+                <ArabicText text={subtitle} size="sm" className="text-text-muted mt-0.5" />
+              )}
+            </div>
 
-          {desc && <p className="text-xs text-text-muted line-clamp-2">{desc}</p>}
+            {desc && <p className="text-xs text-text-muted line-clamp-2">{desc}</p>}
 
-          <div className="flex items-center gap-3 text-xs text-text-muted mt-auto pt-2">
-            <span>
-              {fmtCount} {t("practice.hub.questions")}
-            </span>
-            {summary.quizzesTaken > 0 && (
-              <span aria-hidden className="text-text-muted">
-                {"•"}
-              </span>
-            )}
-            {summary.quizzesTaken > 0 && (
+            <div className="flex items-center gap-3 text-xs text-text-muted mt-auto pt-2">
               <span>
-                {fmtTaken} {t("practice.hub.taken")}
+                {fmtCount} {t("practice.hub.questions")}
               </span>
-            )}
+              {summary.quizzesTaken > 0 && (
+                <span aria-hidden className="text-text-muted">
+                  {"•"}
+                </span>
+              )}
+              {summary.quizzesTaken > 0 && (
+                <span>
+                  {fmtTaken} {t("practice.hub.taken")}
+                </span>
+              )}
+            </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-gold-light/30 dark:border-gold-dark/20">
+          <div
+            className={cn(
+              "flex items-center justify-between pt-2 border-t border-gold-light/30 dark:border-gold-dark/20",
+              wide && "sm:w-64 sm:shrink-0 sm:flex-col sm:items-start sm:gap-2 sm:border-t-0 sm:border-s sm:ps-8 sm:pt-0",
+            )}
+          >
             <div className="text-xs">
               {summary.lastScore !== null ? (
                 <span>
@@ -111,7 +124,7 @@ export const PracticeModuleCard = memo(function PracticeModuleCard({
   );
 
   return (
-    <Link href={href} className="block">
+    <Link href={href} className={cn("block", className)}>
       {card}
     </Link>
   );
