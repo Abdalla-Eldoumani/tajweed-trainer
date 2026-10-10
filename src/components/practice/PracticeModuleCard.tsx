@@ -23,9 +23,9 @@ interface PracticeModuleCardProps {
 }
 
 function scoreColor(score: number): string {
-  if (score >= 80) return "text-green-700 dark:text-green-400";
-  if (score >= 60) return "text-amber-700 dark:text-amber-400";
-  return "text-red-700 dark:text-red-400";
+  if (score >= 80) return "text-ok";
+  if (score >= 60) return "text-warn";
+  return "text-err";
 }
 
 export const PracticeModuleCard = memo(function PracticeModuleCard({
