@@ -109,7 +109,7 @@ async function main() {
   await setStore(page, { settings: { ...(stored.settings ?? {}), language: "ar" } });
   await page.goto(`${BASE}/learn/waqf`, { waitUntil: "networkidle" });
   const arText = await page.locator("main").innerText();
-  record("Arabic locale: /learn/waqf opens its lesson", arText.includes("أحكام الوقف") && !arText.includes("مقفل"), `chars: ${arText.length}`);
+  record("Arabic locale: /learn/waqf opens its lesson", arText.includes("علامات الوقف") && !arText.includes("مقفل"), `chars: ${arText.length}`);
   await setStore(page, { settings: { ...(stored.settings ?? {}), language: "en" } });
 
   // 7. No serious console errors during the flow.
