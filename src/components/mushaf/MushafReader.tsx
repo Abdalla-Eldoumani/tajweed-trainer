@@ -421,7 +421,7 @@ export function MushafReader({ page, data, surahs }: MushafReaderProps) {
           >
             {surahs.map((s) => (
               <option key={s.number} value={s.number}>
-                {s.number}. {isAr ? s.nameArabic : s.nameSimple}
+                {isAr ? toArabicIndic(s.number) : s.number}. {isAr ? s.nameArabic : s.nameSimple}
               </option>
             ))}
           </select>
