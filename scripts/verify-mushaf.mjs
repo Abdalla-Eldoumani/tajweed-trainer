@@ -138,7 +138,7 @@ async function main() {
   // from the panel's per-verse bookmark which may also be on screen now).
   await page.keyboard.press("Escape");
   await page.waitForTimeout(400);
-  await page.click('button[aria-label="Add bookmark"]');
+  await page.click('button[aria-label="Bookmark this page"]');
   await page.waitForTimeout(200);
   const stored = await page.evaluate(() => {
     const raw = localStorage.getItem("tajweed-trainer-progress");
