@@ -593,7 +593,7 @@ export default function SettingsPage() {
             />
           </label>
           {revisionDenied && (
-            <p className="text-xs text-red-600 dark:text-red-400 mt-2">{t("settings.revisionRemindersDenied")}</p>
+            <p className="text-xs text-err mt-2">{t("settings.revisionRemindersDenied")}</p>
           )}
         </Card>
       )}
@@ -640,7 +640,7 @@ export default function SettingsPage() {
           <p
             className={cn(
               "text-xs mt-2",
-              backupStatus.kind === "success" ? "text-primary dark:text-primary-light" : "text-red-600 dark:text-red-400",
+              backupStatus.kind === "success" ? "text-primary dark:text-primary-light" : "text-err",
             )}
           >
             {t(backupStatus.key)}
