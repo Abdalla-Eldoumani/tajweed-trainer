@@ -11,6 +11,7 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - Other phrases now cite a verse that contains them: يَقُولُونَ 2:79 (was 2:8), آمَنُوا 2:9 (was 2:3), لَهُمْ مَا يَشَاءُونَ 39:34 (was 16:31), مِنْ أَجْرٍ 26:109 (was 36:21), سَمِيعٌۢ بَصِيرٌ 22:61 (was 17:1, which has no iqlab), يَجْعَلُونَ 2:19 (was 6:136), الْقُرْآنَ 4:82 (was 75:18), بِسْمِ اللَّهِ 1:1 (was 3:26), قَالَ اللَّهُ 3:55 (was 2:30).
 - الصَّاخَّةُ (80:33) carries the damma the verse has.
 - `verify-content.mjs` now fails when a question's Arabic is not in its cited verse.
+- Offline verse snapshots now exist for 4:82 and 3:55, and the snapshot script reads the verses that quiz questions cite as well as lesson examples, so the content check no longer warns about them.
 
 ### Corrected lesson wording
 
@@ -20,6 +21,10 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - Ikhfaa is described as the most common of the noon sakinah and tanween rules, not of all rules. Quran.com's tajweed markup counts 5,291 ikhfaa, 4,969 idgham and 562 iqlab.
 - Removed two claims that did not hold: an incomplete statement of when a sakin raa is heavy, and a circular clause about shortening the madd munfasil to four beats, since the lesson already gives the range as four to five.
 - Short notes on the lesson pages say that teachers differ on lip closeness in ikhfaa shafawi and iqlab, on the three levels of qalqalah and the ranking of the heavy letters, and that printed mushafs use different sets of waqf marks. They do not pick a side and point to a local imam or teacher.
+- The laam-raa lesson now covers two more Hafs cases for a sakin raa. After an original kasrah it is heavy when an isti'la letter follows in the same word (مِرْصَادًا, 78:21, with the other four such words and the فِرْقٍ exception noted). When you stop on it after a sakin letter that follows a kasrah it is light (ٱلذِّكْرِ, 38:1). The quiz option that said "preceded by another sakin letter" now says which sakin letters it means.
+- The tafkheem lesson notes that teachers count the levels differently and names the schemes reported by Ibn al-Jazari, Ibn al-Tahhan and al-Mutawalli. The two final-vowel examples carry the vowel on their last letter (قَبْلُ, يَقْطَعُونَ), and the level questions say they use the lesson's five levels.
+- The waqf lesson says where ط, ز and ص are used: the six marks of al-Sajawandi appear in printings that follow his system, the Madinah Mushaf uses a different set, and printed Warsh and Qalun mushafs use a single mark.
+- The English lesson and quiz text no longer uses em dashes. Arabic fields are unchanged.
 
 ### Fixed
 
@@ -30,6 +35,15 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - **Quiz read-aloud skips Qur'anic words.** The read-aloud button no longer voices the vowelled Qur'anic words inside a prompt, since device voices misread them.
 - **Repetition counter counts the last listen.** In the tikrar (repetition) drill, an audio-led session that looped a verse N times counted only N−1: the final listen ended the loop without registering. It now counts the full N. The manual count control was always accurate; this aligns the listen-along count with it.
 - **The browser verify scripts pass again.** They now skip the first-run tour, unlock the modules they visit, use the current theme setting and labels, and close the browser when a step fails.
+- **Arabic interface numerals are consistent.** Counts, scores, streaks, step counters, verse labels, surah lists, playback speeds, review intervals and the player clock use Arabic-Indic digits when the interface is Arabic. Speeds read 0.75× in English and ٠٫٧٥× in Arabic.
+- **Arabic body text no longer falls back to the system sans.** The body font falls back to Amiri for Arabic letters.
+- **No buttons inside links.** Lesson navigation, mushaf page turns, the error screen and the home actions are real links that carry the button styling.
+- **Makharij diagram labels are larger and follow the language.** They stay above 13px from a 320px screen up and show the Arabic names under the Arabic interface, with the diagram trimmed to its drawing.
+- **Status colours come from the theme.** Success, error and warning text use three themed inks instead of stock Tailwind red, green and blue.
+- **The axe check runs on every theme.** It covers nine routes in all five themes and both languages.
+- **Clicks work during the theme change.** The crossfade is shorter and no longer intercepts pointer events.
+- **The two bookmark labels differ.** The page bookmark reads "Bookmark this page" and "Remove page bookmark"; the verse bookmark keeps its own label.
+- **The practice hub fills its rows.** Mixed Review joins the module grid and Review Due, when present, takes a full row.
 
 ### Changed
 
@@ -39,11 +53,14 @@ Every lesson example and quiz question was checked against api.quran.com, and th
 - **Dark-theme muted text meets AA.** Muted text resolves from the theme variable instead of an opacity modifier.
 - **Quiz questions come only from the authored pool.** The fallback that built questions from lesson examples is removed.
 - **Next.js 16.4.0.** Picks up the framework's security fixes released this month. Vitest moves to 4.1.11. Dependencies are pinned to exact versions, and the bundle analyzer and the obsolete interest-cohort header are gone.
-- **Alegreya Sans for body text.** It replaces Inter and sits with the Spectral headings and the Amiri Arabic faces. The Latin type scale is a step larger, small text no longer drops below 0.6875rem, and figures are lining.
+- **Alegreya Sans for body text.** It replaces Inter and sits with the Spectral headings and the Amiri Arabic faces. The Latin type scale is a step larger, small text no longer drops below 13px, and figures are lining.
 - **Rub el hizb ornament.** The star marks on the mushaf frame and surah cartouche are one inline mark that follows the theme.
 - **Quieter cards.** Cards lose the drop shadow and take a gold border on hover. Rule cards are marked with a small diamond instead of a coloured bar.
 - **Layout fixes.** The lesson navigation divider no longer overlaps the buttons, makharij markers no longer collide with their labels, and the reader toolbar wraps instead of clipping.
 - **44px touch targets.** Buttons, the language toggle, sidebar links, settings rows, reader and overlay controls and the mini player meet the size, and the inline verse controls have a 44px hit area around a smaller glyph.
+- **Every lesson and practice quiz opens without finishing the one before.** Progress and quiz scores are still recorded, but nothing is locked, and the learn, practice, sidebar and drawer lists no longer show lock markers.
+- **The Warsh entry is labelled Warsh ‘an Nāfi‘** and says that the lessons teach Hafs an Asim.
+- **Small text meets a 13px floor.** The small and caption type steps are 16px, and badges, weekday labels, tab labels and the verse-end numeral are no smaller than 13px.
 
 ## 2.2.1 (2026-07-03)
 
