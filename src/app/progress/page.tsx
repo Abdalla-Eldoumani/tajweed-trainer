@@ -113,7 +113,7 @@ export default function ProgressPage() {
       <Card>
         <h2 className="font-heading font-semibold text-h3 mb-3">{t("progress.overall")}</h2>
         <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums mb-2">
-          {overall}%
+          {num(overall)}%
         </div>
         <ProgressBar value={overall} />
       </Card>
@@ -130,17 +130,17 @@ export default function ProgressPage() {
           <div className="flex flex-wrap gap-6 mb-2">
             <div>
               <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">
-                {reviewStats.total}
+                {num(reviewStats.total)}
               </div>
               <p className="text-xs text-text-muted">{t("review.statsTotal")}</p>
             </div>
             <div>
-              <div className="text-h2 font-bold text-accent tabular-nums">{reviewStats.mastered}</div>
+              <div className="text-h2 font-bold text-accent tabular-nums">{num(reviewStats.mastered)}</div>
               <p className="text-xs text-text-muted">{t("review.statsMastered")}</p>
             </div>
             <div>
               <div className="text-h2 font-bold text-err tabular-nums">
-                {reviewStats.due}
+                {num(reviewStats.due)}
               </div>
               <p className="text-xs text-text-muted">{t("review.statsDue")}</p>
             </div>
@@ -316,12 +316,12 @@ export default function ProgressPage() {
         <div className="flex gap-6">
           <div>
             <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">
-              {progress.streaks.currentStreak}
+              {num(progress.streaks.currentStreak)}
             </div>
             <p className="text-xs text-text-muted">{t("progress.current")}</p>
           </div>
           <div>
-            <div className="text-h2 font-bold text-accent tabular-nums">{progress.streaks.longestStreak}</div>
+            <div className="text-h2 font-bold text-accent tabular-nums">{num(progress.streaks.longestStreak)}</div>
             <p className="text-xs text-text-muted">{t("progress.longest")}</p>
           </div>
         </div>
@@ -352,7 +352,7 @@ export default function ProgressPage() {
                     {done ? t("common.completed") : t("learn.notStarted")}
                   </p>
                   {mp.quizScores.length > 0 && (
-                    <p>{t("progress.latestQuiz")}: {mp.quizScores[mp.quizScores.length - 1].score}%</p>
+                    <p>{t("progress.latestQuiz")}: {num(mp.quizScores[mp.quizScores.length - 1].score)}%</p>
                   )}
                 </div>
               </li>
@@ -384,7 +384,7 @@ export default function ProgressPage() {
                 .map((qs, i) => (
                   <div key={i} className="flex items-center justify-between gap-2 text-xs py-1 border-b border-gold-light/30 dark:border-gold-dark/20 last:border-0">
                     <span className="text-text-muted truncate min-w-0 flex-1">{getModuleLabel(qs.moduleId)}</span>
-                    <span className="font-medium shrink-0">{qs.score}%</span>
+                    <span className="font-medium shrink-0">{num(qs.score)}%</span>
                     <span className="text-text-muted shrink-0">{new Date(qs.date).toLocaleDateString()}</span>
                   </div>
                 ))}
@@ -399,12 +399,12 @@ export default function ProgressPage() {
           <div className="flex flex-wrap gap-6 mb-3">
             <div>
               <div className="text-h2 font-bold text-primary dark:text-primary-light tabular-nums">
-                {insights.quizStarts}
+                {num(insights.quizStarts)}
               </div>
               <p className="text-xs text-text-muted">{t("insights.quizStarts")}</p>
             </div>
             <div>
-              <div className="text-h2 font-bold text-accent tabular-nums">{insights.quizFinishes}</div>
+              <div className="text-h2 font-bold text-accent tabular-nums">{num(insights.quizFinishes)}</div>
               <p className="text-xs text-text-muted">{t("insights.quizFinishes")}</p>
             </div>
           </div>
@@ -415,7 +415,7 @@ export default function ProgressPage() {
                 {insights.topRoutes.map(([path, n]) => (
                   <li key={path} className="flex justify-between gap-2">
                     <span className="truncate min-w-0 flex-1">{path}</span>
-                    <span className="shrink-0 font-medium">{n}</span>
+                    <span className="shrink-0 font-medium">{num(n)}</span>
                   </li>
                 ))}
               </ul>
