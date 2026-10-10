@@ -6,7 +6,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { getResourceTranslations } from "@/lib/quran-api";
 import { CURATED_TRANSLATIONS, mergeResources } from "@/lib/reading-resources";
 import { ReciterSelect } from "@/components/ui/ReciterSelect";
-import { cn } from "@/lib/utils";
+import { cn, formatSpeed } from "@/lib/utils";
 import type { TranslationResource } from "@/lib/types";
 
 // The playback-speed steps, the same set the Settings speed control offers.
@@ -25,7 +25,7 @@ const DEFAULT_TRANSLATION_ID = 20;
 // settings.reciter / settings.playbackSpeed on the next play, and the mounted
 // reading-depth panel re-fetches when settings.translationId changes.
 export function OverlayInlineControls() {
-  const { t } = useTranslation();
+  const { t, isAr } = useTranslation();
   const { settings, updateSettings } = useSettings();
 
   // The only local state is the resource catalogue list (not a setting): seeded
@@ -93,10 +93,9 @@ export function OverlayInlineControls() {
                 type="button"
                 onClick={() => updateSettings({ playbackSpeed: speed })}
                 aria-pressed={active}
-                aria-label={`${speed}x`}
                 className={speedChip(active)}
               >
-                {speed}x
+                {formatSpeed(speed, isAr)}
               </button>
             );
           })}
