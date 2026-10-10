@@ -64,7 +64,7 @@ When wrapping a `RuleCard` from a `.map()`, put the `id` and `scroll-mt-20` on a
 
 ## Pulling new verses
 
-Lessons render color-coded tajweed from `src/data/verse-snapshots.json`, a snapshot of every verse a lesson example cites. `scripts/prefetch-tajweed-snapshots.mjs` pulls it once from the Quran.com Foundation API, so the build needs no live request and coloring works offline: it reads the example verse keys from `src/data/content/*.json`, fetches each surah's `text_uthmani_tajweed` (batched per chapter), and writes the file keyed by `"<surah>:<ayah>"`. It is idempotent: an unchanged example set re-writes the same bytes and keeps the existing `fetchedAt`.
+Lessons render color-coded tajweed from `src/data/verse-snapshots.json`, a snapshot of every verse a lesson example or a quiz question cites. `scripts/prefetch-tajweed-snapshots.mjs` pulls it once from the Quran.com Foundation API, so the build needs no live request and coloring works offline: it reads the example verse keys from `src/data/content/*.json` and the quiz sources in `src/data/questions/*.ts`, fetches each surah's `text_uthmani_tajweed` (batched per chapter), and writes the file keyed by `"<surah>:<ayah>"`. It is idempotent: an unchanged example set re-writes the same bytes and keeps the existing `fetchedAt`.
 
 The snapshot file shape is:
 
