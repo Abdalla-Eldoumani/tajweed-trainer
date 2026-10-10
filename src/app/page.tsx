@@ -12,7 +12,6 @@ import { RevisionDueCard } from "@/components/home/RevisionDueCard";
 import { StreakCounter } from "@/components/practice/StreakCounter";
 import { useProgress } from "@/hooks/useProgress";
 import { useTranslation } from "@/lib/i18n";
-import { isModuleUnlocked } from "@/lib/module-unlock";
 import learningPath from "@/data/content/learning-path.json";
 import basmala from "@/data/basmala.json";
 import type { LearningModule } from "@/lib/types";
@@ -29,13 +28,11 @@ const DailyVerse = dynamic(
 const modules = learningPath.modules as LearningModule[];
 
 export default function HomePage() {
-  const { progress, moduleProgress, getOverallCompletion } = useProgress();
+  const { moduleProgress, getOverallCompletion } = useProgress();
   const { t } = useTranslation();
 
   const overall = getOverallCompletion(modules.map((m) => m.id));
-  const next = modules.find(
-    (m) => isModuleUnlocked(progress, m.id) && moduleProgress(m.id).lessonsCompleted.length === 0,
-  );
+  const next = modules.find((m) => moduleProgress(m.id).lessonsCompleted.length === 0);
   const heroLabel = !next ? t("nav.allModules") : overall > 0 ? t("home.nextLesson") : t("home.startLearning");
 
   return (
@@ -86,7 +83,6 @@ export default function HomePage() {
                   module={module}
                   lessonDone={modProgress.lessonsCompleted.length > 0}
                   quizScore={scores.length > 0 ? scores[scores.length - 1].score : null}
-                  locked={!isModuleUnlocked(progress, module.id)}
                 />
               </li>
             );
