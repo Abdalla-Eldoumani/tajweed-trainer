@@ -427,7 +427,7 @@ export function MiniPlayer() {
           {status === "loading" ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />}
         </button>
         <span
-          className={`min-w-0 flex-1 truncate text-xs ${error ? "text-red-600 dark:text-red-400" : "text-text-muted"}`}
+          className={`min-w-0 flex-1 truncate text-xs ${error ? "text-err" : "text-text-muted"}`}
         >
           {label}
           {cur ? ` · ${cur.surah}:${cur.ayah}` : ""}
@@ -491,7 +491,7 @@ export function MiniPlayer() {
             role="alert"
             className="mb-2 pb-2 border-b border-gold-light/20 dark:border-gold-dark/15 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs"
           >
-            <span className="text-red-600 dark:text-red-400">{t(error)}</span>
+            <span className="text-err">{t(error)}</span>
             <Link
               href="/settings"
               className="shrink-0 font-medium text-primary dark:text-primary-light underline underline-offset-2 hover:no-underline"
@@ -607,7 +607,7 @@ export function MiniPlayer() {
               {status === "loading" ? <LoadingIcon /> : playing ? <PauseIcon /> : <PlayIcon />}
             </button>
             <span
-              className={`max-w-[120px] truncate text-xs px-1 ${error ? "text-red-600 dark:text-red-400" : "text-text-muted"}`}
+              className={`max-w-[120px] truncate text-xs px-1 ${error ? "text-err" : "text-text-muted"}`}
             >
               {label}
               {cur ? ` · ${cur.surah}:${cur.ayah}` : ""}
