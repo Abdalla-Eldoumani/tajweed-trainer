@@ -74,7 +74,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "The lip letters", ar: "حروف الشفتين" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Al-Jawf is the empty space in the mouth/throat — the three madd letters (Alif, Waw Sakinah after Dammah, Yaa Sakinah after Kasrah) emerge from here.", ar: "الجوف هو الفضاء المفتوح داخل الفم والحلق، ومنه تخرج حروف المدّ الثلاثة (الألف، والواو الساكنة بعد ضمّة، والياء الساكنة بعد كسرة).", lessonAnchor: "al-jawf" },
+    explanation: { en: "Al-Jawf is the empty space in the mouth/throat. The three madd letters (Alif, Waw Sakinah after Dammah, Yaa Sakinah after Kasrah) emerge from here.", ar: "الجوف هو الفضاء المفتوح داخل الفم والحلق، ومنه تخرج حروف المدّ الثلاثة (الألف، والواو الساكنة بعد ضمّة، والياء الساكنة بعد كسرة).", lessonAnchor: "al-jawf" },
     source: { surah: 1, ayah: 5, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -85,7 +85,7 @@ export const questions: Question[] = [
     arabicText: "الْحَمْدُ",
     englishGloss: "all praise",
     options: [
-      { id: "opt-a", label: { en: "3 — for 6 letters", ar: "ثلاثة لستّة حروف" } },
+      { id: "opt-a", label: { en: "3 (for 6 letters)", ar: "ثلاثة لستّة حروف" } },
       { id: "opt-b", label: { en: "1", ar: "واحد" } },
       { id: "opt-c", label: { en: "5", ar: "خمسة" } },
       { id: "opt-d", label: { en: "10", ar: "عشرة" } },
@@ -153,13 +153,13 @@ export const questions: Question[] = [
     arabicText: "اللَّيْلِ",
     englishGloss: "the night",
     options: [
-      { id: "opt-a", label: { en: "10 — producing 18 letters", ar: "عشرة مخارج تخرج منها ثمانية عشر حرفا" } },
+      { id: "opt-a", label: { en: "10, producing 18 letters", ar: "عشرة مخارج تخرج منها ثمانية عشر حرفا" } },
       { id: "opt-b", label: { en: "5", ar: "خمسة" } },
       { id: "opt-c", label: { en: "3", ar: "ثلاثة" } },
       { id: "opt-d", label: { en: "17", ar: "سبعة عشر" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The tongue has 10 articulation points producing 18 letters — the largest and most varied region.", ar: "في اللسان عشرة مخارج تخرج منها ثمانية عشر حرفا، وهو أوسع المناطق.", lessonAnchor: "al-lisan" },
+    explanation: { en: "The tongue has 10 articulation points producing 18 letters, the largest and most varied region.", ar: "في اللسان عشرة مخارج تخرج منها ثمانية عشر حرفا، وهو أوسع المناطق.", lessonAnchor: "al-lisan" },
     source: { surah: 92, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -212,7 +212,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Tongue tip", ar: "طرف اللسان" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Kaaf is just forward of Qaaf — back of tongue against the HARD palate (Qaaf hits the soft palate). Both are tongue letters but at different points.", ar: "الكاف أمام مخرج القاف قليلا — أقصى اللسان مع الحنك الصلب. كلاهما من اللسان في موضعين متقاربين.", lessonAnchor: "al-lisan" },
+    explanation: { en: "Kaaf is just forward of Qaaf: back of tongue against the HARD palate (Qaaf hits the soft palate). Both are tongue letters but at different points.", ar: "الكاف أمام مخرج القاف قليلا — أقصى اللسان مع الحنك الصلب. كلاهما من اللسان في موضعين متقاربين.", lessonAnchor: "al-lisan" },
     source: { surah: 1, ayah: 4, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -229,7 +229,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Saad (ص), Zaay (ز), Seen (س)", ar: "الصاد، والزاي، والسين" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "ج ش ي share the same makhraj — middle of the tongue against the hard palate. The Yaa here is the consonant (non-madd).", ar: "ج ش ي تشترك في وسط اللسان مع الحنك الأعلى. والمراد بالياء غير المدّيّة.", lessonAnchor: "al-lisan" },
+    explanation: { en: "ج ش ي share the same makhraj: middle of the tongue against the hard palate. The Yaa here is the consonant (non-madd).", ar: "ج ش ي تشترك في وسط اللسان مع الحنك الأعلى. والمراد بالياء غير المدّيّة.", lessonAnchor: "al-lisan" },
     source: { surah: 106, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -246,7 +246,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Laam (ل)", ar: "اللام (ل)" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Daad (ض) is the most unique — it can emerge from either or both sides of the tongue against the upper molars. The lesson notes this as Daad's distinguishing feature.", ar: "الضاد (ض) أكثر الحروف تميّزا — تخرج من إحدى الحافتين أو كلتيهما مع الأضراس العليا، وهذا مما اختصّت به في الدرس.", lessonAnchor: "al-lisan" },
+    explanation: { en: "Daad (ض) is the most unique: it can emerge from either or both sides of the tongue against the upper molars. The lesson notes this as Daad's distinguishing feature.", ar: "الضاد (ض) أكثر الحروف تميّزا — تخرج من إحدى الحافتين أو كلتيهما مع الأضراس العليا، وهذا مما اختصّت به في الدرس.", lessonAnchor: "al-lisan" },
     source: { surah: 1, ayah: 7, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -376,7 +376,7 @@ export const questions: Question[] = [
     arabicText: "بِسْمِ",
     englishGloss: "in the name of",
     options: [
-      { id: "opt-a", label: { en: "2 — producing 4 letters", ar: "اثنان لأربعة حروف" } },
+      { id: "opt-a", label: { en: "2, producing 4 letters", ar: "اثنان لأربعة حروف" } },
       { id: "opt-b", label: { en: "1", ar: "واحد" } },
       { id: "opt-c", label: { en: "3", ar: "ثلاثة" } },
       { id: "opt-d", label: { en: "4", ar: "أربعة" } },
@@ -395,13 +395,13 @@ export const questions: Question[] = [
     arabicText: "الضَّالِّينَ",
     englishGloss: "those who go astray",
     options: [
-      { id: "opt-a", label: { en: "It can emerge from one or both sides of the tongue against the molars — flexible articulation that learners often confuse with Daal or Dhaa", ar: "تخرج من إحدى الحافتين أو كلتيهما مع الأضراس العليا، وهذا التنوّع يُربك المتعلّمين فيخلطونها بالدال أو الظاء" } },
+      { id: "opt-a", label: { en: "It can emerge from one or both sides of the tongue against the molars, a flexible articulation that learners often confuse with Daal or Dhaa", ar: "تخرج من إحدى الحافتين أو كلتيهما مع الأضراس العليا، وهذا التنوّع يُربك المتعلّمين فيخلطونها بالدال أو الظاء" } },
       { id: "opt-b", label: { en: "It cannot be heard", ar: "لا تُسمع" } },
       { id: "opt-c", label: { en: "It only exists at end of words", ar: "لا توجد إلا في آخر الكلمات" } },
       { id: "opt-d", label: { en: "It has no makhraj", ar: "لا مخرج لها" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson explicitly states: 'Daad is the most unique Arabic letter — it can emerge from either or both sides of the tongue.' This flexibility, combined with its heavy attribute, makes it the hardest letter to master.", ar: "نصّ الدرس على أنّ 'الضاد أصعب حروف العربية وأكثرها تميّزا، تخرج من إحدى الحافتين أو من كلتيهما'. هذه المرونة مع التفخيم تجعلها أصعب الحروف نطقا.", lessonAnchor: "al-lisan" },
+    explanation: { en: "The lesson explicitly states: 'Daad is the most unique Arabic letter: it can emerge from either or both sides of the tongue.' This flexibility, combined with its heavy attribute, makes it the hardest letter to master.", ar: "نصّ الدرس على أنّ 'الضاد أصعب حروف العربية وأكثرها تميّزا، تخرج من إحدى الحافتين أو من كلتيهما'. هذه المرونة مع التفخيم تجعلها أصعب الحروف نطقا.", lessonAnchor: "al-lisan" },
     source: { surah: 1, ayah: 7, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -463,13 +463,13 @@ export const questions: Question[] = [
     arabicText: "اللَّيْلِ",
     englishGloss: "the night",
     options: [
-      { id: "opt-a", label: { en: "Al-Lisan (the tongue) — 10 points, 18 letters", ar: "اللسان — عشرة مخارج وثمانية عشر حرفا" } },
-      { id: "opt-b", label: { en: "Al-Halq (the throat) — 3 points, 6 letters", ar: "الحلق — ثلاثة مخارج وستّة حروف" } },
-      { id: "opt-c", label: { en: "Al-Jawf — 1 point, 3 letters", ar: "الجوف — مخرج واحد وثلاثة حروف" } },
-      { id: "opt-d", label: { en: "Al-Khayshoom — 1 point", ar: "الخيشوم — مخرج واحد" } },
+      { id: "opt-a", label: { en: "Al-Lisan (the tongue): 10 points, 18 letters", ar: "اللسان — عشرة مخارج وثمانية عشر حرفا" } },
+      { id: "opt-b", label: { en: "Al-Halq (the throat): 3 points, 6 letters", ar: "الحلق — ثلاثة مخارج وستّة حروف" } },
+      { id: "opt-c", label: { en: "Al-Jawf: 1 point, 3 letters", ar: "الجوف — مخرج واحد وثلاثة حروف" } },
+      { id: "opt-d", label: { en: "Al-Khayshoom: 1 point", ar: "الخيشوم — مخرج واحد" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Al-Lisan has 10 points and 18 letters — the largest region. Al-Halq is 3 points / 6 letters; Ash-Shafataan is 2 points / 4 letters; Al-Jawf and Al-Khayshoom are 1 point each.", ar: "اللسان عشرة مخارج وثمانية عشر حرفا، وهو أوسع المناطق. الحلق ثلاثة مخارج وستّة حروف، والشفتان مخرجان وأربعة حروف، والجوف والخيشوم مخرج واحد لكلّ منهما.", lessonAnchor: "al-lisan" },
+    explanation: { en: "Al-Lisan has 10 points and 18 letters, the largest region. Al-Halq is 3 points / 6 letters; Ash-Shafataan is 2 points / 4 letters; Al-Jawf and Al-Khayshoom are 1 point each.", ar: "اللسان عشرة مخارج وثمانية عشر حرفا، وهو أوسع المناطق. الحلق ثلاثة مخارج وستّة حروف، والشفتان مخرجان وأربعة حروف، والجوف والخيشوم مخرج واحد لكلّ منهما.", lessonAnchor: "al-lisan" },
     source: { surah: 92, ayah: 1, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -520,7 +520,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "It only matters at the end of an ayah", ar: "لا أثر له إلا في آخر الآية" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "The lesson states: 'Mastering these is the foundation of all Tajweed.' Tajweed rules are about how letters interact — but you can only apply them correctly if you produce each letter from its correct makhraj first. A mispronounced ع or ح or ض breaks every rule that involves those letters.", ar: "ذكر الدرس أنّ 'إتقان المخارج هو أساس علم التجويد'. الأحكام تتعلّق بكيفية تفاعل الحروف، فلا يصحّ تطبيقها إلا إذا صحّ نطق الحرف من مخرجه أوّلا. وخطأ نطق ع أو ح أو ض يُفسد كلّ حكم متعلّق بها.", lessonAnchor: "makharij-overview" },
+    explanation: { en: "The lesson states: 'Mastering these is the foundation of all Tajweed.' Tajweed rules are about how letters interact, but you can only apply them correctly if you produce each letter from its correct makhraj first. A mispronounced ع or ح or ض breaks every rule that involves those letters.", ar: "ذكر الدرس أنّ 'إتقان المخارج هو أساس علم التجويد'. الأحكام تتعلّق بكيفية تفاعل الحروف، فلا يصحّ تطبيقها إلا إذا صحّ نطق الحرف من مخرجه أوّلا. وخطأ نطق ع أو ح أو ض يُفسد كلّ حكم متعلّق بها.", lessonAnchor: "makharij-overview" },
     source: { surah: 1, ayah: 2, translationEditionId: null, provenance: PROVENANCE },
   },
 ];
