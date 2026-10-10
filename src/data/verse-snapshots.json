@@ -143,10 +143,22 @@
     "fetchedAt": "2026-06-07T00:00:00.000Z",
     "source": "api.quran.com/api/v4 uthmani"
   },
+  "3:55": {
+    "tajweedHtml": "إِذْ قَالَ <tajweed class=ham_wasl>ٱ</tajweed>للَّهُ يَ<tajweed class=madda_normal>ـٰ</tajweed>عِيسَ<tajweed class=madda_obligatory>ىٰٓ</tajweed> إِ<tajweed class=ghunnah>نّ</tajweed>ِى مُتَوَفِّيكَ وَرَافِعُكَ إِلَىَّ وَمُطَهِّرُكَ مِنَ <tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ كَفَرُو<tajweed class=slnt>اْ</tajweed> وَجَاعِلُ <tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ <tajweed class=ham_wasl>ٱ</tajweed>تَّبَعُوكَ فَوْقَ <tajweed class=ham_wasl>ٱ</tajweed>لَّذِينَ كَفَر<tajweed class=madda_obligatory>ُوٓ</tajweed><tajweed class=slnt>اْ</tajweed> إِلَىٰ يَوْمِ <tajweed class=ham_wasl>ٱ</tajweed>لْقِيَ<tajweed class=madda_normal>ـٰ</tajweed>مَةِ‌ۖ ثُ<tajweed class=ghunnah>مّ</tajweed>َ إِلَىَّ مَرْجِعُكُمْ فَأَحْكُمُ بَيْنَكُمْ فِيمَا كُ<tajweed class=ikhafa>نت</tajweed>ُمْ فِيهِ تَخْتَلِف<tajweed class=madda_permissible>ُو</tajweed>نَ <span class=end>٥٥</span>",
+    "arabic": "إِذْ قَالَ ٱللَّهُ يَـٰعِيسَىٰٓ إِنِّى مُتَوَفِّيكَ وَرَافِعُكَ إِلَىَّ وَمُطَهِّرُكَ مِنَ ٱلَّذِينَ كَفَرُواْ وَجَاعِلُ ٱلَّذِينَ ٱتَّبَعُوكَ فَوْقَ ٱلَّذِينَ كَفَرُوٓاْ إِلَىٰ يَوْمِ ٱلْقِيَـٰمَةِ‌ۖ ثُمَّ إِلَىَّ مَرْجِعُكُمْ فَأَحْكُمُ بَيْنَكُمْ فِيمَا كُنتُمْ فِيهِ تَخْتَلِفُونَ ٥٥",
+    "fetchedAt": "2026-10-10T17:10:06.072Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
   "4:17": {
     "tajweedHtml": "إِ<tajweed class=ghunnah>نّ</tajweed>َمَا <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed>تَّوْبَةُ عَلَى <tajweed class=ham_wasl>ٱ</tajweed>للَّهِ لِلَّذِينَ يَعْمَلُونَ <tajweed class=ham_wasl>ٱ</tajweed><tajweed class=laam_shamsiyah>ل</tajweed>سّ<tajweed class=madda_obligatory>ُو</tajweed>ٓءَ بِجَهَ<tajweed class=madda_normal>ـٰ</tajweed>لَ<tajweed class=ikhafa>ةٍ ث</tajweed>ُ<tajweed class=ghunnah>مّ</tajweed>َ يَتُوبُونَ مِ<tajweed class=ikhafa>ن ق</tajweed>َرِي<tajweed class=ikhafa>بٍ ف</tajweed>َأُ<tajweed class=slnt>وْ</tajweed>لَ<tajweed class=madda_obligatory>ـٰٓ</tajweed>ئِكَ يَتُوبُ <tajweed class=ham_wasl>ٱ</tajweed>للَّهُ عَلَيْهِمْ‌ۗ وَكَانَ <tajweed class=ham_wasl>ٱ</tajweed>للَّهُ عَلِيمًا حَكِيمًا <span class=end>١٧</span>",
     "arabic": "إِنَّمَا ٱلتَّوْبَةُ عَلَى ٱللَّهِ لِلَّذِينَ يَعْمَلُونَ ٱلسُّوٓءَ بِجَهَـٰلَةٍ ثُمَّ يَتُوبُونَ مِن قَرِيبٍ فَأُوْلَـٰٓئِكَ يَتُوبُ ٱللَّهُ عَلَيْهِمْ‌ۗ وَكَانَ ٱللَّهُ عَلِيمًا حَكِيمًا ١٧",
     "fetchedAt": "2026-05-31T04:41:53.063Z",
+    "source": "api.quran.com/api/v4 uthmani_tajweed"
+  },
+  "4:82": {
+    "tajweedHtml": "أَفَلَا يَتَدَبَّرُونَ <tajweed class=ham_wasl>ٱ</tajweed>لْقُرْءَانَ‌ۚ وَلَوْ كَانَ مِنْ عِ<tajweed class=ikhafa>ند</tajweed>ِ غَيْرِ <tajweed class=ham_wasl>ٱ</tajweed>للَّهِ لَوَجَدُو<tajweed class=slnt>اْ</tajweed> فِيهِ <tajweed class=ham_wasl>ٱ</tajweed>خْتِلَ<tajweed class=madda_normal>ـٰ</tajweed><tajweed class=ikhafa>فًا ك</tajweed>َثِيرًا <span class=end>٨٢</span>",
+    "arabic": "أَفَلَا يَتَدَبَّرُونَ ٱلْقُرْءَانَ‌ۚ وَلَوْ كَانَ مِنْ عِندِ غَيْرِ ٱللَّهِ لَوَجَدُواْ فِيهِ ٱخْتِلَـٰفًا كَثِيرًا ٨٢",
+    "fetchedAt": "2026-10-10T17:10:06.072Z",
     "source": "api.quran.com/api/v4 uthmani_tajweed"
   },
   "6:26": {
