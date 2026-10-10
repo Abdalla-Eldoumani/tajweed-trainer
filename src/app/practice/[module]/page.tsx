@@ -5,9 +5,6 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useTranslation } from "@/lib/i18n";
 import { MODULES } from "@/components/layout/nav-data";
-import { useModuleLock } from "@/hooks/useModuleLock";
-import { getModuleById } from "@/lib/module-unlock";
-import { LockedModuleScreen } from "@/components/learn/LockedModuleScreen";
 
 const QuizSession = dynamic(
   () => import("@/components/practice/QuizSession").then((mod) => ({ default: mod.QuizSession })),
@@ -48,28 +45,9 @@ function ModuleNotFound({ id }: { id: string }) {
 export default function ModulePracticePage({ params }: { params: Promise<{ module: string }> }) {
   const { t, isAr } = useTranslation();
   const { module: moduleId } = use(params);
-  // The quiz gates on the same rule as its lessons: a module practice quiz is
-  // reachable once the module itself is unlocked, which keeps the chain
-  // meaningful (finish a quiz to open the next module and its quiz). The hook
-  // runs unconditionally before the early returns per the rules of hooks; an
-  // unknown id resolves to unlocked and falls through to the 404 panel.
-  const { locked, prereqId, prereqTitleEn, prereqTitleAr } = useModuleLock(moduleId);
 
   if (!VALID_MODULE_IDS.has(moduleId)) {
     return <ModuleNotFound id={moduleId} />;
-  }
-
-  const learningModule = getModuleById(moduleId);
-  if (locked && learningModule && prereqId && prereqTitleEn && prereqTitleAr) {
-    return (
-      <LockedModuleScreen
-        moduleTitleEn={learningModule.title_en}
-        moduleTitleAr={learningModule.title_ar}
-        prereqId={prereqId}
-        prereqTitleEn={prereqTitleEn}
-        prereqTitleAr={prereqTitleAr}
-      />
-    );
   }
 
   const mod = MODULES.find((m) => m.id === moduleId);
