@@ -3,7 +3,8 @@
 // example used in the lessons, so lesson verses render real per-letter colors
 // without a live request and keep working offline.
 //
-// It reads the example verse keys from src/data/content/*.json, fetches each
+// It reads the example verse keys from src/data/content/*.json and the verses
+// cited by the quiz questions in src/data/questions/*.ts, fetches each
 // referenced surah's text_uthmani_tajweed once from the Quran.com Foundation API
 // v4 (batched per chapter, not per ayah), and writes src/data/verse-snapshots.json
 // keyed by "<surah>:<ayah>". Idempotent: with unchanged content and API output a
@@ -21,6 +22,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..");
 const CONTENT_DIR = join(REPO_ROOT, "src", "data", "content");
+const QUESTIONS_DIR = join(REPO_ROOT, "src", "data", "questions");
 const SNAPSHOTS_PATH = join(REPO_ROOT, "src", "data", "verse-snapshots.json");
 const API = "https://api.quran.com/api/v4/quran/verses/uthmani_tajweed";
 const SOURCE = "api.quran.com/api/v4 uthmani_tajweed";
@@ -62,6 +64,14 @@ async function gatherExampleKeys() {
   for (const f of files) {
     collectKeys(JSON.parse(await readFile(join(CONTENT_DIR, f), "utf8")), keys);
   }
+  // Quiz questions cite their verse as `source: { surah: N, ayah: M, ...}`.
+  const questionFiles = (await readdir(QUESTIONS_DIR)).filter((f) => f.endsWith(".ts") && !f.endsWith(".test.ts"));
+  for (const f of questionFiles) {
+    const text = await readFile(join(QUESTIONS_DIR, f), "utf8");
+    for (const m of text.matchAll(/source:\s*\{\s*surah:\s*(\d+),\s*ayah:\s*(\d+)/g)) {
+      keys.add(`${m[1]}:${m[2]}`);
+    }
+  }
   return [...keys].sort(byVerseKey);
 }
 
@@ -81,7 +91,7 @@ async function fetchSurahTajweed(surah) {
 
 async function main() {
   const keys = await gatherExampleKeys();
-  console.log(`Found ${keys.length} distinct example verse(s) across content files.`);
+  console.log(`Found ${keys.length} distinct verse(s) across lesson examples and quiz sources.`);
 
   const surahs = [...new Set(keys.map((k) => Number(k.split(":")[0])))].sort((a, b) => a - b);
   const tajweedByKey = new Map();
