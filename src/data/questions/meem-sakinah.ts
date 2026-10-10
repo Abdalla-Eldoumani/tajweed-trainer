@@ -97,8 +97,8 @@ export const questions: Question[] = [
     arabicText: "هُمْ فِيهَا",
     englishGloss: "they in it",
     options: [
-      { id: "opt-a", label: { en: "No — clear pronunciation, no ghunnah", ar: "لا — نطق واضح بلا غنّة" } },
-      { id: "opt-b", label: { en: "Yes — 2 beats", ar: "نعم — حركتان" } },
+      { id: "opt-a", label: { en: "No: clear pronunciation, no ghunnah", ar: "لا — نطق واضح بلا غنّة" } },
+      { id: "opt-b", label: { en: "Yes, 2 beats", ar: "نعم — حركتان" } },
       { id: "opt-c", label: { en: "Only with the letter Faa (ف)", ar: "فقط مع الفاء (ف)" } },
       { id: "opt-d", label: { en: "Only with the letter Waw (و)", ar: "فقط مع الواو (و)" } },
     ],
@@ -114,7 +114,7 @@ export const questions: Question[] = [
     arabicText: "أَنْعَمْتَ",
     englishGloss: "You have bestowed favor",
     options: [
-      { id: "opt-a", label: { en: "From شَفَة (lip) — the Meem is a lip letter", ar: "من شَفة — لأنّ الميم حرف شفوي" } },
+      { id: "opt-a", label: { en: "From شَفَة (lip): the Meem is a lip letter", ar: "من شَفة — لأنّ الميم حرف شفوي" } },
       { id: "opt-b", label: { en: "From شَفاء (healing)", ar: "من شفاء" } },
       { id: "opt-c", label: { en: "After a famous reciter", ar: "نسبة إلى قارئ مشهور" } },
       { id: "opt-d", label: { en: "From شَافِع (witness)", ar: "من شافع" } },
@@ -137,7 +137,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "There are actually 5 rules", ar: "بل خمسة أحكام" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Meem Sakinah has only three rules: Ikhfaa, Idgham, and Izhar — all Shafawi. There is no Iqlab for Meem; the four-rule structure is specific to Noon Sakinah and Tanween.", ar: "الميم الساكنة لها ثلاثة أحكام فحسب: إخفاء وإدغام وإظهار، كلّها شفوية. ولا إقلاب للميم؛ والأحكام الأربعة خاصّة بالنون والتنوين.", lessonAnchor: "meem-sakinah-overview" },
+    explanation: { en: "Meem Sakinah has only three rules: Ikhfaa, Idgham, and Izhar, all Shafawi. There is no Iqlab for Meem; the four-rule structure is specific to Noon Sakinah and Tanween.", ar: "الميم الساكنة لها ثلاثة أحكام فحسب: إخفاء وإدغام وإظهار، كلّها شفوية. ولا إقلاب للميم؛ والأحكام الأربعة خاصّة بالنون والتنوين.", lessonAnchor: "meem-sakinah-overview" },
     source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
 
@@ -150,7 +150,7 @@ export const questions: Question[] = [
     arabicText: "تَرْمِيهِمْ بِحِجَارَةٍ",
     englishGloss: "striking them with stones",
     options: [
-      { id: "opt-a", label: { en: "Ikhfaa Shafawi — Meem Sakinah followed by Baa (ب)", ar: "إخفاء شفوي — ميم ساكنة قبل الباء (ب)" } },
+      { id: "opt-a", label: { en: "Ikhfaa Shafawi: Meem Sakinah followed by Baa (ب)", ar: "إخفاء شفوي — ميم ساكنة قبل الباء (ب)" } },
       { id: "opt-b", label: { en: "Idgham Shafawi", ar: "إدغام شفوي" } },
       { id: "opt-c", label: { en: "Izhar Shafawi", ar: "إظهار شفوي" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
@@ -184,7 +184,7 @@ export const questions: Question[] = [
     arabicText: "لَهُمْ مَا",
     englishGloss: "for them whatever",
     options: [
-      { id: "opt-a", label: { en: "Idgham Shafawi — Meem followed by Meem", ar: "إدغام شفوي — ميم تليها ميم" } },
+      { id: "opt-a", label: { en: "Idgham Shafawi: Meem followed by Meem", ar: "إدغام شفوي — ميم تليها ميم" } },
       { id: "opt-b", label: { en: "Ikhfaa Shafawi", ar: "إخفاء شفوي" } },
       { id: "opt-c", label: { en: "Izhar Shafawi", ar: "إظهار شفوي" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
@@ -201,7 +201,7 @@ export const questions: Question[] = [
     arabicText: "هُمْ فِيهَا",
     englishGloss: "they in it",
     options: [
-      { id: "opt-a", label: { en: "Izhar Shafawi — Meem followed by Faa (ف)", ar: "إظهار شفوي — ميم قبل الفاء (ف)" } },
+      { id: "opt-a", label: { en: "Izhar Shafawi: Meem followed by Faa (ف)", ar: "إظهار شفوي — ميم قبل الفاء (ف)" } },
       { id: "opt-b", label: { en: "Ikhfaa Shafawi", ar: "إخفاء شفوي" } },
       { id: "opt-c", label: { en: "Idgham Shafawi", ar: "إدغام شفوي" } },
       { id: "opt-d", label: { en: "Iqlab", ar: "إقلاب" } },
@@ -218,7 +218,7 @@ export const questions: Question[] = [
     arabicText: "أَنْعَمْتَ",
     englishGloss: "You have bestowed favor",
     options: [
-      { id: "opt-a", label: { en: "Izhar Shafawi — Meem followed by Taa (ت) within one word", ar: "إظهار شفوي — ميم قبل التاء (ت) في كلمة واحدة" } },
+      { id: "opt-a", label: { en: "Izhar Shafawi: Meem followed by Taa (ت) within one word", ar: "إظهار شفوي — ميم قبل التاء (ت) في كلمة واحدة" } },
       { id: "opt-b", label: { en: "Ikhfaa Shafawi", ar: "إخفاء شفوي" } },
       { id: "opt-c", label: { en: "Idgham Shafawi", ar: "إدغام شفوي" } },
       { id: "opt-d", label: { en: "No rule applies here", ar: "لا حكم هنا" } },
@@ -241,7 +241,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "The middle of the tongue (وسط اللسان)", ar: "وسط اللسان" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Both Baa and Meem are lip letters — that is why these rules are called Shafawi (lip-related).", ar: "الباء والميم من حروف الشفتين، ولذلك سُمّيت أحكامهما بالشفوي.", lessonAnchor: "ikhfaa-shafawi" },
+    explanation: { en: "Both Baa and Meem are lip letters, which is why these rules are called Shafawi (lip-related).", ar: "الباء والميم من حروف الشفتين، ولذلك سُمّيت أحكامهما بالشفوي.", lessonAnchor: "ikhfaa-shafawi" },
     source: { surah: 105, ayah: 4, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -303,8 +303,8 @@ export const questions: Question[] = [
     arabicText: "هُمْ فِيهَا",
     englishGloss: "they in it",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — only Baa triggers Ikhfaa for Meem Sakinah", ar: "خطأ شائع — لا يستوجب الإخفاء للميم إلا الباء" } },
-      { id: "opt-b", label: { en: "Correct — Faa always triggers ghunnah", ar: "صواب — الفاء تستوجب الغنّة دائما" } },
+      { id: "opt-a", label: { en: "A common mistake: only Baa triggers Ikhfaa for Meem Sakinah", ar: "خطأ شائع — لا يستوجب الإخفاء للميم إلا الباء" } },
+      { id: "opt-b", label: { en: "Correct: Faa always triggers ghunnah", ar: "صواب — الفاء تستوجب الغنّة دائما" } },
       { id: "opt-c", label: { en: "Correct only at end of ayah", ar: "صواب عند نهاية الآية فقط" } },
       { id: "opt-d", label: { en: "Required by Hafs", ar: "واجب في رواية حفص" } },
     ],
@@ -356,7 +356,7 @@ export const questions: Question[] = [
     arabicText: "هُمْ فِيهَا",
     englishGloss: "they in it",
     options: [
-      { id: "opt-a", label: { en: "Absent — Izhar Shafawi has NO ghunnah; Idgham Shafawi has a 2-beat ghunnah", ar: "معدومة — الإظهار الشفوي لا غنّة فيه، والإدغام الشفوي فيه غنّة بمقدار حركتين" } },
+      { id: "opt-a", label: { en: "Absent: Izhar Shafawi has NO ghunnah; Idgham Shafawi has a 2-beat ghunnah", ar: "معدومة — الإظهار الشفوي لا غنّة فيه، والإدغام الشفوي فيه غنّة بمقدار حركتين" } },
       { id: "opt-b", label: { en: "Stronger", ar: "أقوى" } },
       { id: "opt-c", label: { en: "Equal in beats but lighter in quality", ar: "بنفس المقدار لكنها أرقّ" } },
       { id: "opt-d", label: { en: "4 beats long", ar: "أربع حركات" } },
@@ -373,7 +373,7 @@ export const questions: Question[] = [
     arabicText: "تَرْمِيهِمْ بِحِجَارَةٍ",
     englishGloss: "striking them with stones",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — the lips should only come CLOSE", ar: "خطأ شائع — الشفتان تتقاربان فقط" } },
+      { id: "opt-a", label: { en: "A common mistake: the lips should only come CLOSE", ar: "خطأ شائع — الشفتان تتقاربان فقط" } },
       { id: "opt-b", label: { en: "Required for Ikhfaa Shafawi", ar: "لازم في الإخفاء الشفوي" } },
       { id: "opt-c", label: { en: "Permitted only at end of ayah", ar: "جائز عند نهاية الآية فقط" } },
       { id: "opt-d", label: { en: "Required only at the start of an ayah", ar: "لازم في بداية الآية فقط" } },
@@ -407,7 +407,7 @@ export const questions: Question[] = [
     arabicText: "لَهُمْ مَا",
     englishGloss: "for them whatever",
     options: [
-      { id: "opt-a", label: { en: "A common mistake — they must become one emphasized Meem (with shaddah)", ar: "خطأ شائع — يجب أن تصبحا ميما واحدة مشدّدة" } },
+      { id: "opt-a", label: { en: "A common mistake: they must become one emphasized Meem (with shaddah)", ar: "خطأ شائع — يجب أن تصبحا ميما واحدة مشدّدة" } },
       { id: "opt-b", label: { en: "Permitted in fast recitation", ar: "جائز في التلاوة السريعة" } },
       { id: "opt-c", label: { en: "Required for clarity", ar: "لازم للوضوح" } },
       { id: "opt-d", label: { en: "Acceptable when stopping", ar: "مقبول عند الوقف" } },
@@ -430,7 +430,7 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "Form an O shape", ar: "تتخذان شكلا دائريا" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Izhar Shafawi requires a clearly pronounced Meem — the lips must close fully. The lesson notes that not closing them fully is a common mistake.", ar: "الإظهار الشفوي يتطلّب ميما واضحة، فتنطبق الشفتان تماما. وذكر الدرس أنّ عدم إطباقهما من الأخطاء الشائعة.", lessonAnchor: "izhar-shafawi" },
+    explanation: { en: "Izhar Shafawi requires a clearly pronounced Meem, and the lips must close fully. The lesson notes that not closing them fully is a common mistake.", ar: "الإظهار الشفوي يتطلّب ميما واضحة، فتنطبق الشفتان تماما. وذكر الدرس أنّ عدم إطباقهما من الأخطاء الشائعة.", lessonAnchor: "izhar-shafawi" },
     source: { surah: 1, ayah: 7, translationEditionId: null, provenance: PROVENANCE },
   },
   {
@@ -447,14 +447,14 @@ export const questions: Question[] = [
       { id: "opt-d", label: { en: "26 letters", ar: "ستّة وعشرون حرفا" } },
     ],
     correctOptionId: "opt-a",
-    explanation: { en: "Ikhfaa covers Baa (1), Idgham covers Meem (1), and Izhar covers everything else (26). Together: 28 letters — every Arabic letter has a defined behavior after Meem Sakinah.", ar: "الإخفاء يشمل الباء (واحد)، والإدغام يشمل الميم (واحد)، والإظهار يشمل ما سواهما (ستّة وعشرون). والمجموع: ثمانية وعشرون حرفا، فلكلّ حرف بعد الميم الساكنة حكم مقرّر.", lessonAnchor: "meem-sakinah-overview" },
+    explanation: { en: "Ikhfaa covers Baa (1), Idgham covers Meem (1), and Izhar covers everything else (26). Together they cover 28 letters, so every Arabic letter has a defined behavior after Meem Sakinah.", ar: "الإخفاء يشمل الباء (واحد)، والإدغام يشمل الميم (واحد)، والإظهار يشمل ما سواهما (ستّة وعشرون). والمجموع: ثمانية وعشرون حرفا، فلكلّ حرف بعد الميم الساكنة حكم مقرّر.", lessonAnchor: "meem-sakinah-overview" },
     source: { surah: 16, ayah: 100, translationEditionId: null, provenance: PROVENANCE },
   },
   {
     id: "meem-new-izhar-shafawi-no-ghunnah",
     moduleId: "meem-sakinah",
     difficulty: "medium",
-    prompt: { en: "In هُمْ فِيهَا (2:39), Meem Sakinah is followed by ف — name the rule and say whether it carries ghunnah.", ar: "في هُمْ فِيهَا (٢:٣٩)، تلي الميمَ الساكنة الفاءُ — سمِّ الحكم وبيّن هل فيه غنّة." },
+    prompt: { en: "In هُمْ فِيهَا (2:39), Meem Sakinah is followed by ف. Name the rule and say whether it carries ghunnah.", ar: "في هُمْ فِيهَا (٢:٣٩)، تلي الميمَ الساكنة الفاءُ — سمِّ الحكم وبيّن هل فيه غنّة." },
     arabicText: "هُمْ فِيهَا",
     englishGloss: "they in it",
     options: [
@@ -465,7 +465,7 @@ export const questions: Question[] = [
     ],
     correctOptionId: "opt-d",
     explanation: {
-      en: "Only Baa (ب) triggers Ikhfaa Shafawi; every other non-Meem letter — Faa (ف) here — is Izhar Shafawi, pronounced clearly with no ghunnah.",
+      en: "Only Baa (ب) triggers Ikhfaa Shafawi; every other non-Meem letter, Faa (ف) here, is Izhar Shafawi, pronounced clearly with no ghunnah.",
       ar: "الباء (ب) وحدها تستوجب الإخفاء الشفوي، وكلّ حرف آخر غير الميم — والفاء (ف) هنا — إظهار شفوي يُنطق واضحا بلا غنّة.",
       lessonAnchor: "izhar-shafawi",
     },
