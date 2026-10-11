@@ -109,7 +109,7 @@ interface ArabicLetter {
 ## Adding a new example
 
 1. Verify the example exists in the Quran at the exact `surah:ayah` (open a Mushaf or use the Quran.com API).
-2. Determine the correct `rule_applied`, matching the wording style already in the file (e.g. `Izhar — Noon Sakinah followed by Hamzah (ء)`).
+2. Determine the correct `rule_applied`, matching the wording style already in the file (e.g. `Izhar: Noon Sakinah followed by Hamzah (ء)`).
 3. Add the example to the rule's `examples` array. Set `surah_name_en` to the standard Latin name; leave `surah_name_ar` empty.
 4. Run `node scripts/fetch-surah-names.mjs` to patch `surah_name_ar`.
 5. Build and load the lesson page; it should render with coloring and audio. If audio is missing, re-check the numbers.
